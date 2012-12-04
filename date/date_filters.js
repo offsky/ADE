@@ -12,7 +12,7 @@ filters.filter('validDate', function($filter) {
         if(angular.isUndefined(input)) return output;
         if(input==0) return output;
 
-        if(angular.isNumber(input)) output = $filter('date')(input,dateFormat);
+        if(angular.isNumber(input)) output = $filter('date')(input*1000,dateFormat);
 
         return output;
     };

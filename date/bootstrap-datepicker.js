@@ -1,5 +1,5 @@
 /* =========================================================
-	Modifications made by Jake Olefsky at Toodledo.com
+	Modifications made by https://github.com/Toodledo/ADE
 
 	1) Added comments so I could better understand the code
 	2) Better handling for case where no date is preset
@@ -146,7 +146,7 @@
 			} else if (typeof newDate === 'string') {
 				this.date = DPGlobal.parseDate(newDate);
 			} else {
-				this.date = new Date(newDate);
+				this.date = new Date(newDate*1000);
 			}
 			this.set();
 

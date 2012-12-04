@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="../vendor/css/angular-ui.min.css"/>
 		<link rel="stylesheet" href="../vendor/css/datepicker.css"/>
 	</head>
-	<body ng-app="app" ng-init="date2=1350400707000">
+	<body ng-app="app" ng-init="date2=1350400707">
 		<div class="container">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -22,7 +22,7 @@
 		<br /><br />
 		
 		<h1>Datejs</h1><br />
-		<p><a href="http://www.datejs.com/">Datejs</a> is a nice library for working with dates.  We made some substantial modifications to it to suite our needs with parsing user entered date strings like "today" and "Next Thursday".</p>
+		<p><a href="http://www.datejs.com/">Datejs</a> is a nice library for working with dates.  We made some substantial modifications to it to suit our needs with parsing user entered date strings like "today" and "Next Thursday".</p>
 		<ul>
 		<li>Try it: <input type="text" class="input-medium" id="input" value="today" /> <b>Unix:</b> <span id="unix"></span> <b>Text:</b> <span id="text"></span></li>
 		<li><a href="date.js">Source</a></li>
@@ -32,10 +32,10 @@
 		
 		<br /><br />
 		<h1>AngularJS Filter</h1><br />
-		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. We just wrote a simple wrapper filter that displays an empty string for 0 instead of Dec 31, 1969.</p>
+		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. We just wrote a simple wrapper filter that displays an empty string for 0 instead of Dec 31, 1969 and uses seconds instead of milliseconds, since this is more standard.</p>
 		
 		<ul>
-		<li>Date 1350400707: {{ 1350400707*1000 | validDate: 'mediumDate' }} </li>
+		<li>Date 1350400707: {{ 1350400707 | validDate: 'mediumDate' }} </li>
 		<li>Date 0: {{ 0 | validDate: 'mediumDate' }} </li>
 		</ul>
 		
@@ -55,9 +55,9 @@
 		<br /><br />
 		<p>There is also a directive for making a non-input element editable:</p>
 
-		<span ade-date='{"class":"input-small","format":"yyyy"}' ng-model="date2">{{date2 | date:'yyyy'}}</span><br /><br />
-		<span ade-date='{"class":"input-medium","format":"MMM d, yyyy"}' ng-model="date2">{{date2 | date:'MMM d, yyyy'}}</span><br /><br />
-		<span ade-date='{"class":"input-large","format":"MMM d, yyyy h:mm:ss a"}' ng-model="date2">{{date2 | date:'MMM d, yyyy h:mm:ss a'}}</span><br /><br />
+		<span ade-date='{"class":"input-small","format":"yyyy"}' ng-model="date2">{{date2 | validDate:'yyyy'}}</span><br /><br />
+		<span ade-date='{"class":"input-medium","format":"MMM d, yyyy"}' ng-model="date2">{{date2 | validDate:'MMM d, yyyy'}}</span><br /><br />
+		<span ade-date='{"class":"input-large","format":"MMM d, yyyy h:mm:ss a"}' ng-model="date2">{{date2 | validDate:'MMM d, yyyy h:mm:ss a'}}</span><br /><br />
 		
 		</div>
 		

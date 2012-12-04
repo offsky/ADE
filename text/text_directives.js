@@ -32,7 +32,6 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
 				value = input.val();
-				console.log(value);
 
 				$scope.$apply(function() {
 					return controller.$setViewValue(value);

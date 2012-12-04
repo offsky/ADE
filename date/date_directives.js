@@ -11,16 +11,13 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 		link: function($scope, element, attrs, controller) {
 			var format = "mm/dd/yyy";
 
-			element.bind('blur', function() {
-				var unix = parseDateString(this.value);
-				//I thought I needed a blur handler, but it looks like it might not be necessary
-			});
-		
 			//Handles return key pressed on in-line text box
 			element.bind('keyup', function(e) {
 				if(e.keyCode==13) { //return key
 					element.datepicker('hide');
 					element.blur();
+				} else if(e.keyCode==27) { //esc
+					element.datepicker('hide');
 				}
 			});
 			
@@ -37,7 +34,6 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 						return controller.$setViewValue(dateStr);
 					});
 				} 
-				
 			};
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
@@ -96,17 +92,21 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 				};
 			}
 			
+			var revert = function() {
+				element.show();
+				input.remove();
+				editing=false;
+			}
+
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
-				value = parseDateString(input.val())*1000;
+				value = parseDateString(input.val());
 				
 				$scope.$apply(function() {
 					return controller.$setViewValue(value);
 				});
 				
-				element.show();
-				input.remove();
-				editing=false;
+				revert();
 			};
 						
 			//handles clicks on the read version of the data
@@ -127,7 +127,14 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 				input.bind("blur",function() {
 					saveEdit();
 				});
-								
+				
+				//Handles escape key reverting change
+				input.bind('keyup', function(e) {
+					if(e.keyCode==27) { //esc
+						revert();
+					}
+				});
+
 				if(!$scope.$$phase) { //make sure we aren't already digesting/applying
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				} 

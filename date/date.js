@@ -1,3 +1,10 @@
+/* =========================================================
+    Modifications made by https://github.com/Toodledo/ADE
+
+    1) Modified regular expressions to match more user inputs
+
+ * ========================================================= */
+
 /**
  * Version: 1.0 Alpha-1 
  * Build Date: 13-Nov-2007
@@ -6,10 +13,7 @@
  * Website: http://www.datejs.com/ or http://www.coolite.com/datejs/
  */
  
- /**
- Heavily modified
- 
- */
+
 var DateJSLoadCultureInfo = function(language)
 {
     if (language.toLowerCase() == "en-us" || language.toLowerCase() == "en")
