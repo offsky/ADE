@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Date JS Unit Tests</title>
+    <script type="text/javascript" src="../../date.js"></script>
+    <link rel="stylesheet" href="../../../vendor/css/qunit.1.10.0.css" />
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script type="text/javascript" src="../../../vendor/js/qunit.1.10.0.js"></script>
+    <script>
+
+        var dp = parseDateString;
+
+        module("Relative", {
+            setup: function () {
+
+            },
+            teardown: function () {
+                DateJSLoadCultureInfo(window.navigator.userLanguage || window.navigator.language);
+            }
+        });
+
+        test("tom, tomorrow, tod, today, yest, yesterday, now", 7, function () {
+
+            var t = Date.today();
+            var today = t.clone().toUnixTimestamp();
+            var yesterday = t.clone().addDays(-1).toUnixTimestamp();
+            var tomorrow = t.clone().addDays(1).toUnixTimestamp();
+
+            equal(dp("yest"), yesterday, "'yest' parses to " + yesterday);
+            equal(dp("yesterday"), yesterday, "'yesterday' parses to " + yesterday);
+            equal(dp("tod"), today, "'tod' parses to " + today);
+            equal(dp("today"), today, "'today' parses to " + today);
+            equal(dp("tom"), tomorrow, "'tom' parses to " + tomorrow);
+            equal(dp("tomorrow"), tomorrow, "'tomorrow' parses to " + tomorrow);
+            ok(dp("now") > today, "'now' parses to " + today);
+
+        });
+
+        test("+/-/in/ago day/week/month/year", function () {
+
+            var today = Date.today();
+
+            var t1 = today.clone().addDays(1).toUnixTimestamp();
+            var t2 = today.clone().addWeeks(2).toUnixTimestamp();
+            var t3 = today.clone().addMonths(3).toUnixTimestamp();
+            var t4 = today.clone().addYears(4).toUnixTimestamp();
+            var t5 = today.clone().addDays(-5).toUnixTimestamp();
+            var t6 = today.clone().addWeeks(-2).toUnixTimestamp();
+            var t7 = today.clone().addMonths(-3).toUnixTimestamp();
+            var t8 = today.clone().addYears(-4).toUnixTimestamp();
+
+            equal(dp("+1d"), t1, "'+1d' parses to " + t1);
+            equal(dp("+1 d"), t1, "'+1 d' parses to " + t1);
+            equal(dp("+1 day"), t1, "'+1 day' parses to " + t1);
+            equal(dp("+1 days"), t1, "'+1 days' parses to " + t1);
+
+            equal(dp("+2 w"), t2, "'+2 w' parses to " + t2);
+            equal(dp("+2 week"), t2, "'+2 week' parses to " + t2);
+            equal(dp("+2 weeks"), t2, "'+2 weeks' parses to " + t2);
+
+            equal(dp("+3 m"), t3, "'+3 m' parses to " + t3);
+            equal(dp("+3 month"), t3, "'+3 month' parses to " + t3);
+            equal(dp("+3 months"), t3, "'+3 months' parses to " + t3);
+
+            equal(dp("+4 y"), t4, "'+4 y' parses to " + t4);
+            equal(dp("+4 yr"), t4, "'+4 yr' parses to " + t4);
+            equal(dp("+4 yrs"), t4, "'+4 yrs' parses to " + t4);
+            equal(dp("+4 year"), t4, "'+4 year' parses to " + t4);
+            equal(dp("+4 years"), t4, "'+4 years' parses to " + t4);
+
+            equal(dp("in 1 d"), t1, "'in 1 d' parses to " + t1);
+            equal(dp("in 1 day"), t1, "'in 1 day' parses to " + t1);
+            equal(dp("1 d"), t1, "'1 d' parses to " + t1);
+            equal(dp("1 day"), t1, "'1 day' parses to " + t1);
+
+            equal(dp("in 2 weeks"), t2, "'in 2 weeks' parses to " + t2);
+            equal(dp("in 2 week"), t2, "'in 2 week' parses to " + t2);
+            equal(dp("in 2 w"), t2, "'in 2 w' parses to " + t2);
+            equal(dp("2 weeks"), t2, "'2 weeks' parses to " + t2);
+            equal(dp("2 week"), t2, "'2 week' parses to " + t2);
+            equal(dp("2 w"), t2, "'2 w' parses to " + t2);
+
+            equal(dp("in 3 m"), t3, "'in 3 m' parses to " + t3);
+            equal(dp("in 3 month"), t3, "'in 3 month' parses to " + t3);
+            equal(dp("in 3 months"), t3, "'in 3 months' parses to " + t3);
+            equal(dp("3 m"), t3, "'3 m' parses to " + t3);
+            equal(dp("3 month"), t3, "'3 month' parses to " + t3);
+            equal(dp("3 months"), t3, "'3 months' parses to " + t3);
+
+            equal(dp("in 4 y"), t4, "'in 4 y' parses to " + t4);
+            equal(dp("in 4 yr"), t4, "'in 4 yr' parses to " + t4);
+            equal(dp("in 4 yrs"), t4, "'in 4 yrs' parses to " + t4);
+            equal(dp("in 4 year"), t4, "'in 4 year' parses to " + t4);
+            equal(dp("in 4 years"), t4, "'in 4 years' parses to " + t4);
+            equal(dp("4 y"), t4, "'4 y' parses to " + t4);
+            equal(dp("4 yr"), t4, "'4 yr' parses to " + t4);
+            equal(dp("4 yrs"), t4, "'4 yrs' parses to " + t4);
+            equal(dp("4 year"), t4, "'4 year' parses to " + t4);
+            equal(dp("4 years"), t4, "'4 years' parses to " + t4);
+
+            equal(dp("-5 day"), t5, "'-5 day' parses to " + t5);
+            equal(dp("-2 weeks"), t6, "'-2 weeks' parses to " + t6);
+            equal(dp("-3 months"), t7, "'-3 months' parses to " + t7);
+            equal(dp("-4 years"), t8, "'-4 years' parses to " + t8);
+
+            equal(dp("5 days ago"), t5, "'5 days ago' parses to " + t5);
+            equal(dp("2 weeks ago"), t6, "'2 weeks ago' parses to " + t6);
+            equal(dp("3 months ago"), t7, "'3 months ago' parses to " + t7);
+            equal(dp("4 years ago"), t8, "'4 years ago' parses to " + t8);
+        });
+
+        test("next [day], next week/month/year", function () {
+
+            var today = Date.today();
+
+            var t1 = today.clone().next().monday().toUnixTimestamp();
+            var t2 = today.clone().next().week().toUnixTimestamp();
+            var t3 = today.clone().next().month().toUnixTimestamp();
+            var t4 = today.clone().next().year().toUnixTimestamp();
+
+            var tue = today.clone().next().tuesday().toUnixTimestamp();
+            var fri = today.clone().next().friday().toUnixTimestamp();
+            var sat = today.clone().next().saturday().toUnixTimestamp();
+
+            equal(dp("next mon"), t1, "'next mon' parses to " + t1);
+            equal(dp("next monday"), t1, "'next monday' parses to " + t1);
+
+            equal(dp("next tue"), tue, "'next tue' parses to " + tue);
+            equal(dp("next fri"), fri, "'next fri' parses to " + fri);
+            equal(dp("next sat"), sat, "'next sat' parses to " + sat);
+
+            equal(dp("next week"), t2, "'next week' parses to " + t2);
+            equal(dp("next month"), t3, "'next month' parses to " + t3);
+            equal(dp("next year"), t4, "'next year' parses to " + t4);
+        });
+
+        test("Last day of [month] / First day of [month]", function () {
+
+            var today = Date.today();
+
+            var t1 = new Date(2030, 0, 31).toUnixTimestamp();
+            var t2 = new Date(2030, 0, 1).toUnixTimestamp();
+
+            equal(dp("last day of jan 2030"), t1, "'last day of jan 2030' parses to " + t1);
+            equal(dp("first day of jan 2030"), t2, "'first day of jan 2030' parses to " + t2);
+            equal(dp("1st day of jan 2030"), t2, "'1st day of jan 2030' parses to " + t2);
+            equal(dp("1st of jan 2030"), t2, "'1st of jan 2030' parses to " + t2);
+        });
+
+        module("Date", {
+            setup: function () {
+
+            },
+            teardown: function () {
+                DateJSLoadCultureInfo(window.navigator.userLanguage || window.navigator.language);
+            }
+        });
+
+        test("Strings", function () {
+
+            var t1 = new Date(2013, 0, 1).toUnixTimestamp();
+
+            equal(dp("Jan 1, 2013"), t1, "'Jan 1, 2013' parses to " + t1);
+            equal(dp("Jan first 2013"), t1, "'Jan first 2013' parses to " + t1);
+            equal(dp("Jan 1, '13"), t1, "'Jan 1, '13' parses to " + t1);
+            equal(dp("January 1, 2013"), t1, "'January 1, 2013' parses to " + t1);
+            equal(dp("January first 2013"), t1, "'January first 2013' parses to " + t1);
+            equal(dp("January 1, '13"), t1, "'January 1, '13' parses to " + t1);
+        });
+
+        test("Numeric - Locale ('en', 'en-US') - Month / Day / Year", function () {
+
+            DateJSLoadCultureInfo('en');
+
+            var t1 = new Date(2013, 0, 5).toUnixTimestamp();
+
+            equal(dp("1/5/2013"), t1, "'1/5/2013' parses to " + t1);
+            equal(dp("1.5.2013"), t1, "'1.5.2013' parses to " + t1);
+            equal(dp("1-5-2013"), t1, "'1-5-2013' parses to " + t1);
+
+            equal(dp("1/5/13"), t1, "'1/5/13' parses to " + t1);
+            equal(dp("1.5.13"), t1, "'1.5.13' parses to " + t1);
+            equal(dp("1-5-13"), t1, "'1-5-13' parses to " + t1);
+
+            equal(dp("2013-01-05"), t1, "'2013-01-05' parses to " + t1);
+            equal(dp("2013-1-5"), t1, "'2013-1-5' parses to " + t1);
+
+        });
+
+        test("Numeric - Locale ('en-GB') - Day / Month / Year", function () {
+
+            DateJSLoadCultureInfo('en-GB');
+
+            var t1 = new Date(2013, 4, 1).toUnixTimestamp();
+
+            equal(dp("1/5/2013"), t1, "'1/5/2013' parses to " + t1);
+            equal(dp("1.5.2013"), t1, "'1.5.2013' parses to " + t1);
+            equal(dp("1-5-2013"), t1, "'1-5-2013' parses to " + t1);
+
+            equal(dp("1/5/13"), t1, "'1/5/13' parses to " + t1);
+            equal(dp("1.5.13"), t1, "'1.5.13' parses to " + t1);
+            equal(dp("1-5-13"), t1, "'1-5-13' parses to " + t1);
+        });
+
+        test("Numeric/String in past without specified year", function () {
+            // Construct past date string dynamically to 6 months ago
+            var today = Date.today();
+            var pastDate = today.addMonths(-6);
+            var futrDate = pastDate.clone().addYears(1).toUnixTimestamp();
+
+            var monthName = Date.prototype.getMonthName(pastDate.getMonth());
+            var dateString = monthName + " " + pastDate.getDate();  // [month name] [day] (6 months ago)
+
+            var jan1 = new Date(2013, 0, 1).toUnixTimestamp();
+
+            equal(dp(dateString), futrDate, "'" + dateString + "' parses to " + futrDate);
+            equal(dp("Jan 1"), jan1, "'Jan 1' parses to " + jan1);
+            equal(dp("Jan 1st"), jan1, "'Jan 1st' parses to " + jan1);
+            equal(dp("Jan first"), jan1, "'Jan first' parses to " + jan1);
+            equal(dp("January 1"), jan1, "'January 1' parses to " + jan1);
+            equal(dp("January 1st"), jan1, "'January 1st' parses to " + jan1);
+            equal(dp("January first"), jan1, "'January first' parses to " + jan1);
+            equal(dp("1/1"), jan1, "'1/1' parses to " + jan1);
+            equal(dp("1-1"), jan1, "'1-1' parses to " + jan1);
+            equal(dp("1.1"), jan1, "'1.1' parses to " + jan1);
+        });
+
+        test("Un parsable", function () {
+            equal(dp("foobar"), null, "'foobar' parses to null");
+            equal(dp("next fish"), null, "'next fish' parses to null");
+            equal(dp("+2 nothing"), null, "'+2 nothing' parses to null");
+            equal(dp("fakuary 2, 2013"), null, "'fakuary 2, 2013' parses to null");
+            equal(dp("15/15/15"), null, "'15/15/15' parses to null");
+        });
+
+    </script>
+</body>
+</html>

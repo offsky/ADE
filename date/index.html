@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title></title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
+		<link rel="stylesheet" href="../vendor/css/angular-ui.min.css"/>
+		<link rel="stylesheet" href="../vendor/css/datepicker.css"/>
+	</head>
+	<body ng-app="app" ng-init="date2=1350400707000">
+		<div class="container">
+		<!--[if lt IE 7]>
+			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+		<![endif]-->
+		<a href="../index.html">back</a>
+		<br /><br />
+		
+		<h1>Datejs</h1><br />
+		<p><a href="http://www.datejs.com/">Datejs</a> is a nice library for working with dates.  We made some substantial modifications to it to suite our needs with parsing user entered date strings like "today" and "Next Thursday".</p>
+		<ul>
+		<li>Try it: <input type="text" class="input-medium" id="input" value="today" /> <b>Unix:</b> <span id="unix"></span> <b>Text:</b> <span id="text"></span></li>
+		<li><a href="date.js">Source</a></li>
+		<li><a href="tests/datejs/index.html">Tests</a></li>
+		</ul>
+		
+		
+		<br /><br />
+		<h1>AngularJS Filter</h1><br />
+		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. We just wrote a simple wrapper filter that displays an empty string for 0 instead of Dec 31, 1969.</p>
+		
+		<ul>
+		<li>Date 1350400707: {{ 1350400707*1000 | validDate: 'mediumDate' }} </li>
+		<li>Date 0: {{ 0 | validDate: 'mediumDate' }} </li>
+		</ul>
+		
+		<br /><br />
+		<h1>AngularJS Directives</h1><br />
+		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to picking from the popup calendar, you can type in things like "today" or "next week". Try it.</p>
+
+		<table>
+		<tr><th>Date</th><th>Date+Time</th><th>Year</th></tr>
+		<tr>
+			<td><input b-datepicker='{"format":"MMM d, yyyy"}' ng-model="date1" type="text" class="input-small" /></td>
+			<td><input b-datepicker='{"format":"MMM d, yyyy h:mm:ss a"}' ng-model="date1" type="text" class="input-large" /></td>
+			<td><input b-datepicker='{"format":"yyyy","viewMode":2,"minViewMode":2}' ng-model="date1" type="text" class="input-small" /></td>
+		</tr>
+		</table>
+		
+		<br /><br />
+		<p>There is also a directive for making a div editable</p>
+
+		<span ade-date='{"model":"date2","class":"input-small"}'>{{date2 | date:'MMM d, yyyy'}}</span><br /><br />
+		<span ade-date-time='{"model":"date2","class":"input-small"}'>{{date2 | date:'MMM d, yyyy h:mm:ss a'}}</span><br /><br />
+		<span ade-year='{"model":"date2","class":"input-small"}'>{{date2 | date:'yyyy'}}</span><br /><br />
+		
+		</div>
+		
+		<!-- Scripts -->
+
+		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
+		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
+		<script src="../vendor/js/angular.js"></script>
+		<script src="../vendor/js/angular-sanitize.js"></script>
+		<script src="../vendor/js/bootstrap.js"></script>
+		
+		<!-- build:js js/scripts.js -->
+		<script src="bootstrap-datepicker.js"></script>
+		<script src="app.js"></script>
+		<script src="date_filters.js"></script>
+		<script src="date_directives.js"></script>
+		<script src="date.js"></script>
+		<!-- endbuild -->
+		
+		<script type="text/javascript">
+		function updateDate() {
+			var unix = parseDateString($("#input").val());
+			$('#unix').text(unix);
+			var date = new Date(unix*1000);
+			$('#text').text(date.toString());
+		}
+		$(document).ready(function() {
+			updateDate();
+			$("#input").on("keyup", updateDate);
+		});
+		</script>
+		
+	</body>
+</html>
