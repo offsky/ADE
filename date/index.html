@@ -44,20 +44,20 @@
 		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to picking from the popup calendar, you can type in things like "today" or "next week". Try it.</p>
 
 		<table>
-		<tr><th>Date</th><th>Date+Time</th><th>Year</th></tr>
+		<tr><th>Year</th><th>Date</th><th>Date+Time</th></tr>
 		<tr>
+			<td><input b-datepicker='{"format":"yyyy","viewMode":2,"minViewMode":2}' ng-model="date1" type="text" class="input-small" /></td>
 			<td><input b-datepicker='{"format":"MMM d, yyyy"}' ng-model="date1" type="text" class="input-small" /></td>
 			<td><input b-datepicker='{"format":"MMM d, yyyy h:mm:ss a"}' ng-model="date1" type="text" class="input-large" /></td>
-			<td><input b-datepicker='{"format":"yyyy","viewMode":2,"minViewMode":2}' ng-model="date1" type="text" class="input-small" /></td>
 		</tr>
 		</table>
 		
 		<br /><br />
-		<p>There is also a directive for making a div editable</p>
+		<p>There is also a directive for making a non-input element editable:</p>
 
-		<span ade-date='{"model":"date2","class":"input-small"}'>{{date2 | date:'MMM d, yyyy'}}</span><br /><br />
-		<span ade-date-time='{"model":"date2","class":"input-small"}'>{{date2 | date:'MMM d, yyyy h:mm:ss a'}}</span><br /><br />
-		<span ade-year='{"model":"date2","class":"input-small"}'>{{date2 | date:'yyyy'}}</span><br /><br />
+		<span ade-date='{"class":"input-small","format":"yyyy"}' ng-model="date2">{{date2 | date:'yyyy'}}</span><br /><br />
+		<span ade-date='{"class":"input-medium","format":"MMM d, yyyy"}' ng-model="date2">{{date2 | date:'MMM d, yyyy'}}</span><br /><br />
+		<span ade-date='{"class":"input-large","format":"MMM d, yyyy h:mm:ss a"}' ng-model="date2">{{date2 | date:'MMM d, yyyy h:mm:ss a'}}</span><br /><br />
 		
 		</div>
 		

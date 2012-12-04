@@ -1,5 +1,5 @@
 /* ==================================================================
-
+	Directive to present a date picker on an input
 ------------------------------------------------------------------*/
 
 angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
@@ -16,6 +16,14 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 				//I thought I needed a blur handler, but it looks like it might not be necessary
 			});
 		
+			//Handles return key pressed on in-line text box
+			element.bind('keyup', function(e) {
+				if(e.keyCode==13) { //return key
+					element.datepicker('hide');
+					element.blur();
+				}
+			});
+			
 			//creates a callback for when something is picked from the popup
 			var updateModel = function(ev) {
 				var dateStr = "";
@@ -36,7 +44,7 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 			if (controller != null) {
 				controller.$render = function() {
 					if(controller.$viewValue) {
-						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary
+						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary?
 						element.datepicker('setValue',controller.$viewValue);
 						element.datepicker('update');
 					} else if(controller.$viewValue===null) {
@@ -65,106 +73,68 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 })
 
 /* ==================================================================
-	
+	Directive to display a calendar for picking a year
 ------------------------------------------------------------------*/
-.directive('adeDate', function() {
-	var editing=false;
-	
-	return function($scope, elem, attrs ) {
-		elem.bind('click', function() {
-			if(editing) return;
-			editing=true;
-			
-			var options = {};
-			if(angular.isObject(attrs.adeDate)) options = attrs.adeDate; 
-			
-			if (typeof(attrs.adeDate) === "string" && attrs.adeDate.length > 0) {
-				options = angular.fromJson(attrs.adeDate); //parses the json string into an object 
-			}
-			console.log(options);
-			
-			elem.children('.adehide').hide();
-			elem.append('<input b-datepicker=\'{"format":"MMM d, yyyy"}\' ng-model="date" type="text" class="'+options.class+'" />');
-			//elem.children('input').focus();
-			
-			if(!$scope.$$phase) { //make sure we aren't already digesting/applying
-				 //This is necessary to get the model to match the value of the input
-				return $scope.$apply(function() {
-					//return controller.$setViewValue(dateStr);
-				});
-			} 
-			
-		});
-	};
-})
-
-/* ==================================================================
-	
-------------------------------------------------------------------*/
-.directive('adeDateTime', function() {
-	return function( scope, elem, attrs ) {
-		elem.bind('click', function() {
-			console.log("click()");
-			
-		});
-	};
-})
-
-/* ==================================================================
-	
-------------------------------------------------------------------*/
-.directive('adeYear', ['$compile',function($compile) {
+.directive('adeDate', ['$compile','$timeout',function($compile,$timeout) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var inputClass = "";
-			var model = "";
+			var inputClass = "input-medium";
+			var format = "MMM d, yyyy";
 			var editing=false;
 			var input = null;
+			var value = null;
+			
+			// called at the begining if there is pre-filled data that needs to be preset in the popup
+			if (controller != null) {
+				controller.$render = function() { //whenever the view needs to be updated
+					value = controller.$modelValue;
+					return controller.$viewValue;
+				};
+			}
 			
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
-				var unix = parseDateString(this.value);
+				value = parseDateString(input.val())*1000;
+				
+				$scope.$apply(function() {
+					return controller.$setViewValue(value);
+				});
+				
 				element.show();
 				input.remove();
 				editing=false;
 			};
-			
+						
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
 				editing=true;
 				
-				element.hide();				
-				$compile('<input b-datepicker=\'{"format":"yyyy","viewMode":2,"minViewMode":2}\' ng-model="'+model+'" type="text" class="'+inputClass+'" />')($scope).insertAfter(element);
+				element.hide();
+				var extraDPoptions = "";
+				if(format=='yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
+				$compile('<input b-datepicker=\'{"format":"'+format+'"'+extraDPoptions+'}\' ng-model="adePickDate" ng-init="adePickDate='+value+'" type="text" class="'+inputClass+'" />')($scope).insertAfter(element);
 				input = element.next('input');
-				//input.focus();
 				
+				input.focus(); //I do not know why both of these are necessary, but they are
+				$timeout(function() { input.focus(); },1);
+			
 				//Handles blur of in-line text box
 				input.bind("blur",function() {
 					saveEdit();
 				});
-				
-				//Handles return key pressed on in-line text box
-				input.bind('keyup', function(e) {
-					if(e.keyCode==13) {
-						saveEdit(); //return key
-					}
-				});
-				
-				
-				
+								
 				if(!$scope.$$phase) { //make sure we aren't already digesting/applying
-					 //This is necessary to get the model to match the value of the input
-					return $scope.$apply();
+					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				} 
 			});
 
 			// Initialization code run for each directive instance once
-			return attrs.$observe('adeYear', function(value) { //value is the contents of the ade-year="" string
+			return attrs.$observe('adeDate', function(value) { //value is the contents of the ade-year="" string
 				var options = {};
 				if(angular.isObject(value)) options = value; 
 				
@@ -172,7 +142,7 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 					options = angular.fromJson(value); //parses the json string into an object 
 				}
 				if(options.class) inputClass = options.class;
-				if(options.model) model = options.model;
+				if(options.format) format = options.format;
 				
 				return element; //TODO: not sure what to return here
 			});
