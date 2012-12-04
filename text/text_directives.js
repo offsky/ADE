@@ -12,15 +12,33 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
 			var inputClass = "";
-			var model = "";
 			var editing=false;
 			var input = null;
-			
-			//callback once the edit is done			
-			var saveEdit = function(ev) {
+			var value = "";
+
+			if (controller != null) {
+				controller.$render = function() { //whenever the view needs to be updated
+					value = controller.$modelValue;
+					return controller.$viewValue;
+				};
+			}
+
+			var revert = function() {
 				element.show();
 				input.remove();
 				editing=false;
+			}
+
+			//callback once the edit is done			
+			var saveEdit = function(ev) {
+				value = input.val();
+				console.log(value);
+
+				$scope.$apply(function() {
+					return controller.$setViewValue(value);
+				});
+
+				revert();
 			};
 			
 			//handles clicks on the read version of the data
@@ -29,7 +47,7 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 				editing=true;
 				
 				element.hide();				
-				$compile('<input ng-model="'+model+'" type="text" class="'+inputClass+'" />')($scope).insertAfter(element);
+				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
@@ -40,8 +58,10 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 				
 				//Handles return key pressed on in-line text box
 				input.bind('keyup', function(e) {
-					if(e.keyCode==13) {
-						saveEdit(); //return key
+					if(e.keyCode==13) { //return key
+						saveEdit(); 
+					} else if(e.keyCode==27) { //esc
+						revert();
 					}
 				});
 				
@@ -61,7 +81,6 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 					options = angular.fromJson(value); //parses the json string into an object 
 				}
 				if(options.class) inputClass = options.class;
-				if(options.model) model = options.model;
 				
 				return element; //TODO: not sure what to return here
 			});
