@@ -7,7 +7,7 @@
 	4) Enabled full text parsing of unrecognized dates via an external date.js library.  
 		So you can type "next week" and it should work
 	5) Got rid of date formatting and allowed caller to take care of this
-
+	6) Method for destroying the calendar DOM object
  * ========================================================= */
 
 
@@ -128,6 +128,10 @@
 				type: 'hide',
 				date: this.date
 			});
+		},
+		
+		remove: function() {
+			this.picker.remove();
 		},
 		
 		//value is set by clicking, on hide, or external setting

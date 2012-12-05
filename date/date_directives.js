@@ -33,7 +33,7 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 					return $scope.$apply(function() {
 						return controller.$setViewValue(dateStr);
 					});
-				} 
+				}
 			};
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
@@ -94,6 +94,7 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 			
 			var revert = function() {
 				element.show();
+				input.datepicker('remove');
 				input.remove();
 				editing=false;
 			}
