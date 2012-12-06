@@ -1,10 +1,24 @@
 /* ==================================================================
 	AngularJS Datatype Editor - Text
-	
 	A directive to edit text in place
+
+	Usage:
+	<div ade-text='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
+
+	Config:
+	"class" will be added to the input box so you can style it.
+	"id" will be used in messages broadcast to the app on state changes.
+
+	Messages:
+		name: ADE-start  
+		data: id from config
+
+		name: ADE-finish
+		data: {id from config, old value, new value}
+
 ------------------------------------------------------------------*/
 
-angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
+adeModule.directive('adeText', ['$compile','$rootScope',function($compile,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
@@ -15,36 +29,43 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 			var editing=false;
 			var input = null;
 			var value = "";
+			var oldValue = "";
+			var id = "";
 
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
-					value = controller.$modelValue;
+					oldValue = value = controller.$modelValue;
 					return controller.$viewValue;
 				};
 			}
 
-			var revert = function() {
+			var finish = function() {
 				element.show();
 				input.remove();
 				editing=false;
+
+				$rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new':value});
 			}
 
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
+				oldValue = value;
 				value = input.val();
+
+				finish();
 
 				$scope.$apply(function() {
 					return controller.$setViewValue(value);
 				});
-
-				revert();
 			};
 			
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
 				editing=true;
-				
+
+				$rootScope.$broadcast('ADE-start',id);
+
 				element.hide();				
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
@@ -60,7 +81,7 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 					if(e.keyCode==13) { //return key
 						saveEdit(); 
 					} else if(e.keyCode==27) { //esc
-						revert();
+						finish();
 					}
 				});
 				
@@ -72,33 +93,19 @@ angular.module('ade', []).directive('adeText', ['$compile',function($compile) {
 			});
 
 			// Watches for changes to the element
-			return attrs.$observe('adeText', function(value) { //value is the contents of the ade-text="" string
+			return attrs.$observe('adeText', function(settings) { //settings is the contents of the ade-text="" string
 				var options = {};
-				if(angular.isObject(value)) options = value; 
+				if(angular.isObject(settings)) options = settings; 
 				
-				if (typeof(value) === "string" && value.length > 0) {
-					options = angular.fromJson(value); //parses the json string into an object 
+				if (typeof(settings) === "string" && settings.length > 0) {
+					options = angular.fromJson(settings); //parses the json string into an object 
 				}
 				if(options.class) inputClass = options.class;
-				
+				if(options.id) id = options.id;
+
 				return element; //TODO: not sure what to return here
 			});
 
 		}
 	};
 }]);
-
-
-
-/*
-References
-
-https://groups.google.com/forum/?fromgroups=#!topic/angular/ERUVRR8vZW0
-http://www.eyecon.ro/bootstrap-datepicker/
-https://gist.github.com/3103533
-https://gist.github.com/3135128
-
-Alternative: https://github.com/angular-ui/angular-ui/tree/master/modules/directives/date
-
-http://docs.angularjs.org/guide/directive	
-*/
