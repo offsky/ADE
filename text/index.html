@@ -30,6 +30,8 @@
 		<br />
 
 		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
+
+		<br /><br /><br /><br />
 		</div>
 		
 		<!-- Scripts -->
@@ -43,7 +45,7 @@
 		<script src="../common/ade.js"></script>
 		<script src="app.js"></script>
 		<script src="text_directives.js"></script>
-		<script>
+		<script type="text/javascript">
 			function ctrl($rootScope) {
 
 				$rootScope.$on('ADE-start', function(e,data) {

@@ -25,7 +25,7 @@ adeModule.directive('adeText', ['$compile','$rootScope',function($compile,$rootS
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var inputClass = "";
+			var inputClass = "input-medium";
 			var editing=false;
 			var input = null;
 			var value = "";
@@ -87,8 +87,7 @@ adeModule.directive('adeText', ['$compile','$rootScope',function($compile,$rootS
 				
 				//make sure we aren't already digesting/applying before we apply the changes
 				if(!$scope.$$phase) {
-					 //This is necessary to get the model to match the value of the input
-					return $scope.$apply();
+					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				} 
 			});
 
