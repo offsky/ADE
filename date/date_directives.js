@@ -2,7 +2,7 @@
 	Directive to present a date picker on an input
 ------------------------------------------------------------------*/
 
-angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
+adeModule.directive('adeCalpop', function($filter){
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
@@ -52,7 +52,7 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 			}
 
 			// Initialization code run for each directive instance.  Enables the bootstrap datepicker object
-			return attrs.$observe('bDatepicker', function(value) { //value is the contents of the b-datepicker="" string
+			return attrs.$observe('adeCalpop', function(value) { //value is the contents of the b-datepicker="" string
 				var options = {};
 				if(angular.isObject(value)) options = value; 
 				
@@ -66,12 +66,12 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 
 		}
 	};
-})
+});
 
 /* ==================================================================
 	Directive to display a calendar for picking a year
 ------------------------------------------------------------------*/
-.directive('adeDate', ['$compile','$timeout',function($compile,$timeout) {
+adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($compile,$timeout,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
@@ -83,31 +83,36 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 			var editing=false;
 			var input = null;
 			var value = null;
+			var oldValue = null;
+			var id = "";
 			
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
-					value = controller.$modelValue;
+					oldValue = value = controller.$modelValue;
 					return controller.$viewValue;
 				};
 			}
 			
-			var revert = function() {
+			var finish = function() {
 				element.show();
 				input.datepicker('remove');
 				input.remove();
 				editing=false;
+
+				$rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new':value});
 			}
 
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
+				oldValue = value;
 				value = parseDateString(input.val());
 				
+				finish();
+
 				$scope.$apply(function() {
 					return controller.$setViewValue(value);
 				});
-				
-				revert();
 			};
 						
 			//handles clicks on the read version of the data
@@ -115,10 +120,12 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 				if(editing) return;
 				editing=true;
 				
+				$rootScope.$broadcast('ADE-start',id);
+
 				element.hide();
 				var extraDPoptions = "";
 				if(format=='yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				$compile('<input b-datepicker=\'{"format":"'+format+'"'+extraDPoptions+'}\' ng-model="adePickDate" ng-init="adePickDate='+value+'" type="text" class="'+inputClass+'" />')($scope).insertAfter(element);
+				$compile('<input ade-calpop=\'{"format":"'+format+'"'+extraDPoptions+'}\' ng-model="adePickDate" ng-init="adePickDate='+value+'" type="text" class="'+inputClass+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				
 				input.focus(); //I do not know why both of these are necessary, but they are
@@ -132,7 +139,7 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 				//Handles escape key reverting change
 				input.bind('keyup', function(e) {
 					if(e.keyCode==27) { //esc
-						revert();
+						finish();
 					}
 				});
 
@@ -142,15 +149,16 @@ angular.module('bDatepicker', []).directive('bDatepicker', function($filter){
 			});
 
 			// Initialization code run for each directive instance once
-			return attrs.$observe('adeDate', function(value) { //value is the contents of the ade-year="" string
+			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-year="" string
 				var options = {};
-				if(angular.isObject(value)) options = value; 
+				if(angular.isObject(settings)) options = settings; 
 				
-				if (typeof(value) === "string" && value.length > 0) {
-					options = angular.fromJson(value); //parses the json string into an object 
+				if (typeof(settings) === "string" && settings.length > 0) {
+					options = angular.fromJson(settings); //parses the json string into an object 
 				}
 				if(options.class) inputClass = options.class;
 				if(options.format) format = options.format;
+				if(options.id) id = options.id;
 				
 				return element; //TODO: not sure what to return here
 			});

@@ -169,6 +169,18 @@
 				top: offset.top + this.height,
 				left: offset.left
 			});
+			
+			//flip up top if off bottom of page
+			var windowH = $(window).height();
+			var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
+			var pickerHeight = this.picker[0].offsetTop+this.picker[0].offsetHeight;
+
+			if(pickerHeight-scroll>windowH) {
+				this.picker.css({
+					top: offset.top - this.picker[0].offsetHeight,
+					left: offset.left
+				});
+			}
 		},
 		
 		//each time a keystroke is fired on the input

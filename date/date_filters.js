@@ -2,9 +2,7 @@
 
 /* Filters */
 
-var filters = angular.module('filters', ['ngSanitize']);
-
-filters.filter('validDate', function($filter) {
+adeModule.filter('validDate', function($filter) {
     return function(input, dateFormat) {
         var output = '';
 
