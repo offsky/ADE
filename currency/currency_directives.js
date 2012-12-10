@@ -1,9 +1,9 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Percent
+	AngularJS Datatype Editor - Currency
 	A directive to edit a percent field in place
 
 	Usage:
-	<div ade-percent='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-currency='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -18,10 +18,10 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adePercent', ['$compile','$rootScope', function($compile,$rootScope) {
+adeModule.directive('adeCurrency', ['$compile','$rootScope', function($compile,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-percent=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-currency=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
@@ -92,7 +92,7 @@ adeModule.directive('adePercent', ['$compile','$rootScope', function($compile,$r
 			});
 
 			// Watches for changes to the element
-			return attrs.$observe('adePercent', function(settings) { //settings is the contents of the ade-percent="" string
+			return attrs.$observe('adeCurrency', function(settings) { //settings is the contents of the ade-currency="" string
 				var options = {};
 				if(angular.isObject(settings)) options = settings; 
 				
