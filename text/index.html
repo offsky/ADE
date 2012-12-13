@@ -26,7 +26,7 @@
 		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-text='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
 		
 		<br /><br />
-		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly. It tracks how you exited edit mode (clicking, tab or return key) so that you can move the focus to the next input if appropriate.</p>
 		<br />
 
 		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
@@ -53,9 +53,18 @@
 				});
 
 				$rootScope.$on('ADE-finish', function(e,data) {
+					console.log(data);
 					$rootScope.lastMessage = "finished edit without changes";
 					if(data.old!=data.new) {
-						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new;
+						var exit = "Exited via clicking outside";
+						switch(data.exit) {
+							case 1: exit = "Exited via tab"; break;
+							case -1: exit = "Exited via shift+tab"; break;
+							case 2: exit = "Exited via return"; break;
+							case -1: exit = "Exited via shift+return"; break;
+						}
+
+						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new+". "+exit;
 					}
 				});
 			}
