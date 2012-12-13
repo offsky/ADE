@@ -94,7 +94,15 @@
 				$rootScope.$on('ADE-finish', function(e,data) {
 					$rootScope.lastMessage = "finished edit without changes";
 					if(data.old!=data.new) {
-						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new;
+						var exit = "Exited via clicking outside";
+						switch(data.exit) {
+							case 1: exit = "Exited via tab"; break;
+							case -1: exit = "Exited via shift+tab"; break;
+							case 2: exit = "Exited via return"; break;
+							case -1: exit = "Exited via shift+return"; break;
+						}
+
+						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new+". "+exit;
 					}
 				});
 			}

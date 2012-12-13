@@ -74,22 +74,28 @@ adeModule.directive('adeCalpop', function($filter){
 adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($compile,$timeout,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-date=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var inputClass = "input-medium";
-			var format = "MMM d, yyyy";
+			var options = {}; //The passed in options to the directive.
 			var editing=false;
 			var input = null;
 			var value = null;
 			var oldValue = null;
-			var id = "";
-			
+			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
+
+			var fillDefaults = function() {
+				if(!options.class) options.class = "input-medium";
+				if(!options.format) options.format = "MMM d, yyyy";
+				if(!options.id) options.id = "";
+			}
+
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
+					if(value==undefined || value==null) value="";
 					return controller.$viewValue;
 				};
 			}
@@ -100,32 +106,35 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 				input.remove();
 				editing=false;
 
-				$rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new':value});
+				$rootScope.$broadcast('ADE-finish',{'id':options.id, 'old':oldValue, 'new':value, 'exit':exit });
+
+				$scope.$apply();
 			}
 
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
 				oldValue = value;
 				value = parseDateString(input.val());
-				
-				finish();
-
+			
 				$scope.$apply(function() {
 					return controller.$setViewValue(value);
 				});
+			
+				finish();
 			};
 						
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
 				editing=true;
+				exit = 0;
 				
-				$rootScope.$broadcast('ADE-start',id);
+				$rootScope.$broadcast('ADE-start',options.id);
 
 				element.hide();
 				var extraDPoptions = "";
-				if(format=='yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				$compile('<input ade-calpop=\'{"format":"'+format+'"'+extraDPoptions+'}\' ng-model="adePickDate" ng-init="adePickDate='+value+'" type="text" class="'+inputClass+'" />')($scope).insertAfter(element);
+				if(options.format=='yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
+				$compile('<input ade-calpop=\'{"format":"'+options.format+'"'+extraDPoptions+'}\' ng-model="adePickDate" ng-init="adePickDate='+value+'" type="text" class="'+options.class+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				
 				input.focus(); //I do not know why both of these are necessary, but they are
@@ -136,11 +145,31 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 					saveEdit();
 				});
 				
-				//Handles escape key reverting change
-				input.bind('keyup', function(e) {
-					if(e.keyCode==27) { //esc
+				//tracks how you tabbed out of the field, in case you want to focus another field
+				input.bind('keydown', function(e) {
+					//console.log("ade keydown",e.keyCode);
+					if(e.keyCode==9) { //tab
+						e.preventDefault();
+						e.stopPropagation();
+						exit = e.shiftKey ? -1 : 1;
+						saveEdit(); 
+					} else if(e.keyCode==27) { //esc
+						e.preventDefault();
+						e.stopPropagation();
+						oldValue = value;
 						finish();
 					}
+				});
+
+				//Handles return/esc key pressed on in-line text box
+				input.bind('keypress', function(e) {
+					//console.log("ade keypress",e.keyCode);
+					if(e.keyCode==13) { //return
+						e.preventDefault();
+						e.stopPropagation();
+						exit = e.shiftKey ? -2 : 2;
+						saveEdit(); 
+					} 
 				});
 
 				if(!$scope.$$phase) { //make sure we aren't already digesting/applying
@@ -149,17 +178,15 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 			});
 
 			// Initialization code run for each directive instance once
-			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-year="" string
-				var options = {};
-				if(angular.isObject(settings)) options = settings; 
-				
-				if (typeof(settings) === "string" && settings.length > 0) {
+			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-text="" string
+				if(angular.isObject(settings)) {
+					options = settings; 
+				} else if (angular.isString(settings) && settings.length > 0) {
 					options = angular.fromJson(settings); //parses the json string into an object 
 				}
-				if(options.class) inputClass = options.class;
-				if(options.format) format = options.format;
-				if(options.id) id = options.id;
-				
+
+				fillDefaults();
+
 				return element; //TODO: not sure what to return here
 			});
 
