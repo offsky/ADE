@@ -19,7 +19,10 @@ files = [
   'test/unit/text/*.js',
 
   'app/currency/*.js',
-  'test/unit/currency/*.js'
+  'test/unit/currency/*.js',
+
+  'app/url/*.js',
+  'test/unit/url/*.js'
 
 ];
 
