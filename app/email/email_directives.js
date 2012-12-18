@@ -1,9 +1,9 @@
 /* ==================================================================
-	AngularJS Datatype Editor - URL
-	A directive to edit a url field in place
+	AngularJS Datatype Editor - Email
+	A directive to edit an email field in place
 
 	Usage:
-	<div ade-url='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-email='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -19,10 +19,10 @@
 ------------------------------------------------------------------*/
 var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
-adeModule.directive('adeUrl', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
+adeModule.directive('adeEmail', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-url=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-email=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
@@ -63,15 +63,13 @@ adeModule.directive('adeUrl', ['$compile','$rootScope', '$filter', function($com
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
-
                 editing=true;
-
 
 				$rootScope.$broadcast('ADE-start',id);
 
 				element.hide();
 
-                value = $scope.urlstring;
+                value = $scope.emailstring;
 
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
@@ -98,7 +96,7 @@ adeModule.directive('adeUrl', ['$compile','$rootScope', '$filter', function($com
 			});
 
 			// Watches for changes to the element
-			return attrs.$observe('adeUrl', function(settings) { //settings is the contents of the ade-currency="" string
+			return attrs.$observe('adeEmail', function(settings) { //settings is the contents of the ade-currency="" string
 				var options = {};
 				if(angular.isObject(settings)) options = settings; 
 				
