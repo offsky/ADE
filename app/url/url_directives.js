@@ -41,6 +41,7 @@ adeModule.directive('adeUrl', ['$compile','$rootScope', '$filter', function($com
 			}
 
 			var finish = function() {
+                element.show();
                 input.remove();
 				editing=false;
 
@@ -57,7 +58,6 @@ adeModule.directive('adeUrl', ['$compile','$rootScope', '$filter', function($com
 				$scope.$apply(function() {
 					return controller.$setViewValue(value);
 				});
-                element.show();
 			};
 			
 			//handles clicks on the read version of the data
