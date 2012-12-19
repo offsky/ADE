@@ -1,6 +1,6 @@
 /* ==================================================================
 	AngularJS Datatype Editor - Integer
-	A directive to edit a integer/decimal field in place
+	A directive to edit a integer field in place
 
 	Usage:
 	<div ade-integer='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
@@ -67,6 +67,7 @@ adeModule.directive('adeInteger', ['$compile','$rootScope', '$filter', function(
 				$rootScope.$broadcast('ADE-start',id);
 
 				element.hide();
+                value = (isNaN(value)) ? "" : value;
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();

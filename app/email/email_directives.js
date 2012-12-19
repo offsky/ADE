@@ -96,7 +96,7 @@ adeModule.directive('adeEmail', ['$compile','$rootScope', '$filter', function($c
 			});
 
 			// Watches for changes to the element
-			return attrs.$observe('adeEmail', function(settings) { //settings is the contents of the ade-currency="" string
+			return attrs.$observe('adeEmail', function(settings) { //settings is the contents of the ade-email="" string
 				var options = {};
 				if(angular.isObject(settings)) options = settings; 
 				

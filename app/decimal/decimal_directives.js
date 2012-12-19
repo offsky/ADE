@@ -1,9 +1,9 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Phone
-	A directive to edit a phone field in place
+	AngularJS Datatype Editor - Decimal
+	A directive to edit a integer/decimal field in place
 
 	Usage:
-	<div ade-phone='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-decimal='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -17,12 +17,11 @@
 		data: {id from config, old value, new value}
 
 ------------------------------------------------------------------*/
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
-adeModule.directive('adePhone', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
+adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-phone=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-decimal=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
@@ -49,9 +48,9 @@ adeModule.directive('adePhone', ['$compile','$rootScope', '$filter', function($c
 			}
 
 			//callback once the edit is done			
-			var saveEdit = function() {
+			var saveEdit = function(ev) {
 				oldValue = value;
-				value = input.val();
+				value = parseFloat(input.val());
 
 				finish();
 
@@ -68,7 +67,7 @@ adeModule.directive('adePhone', ['$compile','$rootScope', '$filter', function($c
 				$rootScope.$broadcast('ADE-start',id);
 
 				element.hide();
-
+                value = (isNaN(value)) ? "" : value;
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
@@ -94,7 +93,7 @@ adeModule.directive('adePhone', ['$compile','$rootScope', '$filter', function($c
 			});
 
 			// Watches for changes to the element
-			return attrs.$observe('adePhone', function(settings) { //settings is the contents of the ade-phone="" string
+			return attrs.$observe('adeDecimal', function(settings) { //settings is the contents of the ade-decimal="" string
 				var options = {};
 				if(angular.isObject(settings)) options = settings; 
 				
