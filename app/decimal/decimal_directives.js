@@ -50,7 +50,8 @@ adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function(
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
 				oldValue = value;
-				value = parseFloat(input.val());
+                clean = input.val().replace(/[,]/g, "")
+				value = parseFloat(clean);
 
 				finish();
 
@@ -67,7 +68,7 @@ adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function(
 				$rootScope.$broadcast('ADE-start',id);
 
 				element.hide();
-                value = (isNaN(value)) ? "" : value;
+                value = (isNaN(value)) ? "" : $filter('decimal')(value);
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
