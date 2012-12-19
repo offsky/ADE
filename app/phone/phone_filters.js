@@ -8,7 +8,7 @@ adeModule.filter('phone', function() {
         var clean = input.replace(/[\-\.() ]/g, ""),
             html;
 
-        html = (!isNaN(parseInt(clean)) && (clean.length >= 10)) ? '<a href="tel:'+clean+'">'+input+'</a>' : input;
+        html = (!isNaN(parseInt(clean)) && (clean.length >= 7)) ? '<a href="tel:'+clean+'">'+input+'</a>' : input;
 
         return html;
     };
