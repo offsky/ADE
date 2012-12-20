@@ -1,9 +1,9 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Decimal
-	A directive to edit a decimal field in place
+	AngularJS Datatype Editor - Length
+	A directive to edit a length field in place
 
 	Usage:
-	<div ade-decimal='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-length='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -18,10 +18,10 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
+adeModule.directive('adeLength', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-decimal=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-length=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
@@ -50,8 +50,7 @@ adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function(
 			//callback once the edit is done			
 			var saveEdit = function(ev) {
 				oldValue = value;
-                clean = input.val().replace(/[,]/g, "")
-				value = parseFloat(clean);
+				value = input.val();
 
 				finish();
 
@@ -68,7 +67,6 @@ adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function(
 				$rootScope.$broadcast('ADE-start',id);
 
 				element.hide();
-                value = (isNaN(value)) ? "" : $filter('decimal')(value);
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
@@ -94,7 +92,7 @@ adeModule.directive('adeDecimal', ['$compile','$rootScope', '$filter', function(
 			});
 
 			// Watches for changes to the element
-			return attrs.$observe('adeDecimal', function(settings) { //settings is the contents of the ade-decimal="" string
+			return attrs.$observe('adeLength', function(settings) { //settings is the contents of the ade-length="" string
 				var options = {};
 				if(angular.isObject(settings)) options = settings; 
 				
