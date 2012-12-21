@@ -67,6 +67,7 @@ adeModule.directive('adeLength', ['$compile','$rootScope', '$filter', function($
 				$rootScope.$broadcast('ADE-start',id);
 
 				element.hide();
+                value = $filter('length')(value);
 				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
