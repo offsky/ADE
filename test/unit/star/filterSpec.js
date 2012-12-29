@@ -11,7 +11,7 @@ describe('star', function() {
     }));
 
     it('should return background position of a hollow star', function() {
-        expect(starFilter(false)).toEqual('background-position: 0 -20px');
+        expect(starFilter(true)).toEqual('background-position: 0 -20px');
     });
 
     it('should return background position of a filled star', function() {

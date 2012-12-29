@@ -1,9 +1,9 @@
 /* ==================================================================
- AngularJS Datatype Editor - Star
- A directive to toggle star icon
+ AngularJS Datatype Editor - Rating
+ A directive to toggle rating icon
 
  Usage:
- <a ade-star='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
+ <a ade-rating='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
 
  Config:
  "id" will be used in messages broadcast to the app on state changes.
@@ -17,14 +17,14 @@
 
  ------------------------------------------------------------------*/
 
-adeModule.directive('adeStar', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
+adeModule.directive('adeRating', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
     return {
         require: '?ngModel', //optional dependency for ngModel
-        restrict: 'A', //Attribute declaration eg: <div ade-star=""></div>
+        restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
 
         //The link step (after compile)
         link: function($scope, element, attrs, controller) {
-            var star = null,
+            var rating = null,
                 bgPosition = "",
                 value = "",
                 oldValue = "",
@@ -39,17 +39,20 @@ adeModule.directive('adeStar', ['$compile','$rootScope', '$filter', function($co
             }
 
             //handles clicks on the read version of the data
-            element.bind('click', function() {
+            element.bind('click', function(event) {
 
                 $rootScope.$broadcast('ADE-start',id);
                 oldValue = value;
-                value = (value) ? false : true;
+                starWidth = 23;
+                clickPosition = angular.element(event.target).data('position');
+                value = clickPosition;
                 newValue = value;
-                bgPosition = $filter('star')(value);
 
-                $compile('<a class="star" style="'+bgPosition+'"></a>')($scope).insertAfter(element);
-                star = element.next('a');
-                star.remove();
+                bgPosition = $filter('rating')(value);
+
+                $compile(bgPosition)($scope).insertAfter(element);
+                rating = element.next('div');
+                rating.remove();
 
                 $rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new': newValue});
 
@@ -64,7 +67,7 @@ adeModule.directive('adeStar', ['$compile','$rootScope', '$filter', function($co
             });
 
             // Watches for changes to the element
-            return attrs.$observe('adeStar', function(settings) { //settings is the contents of the ade-star="" string
+            return attrs.$observe('adeRating', function(settings) { //settings is the contents of the ade-rating="" string
                 var options = {};
                 if(angular.isObject(settings)) options = settings;
 

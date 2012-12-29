@@ -37,7 +37,13 @@ files = [
   'test/unit/decimal/*.js',
 
   'app/length/*.js',
-  'test/unit/length/*.js'
+  'test/unit/length/*.js',
+
+  'app/star/*.js',
+  'test/unit/star/*.js',
+
+  'app/rating/*.js',
+  'test/unit/rating/*.js'
 
 ];
 
