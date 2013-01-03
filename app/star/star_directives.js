@@ -1,6 +1,6 @@
 /* ==================================================================
- AngularJS Datatype Editor - Star
- A directive to toggle star icon
+ AngularJS Datatype Editor - Star / Checkbox
+ A directive to toggle star / checkbox icon
 
  Usage:
  <a ade-star='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
@@ -24,9 +24,7 @@ adeModule.directive('adeStar', ['$compile','$rootScope', '$filter', function($co
 
         //The link step (after compile)
         link: function($scope, element, attrs, controller) {
-            var star = null,
-                bgPosition = "",
-                value = "",
+            var value = "",
                 oldValue = "",
                 newValue = "",
                 id = "";
@@ -45,11 +43,6 @@ adeModule.directive('adeStar', ['$compile','$rootScope', '$filter', function($co
                 oldValue = value;
                 value = (value) ? false : true;
                 newValue = value;
-                bgPosition = $filter('star')(value);
-
-                $compile('<a class="star" style="'+bgPosition+'"></a>')($scope).insertAfter(element);
-                star = element.next('a');
-                star.remove();
 
                 $rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new': newValue});
 

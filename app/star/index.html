@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
         <link rel="stylesheet" href="star.css"/>
 	</head>
-	<body ng-app="app" ng-init="starvalue=true">
+	<body ng-app="app" ng-init="starvalue=true;chkvalue=true">
 		<div class="container">
             <!--[if lt IE 7]>
                 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -23,6 +23,8 @@
             <p>A simple directive that makes a star icon clickable.</p>
 
             <p><a ade-star='{"id":"1234"}' ng-model="starvalue" style="{{ starvalue | star }}" class="star"></a></p>
+
+            <p><a ade-star='{"id":"1234"}' ng-model="chkvalue" ng-class="{true: 'checked', false: ''}[chkvalue]" style="{{ chkvalue | star:'checkbox' }}" class="chk"></a></p>
 
             <p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
             <br />

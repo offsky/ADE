@@ -1,1 +1,3 @@
-.star{display:inline-block;width:22px;height:20px;background:url(star.png) 0 0;}
+.star,.chk{display:inline-block;width:22px;height:20px;background:url(star.png) no-repeat 0 0;}
+.chk:hover{background-position:-22px -20px !important;}
+.chk.checked:hover{background-position:-22px -40px !important;}
