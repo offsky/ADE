@@ -1,6 +1,15 @@
-'use strict';
+/* ==================================================================
+    AngularJS Datatype Editor - Money
+    A filter to display a number as a currency.  This wraps Angular's
+    native currency filter so that we can properly handly invalid
+    inputs.
 
-/* Filters */
+    Usage:
+    {{ data | money }}
+
+------------------------------------------------------------------*/
+
+'use strict';
 
 adeModule.filter('money', function($filter) {
     return function(input) {

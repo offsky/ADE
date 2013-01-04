@@ -14,77 +14,74 @@
 		data: id from config
 
 		name: ADE-finish
-		data: {id from config, old value, new value}
+		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeLength', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
+adeModule.directive('adeLength', ['ADE', '$compile','$rootScope', '$filter', function(ADE, $compile,$rootScope,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-length=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var inputClass = "input-medium";
-			var editing=false;
-			var input = null;
+			var options = {}; //The passed in options to the directive.
+			var editing=false; //are we in edit mode or not
+			var input = null; //a reference to the input DOM object
 			var value = "";
 			var oldValue = "";
-			var id = "";
+			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
+					if(value==undefined || value==null) value="";
 					return controller.$viewValue;
 				};
 			}
 
-			var finish = function() {
-                element.show();
-                input.remove();
+			//called once the edit is done, so we can save the new data	and remove edit mode
+			var saveEdit = function(exited) {
+				oldValue = value;
+				exit = exited;
+
+				if(exited!=3) { //don't save value on esc
+					value = input.val();
+					controller.$setViewValue(value);
+				}
+
+				// I think that the apply later is sufficient
+				// not sure what the significance is of doing the work inside the appy function
+				// $scope.$apply(function() {
+				// 	return controller.$setViewValue(value);
+				// });
+
+				element.show();
+				input.remove();
 				editing=false;
 
-				$rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new':value});
-			}
+				ADE.done(options,oldValue,value,exit);
 
-			//callback once the edit is done			
-			var saveEdit = function(ev) {
-				oldValue = value;
-				value = input.val();
-
-				finish();
-
-				$scope.$apply(function() {
-					return controller.$setViewValue(value);
-				});
+				$scope.$apply();
 			};
 			
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
-                editing=true;
+				editing=true;
+				exit = 0;
+				
+				value = $filter('length')(value);
 
-				$rootScope.$broadcast('ADE-start',id);
+				ADE.begin(options);
 
 				element.hide();
-                value = $filter('length')(value);
-				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')($scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.class+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
-				//Handles blur of in-line text box
-				input.bind("blur",function() {
-					saveEdit();
-				});
-				
-				//Handles return key pressed on in-line text box
-				input.bind('keyup', function(e) {
-					if(e.keyCode==13) { //return key
-						saveEdit(); 
-					} else if(e.keyCode==27) { //esc
-						finish();
-					}
-				});
+				ADE.setupBlur(input,saveEdit);
+				ADE.setupKeys(input,saveEdit);
 				
 				//make sure we aren't already digesting/applying before we apply the changes
 				if(!$scope.$$phase) {
@@ -93,16 +90,9 @@ adeModule.directive('adeLength', ['$compile','$rootScope', '$filter', function($
 			});
 
 			// Watches for changes to the element
+			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeLength', function(settings) { //settings is the contents of the ade-length="" string
-				var options = {};
-				if(angular.isObject(settings)) options = settings; 
-				
-				if (typeof(settings) === "string" && settings.length > 0) {
-					options = angular.fromJson(settings); //parses the json string into an object 
-				}
-				if(options.class) inputClass = options.class;
-				if(options.id) id = options.id;
-
+				options = ADE.parseSettings(settings, {class:"input-medium"});
 				return element; //TODO: not sure what to return here
 			});
 

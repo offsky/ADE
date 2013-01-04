@@ -19,18 +19,17 @@
 		<a href="../index.html">back</a>
 
         <br /><br />
-        <h1>Phone Filter</h1><br />
-        <p>We just wrote a simple filter that convert a phone string into a clickable link.</p>
+        <h1>Phone filter</h1><br />
+        <p>A filter that convert a phone string into a clickable link that should work on a device that supports phone calls.</p>
 
         <ul>
             <li>Phone 760-555-1234: <span ng-bind-html="'760-555-1234' | phone"></span> </li>
             <li>Invalid phone "phone": <span ng-bind-html='"phone" | phone'></span></li>
-
         </ul>
 
 		<br /><br />
-		<h1>AngularJS Directives</h1><br />
-		<p>A simple directive that makes a text string editable. The typical way that we have seen this done is to have hidden input boxes that toggle to visible when clicked.  The important difference here is that the input box is created and destroyed only when you needed, so the DOM is not filled with unused elements. This can be a benefit when you have lots and lots of editable things on the page.</p>
+		<h1>Phone number editing directive</h1><br />
+		<p>A simple directive that makes a phone number string editable.</p>
 
 		<br /><br />
 		
@@ -45,34 +44,17 @@
 		<br /><br /><br /><br />
 		</div>
 		
-		<!-- Scripts -->
-
 		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
-        <script src="../vendor/js/angular-sanitize.js"></script>
+      <script src="../vendor/js/angular-sanitize.js"></script>
 		<script src="../vendor/js/bootstrap.js"></script>
 		
-		<!-- build:js js/scripts.js -->
 		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
 		<script src="app.js"></script>
 		<script src="phone_directives.js"></script>
-        <script src="phone_filters.js"></script>>
-		<script type="text/javascript">
-			function ctrl($rootScope) {
-
-				$rootScope.$on('ADE-start', function(e,data) {
-					$rootScope.lastMessage = "started edit";
-				});
-
-				$rootScope.$on('ADE-finish', function(e,data) {
-					$rootScope.lastMessage = "finished edit without changes";
-					if(data.old!=data.new) {
-						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new;
-					}
-				});
-			}
-		</script>
-		<!-- endbuild -->
+      <script src="phone_filters.js"></script>>
+		
 	</body>
 </html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title></title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
+		  <link rel="stylesheet" href="toggle.css"/>
+	</head>
+	<body ng-app="app" ng-init="starvalue=true;chkvalue=true;balloon=false">
+		<div class="container">
+				<!--[if lt IE 7]>
+					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+				<![endif]-->
+				<a href="../index.html">back</a>
+				<br /><br />
+				<h1>Star / Checkbox Directive</h1>
+				<p>A directive that toggles an icon between two states.  It also has optional hover states and can support different size icons easily.</p>
+
+			
+
+				<div style="width:32px; height:16px; padding:0px; cursor:pointer;" ade-toggle='{"id":"1001"}' ng-model="starvalue" ng-bind-html="starvalue | toggle:'star'"></div>
+
+				<br />
+
+				<div style="width:32px; height:16px; padding:0px; cursor:pointer;" ade-toggle='{"id":"1002"}' ng-model="chkvalue" ng-bind-html="chkvalue | toggle:'check'"></div>
+				
+				<br />
+				
+				<div style="width:32px; height:32px; padding:0px; cursor:pointer;" ade-toggle='{"id":"1003"}' ng-model="balloon" ng-bind-html="balloon | toggle:'balloon'"></div>
+
+				<br /><br />
+				
+				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+				<br />
+
+				<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
+
+				<br /><br /><br /><br /><br /><br /><br />
+
+				Icons: <a href="http://www.fatcow.com/free-icons">Fatcow</a>
+		</div>
+		
+		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
+		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
+		<script src="../vendor/js/angular.js"></script>
+      <script src="../vendor/js/angular-sanitize.js"></script>
+		<script src="../vendor/js/bootstrap.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="app.js"></script>
+
+		<script src="toggle_directives.js"></script>
+		<script src="toggle_filters.js"></script>
+		 
+	</body>
+</html>

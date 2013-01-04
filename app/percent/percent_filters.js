@@ -1,6 +1,13 @@
-'use strict';
+/* ==================================================================
+	AngularJS Datatype Editor - Percent
+	A filter to display a number as a percent
 
-/* Filters */
+	Usage:
+	{{ data | percent }}
+
+------------------------------------------------------------------*/
+
+'use strict';
 
 adeModule.filter('percent', function() {
     return function(input) {

@@ -1,16 +1,26 @@
+/* ==================================================================
+	AngularJS Datatype Editor - Integer
+	A filter to display a number as an integer.
+	Wrapper for Angular's built in filter so that we can display
+	invalid inputs correctly.
+
+	Usage:
+	{{ data | integer }}
+
+------------------------------------------------------------------*/
+
 'use strict';
 
-/* Filters */
-adeModule.filter('num', function($filter) {
+adeModule.filter('integer', function($filter) {
 
-    return function(input, fractionSize) {
-        var output = '';
+	return function(input) {
+		var output = '';
 
-        if (angular.isUndefined(input) || !angular.isNumber(input)) return output;
+		if (angular.isUndefined(input) || !angular.isNumber(input)) return output;
 
-        output = $filter('number')(input,fractionSize);
+		output = $filter('number')(input,0);
 
-        return output;
-    };
+		return output;
+	 };
 });
 

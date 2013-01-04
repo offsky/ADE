@@ -1,6 +1,15 @@
+/* ==================================================================
+    AngularJS Datatype Editor - Length
+    A filter to display a number that represents minutes, and format it
+    into a pretty version, such as "2hrs".
+
+    Usage:
+    {{ data | length }}
+
+------------------------------------------------------------------*/
+
 'use strict';
 
-/* Filters */
 adeModule.filter('length', function() {
 
     function parseHrsMins(value) {

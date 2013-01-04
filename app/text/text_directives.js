@@ -14,11 +14,11 @@
 		data: id from config
 
 		name: ADE-finish
-		data: {id from config, old value, new value}
+		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeText', ['$compile','$rootScope',function($compile,$rootScope) {
+adeModule.directive('adeText', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
@@ -26,45 +26,44 @@ adeModule.directive('adeText', ['$compile','$rootScope',function($compile,$rootS
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
 			var options = {}; //The passed in options to the directive.
-			var editing=false;
-			var input = null;
+			var editing=false; //are we in edit mode or not
+			var input = null; //a reference to the input DOM object
 			var value = "";
 			var oldValue = "";
-			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
+			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
-			var fillDefaults = function() {
-				if(!options.class) options.class = "input-medium";
-				if(!options.id) options.id = "";
-			}
-
+			//whenever the model changes, we get called so we can update our value
 			if (controller != null) {
-				controller.$render = function() { //whenever the view needs to be updated
+				controller.$render = function() { 
 					oldValue = value = controller.$modelValue;
 					if(value==undefined || value==null) value="";
 					return controller.$viewValue;
 				};
 			}
 
-			var finish = function() {
+			//called once the edit is done, so we can save the new data	and remove edit mode
+			var saveEdit = function(exited) {
+				oldValue = value;
+				exit = exited;
+
+				if(exited!=3) { //don't save value on esc
+					value = input.val();
+					controller.$setViewValue(value);
+				}
+
+				// I think that the apply later is sufficient
+				// not sure what the significance is of doing the work inside the appy function
+				// $scope.$apply(function() {
+				// 	return controller.$setViewValue(value);
+				// });
+
 				element.show();
 				input.remove();
 				editing=false;
 
-				$rootScope.$broadcast('ADE-finish',{'id':options.id, 'old':oldValue, 'new':value, 'exit':exit });
+				ADE.done(options,oldValue,value,exit);
 
 				$scope.$apply();
-			}
-
-			//callback once the edit is done			
-			var saveEdit = function(ev) {
-				oldValue = value;
-				value = input.val();
-
-				$scope.$apply(function() {
-					return controller.$setViewValue(value);
-				});
-
-				finish(); //finish needs to come after the apply so that the new value is applied already
 			};
 			
 			//handles clicks on the read version of the data
@@ -73,63 +72,28 @@ adeModule.directive('adeText', ['$compile','$rootScope',function($compile,$rootS
 				editing=true;
 				exit = 0;
 
-				$rootScope.$broadcast('ADE-start',options.id);
+				ADE.begin(options);
 
 				element.hide();				
 				$compile('<input type="text" class="'+options.class+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
-				//Handles blur of in-line text box
-				input.bind("blur",function() {
-					saveEdit();
-				});
-				
-				//tracks how you tabbed out of the field, in case you want to focus another field
-				input.bind('keydown', function(e) {
-					if(e.keyCode==9) { //tab
-						e.preventDefault();
-						e.stopPropagation();
-						exit = e.shiftKey ? -1 : 1;
-						saveEdit(); 
-					} else if(e.keyCode==27) { //esc
-						e.preventDefault();
-						e.stopPropagation();
-						oldValue = value;
-						finish();
-					}
-				});
-
-				//Handles return/esc key pressed on in-line text box
-				input.bind('keypress', function(e) {
-					//console.log("ade keypress",e.keyCode);
-					if(e.keyCode==13) { //return
-						e.preventDefault();
-						e.stopPropagation();
-						exit = e.shiftKey ? -2 : 2;
-						saveEdit(); 
-					} 
-				});
+				ADE.setupBlur(input,saveEdit);
+				ADE.setupKeys(input,saveEdit);
 
 				//make sure we aren't already digesting/applying before we apply the changes
 				if(!$scope.$$phase) {
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				} 
 			});
-
+			
 			// Watches for changes to the element
+			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeText', function(settings) { //settings is the contents of the ade-text="" string
-				if(angular.isObject(settings)) {
-					options = settings; 
-				} else if (angular.isString(settings) && settings.length > 0) {
-					options = angular.fromJson(settings); //parses the json string into an object 
-				}
-
-				fillDefaults();
-
-				return element; //TODO: not sure what to return here
+				options = ADE.parseSettings(settings, {class:"input-medium"});
+				return element;
 			});
-
 		}
 	};
 }]);

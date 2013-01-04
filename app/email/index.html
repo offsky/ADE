@@ -20,17 +20,15 @@
 
         <br /><br />
         <h1>Email Filter</h1><br />
-        <p>We just wrote a simple filter that convert an email string into a clickable link.</p>
-
+        <p>Angular's built in linky filter is sufficient for email addresses.</p>
         <ul>
             <li>Email admin@toodledo.com: <span ng-bind-html="'admin@toodledo.com' | linky"></span> </li>
             <li>Invalid email "email": <span ng-bind-html='"email" | linky'></span></li>
-
         </ul>
 
 		<br /><br />
-		<h1>AngularJS Directives</h1><br />
-		<p>A simple directive that makes a text string editable. The typical way that we have seen this done is to have hidden input boxes that toggle to visible when clicked.  The important difference here is that the input box is created and destroyed only when you needed, so the DOM is not filled with unused elements. This can be a benefit when you have lots and lots of editable things on the page.</p>
+		<h1>Email editing directive</h1><br />
+		<p>A directive that makes an email address editable.</p>
 
 		<br /><br />
 		
@@ -45,33 +43,16 @@
 		<br /><br /><br /><br />
 		</div>
 		
-		<!-- Scripts -->
-
 		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
-        <script src="../vendor/js/angular-sanitize.js"></script>
+      <script src="../vendor/js/angular-sanitize.js"></script>
 		<script src="../vendor/js/bootstrap.js"></script>
 		
-		<!-- build:js js/scripts.js -->
 		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
 		<script src="app.js"></script>
 		<script src="email_directives.js"></script>
-		<script type="text/javascript">
-			function ctrl($rootScope) {
-
-				$rootScope.$on('ADE-start', function(e,data) {
-					$rootScope.lastMessage = "started edit";
-				});
-
-				$rootScope.$on('ADE-finish', function(e,data) {
-					$rootScope.lastMessage = "finished edit without changes";
-					if(data.old!=data.new) {
-						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new;
-					}
-				});
-			}
-		</script>
-		<!-- endbuild -->
+		
 	</body>
 </html>

@@ -1,9 +1,11 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Phone
-	A directive to edit a phone field in place
+	AngularJS Datatype Editor - Number
+	A directive to edit a number in place. 
+
+	Used for percent, money, decimal, integer
 
 	Usage:
-	<div ade-phone='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-number='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -17,12 +19,11 @@
 		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
-adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
+adeModule.directive('adeNumber', ['ADE','$compile','$rootScope', function(ADE,$compile,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-phone=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-number=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
@@ -49,6 +50,8 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$com
 
 				if(exited!=3) { //don't save value on esc
 					value = input.val();
+					value = value.replace(/[^0-9.]/g, '');
+					value = parseFloat(value);
 					controller.$setViewValue(value);
 				}
 
@@ -82,19 +85,20 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$com
 				
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
-
+				
 				//make sure we aren't already digesting/applying before we apply the changes
 				if(!$scope.$$phase) {
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				} 
 			});
-			
+
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adePhone', function(settings) { //settings is the contents of the ade-phone="" string
-				options = ADE.parseSettings(settings, {class:"input-medium"});
+			return attrs.$observe('adeNumber', function(settings) { //settings is the contents of the ade-number="" string
+				options = ADE.parseSettings(settings, {class:"input-small"});
 				return element;
 			});
+
 		}
 	};
 }]);
