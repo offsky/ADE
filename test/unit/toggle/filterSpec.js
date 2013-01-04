@@ -2,19 +2,19 @@
 
 
 describe('star', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
 
     var starFilter;
 
     beforeEach(inject(function($filter) {
-        starFilter = $filter('star');
+        starFilter = $filter('toggle');
     }));
 
     it('should return background position of a hollow star', function() {
-        expect(starFilter(true)).toEqual('background-position: 0 -20px');
+        expect(starFilter(true,'star')).toEqual('<span class="star on">');
     });
 
     it('should return background position of a filled star', function() {
-        expect(starFilter(false)).toEqual('background-position: 0 0');
+        expect(starFilter(false,'star')).toEqual('<span class="star off">');
     });
 });

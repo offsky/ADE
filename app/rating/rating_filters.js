@@ -1,24 +1,43 @@
+/* ==================================================================
+	AngularJS Datatype Editor - Rating
+	A filter to make a number editable via a rating star bar.
+
+	You can pass in the width of each star and the number of stars
+
+	Usage:
+	{{ data | rating:{width:23,num:6} }}
+
+------------------------------------------------------------------*/
+
 'use strict';
 
-/* Filters */
 adeModule.filter('rating', function() {
-    return function(input) {
-        var starW = 23,
-            starCount = 5,
-            clean = parseInt(input),
-            containerW = starW * starCount,
-            bgW = clean / starCount * containerW,
-            starsHtml ='', html;
+	return function(input,options) {
+		var starW = 23;
+		var starCount = 5;
+		var starClass = "rating";
 
-        html = '<div class="rating" style="width:'+containerW+'px;"><div class="bg" style="width:'+bgW+'px;"></div>' +
-            '<div class="stars">';
+	 	if(options && options.width) starW = options.width;
+		if(options && options.num) starCount = options.num;
+		if(options && options.class) starClass = options.class;
 
-        for (var i = 0; i < starCount; i++) {
-            starsHtml += '<a class="star" data-position="'+(i+1)+'"></a>';
-        }
+		var clean = parseInt(input);
+		var containerW = starW * starCount;
+		var bgW = clean / starCount * containerW;
 
-        html += starsHtml + '</div></div>';
+		var html = '<div class="'+starClass+'" style="width:'+containerW+'px;"><div class="bg" style="width:'+bgW+'px;"></div>';
 
-        return html;
-    };
+		//aborted attempt to make hover effects
+		//html+='<div class="bg2" style="width:'+(containerW - bgW)+'px;"></div>';
+		
+		html += '<div class="stars">';
+
+		for (var i = 0; i < starCount; i++) {
+			html += '<a class="star" data-position="'+(i+1)+'"></a>';
+		}
+
+		html += '</div></div>';
+
+		return html;
+	};
 });

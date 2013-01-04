@@ -1,7 +1,7 @@
 'use strict';
 
 describe('length', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
 
     var lengthFilter;
 

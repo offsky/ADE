@@ -9,41 +9,41 @@ files = [
   'test/lib/angular/angular-mocks.js',
   'app/common/*.js',
 
-  'app/percent/*.js',
-  'test/unit/percent/*.js',
-
   'app/date/*.js',
   'test/unit/date/*.js',
-
-  'app/text/*.js',
-  'test/unit/text/*.js',
-
-  'app/currency/*.js',
-  'test/unit/currency/*.js',
-
-  'app/url/*.js',
-  'test/unit/url/*.js',
-
-  'app/email/*.js',
-  'test/unit/email/*.js',
-
-  'app/phone/*.js',
-  'test/unit/phone/*.js',
-
-  'app/integer/*.js',
-  'test/unit/integer/*.js',
 
   'app/decimal/*.js',
   'test/unit/decimal/*.js',
 
+  'app/email/*.js',
+  'test/unit/email/*.js',
+
+  'app/integer/*.js',
+  'test/unit/integer/*.js',
+
   'app/length/*.js',
   'test/unit/length/*.js',
 
-  'app/star/*.js',
-  'test/unit/star/*.js',
+  'app/money/*.js',
+  'test/unit/money/*.js',
+
+  'app/percent/*.js',
+  'test/unit/percent/*.js',
+
+  'app/phone/*.js',
+  'test/unit/phone/*.js',
 
   'app/rating/*.js',
-  'test/unit/rating/*.js'
+  'test/unit/rating/*.js',
+
+  'app/text/*.js',
+  'test/unit/text/*.js',
+
+  'app/toggle/*.js',
+  'test/unit/toggle/*.js',
+
+  'app/url/*.js',
+  'test/unit/url/*.js'
 
 ];
 

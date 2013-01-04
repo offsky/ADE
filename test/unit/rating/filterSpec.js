@@ -2,7 +2,7 @@
 
 
 describe('rating', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
 
     var ratingFilter;
 

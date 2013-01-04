@@ -2,7 +2,7 @@
 
 
 describe('phone', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
 
     var phoneFilter;
 

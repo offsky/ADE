@@ -2,7 +2,7 @@
 
 
 describe('percent', function() {
-	beforeEach(module('ade'));
+	beforeEach(module('ADE'));
 
 	var percentFilter;
 

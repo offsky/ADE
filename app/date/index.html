@@ -46,18 +46,18 @@
 		<table>
 		<tr><th>Year</th><th>Date</th><th>Date+Time</th></tr>
 		<tr>
-			<td><input ade-calpop='{"format":"yyyy","viewMode":2,"minViewMode":2}' ng-model="date1" type="text" class="input-small" /></td>
-			<td><input ade-calpop='{"format":"MMM d, yyyy"}' ng-model="date1" type="text" class="input-small" /></td>
-			<td><input ade-calpop='{"format":"MMM d, yyyy h:mm:ss a"}' ng-model="date1" type="text" class="input-large" /></td>
+			<td><input ade-calpop='{"format":"yyyy","viewMode":2,"minViewMode":2}' ng-model="date1a" type="text" class="input-small" /></td>
+			<td><input ade-calpop='{"format":"MMM d, yyyy"}' ng-model="date1b" type="text" class="input-small" /></td>
+			<td><input ade-calpop='{"format":"MMM d, yyyy h:mm:ss a"}' ng-model="date1c" type="text" class="input-large" /></td>
 		</tr>
 		</table>
 		
 		<br /><br />
 		<p>There is also a directive for making a non-input element editable:</p>
 
-		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-date='{"class":"input-small","format":"yyyy","id":"1234"}' ng-model="date2">{{date2 | validDate:'yyyy'}}</div><br /><br />
-		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-date='{"class":"input-medium","format":"MMM d, yyyy","id":"1234"}' ng-model="date2">{{date2 | validDate:'MMM d, yyyy'}}</div><br /><br />
-		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-date='{"class":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234"}' ng-model="date2">{{date2 | validDate:'MMM d, yyyy h:mm:ss a'}}</div><br /><br />
+		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-date='{"class":"input-small","format":"yyyy","id":"1234"}' ng-model="date2a">{{date2a | validDate:'yyyy'}}</div><br /><br />
+		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-date='{"class":"input-medium","format":"MMM d, yyyy","id":"1234"}' ng-model="date2b">{{date2b | validDate:'MMM d, yyyy'}}</div><br /><br />
+		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-date='{"class":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234"}' ng-model="date2c">{{date2c | validDate:'MMM d, yyyy h:mm:ss a'}}</div><br /><br />
 		
 
 		<br /><br />
@@ -78,6 +78,7 @@
 		
 		<!-- build:js js/scripts.js -->
 		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
 		<script src="bootstrap-datepicker.js"></script>
 		<script src="app.js"></script>
 		<script src="date_filters.js"></script>
@@ -86,26 +87,7 @@
 		<!-- endbuild -->
 		
 		<script type="text/javascript">
-			function ctrl($rootScope) {
-				$rootScope.$on('ADE-start', function(e,data) {
-					$rootScope.lastMessage = "started edit";
-				});
-
-				$rootScope.$on('ADE-finish', function(e,data) {
-					$rootScope.lastMessage = "finished edit without changes";
-					if(data.old!=data.new) {
-						var exit = "Exited via clicking outside";
-						switch(data.exit) {
-							case 1: exit = "Exited via tab"; break;
-							case -1: exit = "Exited via shift+tab"; break;
-							case 2: exit = "Exited via return"; break;
-							case -1: exit = "Exited via shift+return"; break;
-						}
-
-						$rootScope.lastMessage = "finished edit with changes. Was: "+data.old+". Now: "+data.new+". "+exit;
-					}
-				});
-			}
+			
 
 			function updateDate() {
 				var unix = parseDateString($("#input").val());

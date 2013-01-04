@@ -2,17 +2,17 @@
 
 
 describe('integer', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
 
     var numberFilter;
 
     beforeEach(inject(function($filter) {
-        numberFilter =  $filter('num');
+        numberFilter =  $filter('integer');
     }));
 
     it('should format integer', function() {
         expect(numberFilter(1234)).toBe('1,234');
-        expect(numberFilter(1234.237, 2)).toEqual('1,234.24');
+        expect(numberFilter(1234.237)).toEqual('1,234');
     });
 
     it('should properly format empty or invalid as empty string', function() {

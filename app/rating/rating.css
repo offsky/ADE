@@ -1,4 +1,9 @@
-.rating{position:relative;overflow:hidden;z-index:1;height:20px;}
-.rating .stars{position:relative;top:-20px;left:0;z-index:3;height:20px;background: url(rating.png) repeat-x 0 0;}
-.rating .stars .star{width:23px;height:20px;display:inline-block;cursor:pointer;}
+.rating{position:relative;overflow:hidden;z-index:1;height:23px;}
+.rating .stars{position:relative;top:-23px;left:0;z-index:3;height:23px;background: url(rating.png) repeat-x 0 0;}
+.rating .stars .star{width:23px;height:23px;display:inline-block;cursor:pointer;}
 .rating .bg{position:relative;top:0;left:0;z-index:2;height:100%;background-color:#B57A15;}
+
+.rating_s{position:relative;overflow:hidden;z-index:1;height:16px;}
+.rating_s .stars{position:relative;top:-16px;left:0;z-index:3;height:16px;background: url(rating_s.png) repeat-x 0 0;}
+.rating_s .stars .star{width:16px;height:16px;display:inline-block;cursor:pointer;}
+.rating_s .bg{position:relative;top:0;left:0;z-index:2;height:100%;background-color:#B57A15;}

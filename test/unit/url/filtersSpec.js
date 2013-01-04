@@ -2,7 +2,7 @@
 
 
 describe('url', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
     beforeEach(module('ngSanitize'));
 
     var linky, urlFilter;

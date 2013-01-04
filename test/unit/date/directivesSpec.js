@@ -3,7 +3,7 @@
 /* jasmine specs for directives go here */
 
 describe('date directive', function() {
-	beforeEach(module('ade'));
+	beforeEach(module('ADE'));
 
 	it('should make an empty div', function() {
 		module(function($provide) {

@@ -1,6 +1,14 @@
-'use strict';
+/* ==================================================================
+	AngularJS Datatype Editor - Date
+	A filter to display a date. It is a wrapper for Angular's date filter
+	that provides better display for invalid values.
+	
+	Usage:
+	{{ data | validDate:'yyyy' }}
 
-/* Filters */
+------------------------------------------------------------------*/
+
+'use strict';
 
 adeModule.filter('validDate', function($filter) {
     return function(input, dateFormat) {

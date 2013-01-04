@@ -71,7 +71,7 @@ adeModule.directive('adeCalpop', function($filter){
 /* ==================================================================
 	Directive to display a calendar for picking a year
 ------------------------------------------------------------------*/
-adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($compile,$timeout,$rootScope) {
+adeModule.directive('adeDate', ['ADE','$compile','$timeout','$rootScope',function(ADE,$compile,$timeout,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-date=""></div>
@@ -85,12 +85,6 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 			var oldValue = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
-			var fillDefaults = function() {
-				if(!options.class) options.class = "input-medium";
-				if(!options.format) options.format = "MMM d, yyyy";
-				if(!options.id) options.id = "";
-			}
-
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
@@ -100,27 +94,24 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 				};
 			}
 			
-			var finish = function() {
+			//callback once the edit is done			
+			var saveEdit = function(exited) {
+				oldValue = value;
+				exit = exited;
+				
+				if(exited!=3) { //don't save value on esc
+					value = parseDateString(input.val());
+					controller.$setViewValue(value);
+				}
+			
 				element.show();
 				input.datepicker('remove');
 				input.remove();
 				editing=false;
 
-				$rootScope.$broadcast('ADE-finish',{'id':options.id, 'old':oldValue, 'new':value, 'exit':exit });
+				ADE.done(options,oldValue,value,exit);
 
 				$scope.$apply();
-			}
-
-			//callback once the edit is done			
-			var saveEdit = function(ev) {
-				oldValue = value;
-				value = parseDateString(input.val());
-			
-				$scope.$apply(function() {
-					return controller.$setViewValue(value);
-				});
-			
-				finish();
 			};
 						
 			//handles clicks on the read version of the data
@@ -129,7 +120,7 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 				editing=true;
 				exit = 0;
 				
-				$rootScope.$broadcast('ADE-start',options.id);
+				ADE.begin(options);
 
 				element.hide();
 				var extraDPoptions = "";
@@ -141,36 +132,8 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 				$timeout(function() { input.focus(); },1);
 			
 				//Handles blur of in-line text box
-				input.bind("blur",function() {
-					saveEdit();
-				});
-				
-				//tracks how you tabbed out of the field, in case you want to focus another field
-				input.bind('keydown', function(e) {
-					//console.log("ade keydown",e.keyCode);
-					if(e.keyCode==9) { //tab
-						e.preventDefault();
-						e.stopPropagation();
-						exit = e.shiftKey ? -1 : 1;
-						saveEdit(); 
-					} else if(e.keyCode==27) { //esc
-						e.preventDefault();
-						e.stopPropagation();
-						oldValue = value;
-						finish();
-					}
-				});
-
-				//Handles return/esc key pressed on in-line text box
-				input.bind('keypress', function(e) {
-					//console.log("ade keypress",e.keyCode);
-					if(e.keyCode==13) { //return
-						e.preventDefault();
-						e.stopPropagation();
-						exit = e.shiftKey ? -2 : 2;
-						saveEdit(); 
-					} 
-				});
+				ADE.setupBlur(input,saveEdit);
+				ADE.setupKeys(input,saveEdit);
 
 				if(!$scope.$$phase) { //make sure we aren't already digesting/applying
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
@@ -178,15 +141,9 @@ adeModule.directive('adeDate', ['$compile','$timeout','$rootScope',function($com
 			});
 
 			// Initialization code run for each directive instance once
+			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-text="" string
-				if(angular.isObject(settings)) {
-					options = settings; 
-				} else if (angular.isString(settings) && settings.length > 0) {
-					options = angular.fromJson(settings); //parses the json string into an object 
-				}
-
-				fillDefaults();
-
+				options = ADE.parseSettings(settings, {class:"input-medium",format:"MMM d, yyyy"});
 				return element; //TODO: not sure what to return here
 			});
 

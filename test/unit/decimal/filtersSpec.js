@@ -2,7 +2,7 @@
 
 
 describe('decimal', function() {
-    beforeEach(module('ade'));
+    beforeEach(module('ADE'));
 
     var numberFilter;
 
@@ -12,6 +12,7 @@ describe('decimal', function() {
 
     it('should format decimal', function() {
         expect(numberFilter(1234.237, 2)).toEqual('1,234.24');
+        expect(numberFilter(1234.237, 3)).toEqual('1,234.237');
     });
 
     it('should properly format empty or invalid as empty string', function() {

@@ -13,23 +13,23 @@
  data: id from config
 
  name: ADE-finish
- data: {id from config, old value, new value}
+ data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
 
-adeModule.directive('adeRating', ['$compile','$rootScope', '$filter', function($compile,$rootScope,$filter) {
+adeModule.directive('adeRating', ['ADE','$compile','$rootScope', '$filter', function(ADE, $compile,$rootScope,$filter) {
     return {
         require: '?ngModel', //optional dependency for ngModel
         restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
 
         //The link step (after compile)
         link: function($scope, element, attrs, controller) {
-            var rating = null,
-                bgPosition = "",
-                value = "",
-                oldValue = "",
-                newValue = "",
-                id = "";
+            var options = {};
+            var rating = null;
+            var bgPosition = "";
+            var value = "";
+            var oldValue = "";
+            var newValue = "";
 
             if (controller != null) {
                 controller.$render = function() { //whenever the view needs to be updated
@@ -41,9 +41,9 @@ adeModule.directive('adeRating', ['$compile','$rootScope', '$filter', function($
             //handles clicks on the read version of the data
             element.bind('click', function(event) {
 
-                $rootScope.$broadcast('ADE-start',id);
+                ADE.begin(options);
+
                 oldValue = value;
-                starWidth = 23;
                 clickPosition = angular.element(event.target).data('position');
                 value = clickPosition;
                 newValue = value;
@@ -54,7 +54,7 @@ adeModule.directive('adeRating', ['$compile','$rootScope', '$filter', function($
                 rating = element.next('div');
                 rating.remove();
 
-                $rootScope.$broadcast('ADE-finish',{'id':id, 'old':oldValue, 'new': newValue});
+                ADE.done(options,oldValue,value,0);
 
                 $scope.$apply(function() {
                     return controller.$setViewValue(value);
@@ -68,14 +68,7 @@ adeModule.directive('adeRating', ['$compile','$rootScope', '$filter', function($
 
             // Watches for changes to the element
             return attrs.$observe('adeRating', function(settings) { //settings is the contents of the ade-rating="" string
-                var options = {};
-                if(angular.isObject(settings)) options = settings;
-
-                if (typeof(settings) === "string" && settings.length > 0) {
-                    options = angular.fromJson(settings); //parses the json string into an object
-                }
-                if(options.id) id = options.id;
-
+                options = ADE.parseSettings(settings, {});
                 return element; //TODO: not sure what to return here
             });
 
