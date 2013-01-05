@@ -13,27 +13,24 @@
 
 adeModule.filter('rating', function() {
 	return function(input,options) {
-		var starW = 23;
-		var starCount = 5;
-		var starClass = "rating";
+		var starW = 23,
+            starCount = 5,
+            starClass = "rating",
+            starStatusClass = "off";
 
 	 	if(options && options.width) starW = options.width;
 		if(options && options.num) starCount = options.num;
 		if(options && options.class) starClass = options.class;
 
-		var clean = parseInt(input);
 		var containerW = starW * starCount;
-		var bgW = clean / starCount * containerW;
 
-		var html = '<div class="'+starClass+'" style="width:'+containerW+'px;"><div class="bg" style="width:'+bgW+'px;"></div>';
-
-		//aborted attempt to make hover effects
-		//html+='<div class="bg2" style="width:'+(containerW - bgW)+'px;"></div>';
+		var html = '<div class="'+starClass+'" style="width:'+containerW+'px;">';
 		
 		html += '<div class="stars">';
 
 		for (var i = 0; i < starCount; i++) {
-			html += '<a class="star" data-position="'+(i+1)+'"></a>';
+            starStatusClass = (i<input) ? "on" : "off";
+			html += '<a class="star '+starStatusClass+'" data-position="'+(i+1)+'"></a>';
 		}
 
 		html += '</div></div>';

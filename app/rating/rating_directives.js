@@ -24,12 +24,10 @@ adeModule.directive('adeRating', ['ADE','$compile','$rootScope', '$filter', func
 
         //The link step (after compile)
         link: function($scope, element, attrs, controller) {
-            var options = {};
-            var rating = null;
-            var bgPosition = "";
-            var value = "";
-            var oldValue = "";
-            var newValue = "";
+            var options = {},
+                value = "",
+                oldValue = "",
+                newValue = "";
 
             if (controller != null) {
                 controller.$render = function() { //whenever the view needs to be updated
@@ -44,15 +42,8 @@ adeModule.directive('adeRating', ['ADE','$compile','$rootScope', '$filter', func
                 ADE.begin(options);
 
                 oldValue = value;
-                clickPosition = angular.element(event.target).data('position');
-                value = clickPosition;
+                value = angular.element(event.target).data('position');
                 newValue = value;
-
-                bgPosition = $filter('rating')(value);
-
-                $compile(bgPosition)($scope).insertAfter(element);
-                rating = element.next('div');
-                rating.remove();
 
                 ADE.done(options,oldValue,value,0);
 
