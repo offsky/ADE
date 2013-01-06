@@ -1,0 +1,5 @@
+.icons-holder{position:relative;}
+.icons-holder span{cursor:pointer;}
+.icons-popup{background:#efefef;border:1px solid #ccc;position:absolute;
+    border-radius:5px;padding:0 10px 5px 10px;top:0;left:10px;width:200px}
+.icons-popup span{padding:3px;margin:0;}
