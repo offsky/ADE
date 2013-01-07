@@ -171,7 +171,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 element.hide();
                 var extraDPoptions = "";
                 if(options.format=='yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-                $compile('<input ade-timepop ng-model="adePickTime" ng-init="adePickTime='+value+'" type="text" class="'+options.class+'" />')($scope).insertAfter(element);
+                $compile('<input ade-timepop ng-model="adePickTime" ng-init="adePickTime='+value+'" type="text" class="'+options.className+'" />')($scope).insertAfter(element);
                 input = element.next('input');
 
                 input.focus(); //I do not know why both of these are necessary, but they are
@@ -189,7 +189,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
             // Initialization code run for each directive instance once
             // TODO: understand why I have to return the observer and why the observer returns element
             return attrs.$observe('adeTime', function(settings) { //settings is the contents of the ade-text="" string
-                options = ADE.parseSettings(settings, {class:"input-medium"});
+                options = ADE.parseSettings(settings, {className:"input-medium"});
                 return element; //TODO: not sure what to return here
             });
 		}
