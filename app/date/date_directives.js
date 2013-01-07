@@ -89,7 +89,7 @@ adeModule.directive('adeDate', ['ADE','$compile','$timeout','$rootScope',functio
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
-					if(value==undefined || value==null) value="";
+					if(value==undefined || value==null) value=0;
 					return controller.$viewValue;
 				};
 			}
