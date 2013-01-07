@@ -81,7 +81,7 @@ adeModule.directive('adeDate', ['ADE','$compile','$timeout','$rootScope',functio
 			var options = {}; //The passed in options to the directive.
 			var editing=false;
 			var input = null;
-			var value = null;
+			var value = '';
 			var oldValue = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
@@ -119,7 +119,8 @@ adeModule.directive('adeDate', ['ADE','$compile','$timeout','$rootScope',functio
 				if(editing) return;
 				editing=true;
 				exit = 0;
-				
+				value = value || 0;
+
 				ADE.begin(options);
 
 				element.hide();

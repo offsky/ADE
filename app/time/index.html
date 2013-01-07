@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title></title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
+		<link rel="stylesheet" href="../vendor/css/angular-ui.min.css"/>
+		<link rel="stylesheet" href="../vendor/css/timepicker.css"/>
+	</head>
+	<body ng-app="app" ng-init="time1=86399">
+		<div class="container">
+		<!--[if lt IE 7]>
+			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+		<![endif]-->
+		<a href="../index.html">back</a>
+		
+		
+		<br /><br />
+		<h1>AngularJS Filter</h1><br />
+		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. We just wrote a simple wrapper filter that displays an empty string for 0 instead of Dec 31, 1969 and uses seconds instead of milliseconds, since this is more standard.</p>
+		
+		<ul>
+		<li>Time 86399: {{ 86399 | time }} </li>
+		<li>Date abc: {{ 'abc' | time }} </li>
+		</ul>
+		
+		<br /><br />
+		<h1>AngularJS Directives</h1><br />
+		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to picking from the popup calendar, you can type in things like "today" or "next week". Try it.</p>
+
+		<div>Time: <input ade-timepop='{"id":"1001"}' ng-model="time2" maxlength="8" type="text" class="input-small" /></div>
+		
+		<br /><br />
+		<p>There is also a directive for making a non-input element editable:</p>
+
+		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-time='{"id":"1234"}' ng-model="time1">{{ time1 | time}}</div><br /><br />
+
+		<br /><br />
+		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+		<br />
+
+		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
+
+		<br /><br /><br /><br />
+		</div>
+		
+		<!-- Scripts -->
+
+		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
+		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
+		<script src="../vendor/js/angular.js"></script>
+		<script src="../vendor/js/bootstrap.js"></script>
+		
+		<!-- build:js js/scripts.js -->
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="bootstrap-timepicker.js"></script>
+		<script src="app.js"></script>
+		<script src="time_filters.js"></script>
+		<script src="time_directives.js"></script>
+        <script src="../date/date.js"></script>
+		<!-- endbuild -->
+
+		
+	</body>
+</html>
