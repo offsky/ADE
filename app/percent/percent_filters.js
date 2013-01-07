@@ -11,8 +11,8 @@
 
 adeModule.filter('percent', function() {
     return function(input) {
-        var clean = parseFloat(input),
-            output = '';
+        var clean = parseFloat(input);
+        var output = '';
 
         if (!isNaN(clean)) { output = clean + '\u0025' }
 

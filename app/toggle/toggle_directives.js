@@ -61,7 +61,7 @@ adeModule.directive('adeToggle', ['ADE','$compile','$rootScope','$filter', funct
 
 			// Watches for changes to the element
 			return attrs.$observe('adeToggle', function(settings) { //settings is the contents of the ade-toggle="" string
-				options = ADE.parseSettings(settings, {class:"input-medium"});
+				options = ADE.parseSettings(settings, {});
 				return element; //TODO: not sure what to return here
 			});
 

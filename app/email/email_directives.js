@@ -17,7 +17,6 @@
 		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
 adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', function(ADE,$compile,$rootScope,$filter) {
 	return {
@@ -72,8 +71,6 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 				if(editing) return;
 				editing=true;
 				exit = 0;
-
-				value = $scope.emailstring;
 
 				ADE.begin(options);
 

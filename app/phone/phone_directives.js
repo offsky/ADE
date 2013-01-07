@@ -17,7 +17,6 @@
 		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
 adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
 	return {

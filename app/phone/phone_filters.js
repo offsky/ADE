@@ -11,6 +11,8 @@
 
 adeModule.filter('phone', function() {
 	return function(input) {
+		if(!input) return "";
+		
 		var clean = input.replace(/[\-\.() ]/g, "");
 		var html;
 
