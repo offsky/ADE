@@ -10,6 +10,9 @@
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="vendor/css/bootstrap.css"/>
+		<link rel="stylesheet" href="vendor/css/angular-ui.min.css"/>
+		<link rel="stylesheet" href="vendor/css/datepicker.css"/>
+		<link rel="stylesheet" href="vendor/css/timepicker.css"/>
 		<script src="vendor/js/jquery-1.8.2.min.js"></script>
 		<script src="vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="vendor/js/angular.js"></script>
@@ -18,10 +21,10 @@
 		<script src="common/app.js"></script>
 		<script src="compiled.js"></script>
 		<style>
-			.sample { background-color: #eee; height:20px; padding:3px; cursor:pointer; display:inline-block;}
+			.sample { background-color: #eee; height:19px; padding:10px; cursor:pointer; display:inline-block;}
 		</style>
 	</head>
-	<body ng-app="app" ng-init="datatext='click to edit me';dataurl='http://www.github.com';datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9" >
+	<body ng-app="app" ng-init="datatext='click to edit me';datatime=1000;dataurl='http://www.github.com';datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9" >
 		<div class="container">
 
 		<h1>AngularJS Datatype Editors (ADE)</h1>
@@ -33,39 +36,39 @@
 			Example: <div class="sample" ade-text='{"className":"input-large"}' ng-model="datatext">{{datatext}}</div>
 			<br /><br />
 
-		<a href="">Text (Long)</a> - A popup text area for editing large amounts of plain text.<br />
-			Example:
+		<a href="">Text (Long)</a> - A popup text area for editing large amounts of richly formatted text.<br />
+			Example: TBD
 			<br /><br />
 
 		<a href="url/">URL</a> - A filter to make links clickable, and a way to edit them in place.<br />
-			Example:  <div class="sample" ade-url='{"className":"input-medium","id":"1234"}' ng-model="dataurl" ng-bind-html="dataurl | url"></div>
+			Example:  <div class="sample" ade-url='{"className":"input-medium"}' ng-model="dataurl" ng-bind-html="dataurl | url"></div>
 			<br /><br />
 
 		<a href="email/">Email Address</a> - A filter to make email address clickable to email, and a way to edit them in place.<br />
-			Example:
+			Example: <div class="sample" ade-email='{"className":"input-medium"}' ng-model="dataemail" ng-bind-html="dataemail | email"></div>
 			<br /><br />
 
 		<a href="phone/">Phone Number</a> - A filter to make a phone number clickable to call (on support devices) and a way to edit them in place.<br />
-			Example:
+			Example: <div class="sample" ade-phone='{"className":"input-medium"}' ng-model="dataphone" ng-bind-html="dataphone | phone"></div>
 			<br /><br />
 		
 
 		<br /><h2>Dates</h2><br />
 		
 		<a href="date/">Date</a> - Formats a unix timestamp as a date (Jan 1, 2013) and provides a popup calendar for editing.<br />
-			Example:
+			Example: <div class="sample" ade-date='{"className":"input-medium","format":"MMM d, yyyy"}' ng-model="datadate">{{datadate | validDate:'MMM d, yyyy'}}</div>
 			<br /><br />
 		
 		<a href="date/">Date + Time</a> - Formats a unix timestamp as a date + time (Jan 1, 2013 11:45 am)  and provides a popup calendar for editing.<br />
-			Example:
+			Example: <div class="sample" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a"}' ng-model="datadate">{{datadate | validDate:'MMM d, yyyy h:mm:ss a'}}</div>
 			<br /><br />
 		
 		<a href="date/">Year</a> - Formats a unix timestamp as a year  (2013) and provides a popup calendar for editing.<br />
-			Example:
+			Example: <div class="sample" ade-date='{"className":"input-small","format":"yyyy"}' ng-model="datadate">{{datadate | validDate:'yyyy'}}</div>
 			<br /><br />
 		
 		<a href="time/">Time</a> - Formats an integer as a time of the day and provides a popup widget for edting the time.<br />
-			Example:
+			Example: <div class="sample" ade-time ng-model="datatime">{{ datatime | time}}</div>
 			<br /><br />
 		
 		<br /><h2>Numeric</h2><br />
@@ -93,15 +96,15 @@
 		<br /><h2>Other</h2><br />
 		
 		<a href="">List (pick multiple)</a> - Presents a popup list to choose multiple values from. <br />
-			Example:
+			Example: TBD
 			<br /><br />
 		
 		<a href="">List (pick one)</a> - Presents a popup list to choose one value from.<br />
-			Example:
+			Example: TBD
 			<br /><br />
 
 		<a href="rating/">Rating</a> - Presents an integer as a specificed number of stars so you can rate things.<br />
-			Example:
+			Example: <div ade-rating ng-model="datarate" ng-bind-html-unsafe='datarate | rating:{className:"rating_s",width:16,num:10}'></div>
 			<br /><br />
 		
 		<a href="toggle/">Toggle Icon (Star/Checkbox)</a> - A boolean that is represented as an image that can be toggled between two states.<br />
