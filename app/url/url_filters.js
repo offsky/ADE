@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('url', function($filter) {
+adeModule.filter('url', ['$filter',function($filter) {
 	return function(input) {
 		var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 		var output = '';
@@ -32,5 +32,5 @@ adeModule.filter('url', function($filter) {
 
 		return html;
 	};
-});
+}]);
 

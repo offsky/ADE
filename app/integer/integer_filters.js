@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('integer', function($filter) {
+adeModule.filter('integer', ['$filter',function($filter) {
 
 	return function(input) {
 		var output = '';
@@ -22,5 +22,5 @@ adeModule.filter('integer', function($filter) {
 
 		return output;
 	 };
-});
+}]);
 

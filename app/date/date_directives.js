@@ -2,7 +2,7 @@
 	Directive to present a date picker on an input
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeCalpop', function($filter){
+adeModule.directive('adeCalpop', ['$filter',function($filter){
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
@@ -66,7 +66,7 @@ adeModule.directive('adeCalpop', function($filter){
 
 		}
 	};
-});
+}]);
 
 /* ==================================================================
 	Directive to display a calendar for picking a year

@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('email', function($filter) {
+adeModule.filter('email', ['$filter',function($filter) {
 
 	return function(input) {
 		if(!input) return '';
@@ -19,5 +19,5 @@ adeModule.filter('email', function($filter) {
 
 		return $filter('linky')(input);
 	 };
-});
+}]);
 

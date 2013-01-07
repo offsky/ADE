@@ -2,7 +2,7 @@
 	Directive to present a time picker on an input
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeTimepop', function($filter){
+adeModule.directive('adeTimepop', ['$filter',function($filter){
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-timepicker=""></div>
@@ -111,7 +111,7 @@ adeModule.directive('adeTimepop', function($filter){
             });
 		}
 	};
-});
+}]);
 
 /* ==================================================================
 	Directive to display a calendar for picking a year

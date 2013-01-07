@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('money', function($filter) {
+adeModule.filter('money', ['$filter',function($filter) {
     return function(input) {
         var output = '', clean;
 
@@ -28,5 +28,5 @@ adeModule.filter('money', function($filter) {
 
         return output;
     };
-});
+}]);
 
