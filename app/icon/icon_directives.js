@@ -56,12 +56,6 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				};
 			}
 
-            var saveIcon = function(value) {
-                controller.$setViewValue(value);
-                newValue = value;
-                $scope.$apply();
-            };
-
             var hidePopup = function() {
                 $(element).find('.icons-popup').remove();
             };
@@ -73,7 +67,9 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
 				ADE.begin(options);
 
-                var $iconPopup = $(element).find('.icons-popup');
+                var $iconPopup = $(element).find('.icons-popup'),
+                    clickTarget = angular.element(e.target),
+                    attrClass = clickTarget.attr('class');
 
 				oldValue = value;
 
@@ -81,20 +77,24 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
                     $compile('<div class="icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter($(element).find('span'));
                     return;
                 }
-                value = angular.element(e.target).attr('class').substr(5);
 
-                saveIcon(value);
+                if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent().parent()[0] == element[0]) {
+                    value = clickTarget.attr('class').substr(5);
+                    controller.$setViewValue(value);
+                    ADE.done(options,oldValue,value,0);
 
-                ADE.done(options,oldValue,value,0);
+                    //make sure we aren't already digesting/applying before we apply the changes
+                    if(!$scope.$$phase) {
+                        return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                    }
+                }
 
                 hidePopup();
-
-
 			});
 
 			// Watches for changes to the element
 			return attrs.$observe('adeIcon', function(settings) { //settings is the contents of the ade-icon="" string
-				//options = ADE.parseSettings(settings, {class:"input-medium"});
+				options = ADE.parseSettings(settings, {});
 				return element; //TODO: not sure what to return here
 			});
 
