@@ -1,5 +1,5 @@
 /* Icon Directive */
-.ade-icon {cursor:pointer;}
+.ade-icon-container {position:relative;display:inline-block;cursor:pointer;}
 .ade-icons-popup.dropdown-menu{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;left:-7px;}
 .ade-icons-popup.dropdown-menu:before {
     border-bottom: 7px solid rgba(0, 0, 0, 0.2);

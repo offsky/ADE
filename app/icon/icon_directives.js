@@ -24,7 +24,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
         iconsPopupTemplate = '';
 
     for (var i = 0; i < len; i++) {
-        iconsPopupTemplate += '<span class="ade-icon icon-' + icons[i] +'"></span>';
+        iconsPopupTemplate += '<span class="icon-' + icons[i] +'"></span>';
     }
 
 	return {
@@ -41,6 +41,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
             $("body").on("keyup", function(ev) {
                 if(ev.keyCode === 27) {
                     hidePopup();
+                    ADE.done(options,oldValue,value,3);
                 }
             });
 
