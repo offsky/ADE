@@ -1,4 +1,4 @@
-.star{display:inline-block;width:16px;height:16px;background:url(star.png) no-repeat 0 0;}
+.star{display:inline-block;width:16px;height:16px;background:url(star_s.png) no-repeat 0 0;}
 .check{display:inline-block;width:16px;height:16px;background:url(check.png) no-repeat 0 0;}
 
 .off{background-position:0px 0px;}
