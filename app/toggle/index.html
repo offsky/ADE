@@ -11,6 +11,14 @@
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
+		<style>
+			/* Example of how to customize */
+			.ade-balloon{display:inline-block;width:32px;height:32px;background:url(balloon.png) no-repeat 0 0;cursor:pointer;}
+			.ade-balloon.ade-off{background-position:0px 0px;}
+			.ade-balloon.ade-on{background-position:-32px 0px;}
+			.ade-balloon.ade-off:hover{background-position:0px 0px;}
+			.ade-balloon.ade-on:hover{background-position:-32px 0px;}
+		</style>
 	</head>
 	<body ng-app="app" ng-init="starvalue=true;chkvalue=true;balloon=false">
 		<div class="container">
