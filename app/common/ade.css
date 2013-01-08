@@ -1,8 +1,9 @@
+.editable{background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;}
 /* Icon Directive */
-.icons-holder{position:relative;display:inline-block;}
+.icons-holder,.link-holder{position:relative;display:inline-block;}
 .icons-holder span{cursor:pointer;}
 .icons-popup.dropdown-menu{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;left:-7px;}
-.icons-popup.dropdown-menu:before {
+.icons-popup.dropdown-menu:before,.link-popup.dropdown-menu:before {
     border-bottom: 7px solid rgba(0, 0, 0, 0.2);
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
@@ -10,7 +11,7 @@
     left: 6px;
     position: absolute;
     top: -7px;}
-.icons-popup.dropdown-menu:after {
+.icons-popup.dropdown-menu:after,.link-popup.dropdown-menu:after {
     border-bottom: 6px solid #FFFFFF;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
@@ -19,6 +20,10 @@
     position: absolute;
     top: -6px;}
 .icons-popup span{padding:3px;margin:0;}
+
+/* Link Popup */
+.link-popup.dropdown-menu{display:inline-block;padding:4px;border-radius:4px;width:200px;}
+.link-popup a{display:inline;padding:0;color:inherit;}
 
 /* Rating/Star Directives */
 .rating{position:relative;overflow:hidden;z-index:1;height:23px;}

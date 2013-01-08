@@ -10,6 +10,7 @@
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
+        <link rel="stylesheet" href="../common/ade.css"/>
 	</head>
 	<body ng-app="app" ng-init="urlstring='http://www.apple.com'" >
 		<div class="container">
@@ -33,7 +34,9 @@
 
 		<br /><br />
 		
-		<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-url='{"className":"input-medium","id":"1234"}' ng-model="urlstring" ng-bind-html="urlstring | url"></div>
+		<div class="link-holder">
+            <div class="editable" ade-url='{"className":"input-medium","id":"1234"}' ng-model="urlstring" ng-bind-html="urlstring | url"></div>
+		</div>
 		
 		<br /><br />
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
