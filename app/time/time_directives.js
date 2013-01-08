@@ -184,7 +184,6 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 $compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime" ng-init="adePickTime='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.class+'" />')($scope).insertAfter(element);
 
                 input = element.next('input');
-
                 input.focus(); //I do not know why both of these are necessary, but they are
                 $timeout(function() { input.focus(); },1);
 

@@ -49,8 +49,6 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
 	function setupBlur(input,callback) {
 		input.bind("blur",function() {
-            console.log(input);
-            console.log(event.currentTarget);
 			callback(0);
 		});
 	}

@@ -38,6 +38,16 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
                 oldValue = "",
                 newValue = "";
 
+            $("body").on("keyup", function(ev) {
+                if(ev.keyCode === 27) {
+                    hidePopup();
+                }
+            });
+
+            $("body").on("click", function(ev) {
+                if (ev.target != element) hidePopup();
+            });
+
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
@@ -46,6 +56,16 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				};
 			}
 
+            var saveIcon = function(value) {
+                controller.$setViewValue(value);
+                newValue = value;
+                $scope.$apply();
+            };
+
+            var hidePopup = function() {
+                $(element).find('.icons-popup').remove();
+            };
+
 			//handles clicks on the read version of the data
 			element.bind('click', function(e) {
 				e.preventDefault();
@@ -53,29 +73,23 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
 				ADE.begin(options);
 
+                var $iconPopup = $(element).find('.icons-popup');
+
 				oldValue = value;
 
-                if (!$(element).find('.icons-popup').length){
-                    $compile('<div class="icons-popup"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter($(element).find('span'));
+                if (!$iconPopup.length){   //don't popup a second one
+                    $compile('<div class="icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter($(element).find('span'));
                     return;
                 }
-
                 value = angular.element(e.target).attr('class').substr(5);
-                controller.$setViewValue(value);
-                newValue = value;
 
-
-                // added this to hide the popup when user selects the same icon, this can be removed if hiding popup is not desirable
-                if (newValue === oldValue) {
-                    $(element).find('.icons-popup').remove();
-                }
+                saveIcon(value);
 
                 ADE.done(options,oldValue,value,0);
 
-				//make sure we aren't already digesting/applying before we apply the changes
-				if(!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
-				}
+                hidePopup();
+
+
 			});
 
 			// Watches for changes to the element
