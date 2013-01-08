@@ -11,8 +11,8 @@
 
 adeModule.filter('toggle', function() {
 	return function(input, option) {
-		if(input) return '<span class="'+option+' on">';
+		if(input) return '<span class="ade-'+option+' ade-on">';
 
-		return '<span class="'+option+' off">';
+		return '<span class="ade-'+option+' ade-off">';
 	};
 });

@@ -25,12 +25,13 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
-			var editing=false;
-			var input = null;
-			var value = "";
-			var oldValue = "";
-			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+			var options = {}, //The passed in options to the directive.
+			    editing=false,
+                input = null,
+                value = "",
+                oldValue = "",
+                linkPopupClass = 'ade-link-popup',
+                exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
@@ -86,7 +87,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
             };
 
             $scope.hidePopup = function() {
-                element.next('.link-popup').remove();
+                element.next('.'+ linkPopupClass +'').remove();
             };
 
             $("body").on("keyup", function(ev) {
@@ -102,7 +103,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 
 			//handles clicks on the read version of the data
 			element.bind('click', function(e) {
-                var $linkPopup = element.next('.link-popup');
+                var $linkPopup = element.next('.'+ linkPopupClass +'');
 
                 //if (e.target == $(element).find('a')[0]) {
                     e.preventDefault();
@@ -113,7 +114,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 
                 if (value !== "" && value.match('http')) {
 				    if (!$linkPopup.length) {
-                        $compile('<div class="link-popup dropdown-menu"><a href="'+value+'">Follow Link</a> or <a ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
+                        $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a href="'+value+'">Follow Link</a> or <a ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
                     }
                 } else {
                    $scope.editLink();

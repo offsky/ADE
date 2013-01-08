@@ -41,6 +41,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
             $("body").on("keyup", function(ev) {
                 if(ev.keyCode === 27) {
                     hidePopup();
+                    ADE.done(options,oldValue,value,3);
                 }
             });
 
@@ -57,7 +58,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 			}
 
             var hidePopup = function() {
-                $(element).find('.icons-popup').remove();
+                $(element).find('.ade-icons-popup').remove();
             };
 
 			//handles clicks on the read version of the data
@@ -67,14 +68,14 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
 				ADE.begin(options);
 
-                var $iconPopup = $(element).find('.icons-popup'),
+                var $iconPopup = $(element).find('.ade-icons-popup'),
                     clickTarget = angular.element(e.target),
                     attrClass = clickTarget.attr('class');
 
 				oldValue = value;
 
                 if (!$iconPopup.length){   //don't popup a second one
-                    $compile('<div class="icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter($(element).find('span'));
+                    $compile('<div class="ade-icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter($(element).find('span'));
                     return;
                 }
 

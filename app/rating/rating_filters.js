@@ -24,13 +24,13 @@ adeModule.filter('rating', function() {
 
 		var containerW = starW * starCount;
 
-		var html = '<div class="'+starClass+'" style="width:'+containerW+'px;">';
+		var html = '<div class="ade-'+starClass+'" style="width:'+containerW+'px;">';
 		
-		html += '<div class="stars">';
+		html += '<div class="ade-rate-container">';
 
 		for (var i = 0; i < starCount; i++) {
             starStatusClass = (i<input) ? "on" : "off";
-			html += '<a class="star '+starStatusClass+'" data-position="'+(i+1)+'"></a>';
+			html += '<a class="ade-rate-one ade-'+starStatusClass+'" data-position="'+(i+1)+'"></a>';
 		}
 
 		html += '</div></div>';
