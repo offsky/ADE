@@ -10,31 +10,31 @@
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
-        <link rel="stylesheet" href="../common/common.css"/>
+		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
 	<body ng-app="app" ng-init="value=0;value2=1">
 		<div class="container">
-            <!--[if lt IE 7]>
-                <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-            <![endif]-->
-            <a href="../index.html">back</a>
-            <br /><br />
-            <h1>Rating edit directive</h1>
-            <p>A simple directive that makes a star rating clickable.</p>
+				<!--[if lt IE 7]>
+					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+				<![endif]-->
+				<a href="../index.html">back</a>
+				<br /><br />
+				<h1>Rating edit directive</h1>
+				<p>A simple directive that makes a star rating clickable.</p>
 
-            <div ade-rating='{"id":"1001"}' ng-model="value" ng-bind-html-unsafe='value | rating'></div>
-            <br />
+				<div ade-rating='{"id":"1001"}' ng-model="value" ng-bind-html-unsafe='value | rating'></div>
+				<br />
 
-            <div ade-rating='{"id":"1002"}' ng-model="value2" ng-bind-html-unsafe='value2 | rating:{className:"rating_s",width:16,num:10}'></div>
+				<div ade-rating='{"id":"1002"}' ng-model="value2" ng-bind-html-unsafe='value2 | rating:{className:"rating_s",width:16,num:10}'></div>
 
-            <br />
+				<br />
 
-            <p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-            <br />
+				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+				<br />
 
-            <b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
+				<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
 
-            <br /><br /><br /><br />
+				<br /><br /><br /><br />
 
 		</div>
 		
@@ -45,10 +45,10 @@
 		<script src="../vendor/js/bootstrap.js"></script>
 		
 		<script src="../common/ade.js"></script>
-        <script src="../common/demoCtrl.js"></script>
+		<script src="../common/demoCtrl.js"></script>
 		<script src="app.js"></script>
 		<script src="rating_directives.js"></script>
-        <script src="rating_filters.js"></script>
-        
+		<script src="rating_filters.js"></script>
+		  
 	</body>
 </html>
