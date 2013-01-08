@@ -199,7 +199,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
             // Initialization code run for each directive instance once
             // TODO: understand why I have to return the observer and why the observer returns element
             return attrs.$observe('adeTime', function(settings) { //settings is the contents of the ade-text="" string
-                options = ADE.parseSettings(settings, {className:"input-medium"});
+                options = ADE.parseSettings(settings, {class:"input-medium"});
                 return element; //TODO: not sure what to return here
             });
         }
