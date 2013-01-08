@@ -13,6 +13,7 @@
 		<link rel="stylesheet" href="vendor/css/angular-ui.min.css"/>
 		<link rel="stylesheet" href="vendor/css/datepicker.css"/>
 		<link rel="stylesheet" href="vendor/css/timepicker.css"/>
+		<link rel="stylesheet" href="common/ade.css"/>
 		<script src="vendor/js/jquery-1.8.2.min.js"></script>
 		<script src="vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="vendor/js/angular.js"></script>
@@ -24,7 +25,7 @@
 			.sample { background-color: #eee; height:19px; padding:10px; cursor:pointer; display:inline-block;}
 		</style>
 	</head>
-	<body ng-app="app" ng-init="datatext='click to edit me';datatime=1000;dataurl='http://www.github.com';datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9" >
+	<body ng-app="app" ng-init="datatext='click to edit me';datatime=1000;dataicon='glass';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9" >
 		<div class="container">
 
 		<h1>AngularJS Datatype Editors (ADE)</h1>
@@ -104,15 +105,15 @@
 			<br /><br />
 
 		<a href="rating/">Rating</a> - Presents an integer as a specificed number of stars so you can rate things.<br />
-			Example: <div ade-rating ng-model="datarate" ng-bind-html-unsafe='datarate | rating:{className:"rating_s",width:16,num:10}'></div>
+			Example: <div style="display:inline-block;" ade-rating ng-model="datarate" ng-bind-html-unsafe='datarate | rating:{className:"rating_s",width:16,num:10}'></div>
 			<br /><br />
 		
 		<a href="toggle/">Toggle Icon (Star/Checkbox)</a> - A boolean that is represented as an image that can be toggled between two states.<br />
-			Example:
+			Example: <div style="display:inline-block;" ade-toggle ng-model="datatoggle" ng-bind-html="datatoggle | toggle:'star'"></div>
 			<br /><br />
 		
 		<a href="icon/">Icon</a> - An icon that can be switched between a number of different options with a popup editor.<br />
-			Example:
+			Example: <div class="icons-holder" ade-icon ng-model="dataicon" ng-bind-html="dataicon | icon"></div>
 			<br /><br />
 
 		<br /><br /><br /><br /><br />
