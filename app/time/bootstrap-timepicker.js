@@ -238,6 +238,11 @@
                     }
                     this.update();
                     break;
+                case 13:
+                    // enter
+                    this.updateElement();
+                    this.hideWidget();
+                    break;
             }
         }
 
@@ -355,14 +360,14 @@
                     this.hour = 1;
                 }
 
-                if (this.meridian == 'am' || this.meridian == 'a') {
-                    this.meridian = 'AM';
-                } else if (this.meridian == 'pm' || this.meridian == 'p') {
-                    this.meridian = 'PM';
+                if (this.meridian == 'AM' || this.meridian == 'A') {
+                    this.meridian = 'am';
+                } else if (this.meridian == 'PM' || this.meridian == 'P') {
+                    this.meridian = 'pm';
                 }
 
-                if (this.meridian != 'AM' && this.meridian != 'PM') {
-                    this.meridian = 'AM';
+                if (this.meridian != 'am' && this.meridian != 'pm') {
+                    this.meridian = 'am';
                 }
             } else {
                 if (this.hour >= 24) {
@@ -413,7 +418,7 @@
                     var hours = dTime.getHours();
                     var minutes = Math.floor(dTime.getMinutes() / this.minuteStep) * this.minuteStep;
                     var seconds = Math.floor(dTime.getSeconds() / this.secondStep) * this.secondStep;
-                    var meridian = "AM";
+                    var meridian = "am";
                     if (this.showMeridian) {
                         if (hours === 0) {
                             hours = 12;
@@ -421,9 +426,9 @@
                             if (hours > 12) {
                                 hours = hours - 12;
                             }
-                            meridian = "PM";
+                            meridian = "pm";
                         } else {
-                            meridian = "AM";
+                            meridian = "am";
                         }
                     }
                     this.hour = hours;
@@ -446,7 +451,7 @@
 
         ,
         formatTime: function(hour, minute, second, meridian) {
-            hour = hour < 10 ? '0' + hour : hour;
+            hour = hour; //updated to remove leading zero
             minute = minute < 10 ? '0' + minute : minute;
             second = second < 10 ? '0' + second : second;
 
@@ -503,7 +508,7 @@
         updateWidget: function() {
             if (this.showInputs) {
                 this.$widget.find('input.bootstrap-timepicker-hour')
-                    .val(this.hour < 10 ? '0' + this.hour : this.hour);
+                    .val(this.hour); //updated to remove leading zero
                 this.$widget.find('input.bootstrap-timepicker-minute')
                     .val(this.minute < 10 ? '0' + this.minute : this.minute);
                 if (this.showSeconds) {
@@ -742,7 +747,7 @@
 
         ,
         toggleMeridian: function() {
-            this.meridian = this.meridian === 'AM' ? 'PM' : 'AM';
+            this.meridian = this.meridian === 'am' ? 'pm' : 'am';
 
             this.update();
         }

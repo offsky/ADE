@@ -10,8 +10,9 @@
 'use strict';
 
 adeModule.filter('time', function() {
-    return function(input) {
+    return function(input, format) {
         var output = '',
+            format = format || "12",
             date, ampm, hours, minutes;
 
         if (angular.isUndefined(input)) return output;
@@ -21,11 +22,17 @@ adeModule.filter('time', function() {
         hours = date.getHours();
         minutes = date.getMinutes();
 
-        ampm = (hours >= 12) ? 'pm' : 'am';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        minutes = minutes < 10 ? '0'+minutes : minutes;
-        output = hours + ":" + minutes + " " + ampm;
+        if (format === "12") {
+            ampm = (hours >= 12) ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            output = hours + ":" + minutes + " " + ampm;
+        } else {
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            output = hours + ":" + minutes;
+        }
+
 
         return output;
     };

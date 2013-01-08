@@ -21,26 +21,20 @@ adeModule.directive('adeTimepop', function($filter){
                 } else {
                     if (validKey) {
                         var timeStr = controller.$viewValue,
-                            pickerData = element.timepicker().data().timepicker;
-
-                        console.log("Key is valid");
-                        console.log("Controller $viewValue: " + timeStr);
-
-                        var arr = timeStr.split(' '),
+                            pickerData = element.timepicker().data().timepicker,
+                            arr = timeStr.split(' '),
                             hrsmin = arr[0].split(':'),
-                            hours = hrsmin[0],
-                            mins = hrsmin[1],
+                            hours = parseInt(hrsmin[0], 10),
+                            mins = parseInt(hrsmin[1], 10),
                             ampm = arr[1],
-                            validHrs = (hours <= 23) ? hours : 0,
-                            validMins = (mins <= 59) ? mins : 0;
+                            validHrs = (hours <= 23) ? hours : 23,
+                            validMins = (mins <= 59) ? mins : 59;
 
 
-                            pickerData.hour = validHrs;
-                            pickerData.minute = validMins;
-                            pickerData.meridian = ampm;
-                            element.timepicker('updateWidget');
-
-
+                        pickerData.hour = validHrs;
+                        pickerData.minute = validMins;
+                        pickerData.meridian = ampm;
+                        element.timepicker('updateWidget');
 
                     }
                 }
@@ -48,15 +42,11 @@ adeModule.directive('adeTimepop', function($filter){
             });
 
             element.bind('keypress', function(e) {
+                //valid keys: 1-0, p, a, m,backspace, space,return,esc,space
                 var keys = [49,50,51,52,53,54,55,56,57,109,112,97,48,58,8,186,13,27,32];
                 validKey = false;
-                //valid keys: 1-0, p, a, m,backspace, space,return,esc,space
-                console.log("KeyCode: " + e.keyCode);
 
                 for (var i=0;i<keys.length;i++) {
-                    console.log("Is key valid? " + validKey);
-                    console.log('iteration: ' + i);
-                    console.log("Matching: " + e.keyCode + " to: " + keys[i]);
                     if (!validKey ) {
                         if (e.keyCode === keys[i]) {
                             validKey = true;
@@ -71,9 +61,8 @@ adeModule.directive('adeTimepop', function($filter){
             });
 
             //creates a callback for when something is picked from the popup
-            var updateModel = function(ev) {
+            var updateModel = function() {
                 var timeStr = element.val();
-
 
                 if(!$scope.$$phase) { //make sure we aren't already digesting/applying
                     //This is necessary to get the model to match the value of the input
@@ -83,7 +72,7 @@ adeModule.directive('adeTimepop', function($filter){
                 }
             };
 
-            // called at the begining if there is pre-filled data that needs to be preset in the popup
+            // called at the beginning if there is pre-filled data that needs to be preset in the popup
             if (controller != null) {
                 controller.$render = function() {
                     if(controller.$viewValue) {
@@ -98,13 +87,14 @@ adeModule.directive('adeTimepop', function($filter){
             }
 
             // Initialization code run for each directive instance.  Enables the bootstrap timepicker object
-            return attrs.$observe('adeCalpop', function(value) { //value is the contents of the b-timepicker="" string
+            return attrs.$observe('adeTimepop', function(value) { //value is the contents of the b-timepicker="" string
                 var options = {};
                 if(angular.isObject(value)) options = value;
 
                 if (typeof(value) === "string" && value.length > 0) {
                     options = angular.fromJson(value); //parses the json string into an object
                 }
+
                 if(options.format) format = options.format;
 
                 return element.timepicker(options).on('change', updateModel);
@@ -141,11 +131,22 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
 
             //callback once the edit is done
             var saveEdit = function(exited) {
+                var editedValue = input.val(),
                 oldValue = value;
                 exit = exited;
 
                 if(exited!=3) { //don't save value on esc or no changes
-                    value = Date.parse(input.val()).getTime() / 1000;
+                    var arr = editedValue.split(' '),
+                        hrsmin = arr[0].split(':'),
+                        hours = parseInt(hrsmin[0], 10),
+                        mins = parseInt(hrsmin[1], 10),
+                        ampm = arr[1] || '',
+                        validHrs = (hours <= 23) ? hours : 23,
+                        validMins = (mins <= 59) ? mins : 59,
+                        cleanedValue = validHrs+":"+validMins+" "+ampm;
+
+
+                    value = Date.parse(cleanedValue).getTime() / 1000;
                     controller.$setViewValue(value);
                 }
 
@@ -160,7 +161,9 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
             };
 
             //handles clicks on the read version of the data
-            element.bind('click', function() {
+            element.bind('click', function(e) {
+                var extraTPoptions, timeLength;
+
                 if(editing) return;
                 editing=true;
                 exit = 0;
@@ -169,16 +172,23 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 ADE.begin(options);
 
                 element.hide();
-                var extraDPoptions = "";
-                if(options.format=='yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-                $compile('<input ade-timepop ng-model="adePickTime" ng-init="adePickTime='+value+'" type="text" class="'+options.class+'" />')($scope).insertAfter(element);
+
+                if (options.format === "24") {
+                    extraTPoptions = '"showMeridian":false';
+                    timeLength = 5;
+                } else {
+                    extraTPoptions = '"showMeridian":true';
+                    timeLength = 5;
+                }
+
+                $compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime" ng-init="adePickTime='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.class+'" />')($scope).insertAfter(element);
                 input = element.next('input');
 
                 input.focus(); //I do not know why both of these are necessary, but they are
                 $timeout(function() { input.focus(); },1);
 
                 //Handles blur of in-line text box
-                ADE.setupBlur(input,saveEdit);
+                //ADE.setupBlur(input,saveEdit);
                 ADE.setupKeys(input,saveEdit);
 
                 if(!$scope.$$phase) { //make sure we aren't already digesting/applying
