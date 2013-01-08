@@ -76,7 +76,7 @@ adeModule.directive('adeLength', ['ADE', '$compile','$rootScope', '$filter', fun
 				ADE.begin(options);
 
 				element.hide();
-				$compile('<input type="text" class="'+options.class+'" value="'+value+'" />')($scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
@@ -92,7 +92,7 @@ adeModule.directive('adeLength', ['ADE', '$compile','$rootScope', '$filter', fun
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeLength', function(settings) { //settings is the contents of the ade-length="" string
-				options = ADE.parseSettings(settings, {class:"input-medium"});
+				options = ADE.parseSettings(settings, {className:"input-medium"});
 				return element; //TODO: not sure what to return here
 			});
 

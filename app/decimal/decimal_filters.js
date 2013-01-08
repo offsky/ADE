@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('decimal', function($filter) {
+adeModule.filter('decimal', ['$filter',function($filter) {
 
 	return function(input, fractionSize) {
 		var output = '';
@@ -23,5 +23,5 @@ adeModule.filter('decimal', function($filter) {
 
   		return output;
 	 };
-});
+}]);
 

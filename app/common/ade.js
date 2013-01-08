@@ -15,7 +15,7 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//=========================================================================================
 	//incorporates the default settings into the passed in settings and returns the combination
 	function parseSettings(settings,defaults) {
-		var options;
+		var options = {};
 
 		//parse the passed in settings
 		if(angular.isObject(settings)) {
@@ -35,13 +35,13 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//=========================================================================================
 	//broadcasts the message that we are starting editing
 	function begin(options) {
-		$rootScope.$broadcast('ADE-start',options.id);
+		if(options.id) $rootScope.$broadcast('ADE-start',options.id);
 	}
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
 	function done(options,oldValue,value,exit) {
-		$rootScope.$broadcast('ADE-finish',{'id':options.id,'old':oldValue,'new':value,'exit':exit });
+		if(options.id) $rootScope.$broadcast('ADE-finish',{'id':options.id,'old':oldValue,'new':value,'exit':exit });
 	}
 
 	//=========================================================================================

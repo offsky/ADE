@@ -17,7 +17,6 @@
 		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
 adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', function(ADE,$compile,$rootScope,$filter) {
 	return {
@@ -73,12 +72,10 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 				editing=true;
 				exit = 0;
 
-				value = $scope.emailstring;
-
 				ADE.begin(options);
 
 				element.hide();				
-				$compile('<input type="text" class="'+options.class+'" value="'+value+'" />')($scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
@@ -93,7 +90,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 
 			// Watches for changes to the element
 			return attrs.$observe('adeEmail', function(settings) { //settings is the contents of the ade-email="" string
-				options = ADE.parseSettings(settings, {class:"input-medium"});
+				options = ADE.parseSettings(settings, {className:"input-medium"});
 				return element; //TODO: not sure what to return here
 			});
 

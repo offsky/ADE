@@ -11,12 +11,13 @@
 
 'use strict';
 
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-
-adeModule.filter('url', function($filter) {
+adeModule.filter('url', ['$filter',function($filter) {
 	return function(input) {
-		var output = '',
-			html = '';
+		var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+		var output = '';
+		var html = '';
+
+		if(!input) return '';
 
 		if (URL_REGEXP.test(input)) {
 			html = $filter('linky')(input);
@@ -31,5 +32,5 @@ adeModule.filter('url', function($filter) {
 
 		return html;
 	};
-});
+}]);
 

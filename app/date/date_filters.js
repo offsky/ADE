@@ -10,7 +10,7 @@
 
 'use strict';
 
-adeModule.filter('validDate', function($filter) {
+adeModule.filter('validDate', ['$filter',function($filter) {
     return function(input, dateFormat) {
         var output = '';
 
@@ -22,4 +22,4 @@ adeModule.filter('validDate', function($filter) {
 
         return output;
     };
-});
+}]);

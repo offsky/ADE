@@ -17,7 +17,6 @@
 		data: {id from config, old value, new value, exit value}
 
 ------------------------------------------------------------------*/
-var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
 adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
 	return {
@@ -76,7 +75,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$com
 				ADE.begin(options);
 
 				element.hide();				
-				$compile('<input type="text" class="'+options.class+'" value="'+value+'" />')($scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
@@ -92,7 +91,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$com
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adePhone', function(settings) { //settings is the contents of the ade-phone="" string
-				options = ADE.parseSettings(settings, {class:"input-medium"});
+				options = ADE.parseSettings(settings, {className:"input-medium"});
 				return element;
 			});
 		}

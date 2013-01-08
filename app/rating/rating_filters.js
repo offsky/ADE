@@ -20,7 +20,7 @@ adeModule.filter('rating', function() {
 
 	 	if(options && options.width) starW = options.width;
 		if(options && options.num) starCount = options.num;
-		if(options && options.class) starClass = options.class;
+		if(options && options.className) starClass = options.className;
 
 		var containerW = starW * starCount;
 
