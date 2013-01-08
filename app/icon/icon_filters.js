@@ -11,6 +11,6 @@
 
 adeModule.filter('icon', function() {
 	return function(input, option) {
-		return '<span class="icon icon-'+input+'">';
+		return '<span class="icon-'+input+'">';
 	};
 });

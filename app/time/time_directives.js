@@ -129,6 +129,10 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 };
             }
 
+            angular.element('body').bind("click", function(e) {
+                if (e.target != element[0]) saveEdit(0);
+            });
+
             //callback once the edit is done
             var saveEdit = function(exited) {
                 var editedValue = input.val(),
@@ -187,8 +191,6 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 input.focus(); //I do not know why both of these are necessary, but they are
                 $timeout(function() { input.focus(); },1);
 
-                //Handles blur of in-line text box
-                //ADE.setupBlur(input,saveEdit);
                 ADE.setupKeys(input,saveEdit);
 
                 if(!$scope.$$phase) { //make sure we aren't already digesting/applying
