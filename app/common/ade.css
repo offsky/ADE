@@ -34,26 +34,20 @@
 .ade-rating .ade-off:hover{background-position:0 -23px;}
 .ade-rating .ade-off:hover~.ade-off,.ade-rating .ade-on:hover~.ade-on,.ade-rating .ade-on:hover~.ade-off{background-position:0 0;}
 
-.rating_s{position:relative;overflow:hidden;z-index:1;height:16px;}
-.rating_s .stars{position:relative;left:0;z-index:3;height:16px;}
-.rating_s .stars:hover .off{background-position:-16px -16px;}
-.rating_s .star{width:16px;height:16px;display:inline-block;cursor:pointer;background: url(adeImg/star_s.png) 0 0;}
-.rating_s .star.on{background-position:-16px 0;}
-.rating_s .on:hover{background-position:-16px -16px;}
-.rating_s .off:hover{background-position:-16px -16px;}
-.rating_s .off:hover~.off,.rating_s .on:hover~.on,.rating_s .on:hover~.off{ background-position:0 0;}
+.ade-rating_s{position:relative;overflow:hidden;z-index:1;height:16px;}
+.ade-rating_s .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
+.ade-rating_s .ade-rate-container:hover .ade-off{background-position:-16px -16px;}
+.ade-rating_s .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;background: url(adeImg/star_s.png) 0 0;}
+.ade-rating_s .ade-on{background-position:-16px 0;}
+.ade-rating_s .ade-on:hover{background-position:-16px -16px;}
+.ade-rating_s .ade-off:hover{background-position:-16px -16px;}
+.ade-rating_s .ade-off:hover~.ade-off,.ade-rating_s .ade-on:hover~.ade-on,.ade-rating_s .ade-on:hover~.ade-off{background-position:0 0;}
 
 /* Toggle Directive */
-.star{display:inline-block;width:16px;height:16px;background:url(adeImg/star_s.png) no-repeat 0 0;cursor:pointer;}
-.check{display:inline-block;width:16px;height:16px;background:url(adeImg/check.png) no-repeat 0 0;cursor:pointer;}
+.ade-star{display:inline-block;width:16px;height:16px;background:url(adeImg/star_s.png) no-repeat 0 0;cursor:pointer;}
+.ade-check{display:inline-block;width:16px;height:16px;background:url(adeImg/check.png) no-repeat 0 0;cursor:pointer;}
 
-.off{background-position:0px 0px;}
-.on{background-position:-16px 0px;}
-.off:hover{background-position:0px -16px;}
-.on:hover{background-position:-16px -16px;}
-
-.balloon{display:inline-block;width:32px;height:32px;background:url(adeImg/balloon.png) no-repeat 0 0;cursor:pointer;}
-.balloon.off{background-position:0px 0px;}
-.balloon.on{background-position:-32px 0px;}
-.balloon.off:hover{background-position:0px 0px;}
-.balloon.on:hover{background-position:-32px 0px;}
+.ade-off{background-position:0px 0px;}
+.ade-on{background-position:-16px 0px;}
+.ade-off:hover{background-position:0px -16px;}
+.ade-on:hover{background-position:-16px -16px;}
