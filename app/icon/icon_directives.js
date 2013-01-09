@@ -24,7 +24,8 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
         iconsPopupTemplate = '';
 
     for (var i = 0; i < len; i++) {
-        iconsPopupTemplate += '<span class="icon-' + icons[i] +'"></span>';
+        var iconName = icons[i];
+        iconsPopupTemplate += '<span class="icon-' + icons[i] +'" ng-click="saveEdit(0, \''+iconName+'\')"></span>';
     }
 
 	return {
@@ -36,18 +37,8 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 			var options = {},
                 value = "",
                 oldValue = "",
-                newValue = "";
-
-            $("body").on("keyup", function(ev) {
-                if(ev.keyCode === 27) {
-                    hidePopup();
-                    ADE.done(options,oldValue,value,3);
-                }
-            });
-
-            $("body").on("click", function(ev) {
-                if (ev.target != element) hidePopup();
-            });
+                iconPopupClass = 'ade-icons-popup',
+                exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
@@ -57,8 +48,44 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				};
 			}
 
-            var hidePopup = function() {
-                $(element).find('.ade-icons-popup').remove();
+            $scope.hidePopup = function() {
+                element.next('.'+ iconPopupClass +'').remove();
+            };
+
+            $("body").on("keyup", function(ev) {
+                if(ev.keyCode === 27) {
+                    $scope.saveEdit(3);
+                    $scope.hidePopup();
+                }
+            });
+
+            $("body").on("click", function(ev) {
+                var clickTarget = angular.element(ev.target),
+                    attrClass = clickTarget.attr('class') || "";
+                if (!attrClass.match('icon')) {
+                    $scope.saveEdit();
+                    $scope.hidePopup();
+                }
+            });
+
+            $scope.saveEdit = function(exited, newValue) {
+                oldValue = value;
+                value = newValue || oldValue;
+                exit = exited;
+
+                if (exit !== 3) {
+                    //don't save value on esc
+                    controller.$setViewValue(value);
+                }
+
+                $scope.hidePopup();
+
+                ADE.done(options,oldValue,value,exit);
+
+                if(!$scope.$$phase) {
+                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                }
+
             };
 
 			//handles clicks on the read version of the data
@@ -66,7 +93,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				e.preventDefault();
 				e.stopPropagation();
 
-				ADE.begin(options);
+                ADE.begin(options);
 
                 var $iconPopup = $(element).find('.ade-icons-popup'),
                     clickTarget = angular.element(e.target),
@@ -74,23 +101,15 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
 				oldValue = value;
 
-                if (!$iconPopup.length){   //don't popup a second one
-                    $compile('<div class="ade-icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter($(element).find('span'));
-                    return;
-                }
-
-                if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent().parent()[0] == element[0]) {
-                    value = clickTarget.attr('class').substr(5);
-                    controller.$setViewValue(value);
-                    ADE.done(options,oldValue,value,0);
-
-                    //make sure we aren't already digesting/applying before we apply the changes
-                    if(!$scope.$$phase) {
-                        return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]) {
+                    if (!$iconPopup.length){   //don't popup a second one
+                        $compile('<div class="ade-icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter(element);
                     }
                 }
 
-                hidePopup();
+                if(!$scope.$$phase) {
+                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                }
 			});
 
 			// Watches for changes to the element

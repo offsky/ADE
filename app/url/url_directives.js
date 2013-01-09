@@ -45,9 +45,9 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 			var saveEdit = function(exited) {
 
 				oldValue = value;
-				exitCode = exited;
+				exit = exited;
 
-				if (exitCode !== 3) {
+				if (exit !== 3) {
 				    //don't save value on esc
                     if (input) {
 					    value = input.val();
@@ -59,7 +59,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 				(input) ? input.remove(): $scope.hidePopup();
 				editing=false;
 
-				ADE.done(options,oldValue,value,exitCode);
+				ADE.done(options,oldValue,value,exit);
 
 				$scope.$apply();
 			};
@@ -103,12 +103,9 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 
 			//handles clicks on the read version of the data
 			element.bind('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 var $linkPopup = element.next('.'+ linkPopupClass +'');
-
-                //if (e.target == $(element).find('a')[0]) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                //}
 
 				if(editing) return;
 
