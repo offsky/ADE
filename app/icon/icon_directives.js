@@ -23,6 +23,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
         len = icons.length,
         iconsPopupTemplate = '';
 
+    if (len > 0) iconsPopupTemplate = '<a class="icon-_clear" ng-click="saveEdit(0, \'_clear\')">clear</a>';
     for (var i = 0; i < len; i++) {
         var iconName = icons[i];
         iconsPopupTemplate += '<span class="icon-' + icons[i] +'" ng-click="saveEdit(0, \''+iconName+'\')"></span>';

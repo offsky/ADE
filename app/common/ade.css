@@ -19,6 +19,8 @@
     position: absolute;
     top: -6px;}
 .ade-icons-popup span{padding:3px;margin:0;}
+.ade-icon-container .icon-_clear{background:#333;padding:0;}
+.ade-icons-popup .icon-_clear{background:none;float:right;margin:-25px 15px 0 0;color:#08c;font-size:12px;}
 
 /* Link Popup */
 .ade-link-popup.dropdown-menu{display:inline-block;padding:4px;border-radius:4px;width:200px;}
