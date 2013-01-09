@@ -11,7 +11,9 @@
 'use strict';
 
 var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) { 
-	
+
+    $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
+
 	//=========================================================================================
 	//incorporates the default settings into the passed in settings and returns the combination
 	function parseSettings(settings,defaults) {
