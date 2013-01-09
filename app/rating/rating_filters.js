@@ -32,7 +32,7 @@ adeModule.filter('rating', function() {
 		for (var i = 0; i <= starCount; i++) {
             starStatusClass = (i<=input) ? "on" : "off";
             if (i==0) {
-                html += '<a class="ade-rate-one ade-zero" data-position="'+(i)+'">0</a>';
+                html += '<a class="ade-rate-one ade-zero" data-position="'+(i)+'">&nbsp;</a>';
             } else {
 			    html += '<a class="ade-rate-one ade-'+starStatusClass+'" data-position="'+(i)+'"></a>';
             }
