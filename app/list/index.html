@@ -11,7 +11,6 @@
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
-		<link rel="stylesheet" href="../vendor/css/angular-ui.min.css"/>
 		<link rel="stylesheet" href="../vendor/css/select2.css"/>
 	</head>
 	<body ng-app="app" ng-init="datamulti='apple';datasingle='cherry'">
@@ -21,21 +20,28 @@
 				<![endif]-->
 				<a href="../index.html">back</a>
 				<br /><br />
-				<h1>List Directive</h1>
-				<p>A directive that allows to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). This one requires <a href="http://angular-ui.github.com">Angular UI</a> and <a href="http://ivaynberg.github.com/select2/">Select2</a></p>
+				<h1>Select 2 Wrapper</h1>
+				<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). We extracted some code from the <a href="http://angular-ui.github.com">Angular UI</a> project to do this and use the <a href="http://ivaynberg.github.com/select2/">Select2</a> library.</p><br />
 
 
-				<b>Pick one:</b> <a ng-click="datasingle='cherry'">(choose second)</a>
-				<input style="width:200px" type="hidden" ui-select2="{allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query}" ng-model="datasingle" data-placeholder="List...">
+				<b>Pick one:</b>
+				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query}" ng-model="datasingle" data-placeholder="List..." />
 				<br /><br />
 				<b>Pick Multiple:</b>
-				<input style="width:200px" type="hidden" ui-select2="{allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query}" multiple="multiple" ng-model="datamulti" data-placeholder="List...">
+				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query}" multiple="multiple" ng-model="datamulti" data-placeholder="List..." />
 			
 				<br /><br />
-				<p>The directive will also handle editing the list value for a non-input element
+				<h1>List Directive</h1>
 
-				<div>Apple</div>
+				<p>The directive will handle editing the list value for a non-input element.</p>
 
+				<b>Pick one:</b> <br />
+				<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-list='{"id":"1234","multiple":false,"listid":"1"}' ng-model="datasingle">{{datasingle}}</div>
+				<br />
+				<b>Pick Multiple:</b> <br />
+				<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-list='{"id":"1234","multiple":true,"listid":"1"}' ng-model="datamulti">{{datamulti}}</div>
+
+				<br /><br />
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 				<br />
             <br /><br /><br /><br />
@@ -47,7 +53,6 @@
 		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
-		<script src="../vendor/js/angular-ui.js"></script>
 		<script src="../vendor/js/angular-sanitize.js"></script>
 		<script src="../vendor/js/select2.js"></script>
 		<script src="../vendor/js/bootstrap.js"></script>
@@ -84,11 +89,8 @@
 
 					//if we didn't get an exact match, add an "add new option" option if wanted.
 					if(this.allowAddNewValues && options.term && !exactMatch) results.push({id:options.term,text:options.term}); 
-					
 					options.callback({more:false,context:'',results:results});
 				}
-
-
 			}
 
 			SelectCtrl.$inject = ['$scope', '$rootScope'];
