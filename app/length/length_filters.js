@@ -12,6 +12,7 @@
 
 adeModule.filter('length', function() {
 
+	//Minutes are passed in and a more readable (hrs mins) string is returned
 	function parseHrsMins(value) {
 		// value should be passed in minutes
 		var output = '',
