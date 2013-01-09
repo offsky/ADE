@@ -11,10 +11,10 @@ describe('star', function() {
     }));
 
     it('should return background position of a hollow star', function() {
-        expect(starFilter(true,'star')).toEqual('<span class="star on">');
+        expect(starFilter(true,'star')).toEqual('<span class="ade-star ade-on">');
     });
 
     it('should return background position of a filled star', function() {
-        expect(starFilter(false,'star')).toEqual('<span class="star off">');
+        expect(starFilter(false,'star')).toEqual('<span class="ade-star ade-off">');
     });
 });
