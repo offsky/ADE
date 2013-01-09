@@ -108,6 +108,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 
                 if (value !== "" && $filter('url')(value).match('http')) {
 				    if (!$linkPopup.length) {
+                        if (!value.match('http')) value = "http://"+value;
                         $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Follow Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
                     }
                 } else {

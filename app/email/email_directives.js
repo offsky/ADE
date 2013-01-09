@@ -108,6 +108,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 
                 if (value !== "" && $filter('email')(value).match('mailto')) {
                     if (!$linkPopup.length) {
+                        if (!value.match('mailto')) value = "mailto:"+value;
                         $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
                     }
                 } else {
