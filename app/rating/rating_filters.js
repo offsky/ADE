@@ -16,21 +16,26 @@ adeModule.filter('rating', function() {
 		var starW = 23,
             starCount = 5,
             starClass = "rating",
-            starStatusClass = "off";
+            starStatusClass = "off",
+            zeroRateW = 10;
 
 	 	if(options && options.width) starW = options.width;
 		if(options && options.num) starCount = options.num;
 		if(options && options.className) starClass = options.className;
 
-		var containerW = starW * starCount;
+		var containerW = starW * starCount + zeroRateW;
 
 		var html = '<div class="ade-'+starClass+'" style="width:'+containerW+'px;">';
 		
 		html += '<div class="ade-rate-container">';
 
-		for (var i = 0; i < starCount; i++) {
-            starStatusClass = (i<input) ? "on" : "off";
-			html += '<a class="ade-rate-one ade-'+starStatusClass+'" data-position="'+(i+1)+'"></a>';
+		for (var i = 0; i <= starCount; i++) {
+            starStatusClass = (i<=input) ? "on" : "off";
+            if (i==0) {
+                html += '<a class="ade-rate-one ade-zero" data-position="'+(i)+'">0</a>';
+            } else {
+			    html += '<a class="ade-rate-one ade-'+starStatusClass+'" data-position="'+(i)+'"></a>';
+            }
 		}
 
 		html += '</div></div>';

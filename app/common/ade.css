@@ -44,6 +44,8 @@
 .ade-rating_s .ade-off:hover{background-position:-16px -16px;}
 .ade-rating_s .ade-off:hover~.ade-off,.ade-rating_s .ade-on:hover~.ade-on,.ade-rating_s .ade-on:hover~.ade-off{background-position:0 0;}
 
+.ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
+
 /* Toggle Directive */
 .ade-star{display:inline-block;width:16px;height:16px;background:url(adeImg/star_s.png) no-repeat 0 0;cursor:pointer;}
 .ade-check{display:inline-block;width:16px;height:16px;background:url(adeImg/check.png) no-repeat 0 0;cursor:pointer;}
