@@ -43,7 +43,6 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
 			var saveEdit = function(exited) {
-
 				oldValue = value;
 				exit = exited;
 
@@ -65,12 +64,10 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 			};
 
             $scope.editLink = function() {
-
                 editing=true;
                 exit = 0;
 
                 ADE.begin(options);
-
 
                 element.hide();
                 $scope.hidePopup();
