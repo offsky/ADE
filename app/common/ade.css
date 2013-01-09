@@ -33,7 +33,11 @@
 .ade-rating .ade-on{background-position:-23px 0;}
 .ade-rating .ade-on:hover{background-position:-23px -23px;}
 .ade-rating .ade-off:hover{background-position:0 -23px;}
-.ade-rating .ade-off:hover~.ade-off,.ade-rating .ade-on:hover~.ade-on,.ade-rating .ade-on:hover~.ade-off{background-position:0 0;}
+.ade-rating .ade-off:hover~.ade-off,
+.ade-rating .ade-on:hover~.ade-on,
+.ade-rating .ade-on:hover~.ade-off,
+.ade-rating .ade-zero:hover~.ade-off,
+.ade-rating .ade-zero:hover~.ade-on{background-position:0 0;}
 
 .ade-rating_s{position:relative;overflow:hidden;z-index:1;height:16px;}
 .ade-rating_s .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
@@ -42,9 +46,14 @@
 .ade-rating_s .ade-on{background-position:-16px 0;}
 .ade-rating_s .ade-on:hover{background-position:-16px -16px;}
 .ade-rating_s .ade-off:hover{background-position:-16px -16px;}
-.ade-rating_s .ade-off:hover~.ade-off,.ade-rating_s .ade-on:hover~.ade-on,.ade-rating_s .ade-on:hover~.ade-off{background-position:0 0;}
+.ade-rating_s .ade-off:hover~.ade-off,
+.ade-rating_s .ade-on:hover~.ade-on,
+.ade-rating_s .ade-on:hover~.ade-off,
+.ade-rating_s .ade-zero:hover~.ade-off,
+.ade-rating_s .ade-zero:hover~.ade-on{background-position:0 0;}
 
 .ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
+.ade-rate-one.ade-zero{text-decoration:none;}
 
 /* Toggle Directive */
 .ade-star{display:inline-block;width:16px;height:16px;background:url(adeImg/star_s.png) no-repeat 0 0;cursor:pointer;}
