@@ -18,74 +18,101 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adePhone', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
+adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',function(ADE,$compile,$rootScope,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-phone=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
-			var editing=false; //are we in edit mode or not
-			var input = null; //a reference to the input DOM object
-			var value = "";
-			var oldValue = "";
-			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+            var options = {}, //The passed in options to the directive.
+                editing=false,
+                input = null,
+                value = "",
+                oldValue = "",
+                linkPopupClass = 'ade-link-popup',
+                exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
-			//whenever the model changes, we get called so we can update our value
-			if (controller != null) {
-				controller.$render = function() { 
-					oldValue = value = controller.$modelValue;
-					if(value==undefined || value==null) value="";
-					return controller.$viewValue;
-				};
-			}
+            //whenever the model changes, we get called so we can update our value
+            if (controller != null) {
+                controller.$render = function() {
+                    oldValue = value = controller.$modelValue;
+                    if(value==undefined || value==null) value="";
+                    return controller.$viewValue;
+                };
+            }
 
-			//called once the edit is done, so we can save the new data	and remove edit mode
-			var saveEdit = function(exited) {
-				oldValue = value;
-				exit = exited;
+            //called once the edit is done, so we can save the new data	and remove edit mode
+            var saveEdit = function(exited) {
+                oldValue = value;
+                exit = exited;
 
-				if(exited!=3) { //don't save value on esc
-					value = input.val();
-					controller.$setViewValue(value);
-				}
+                if (exit !== 3) {
+                    //don't save value on esc
+                    if (input) {
+                        value = input.val();
+                        controller.$setViewValue(value);
+                    }
+                }
 
-				// I think that the apply later is sufficient
-				// not sure what the significance is of doing the work inside the appy function
-				// $scope.$apply(function() {
-				// 	return controller.$setViewValue(value);
-				// });
+                element.show();
+                (input) ? input.remove(): $scope.hidePopup();
+                editing=false;
 
-				element.show();
-				input.remove();
-				editing=false;
+                ADE.done(options,oldValue,value,exit);
+                $scope.$apply();
+            };
 
-				ADE.done(options,oldValue,value,exit);
+            $scope.editLink = function() {
+                editing=true;
+                exit = 0;
 
-				$scope.$apply();
-			};
-			
-			//handles clicks on the read version of the data
-			element.bind('click', function() {
-				if(editing) return;
-				editing=true;
-				exit = 0;
+                ADE.begin(options);
 
-				ADE.begin(options);
+                element.hide();
+                $scope.hidePopup();
+                $compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
+                input = element.next('input');
+                input.focus();
 
-				element.hide();				
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
-				input = element.next('input');
-				input.focus();
-				
-				ADE.setupBlur(input,saveEdit);
-				ADE.setupKeys(input,saveEdit);
+                ADE.setupBlur(input,saveEdit);
+                ADE.setupKeys(input,saveEdit);
 
-				//make sure we aren't already digesting/applying before we apply the changes
-				if(!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
-				} 
+                if(!$scope.$$phase) {
+                    return $scope.$apply();
+                }
+            };
+
+            $scope.hidePopup = function() {
+                element.next('.'+ linkPopupClass +'').remove();
+            };
+
+            $("body").on("keyup", function(ev) {
+                if(ev.keyCode === 27) {
+                    saveEdit(3);
+                    $scope.hidePopup();
+                }
+            });
+
+            $("body").on("click", function(ev) {
+                if (ev.target !== element) $scope.hidePopup();
+            });
+
+            //handles clicks on the read version of the data
+            element.bind('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var $linkPopup = element.next('.'+ linkPopupClass +'');
+
+                if(editing) return;
+
+                if (value !== "" && $filter('phone')(value).match('tel')) {
+                    if (!$linkPopup.length) {
+                        $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a class="btn btn-mini btn-primary" href="'+value+'">Follow Link</a> or <a class="btn btn-mini btn-primary" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
+                    }
+                } else {
+                    $scope.editLink();
+                }
 			});
 			
 			// Watches for changes to the element
