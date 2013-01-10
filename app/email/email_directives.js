@@ -102,14 +102,15 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
             element.bind('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var $linkPopup = element.next('.'+ linkPopupClass +'');
+                var $linkPopup = element.next('.'+ linkPopupClass +''),
+                    linkString;
 
                 if(editing) return;
 
                 if (value !== "" && $filter('email')(value).match('mailto')) {
                     if (!$linkPopup.length) {
-                        if (!value.match('mailto')) value = "mailto:"+value;
-                        $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
+                        linkString = (!value.match('mailto')) ?  "mailto:"+value : value;
+                        $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
                     }
                 } else {
                     $scope.editLink();
