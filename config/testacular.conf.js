@@ -43,7 +43,13 @@ files = [
   'test/unit/toggle/*.js',
 
   'app/url/*.js',
-  'test/unit/url/*.js'
+  'test/unit/url/*.js',
+
+  'app/icon/*.js',
+  'test/unit/icon/*.js',
+
+  'app/time/*.js',
+  'test/unit/time/*.js'
 
 ];
 
