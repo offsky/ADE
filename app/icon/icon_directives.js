@@ -50,7 +50,10 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 			}
 
             $scope.hidePopup = function() {
-                element.next('.'+ iconPopupClass +'').remove();
+                var elPopup = angular.element('.'+iconPopupClass+'');
+                if (elPopup.length && elPopup.hasClass('open')) {
+                    elPopup.removeClass('open').remove();
+                }
             };
 
             $("body").on("keyup", function(ev) {
@@ -63,7 +66,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
             $("body").on("click", function(ev) {
                 var clickTarget = angular.element(ev.target),
                     attrClass = clickTarget.attr('class') || "";
-                if (!attrClass.match('icon')) {
+                if (!attrClass.match('icon') && (!clickTarget.parent().hasClass('open')) ) {
                     $scope.saveEdit();
                     $scope.hidePopup();
                 }
@@ -96,15 +99,19 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
                 ADE.begin(options);
 
-                var $iconPopup = $(element).find('.ade-icons-popup'),
+                var $iconPopup = angular.element('.'+iconPopupClass+''),
                     clickTarget = angular.element(e.target),
-                    attrClass = clickTarget.attr('class');
+                    attrClass = clickTarget.attr('class'),
+                    elOffset, posLeft, posTop;
 
 				oldValue = value;
 
                 if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]) {
                     if (!$iconPopup.length){   //don't popup a second one
-                        $compile('<div class="ade-icons-popup dropdown-menu"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).insertAfter(element);
+                        elOffset = element.offset();
+                        posLeft = elOffset.left - 7;  // 7px = custom offset
+                        posTop = elOffset.top + element[0].offsetHeight;
+                        $compile('<div class="ade-icons-popup dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).appendTo('body');
                     }
                 }
 

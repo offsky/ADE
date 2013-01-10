@@ -30,7 +30,6 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
                 input = null,
                 value = "",
                 oldValue = "",
-                linkPopupClass = 'ade-link-popup',
                 exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			if (controller != null) {
@@ -83,10 +82,6 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
                 }
             };
 
-            $scope.hidePopup = function() {
-                element.next('.'+ linkPopupClass +'').remove();
-            };
-
             $("body").on("keyup", function(ev) {
                 if(ev.keyCode === 27) {
                     saveEdit(3);
@@ -102,14 +97,18 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 			element.bind('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var $linkPopup = element.next('.'+ linkPopupClass +'');
+                var $linkPopup = element.next('.'+ $scope.linkPopupClass +''),
+                    elOffset, posLeft, posTop;
 
 				if(editing) return;
 
                 if (value !== "" && $filter('url')(value).match('http')) {
 				    if (!$linkPopup.length) {
                         if (!value.match('http')) value = "http://"+value;
-                        $compile('<div class="'+ linkPopupClass +' dropdown-menu"><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Follow Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
+                        elOffset = element.offset();
+                        posLeft = elOffset.left;
+                        posTop = elOffset.top + element[0].offsetHeight;
+                        $compile('<div class="'+ $scope.linkPopupClass +' dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Follow Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
                     }
                 } else {
                    $scope.editLink();

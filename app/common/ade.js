@@ -12,7 +12,16 @@
 
 var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) { 
 
+    // Common
     $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
+    $rootScope.linkPopupClass = 'ade-link-popup';
+
+    $rootScope.hidePopup = function() {
+        var elPopup = angular.element('.'+$rootScope.linkPopupClass+'');
+        if (elPopup.length && elPopup.hasClass('open')) {
+            elPopup.removeClass('open').remove();
+        }
+    };
 
 	//=========================================================================================
 	//incorporates the default settings into the passed in settings and returns the combination

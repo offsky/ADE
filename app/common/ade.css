@@ -1,7 +1,7 @@
 .ade-editable{background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;}
+
 /* Icon Directive */
-.ade-icon-container,.ade-link-container{position:relative;display:inline-block;cursor:pointer;}
-.ade-icons-popup.dropdown-menu,.ade-link-popup.dropdown-menu{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;left:-7px;}
+.ade-icons-popup.dropdown-menu,.ade-link-popup.dropdown-menu{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;}
 .ade-icons-popup.dropdown-menu:before,.ade-link-popup.dropdown-menu:before {
     border-bottom: 7px solid rgba(0, 0, 0, 0.2);
     border-left: 7px solid transparent;
@@ -18,9 +18,9 @@
     left: 7px;
     position: absolute;
     top: -6px;}
-.ade-icons-popup span{padding:3px;margin:0;}
-.ade-icon-container .icon-_clear{background:#ccc;padding:0;}
-.ade-icons-popup .icon-_clear{background:none;float:right;margin:-25px 15px 0 0;color:#08c;font-size:12px;}
+.ade-icons-popup span{padding:3px;margin:0;cursor:pointer;}
+.ade-icon.icon-_clear{background:#ccc;padding:0;}
+.ade-icons-popup a.icon-_clear{background:none;float:right;margin:-30px 0 0 0;color:#08c;font-size:12px;}
 
 /* Link Popup */
 .ade-link-popup.dropdown-menu{display:inline-block;padding:4px;border-radius:4px;width:200px;}
