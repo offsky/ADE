@@ -155,7 +155,10 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 }
 
                 element.show();
-                input.timepicker('hideWidget');
+
+                if ($('.bootstrap-timepicker').length) {
+                    $('.bootstrap-timepicker').remove();
+                }
                 input.remove();
                 editing=false;
 
@@ -185,7 +188,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                     timeLength = 5;
                 }
 
-                $compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime" ng-init="adePickTime='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />')($scope).insertAfter(element);
+                $compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />')($scope).insertAfter(element);
 
                 input = element.next('input');
                 input.focus(); //I do not know why both of these are necessary, but they are
