@@ -82,8 +82,8 @@ adeModule.directive('adeList', ['ADE','$compile','$rootScope',function(ADE,$comp
 				input = element.next('input');
 
 				setTimeout(function () {
+                    input.select2("open");
 					input.select2("val", value); //TODO: Pre-fill the list with the model's value
-					input.select2("open");
 				});
 
 				if(!options.multiple) {

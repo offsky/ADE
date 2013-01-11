@@ -130,7 +130,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
             }
 
             angular.element('body').bind("click", function(e) {
-                if (e.target != element[0]) saveEdit(0);
+                if (e.target != element[0] && editing) saveEdit(0);
             });
 
             //callback once the edit is done

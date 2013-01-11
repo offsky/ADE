@@ -38,7 +38,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 			var options = {},
                 value = "",
                 oldValue = "",
-                iconPopupClass = 'ade-icons-popup',
+                editing=false,
                 exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			if (controller != null) {
@@ -49,25 +49,9 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				};
 			}
 
-            $scope.hidePopup = function() {
-                var elPopup = angular.element('.'+iconPopupClass+'');
-                if (elPopup.length && elPopup.hasClass('open')) {
-                    elPopup.removeClass('open').remove();
-                }
-            };
-
             $("body").on("keyup", function(ev) {
-                if(ev.keyCode === 27) {
+                if(ev.keyCode === 27 && editing) {
                     $scope.saveEdit(3);
-                    $scope.hidePopup();
-                }
-            });
-
-            $("body").on("click", function(ev) {
-                var clickTarget = angular.element(ev.target),
-                    attrClass = clickTarget.attr('class') || "";
-                if (!attrClass.match('icon') && (!clickTarget.parent().hasClass('open')) ) {
-                    $scope.saveEdit();
                     $scope.hidePopup();
                 }
             });
@@ -81,7 +65,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
                     //don't save value on esc
                     controller.$setViewValue(value);
                 }
-
+                editing=false;
                 $scope.hidePopup();
 
                 ADE.done(options,oldValue,value,exit);
@@ -89,7 +73,6 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
                 if(!$scope.$$phase) {
                     return $scope.$apply(); //This is necessary to get the model to match the value of the input
                 }
-
             };
 
 			//handles clicks on the read version of the data
@@ -99,7 +82,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
                 ADE.begin(options);
 
-                var $iconPopup = angular.element('.'+iconPopupClass+''),
+                var $iconPopup = angular.element('.'+$scope.adePopupClass+''),
                     clickTarget = angular.element(e.target),
                     attrClass = clickTarget.attr('class'),
                     elOffset, posLeft, posTop;
@@ -108,10 +91,11 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
                 if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]) {
                     if (!$iconPopup.length){   //don't popup a second one
+                        editing=true;
                         elOffset = element.offset();
                         posLeft = elOffset.left - 7;  // 7px = custom offset
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="ade-icons-popup dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).appendTo('body');
+                        $compile('<div class="'+$scope.adePopupClass+' dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit()" class="icon icon-remove">close</a><h4>Select an Icon</h4>'+iconsPopupTemplate+'</div>')($scope).appendTo('body');
                     }
                 }
 

@@ -42,7 +42,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 			}
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
-			var saveEdit = function(exited) {
+			$scope.saveEdit = function(exited) {
                 oldValue = value;
                 exit = exited;
 
@@ -83,21 +83,17 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
             };
 
             $("body").on("keyup", function(ev) {
-                if(ev.keyCode === 27) {
+                if(ev.keyCode === 27 && editing) {
                     saveEdit(3);
                     $scope.hidePopup();
                 }
-            });
-
-            $("body").on("click", function(ev) {
-                if (ev.target !== element) $scope.hidePopup();
             });
 
             //handles clicks on the read version of the data
             element.bind('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var $linkPopup = element.next('.'+ $scope.linkPopupClass +''),
+                var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
                     linkString, elOffset, posLeft, posTop;
 
                 if(editing) return;
@@ -108,7 +104,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.linkPopupClass +' dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit()" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
                     }
                 } else {
                     $scope.editLink();
