@@ -83,7 +83,17 @@ adeModule.directive('adeList', ['ADE','$compile','$rootScope',function(ADE,$comp
 
 				setTimeout(function () {
                     input.select2("open");
-					input.select2("val", value); //TODO: Pre-fill the list with the model's value
+					input.select2({
+                        //add what I'm typing to the list of results
+                        query: $scope.query,
+                        //    var data = {results: []};
+                        //    data.results.push({text: query.term});
+                        //    query.callback(data);
+                        //}
+                        //should display the default value of the input
+                        initSelection: value
+
+                    }); //TODO: Pre-fill the list with the model's value
 				});
 
 				if(!options.multiple) {

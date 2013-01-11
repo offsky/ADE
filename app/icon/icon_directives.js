@@ -49,11 +49,17 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				};
 			}
 
-            $("body").on("keyup", function(ev) {
+            angular.element('body').bind("keyup", function(ev) {
                 if(ev.keyCode === 27 && editing) {
                     $scope.saveEdit(3);
-                    $scope.hidePopup();
+                } else {
+                    angular.element(".dropdown-menu.open").removeClass("open").remove();
                 }
+            });
+
+            angular.element('body').bind("click", function(e) {
+                if (e.target != element[0] && editing) $scope.saveEdit(0);
+                angular.element(".dropdown-menu.open").removeClass("open").remove();
             });
 
             $scope.saveEdit = function(exited, newValue) {

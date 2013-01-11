@@ -59,10 +59,14 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 editing=false;
 
                 ADE.done(options,oldValue,value,exit);
-                $scope.$apply();
+                if(!$scope.$$phase) {
+                    return $scope.$apply();
+                }
             };
 
             $scope.editLink = function() {
+                event.preventDefault();
+                event.stopPropagation();
                 editing=true;
                 exit = 0;
 
@@ -74,19 +78,25 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 input = element.next('input');
                 input.focus();
 
-                ADE.setupBlur(input,saveEdit);
-                ADE.setupKeys(input,saveEdit);
+                ADE.setupBlur(input,$scope.saveEdit);
+                ADE.setupKeys(input,$scope.saveEdit);
 
                 if(!$scope.$$phase) {
                     return $scope.$apply();
                 }
             };
 
-            $("body").on("keyup", function(ev) {
+            angular.element('body').bind("keyup", function(ev) {
                 if(ev.keyCode === 27 && editing) {
-                    saveEdit(3);
-                    $scope.hidePopup();
+                    $scope.saveEdit(3);
+                } else {
+                    angular.element(".dropdown-menu.open").removeClass("open").remove();
                 }
+            });
+
+            angular.element('body').bind("click", function(e) {
+                if (e.target != element[0] && editing) $scope.saveEdit(0);
+                angular.element(".dropdown-menu.open").removeClass("open").remove();
             });
 
             //handles clicks on the read version of the data

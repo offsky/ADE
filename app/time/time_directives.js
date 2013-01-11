@@ -16,7 +16,7 @@ adeModule.directive('adeTimepop', ['$filter',function($filter){
                 if(e.keyCode==13) { //return key
                     element.timepicker('hideWidget');
                     element.blur();
-                } else if(e.keyCode==27) { //esc
+                } else if (e.keyCode==27) {
                     element.timepicker('hideWidget');
                 } else {
                     if (validKey) {
@@ -97,7 +97,7 @@ adeModule.directive('adeTimepop', ['$filter',function($filter){
 
                 if(options.format) format = options.format;
 
-                return element.timepicker(options).on('change', updateModel);
+                return element.timepicker(options).on('hideWidget', updateModel);
             });
         }
     };
@@ -133,6 +133,16 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 if (e.target != element[0] && editing) saveEdit(0);
             });
 
+            angular.element('body').bind('keyup', function(e) {
+                if (e.keyCode == 27)  {
+                    if (e.target != element[0] && editing) {
+                        saveEdit(3);
+                    } else {
+                        angular.element(".bootstrap-timepicker.open").removeClass("open");
+                    }
+                }
+            });
+
             //callback once the edit is done
             var saveEdit = function(exited) {
                 var editedValue = input.val(),
@@ -157,7 +167,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 element.show();
 
                 if ($('.bootstrap-timepicker').length) {
-                    $('.bootstrap-timepicker').remove();
+                    angular.element(".bootstrap-timepicker.open").removeClass("open");
                 }
                 input.remove();
                 editing=false;
