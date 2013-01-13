@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="../common/ade.css"/>
 		<link rel="stylesheet" href="../vendor/css/select2.css"/>
 	</head>
-	<body ng-app="app" ng-init="datamulti='apple';datasingle='cherry'">
+	<body ng-app="app" ng-init="datamulti='watermelon,apple';datasingle='cherry'">
 		<div class="container" ng-controller="SelectCtrl" >
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -25,10 +25,10 @@
 
 
 				<b>Pick one:</b>
-				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query}" ng-model="datasingle" data-placeholder="List..." />
+				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" ng-model="datasingle" />
 				<br /><br />
 				<b>Pick Multiple:</b>
-				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query}" multiple="multiple" ng-model="datamulti" data-placeholder="List..." />
+				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" multiple="multiple" id="multi1" ng-model="datamulti" />
 			
 				<br /><br />
 				<h1>List Directive</h1>
@@ -36,10 +36,10 @@
 				<p>The directive will handle editing the list value for a non-input element.</p>
 
 				<b>Pick one:</b> <br />
-				<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-list='{"id":"1234","multiple":false,"listid":"1"}' ng-model="datasingle">{{datasingle}}</div>
+				<div class="ade-editable" ade-list='{"multiple":false,"listid":"1"}' ng-model="datasingle">{{datasingle}}</div>
 				<br />
-				<!--<b>Pick Multiple:</b> <br />
-				<div style="background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer;" ade-list='{"id":"1234","multiple":true,"listid":"1"}' ng-model="datamulti">{{datamulti}}</div>  -->
+				<b>Pick Multiple:</b> <br />
+				<div class="ade-editable" id="multi2" ade-list='{"multiple":true,"listid":"1"}' ng-model="datamulti">{{datamulti}}</div>
 
 				<br /><br />
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
@@ -49,20 +49,21 @@
 				<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
 				<br /><br /><br /><br /><br /><br /><br />
 		</div>
-		
-		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
+
+	    <!--<script src="../vendor/js/jquery-1.8.2.min.js"></script>-->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.js"></script>>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
 		<script src="../vendor/js/angular-sanitize.js"></script>
 		<script src="../vendor/js/select2.js"></script>
 		<script src="../vendor/js/bootstrap.js"></script>
-		
+
 		<script src="../common/ade.js"></script>
 		<script src="../common/demoCtrl.js"></script>
 		<script src="app.js"></script>
 
 		<script src="list_directives.js"></script>
-		 
+
 		 <script type="text/javascript">
 			           // $("#e8_set").click(function () { $("#e8").select2("val", "CA"); });
 
@@ -71,14 +72,14 @@
 				//==================================================================
 				// Handles the select2.js smart select lists data matching.
 				// options.term has the typed in terms.  options.callback is called
-				// with the matching data.  It is done this way instead of having select2 
+				// with the matching data.  It is done this way instead of having select2
 				// do it because it is the only way to get an "add new option" option
 				$scope.query = function(options) {
 					var results = [];
 
 					//here you would fill the list options programmatically
-					var listOptions = ['apple','pear','cherry','pineapple','watermellon'];
-					
+					var listOptions = ['apple','pear','cherry','pineapple','watermelon'];
+
 					//filter options based on typing
 					var exactMatch = false; //tracks if we found an exact match or just a partial match
 					$.each(listOptions,function(i,v) {
@@ -88,15 +89,31 @@
 					});
 
 					//if we didn't get an exact match, add an "add new option" option if wanted.
-					if(this.allowAddNewValues && options.term && !exactMatch) results.push({id:options.term,text:options.term}); 
+					if(this.allowAddNewValues && options.term && !exactMatch) results.push({id:options.term,text:options.term});
 					options.callback({more:false,context:'',results:results});
-				}
+				};
+
+                $scope.selection = function(element, callback) {
+                    var data, results;
+                    if (element.attr("multiple") === "multiple") {
+                        data = [];
+                        results = (angular.isString($scope.datamulti)) ? $scope.datamulti.split(',') : $scope.datamulti;
+                        angular.forEach(results, function(value, key) {
+                            data.push({'id':value,'text':value});
+                        });
+                        callback(data);
+                    } else {
+                        callback({'id':$scope.datasingle,'text':$scope.datasingle});
+                    }
+
+                }
+
 			}
 
 			SelectCtrl.$inject = ['$scope', '$rootScope'];
 
 		</script>
-		
+
 
 	</body>
 </html>

@@ -45,10 +45,22 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
                 exit = exited;
 
                 if (exited != 3) { //don't save value on esc
-                    value = input.val();
+                    value = input.data().select2.data();
+                    /*if (angular.isObject(value) && value.length > 1) {
+                        var v="";
+                        angular.forEach(value, function(val, key) {
+
+                            val = (key < value.length-1) ? val.text +"," : val.text;
+                            v += val;
+                        });
+                    } else {
+                        value = value.text;
+                    }*/
+
                     controller.$setViewValue(value);
                 }
 
+                //if (v) element[0].innerHTML = v;
                 element.show();
                 input.select2('destroy'); //TODO: resolve console error when destroying this the second time for the same input
                 input.remove();
@@ -56,8 +68,14 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 
                 ADE.done(options, oldValue, value, exit);
 
-                $scope.$apply();
+                if (!$scope.$$phase) {
+                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                }
             };
+
+            angular.element('body').bind('click', function(e) {
+                //if (e.target != element[0] && editing) saveEdit(3);
+            });
 
             //handles clicks on the read version of the data
             element.bind('click', function() {
@@ -77,20 +95,21 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 
                 console.log(value);
 
-                $compile('<input type="hidden" ui-select2="{width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query' + listid + '}" ' + multi + ' data-placeholder="List..." />')($scope)
+                $compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:\'List...\',initSelection:selection' + listid + '} ' + multi + ' />')($scope)
                     .insertAfter(element);
                 input = element.next('input');
 
                 setTimeout(function() {
+                    input.select2("data", value);
                     input.select2("open");
-                    input.select2("val", value); //TODO: Pre-fill the list with the model's value
                 });
 
-                if (!options.multiple) {
+
+                //if (!options.multiple) {
                     input.on("change", function(e) {
                         saveEdit();
                     });
-                }
+                //}
 
                 //TODO: make the list go back to read mode on ESC, blur and click outside
                 //ADE.setupBlur(input,saveEdit);
