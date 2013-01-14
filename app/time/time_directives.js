@@ -14,6 +14,7 @@ adeModule.directive('adeTimepop', ['$filter',function($filter){
             //Handles return key pressed on in-line text box
             element.bind('keyup', function(e) {
                 if(e.keyCode==13) { //return key
+                    element.timepicker('updateWidget');
                     element.timepicker('hideWidget');
                     element.blur();
                 } else if (e.keyCode==27) {
@@ -97,7 +98,7 @@ adeModule.directive('adeTimepop', ['$filter',function($filter){
 
                 if(options.format) format = options.format;
 
-                return element.timepicker(options).on('hideWidget', updateModel);
+                return element.timepicker(options).on('updateWidget', updateModel);
             });
         }
     };
@@ -129,20 +130,6 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 };
             }
 
-            angular.element('body').bind("click", function(e) {
-                if (e.target != element[0] && editing) saveEdit(0);
-            });
-
-            angular.element('body').bind('keyup', function(e) {
-                if (e.keyCode == 27)  {
-                    if (e.target != element[0] && editing) {
-                        saveEdit(3);
-                    } else {
-                        angular.element(".bootstrap-timepicker.open").removeClass("open");
-                    }
-                }
-            });
-
             //callback once the edit is done
             var saveEdit = function(exited) {
                 var editedValue = input.val(),
@@ -166,9 +153,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
 
                 element.show();
 
-                if ($('.bootstrap-timepicker').length) {
-                    angular.element(".bootstrap-timepicker.open").removeClass("open");
-                }
+                input.timepicker('removeWidget');
                 input.remove();
                 editing=false;
 
@@ -204,6 +189,7 @@ adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filte
                 input.focus(); //I do not know why both of these are necessary, but they are
                 $timeout(function() { input.focus(); },1);
 
+                ADE.setupBlur(input,saveEdit);
                 ADE.setupKeys(input,saveEdit);
 
                 if(!$scope.$$phase) { //make sure we aren't already digesting/applying

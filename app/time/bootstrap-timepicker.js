@@ -34,6 +34,7 @@
      * ================================== */
     var Timepicker = function(element, options) {
         this.$element = $(element);
+        this.isInput = this.$element.is('input');
         this.options = $.extend({}, $.fn.timepicker.defaults, options, this.$element.data());
         this.minuteStep = this.options.minuteStep || this.minuteStep;
         this.secondStep = this.options.secondStep || this.secondStep;
@@ -87,10 +88,13 @@
             this.$widget = $(this.getTemplate())
                 .appendTo('body');
 
-            this.$widget.on('click', $.proxy(this.widgetClick, this));
+            this.$widget.on({
+                click: $.proxy(this.widgetClick, this),
+                mousedown: $.proxy(this.mousedown, this)
+            });
 
             if (this.showInputs) {
-                this.$widget.find('input')
+                this.picker = this.$widget.find('input')
                     .on({
                         click: function() {
                             this.select();
@@ -110,6 +114,10 @@
 
             if (this.open) {
                 return;
+            }
+
+            if (!this.isInput) {
+                $(document).on('mousedown', $.proxy(this.hide, this));
             }
 
             this.$element.trigger('show');
@@ -160,6 +168,16 @@
         }
 
         ,
+
+        mousedown: function(e){
+            e.stopPropagation();
+            e.preventDefault();
+        },
+
+        removeWidget: function() {
+            this.$widget.remove();
+        },
+
         widgetClick: function(e) {
             e.stopPropagation();
             e.preventDefault();
