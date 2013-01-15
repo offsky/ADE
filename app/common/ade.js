@@ -17,7 +17,7 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
     $rootScope.adePopupClass = 'ade-popup';
 
     $rootScope.hidePopup = function() {
-        var elPopup = angular.element('.'+$rootScope.adePopupClass+'');
+        var elPopup = angular.element('.'+$rootScope.adePopupClass);
         if (elPopup.length && elPopup.hasClass('open')) {
             elPopup.removeClass('open').remove();
         }
@@ -60,6 +60,7 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
 	function setupBlur(input,callback) {
 		input.bind("blur",function() {
+			//console.log("ade blur");
 			callback(0);
 		});
 	}
