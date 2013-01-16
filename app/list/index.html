@@ -25,10 +25,10 @@
 
 
 				<b>Pick one:</b>
-				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" ng-model="datasingle" />
-				<br /><br />
-				<b>Pick Multiple:</b>
-				<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" multiple="multiple" id="multi1" ng-model="datamulti" />
+            <!--<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" ng-model="datasingle" />
+                   <br /><br />
+                   <b>Pick Multiple:</b>
+                   <input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" multiple="multiple" id="multi1" ng-model="datamulti" />   -->
 			
 				<br /><br />
 				<h1>List Directive</h1>
@@ -74,37 +74,54 @@
 				// options.term has the typed in terms.  options.callback is called
 				// with the matching data.  It is done this way instead of having select2
 				// do it because it is the only way to get an "add new option" option
+
+                $scope.listOptions = ['apple','pear','cherry','pineapple','watermelon'];
+
+
 				$scope.query = function(options) {
-					var results = [];
+                    var results = [];
 
 					//here you would fill the list options programmatically
-					var listOptions = ['apple','pear','cherry','pineapple','watermelon'];
+
 
 					//filter options based on typing
 					var exactMatch = false; //tracks if we found an exact match or just a partial match
-					$.each(listOptions,function(i,v) {
+					$.each($scope.listOptions,function(i,v) {
 						if(!angular.isString(v)) v = v.toString();
-						if(v.indexOf(options.term)>=0) results.push({id:v,text:v+""});
+						if(v.indexOf(options.term)>=0) results.push({id:i,text:v+""});
 						if(v==options.term) exactMatch = true;
 					});
+                    console.log($scope.listOptions.indexOf(options.term));
+
 
 					//if we didn't get an exact match, add an "add new option" option if wanted.
-					if(this.allowAddNewValues && options.term && !exactMatch) results.push({id:options.term,text:options.term});
+					if(this.allowAddNewValues && options.term && !exactMatch) results.push({id:results.length,text:options.term});
 					options.callback({more:false,context:'',results:results});
 				};
 
                 $scope.selection = function(element, callback) {
-                    var data, results;
-                    if (element.attr("multiple") === "multiple") {
-                        data = [];
-                        results = (angular.isString($scope.datamulti)) ? $scope.datamulti.split(',') : $scope.datamulti;
-                        angular.forEach(results, function(value, key) {
-                            data.push({'id':value,'text':value});
+                    var data=[], results;
+
+                    results = element.val().split(',');
+
+                    angular.forEach(results, function(val,key) {
+                        console.log("Value: " + val);
+                        angular.forEach($scope.listOptions, function(v,k) {
+                            if (v === val) data.push({id:k, text:v});
                         });
-                        callback(data);
-                    } else {
-                        callback({'id':$scope.datasingle,'text':$scope.datasingle});
-                    }
+                        console.log(data);
+                    });
+
+                    //if (element.attr("multiple") === "multiple") {
+                        //data = [];
+                        //results = (angular.isString($scope.datamulti)) ? $scope.datamulti.split(',') : $scope.datamulti;
+                        //angular.forEach(results, function(value, key) {
+                        //    data.push({'id':key,'text':value});
+                        //});
+                    callback(data);
+                    //} else {
+                    //    callback({'text':$scope.datasingle});
+                    //}
 
                 }
 

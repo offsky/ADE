@@ -16,6 +16,11 @@
     background-color: #006dcc;}
 .ade-links .icon.icon-remove{margin:3px 0 0 0;}
 
+/* Longtext Directive */
+.ade-longtext.dropdown-menu.open{padding:0 10px 10px 10px;min-width:289px;width:auto;}
+.ade-longtext textarea{margin-top:15px;}
+
+
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:23px;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:23px;}

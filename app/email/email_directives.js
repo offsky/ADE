@@ -46,6 +46,8 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 oldValue = value;
                 exit = exited;
 
+                window.clearTimeout(timeout);
+
                 if (exit !== 3) {
                     //don't save value on esc
                     if (input) {
@@ -55,7 +57,8 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 }
 
                 element.show();
-                (input) ? input.remove(): $scope.hidePopup();
+                $scope.hidePopup();
+                input.remove();
                 editing=false;
 
                 ADE.done(options,oldValue,value,exit);
@@ -65,6 +68,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
             };
 
             $scope.editLink = function() {
+                window.clearTimeout(timeout);
                 event.preventDefault();
                 event.stopPropagation();
                 editing=true;
@@ -74,6 +78,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 
                 element.hide();
                 $scope.hidePopup();
+
                 $compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
                 input = element.next('input');
                 input.focus();
@@ -85,19 +90,6 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                     return $scope.$apply();
                 }
             };
-
-            angular.element('body').bind("keyup", function(ev) {
-                if(ev.keyCode === 27 && editing) {
-                    $scope.saveEdit(3);
-                } else {
-                    angular.element(".dropdown-menu.open").removeClass("open").remove();
-                }
-            });
-
-            angular.element('body').bind("click", function(e) {
-                if (e.target != element[0] && editing) $scope.saveEdit(0);
-                angular.element(".dropdown-menu.open").removeClass("open").remove();
-            });
 
             //handles clicks on the read version of the data
             element.bind('click', function(e) {
@@ -114,7 +106,21 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit()" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).insertAfter(element);
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisemail" type="text" /></div></div>')($scope).insertAfter(element);
+
+                        input = angular.element('#invisemail');
+                        input.focus();
+
+                        ADE.setupKeys(input,$scope.saveEdit);
+
+                        input.bind("blur",function(e) {
+                            //We delay the closure of the popup to give the internal icons a chance to
+                            //fire their click handlers and change the value.
+                            timeout = window.setTimeout(function() {
+                                $scope.saveEdit(3);
+                            },300);
+
+                        });
                     }
                 } else {
                     $scope.editLink();

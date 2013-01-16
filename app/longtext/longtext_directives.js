@@ -18,19 +18,20 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeText', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
+adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
 
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
-			var editing=false; //are we in edit mode or not
-			var input = null; //a reference to the input DOM object
-			var value = "";
-			var oldValue = "";
-			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+			var options = {},
+                editing=false,
+                txtArea=null,
+                input = null,
+                value = "",
+                oldValue = "",
+                exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
 			if (controller != null) {
@@ -42,45 +43,62 @@ adeModule.directive('adeText', ['ADE','$compile','$rootScope',function(ADE,$comp
 			}
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
-			var saveEdit = function(exited) {
+			$scope.saveEdit = function(exited) {
 				oldValue = value;
 				exit = exited;
 
-				if(exited!=3) { //don't save value on esc
-					value = input.val();
-					controller.$setViewValue(value);
-				}
+                if(exit != 2) {
+                    if(exited!=3) { //don't save value on esc
+                        value = txtArea.val();
+                        controller.$setViewValue(value);
+                    }
 
-				// I think that the apply later is sufficient
-				// not sure what the significance is of doing the work inside the appy function
-				// $scope.$apply(function() {
-				// 	return controller.$setViewValue(value);
-				// });
+                    element.show();
+                    input.remove();
+                    editing=false;
 
-				element.show();
-				input.remove();
-				editing=false;
+                    ADE.done(options,oldValue,value,exit);
 
-				ADE.done(options,oldValue,value,exit);
+                    if(!$scope.$$phase) {
+                        return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                    }
+                } else {
+                    txtArea.val(txtArea.val()+'\n');
+                }
+            };
 
-				$scope.$apply();
-			};
+            element.hover(
+                function(){
+                   console.log(value);
+                },
+                function(){
+                    console.log("off");
+                }
+            );
 			
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
 				editing=true;
 				exit = 0;
+                var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
+                    elOffset, posLeft, posTop;
 
 				ADE.begin(options);
 
-				element.hide();				
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
-				input = element.next('input');
-				input.focus();
-				
-				ADE.setupBlur(input,saveEdit);
-				ADE.setupKeys(input,saveEdit);
+                if (!$linkPopup.length) {
+                    elOffset = element.offset();
+                    posLeft = elOffset.left;
+                    posTop = elOffset.top + element[0].offsetHeight;
+                    $compile('<div class="'+ $scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><textarea class="'+options.className+'">'+value+'</textarea><a class="'+$scope.miniBtnClasses+'" ng-click="saveEdit()">Save</a></div>')($scope).insertAfter(element);
+                }
+
+                input = element.next('.ade-longtext');
+				txtArea = input.find('textarea');
+				txtArea.focus();
+
+				ADE.setupBlur(txtArea,$scope.saveEdit);
+				ADE.setupKeys(txtArea,$scope.saveEdit);
 
 				//make sure we aren't already digesting/applying before we apply the changes
 				if(!$scope.$$phase) {
@@ -90,8 +108,8 @@ adeModule.directive('adeText', ['ADE','$compile','$rootScope',function(ADE,$comp
 			
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeText', function(settings) { //settings is the contents of the ade-text="" string
-				options = ADE.parseSettings(settings, {className:"input-medium"});
+			return attrs.$observe('adeLongtext', function(settings) { //settings is the contents of the ade-text="" string
+				options = ADE.parseSettings(settings, {className:"input-xlarge"});
 				return element;
 			});
 		}

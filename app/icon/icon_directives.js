@@ -38,6 +38,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 			var options = {};
 			var value = "";
 			var oldValue = "";
+            var newValue ="";
 			var editing=false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var input = null; //a reference to the invisible input DOM object
@@ -53,6 +54,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
 			$scope.saveEdit = function(exited, newValue) {
 				console.log("saveEdit",exited,newValue);
+
 				oldValue = value;
 				value = newValue || oldValue;
 				exit = exited;
@@ -108,7 +110,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 							//fire their click handlers and change the value.
 							timeout = window.setTimeout(function() {
 								$scope.saveEdit(0);
-							},100);
+							},500);
 							
 						});
 					}

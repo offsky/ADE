@@ -55,7 +55,8 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 }
 
                 element.show();
-                (input) ? input.remove(): $scope.hidePopup();
+                $scope.hidePopup();
+                input.remove();
                 editing=false;
 
                 ADE.done(options,oldValue,value,exit);
@@ -65,6 +66,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
             };
 
             $scope.editLink = function() {
+                window.clearTimeout(timeout);
                 event.preventDefault();
                 event.stopPropagation();
                 editing=true;
@@ -84,20 +86,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 if(!$scope.$$phase) {
                     return $scope.$apply();
                 }
-            };
-
-            angular.element('body').bind("keyup", function(ev) {
-                if(ev.keyCode === 27 && editing) {
-                    $scope.saveEdit(3);
-                } else {
-                    angular.element(".dropdown-menu.open").removeClass("open").remove();
-                }
-            });
-
-            angular.element('body').bind("click", function(e) {
-                if (e.target != element[0] && editing) $scope.saveEdit(0);
-                angular.element(".dropdown-menu.open").removeClass("open").remove();
-            });
+            }
 
             //handles clicks on the read version of the data
             element.bind('click', function(e) {
@@ -114,7 +103,21 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit()" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Call</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a></div>')($scope).appendTo('body');
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Call</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisphone" type="text" /></div></div>')($scope).appendTo('body');
+
+                        input = angular.element('#invisphone');
+                        input.focus();
+
+                        ADE.setupKeys(input,$scope.saveEdit);
+
+                        input.bind("blur",function(e) {
+                            //We delay the closure of the popup to give the internal icons a chance to
+                            //fire their click handlers and change the value.
+                            timeout = window.setTimeout(function() {
+                                $scope.saveEdit(3);
+                            },300);
+
+                        });
                     }
                 } else {
                     $scope.editLink();

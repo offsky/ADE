@@ -95,21 +95,30 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 
                 console.log(value);
 
+
+
                 $compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:\'List...\',initSelection:selection' + listid + '} ' + multi + ' />')($scope)
                     .insertAfter(element);
                 input = element.next('input');
 
                 setTimeout(function() {
-                    input.select2("data", value);
+                    input.trigger("change");
                     input.select2("open");
+
+                    input.select2("data", value);
                 });
 
-
-                //if (!options.multiple) {
+                if (!options.multiple) {
                     input.on("change", function(e) {
-                        saveEdit();
+                        //saveEdit();
                     });
-                //}
+                } else {
+                    input.on("blur", function(e) {
+                       console.log("BLUR");
+                    });
+                }
+
+
 
                 //TODO: make the list go back to read mode on ESC, blur and click outside
                 //ADE.setupBlur(input,saveEdit);
