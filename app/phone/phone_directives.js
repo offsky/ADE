@@ -42,7 +42,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
             }
 
             //called once the edit is done, so we can save the new data	and remove edit mode
-            $scope.saveEdit = function(exited) {
+            $scope.savePhone = function(exited) {
                 oldValue = value;
                 exit = exited;
 
@@ -65,7 +65,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 }
             };
 
-            $scope.editLink = function() {
+            $scope.editPhone = function() {
                 window.clearTimeout(timeout);
                 event.preventDefault();
                 event.stopPropagation();
@@ -80,8 +80,8 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 input = element.next('input');
                 input.focus();
 
-                ADE.setupBlur(input,$scope.saveEdit);
-                ADE.setupKeys(input,$scope.saveEdit);
+                ADE.setupBlur(input,$scope.savePhone);
+                ADE.setupKeys(input,$scope.savePhone);
 
                 if(!$scope.$$phase) {
                     return $scope.$apply();
@@ -103,24 +103,24 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Call</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisphone" type="text" /></div></div>')($scope).appendTo('body');
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="savePhone(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Call</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editPhone()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisphone" type="text" /></div></div>')($scope).appendTo('body');
 
                         input = angular.element('#invisphone');
                         input.focus();
 
-                        ADE.setupKeys(input,$scope.saveEdit);
+                        ADE.setupKeys(input,$scope.savePhone);
 
                         input.bind("blur",function(e) {
                             //We delay the closure of the popup to give the internal icons a chance to
                             //fire their click handlers and change the value.
                             timeout = window.setTimeout(function() {
-                                $scope.saveEdit(3);
+                                $scope.savePhone(3);
                             },300);
 
                         });
                     }
                 } else {
-                    $scope.editLink();
+                    $scope.editPhone();
                 }
 			});
 			

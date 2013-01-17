@@ -23,10 +23,10 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 		len = icons.length,
 		iconsPopupTemplate = '';
 
-	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear" ng-click="saveEdit(0, \'_clear\')">clear</a>';
+	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear" ng-click="saveIcon(0, \'_clear\')">clear</a>';
 	for (var i = 0; i < len; i++) {
 		var iconName = icons[i];
-		iconsPopupTemplate += '<span class="icon-' + icons[i] +'" ng-click="saveEdit(0, \''+iconName+'\')"></span>';
+		iconsPopupTemplate += '<span class="icon-' + icons[i] +'" ng-click="saveIcon(0, \''+iconName+'\')"></span>';
 	}
 
 	return {
@@ -52,8 +52,8 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 				};
 			}
 
-			$scope.saveEdit = function(exited, newValue) {
-				console.log("saveEdit",exited,newValue);
+			$scope.saveIcon = function(exited, newValue) {
+				console.log("saveIcon",exited,newValue);
 
 				oldValue = value;
 				value = newValue || oldValue;
@@ -102,14 +102,14 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 						input = angular.element('#invisicon');
 						input.focus();
 
-						ADE.setupKeys(input,$scope.saveEdit);
+						ADE.setupKeys(input,$scope.saveIcon);
 
 						//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
 						input.bind("blur",function(e) {
 							//We delay the closure of the popup to give the internal icons a chance to 
 							//fire their click handlers and change the value.
 							timeout = window.setTimeout(function() {
-								$scope.saveEdit(0);
+								$scope.saveIcon(0);
 							},500);
 							
 						});

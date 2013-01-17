@@ -42,7 +42,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 			}
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
-			$scope.saveEdit = function(exited) {
+			$scope.saveEmail = function(exited) {
                 oldValue = value;
                 exit = exited;
 
@@ -67,7 +67,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 }
             };
 
-            $scope.editLink = function() {
+            $scope.editEmail = function() {
                 window.clearTimeout(timeout);
                 event.preventDefault();
                 event.stopPropagation();
@@ -83,8 +83,8 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 input = element.next('input');
                 input.focus();
 
-                ADE.setupBlur(input,$scope.saveEdit);
-                ADE.setupKeys(input,$scope.saveEdit);
+                ADE.setupBlur(input,$scope.saveEmail);
+                ADE.setupKeys(input,$scope.saveEmail);
 
                 if(!$scope.$$phase) {
                     return $scope.$apply();
@@ -106,24 +106,24 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisemail" type="text" /></div></div>')($scope).insertAfter(element);
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEmail(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editEmail()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisemail" type="text" /></div></div>')($scope).insertAfter(element);
 
                         input = angular.element('#invisemail');
                         input.focus();
 
-                        ADE.setupKeys(input,$scope.saveEdit);
+                        ADE.setupKeys(input,$scope.saveEmail);
 
                         input.bind("blur",function(e) {
                             //We delay the closure of the popup to give the internal icons a chance to
                             //fire their click handlers and change the value.
                             timeout = window.setTimeout(function() {
-                                $scope.saveEdit(3);
+                                $scope.saveEmail(3);
                             },300);
 
                         });
                     }
                 } else {
-                    $scope.editLink();
+                    $scope.editEmail();
                 }
 			});
 

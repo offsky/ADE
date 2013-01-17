@@ -41,7 +41,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 			}
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
-			$scope.saveEdit = function(exited) {
+			$scope.saveUrl = function(exited) {
 				oldValue = value;
 				exit = exited;
 
@@ -64,7 +64,7 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
                 }
 			};
 
-            $scope.editLink = function() {
+            $scope.editUrl = function() {
                 window.clearTimeout(timeout);
                 event.preventDefault();
                 event.stopPropagation();
@@ -79,8 +79,8 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
                 input = element.next('input');
                 input.focus();
 
-                ADE.setupBlur(input,$scope.saveEdit);
-                ADE.setupKeys(input,$scope.saveEdit);
+                ADE.setupBlur(input,$scope.saveUrl);
+                ADE.setupKeys(input,$scope.saveUrl);
 
                 if(!$scope.$$phase) {
                     return $scope.$apply(); //This is necessary to get the model to match the value of the input
@@ -102,24 +102,24 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Follow Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editLink()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisurl" type="text" /></div></div>')($scope).insertAfter(element);
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveUrl(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+value+'">Follow Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editUrl()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisurl" type="text" /></div></div>')($scope).insertAfter(element);
 
                         input = angular.element('#invisurl');
                         input.focus();
 
-                        ADE.setupKeys(input,$scope.saveEdit);
+                        ADE.setupKeys(input,$scope.saveUrl);
 
                         input.bind("blur",function(e) {
                             //We delay the closure of the popup to give the internal icons a chance to
                             //fire their click handlers and change the value.
                             timeout = window.setTimeout(function() {
-                                $scope.saveEdit(3);
+                                $scope.saveUrl(3);
                             },300);
 
                         });
                     }
                 } else {
-                   $scope.editLink();
+                   $scope.editUrl();
                 }
 			});
 
@@ -129,7 +129,6 @@ adeModule.directive('adeUrl', ['ADE','$compile','$rootScope', '$filter', functio
 				options = ADE.parseSettings(settings, {className:"input-medium"});
 				return element; //TODO: not sure what to return here
 			});
-
-		}
-	};
+        }
+    };
 }]);
