@@ -17,7 +17,7 @@
 
  ------------------------------------------------------------------*/
 
-adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', function(ADE,$compile,$rootScope,$filter) {
+adeModule.directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', function(ADE, $compile, $rootScope, $filter) {
 
 	var icons = ['envelope', 'heart', 'star', 'user', 'film', 'music', 'search', 'ok', 'signal', 'trash', 'home', 'file', 'time', 'road', 'inbox', 'refresh', 'lock', 'flag', 'headphones', 'barcode', 'tag', 'book', 'print', 'camera', 'off', 'list', 'picture', 'pencil', 'share', 'move'],
 		len = icons.length,
@@ -26,7 +26,7 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear" ng-click="saveIcon(0, \'_clear\')">clear</a>';
 	for (var i = 0; i < len; i++) {
 		var iconName = icons[i];
-		iconsPopupTemplate += '<span class="icon-' + icons[i] +'" ng-click="saveIcon(0, \''+iconName+'\')"></span>';
+		iconsPopupTemplate += '<span class="icon-' + icons[i] + '" ng-click="saveIcon(0, \'' + iconName + '\')"></span>';
 	}
 
 	return {
@@ -36,10 +36,10 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
 			var options = {};
-			var value = "";
-			var oldValue = "";
-            var newValue ="";
-			var editing=false;
+			var value = '';
+			var oldValue = '';
+         var newValue = '';
+			var editing = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
@@ -47,13 +47,13 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
-					if(value==undefined || value==null) value="";
+					if (value == undefined || value == null) value = '';
 					return controller.$viewValue;
 				};
 			}
 
 			$scope.saveIcon = function(exited, newValue) {
-				console.log("saveIcon",exited,newValue);
+				console.log('saveIcon', exited, newValue);
 
 				oldValue = value;
 				value = newValue || oldValue;
@@ -66,12 +66,12 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 					//don't save value on esc
 					controller.$setViewValue(value);
 				}
-				editing=false;
+				editing = false;
 				$scope.hidePopup();
 
-				ADE.done(options,oldValue,value,exit);
+				ADE.done(options, oldValue, value, exit);
 
-				if(!$scope.$$phase) {
+				if (!$scope.$$phase) {
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			};
@@ -83,40 +83,38 @@ adeModule.directive('adeIcon', ['ADE','$compile','$rootScope','$filter', functio
 
 				ADE.begin(options);
 
-				var $iconPopup = angular.element('.'+$scope.adePopupClass),
+				var $iconPopup = angular.element('.' + $scope.adePopupClass),
 					clickTarget = angular.element(e.target),
 					attrClass = clickTarget.attr('class'),
-					elOffset, 
-					posLeft, 
+					elOffset,
+					posLeft,
 					posTop;
 
-				oldValue = value;
-
 				if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]) {
-					if (!$iconPopup.length){   //don't popup a second one
-						editing=true;
+					if (!$iconPopup.length) {   //don't popup a second one
+						editing = true;
 						elOffset = element.offset();
 						posLeft = elOffset.left - 7;  // 7px = custom offset
 						posTop = elOffset.top + element[0].offsetHeight;
-						$compile('<div class="'+$scope.adePopupClass+' dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><h4>Select an Icon</h4>'+iconsPopupTemplate+'<div style="width: 0;height:0;overflow: hidden;"><input id="invisicon" type="text" /></div></div>')($scope).appendTo('body');
+						$compile('<div class="' + $scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div style="width: 0;height:0;overflow: hidden;"><input id="invisicon" type="text" /></div></div>')($scope).appendTo('body');
 						input = angular.element('#invisicon');
 						input.focus();
 
-						ADE.setupKeys(input,$scope.saveIcon);
+						ADE.setupKeys(input, $scope.saveIcon);
 
 						//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-						input.bind("blur",function(e) {
-							//We delay the closure of the popup to give the internal icons a chance to 
+						input.bind('blur', function(e) {
+							//We delay the closure of the popup to give the internal icons a chance to
 							//fire their click handlers and change the value.
 							timeout = window.setTimeout(function() {
 								$scope.saveIcon(0);
 							},500);
-							
+
 						});
 					}
 				}
 
-				if(!$scope.$$phase) {
+				if (!$scope.$$phase) {
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			});

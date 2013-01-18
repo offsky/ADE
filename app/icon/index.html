@@ -23,12 +23,14 @@
 				<p>A directive that allows to pick an icon from a selection of bootstrap icons.</p>
 
 			
-                <a ade-icon='{"id":"1001"}' ng-model="icon" ng-bind-html="icon | icon"></a>
+				<a ade-icon='{"id":"1001"}' ng-model="icon" ng-bind-html="icon | icon"></a>
+				<br />
+				<a ade-icon='{"id":"1002"}' ng-model="icon2" ng-bind-html="icon2 | icon"></a>
 
 				<br /><br />
 				
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-                <br /><br /><br />
+					 <br /><br /><br />
 
 				<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
 				<br /><br /><br /><br /><br /><br /><br />
