@@ -48,6 +48,8 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//=========================================================================================
 	//broadcasts the message that we are starting editing
 	function begin(options) {
+		console.log('begin', options.id);
+
 		if (options.id) {
 			$rootScope.$broadcast('ADE-start', options.id);
 		}
@@ -56,6 +58,7 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//=========================================================================================
 	//broadcasts the message that we are done editing
 	function done(options, oldValue, value, exit) {
+		console.log('finish', options.id);
 		if (options.id) {
 			$rootScope.$broadcast('ADE-finish',{'id':options.id,'old':oldValue,'new':value,'exit':exit });
 		}
