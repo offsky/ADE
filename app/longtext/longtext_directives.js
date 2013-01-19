@@ -67,43 +67,49 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                 }
             };
 
-            element.hover(
-                function(){
-                   console.log(value);
-                },
-                function(){
-                    console.log("off");
+            $scope.editLongText = function(showText) {
+                var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
+                    elOffset, posLeft, posTop, content;
+
+                content = (showText) ? value : '<textarea class="class="'+options.className+'">'+value+'</textarea>';
+
+                if (!$linkPopup.length) {
+                    elOffset = element.offset();
+                    posLeft = elOffset.left;
+                    posTop = elOffset.top + element[0].offsetHeight;
+                    $compile('<div class="'+ $scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px">'+content+'</div>')($scope).insertAfter(element);
                 }
-            );
+
+                input = element.next('.ade-longtext');
+                txtArea = input.find('textarea');
+
+                if (txtArea.length) {
+                    txtArea.focus();
+
+                    ADE.setupBlur(txtArea,$scope.saveEdit);
+                    ADE.setupKeys(txtArea,$scope.saveEdit);
+                } else {
+                    input.bind('click', $scope.editLongText(false));
+                    ADE.setupBlur(input,$scope.saveEdit);
+                    ADE.setupKeys(input,$scope.saveEdit);
+                }
+
+
+                //make sure we aren't already digesting/applying before we apply the changes
+                if(!$scope.$$phase) {
+                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                }
+            };
 			
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
 				editing=true;
 				exit = 0;
-                var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
-                    elOffset, posLeft, posTop;
 
 				ADE.begin(options);
 
-                if (!$linkPopup.length) {
-                    elOffset = element.offset();
-                    posLeft = elOffset.left;
-                    posTop = elOffset.top + element[0].offsetHeight;
-                    $compile('<div class="'+ $scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEdit(3)" class="icon icon-remove">close</a><textarea class="'+options.className+'">'+value+'</textarea><a class="'+$scope.miniBtnClasses+'" ng-click="saveEdit()">Save</a></div>')($scope).insertAfter(element);
-                }
-
-                input = element.next('.ade-longtext');
-				txtArea = input.find('textarea');
-				txtArea.focus();
-
-				ADE.setupBlur(txtArea,$scope.saveEdit);
-				ADE.setupKeys(txtArea,$scope.saveEdit);
-
-				//make sure we aren't already digesting/applying before we apply the changes
-				if(!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
-				} 
+                $scope.editLongText(false);
 			});
 			
 			// Watches for changes to the element

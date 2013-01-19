@@ -43,7 +43,7 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 			}
 
 			//called once the edit is done, so we can save the new data and remove edit mode
-			$scope.saveUrl = function(exited) {
+			var saveEdit = function(exited) {
 				console.log('saving', exited);
 				oldValue = value;
 				exit = exited;
@@ -68,10 +68,8 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 			};
 
 			//called to enter edit mode on a url. happens immediatly for non-urls or after a popup confirmation for urls
-			$scope.editUrl = function() {
+			var editLink = function() {
 				if (timeout) window.clearTimeout(timeout); //cancels the delayed blur of the popup
-				event.preventDefault();
-				event.stopPropagation();
 				editing = true;
 				exit = 0;
 
@@ -83,8 +81,8 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 				input = element.next('input');
 				input.focus();
 
-				ADE.setupBlur(input, $scope.saveUrl);
-				ADE.setupKeys(input, $scope.saveUrl);
+				ADE.setupBlur(input, saveEdit);
+				ADE.setupKeys(input, saveEdit);
 
 				if (!$scope.$$phase) {
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
@@ -112,19 +110,21 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 						posTop = elOffset.top + element[0].offsetHeight;
 
 						var html = '<div class="' + $scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-									  '<a class="' + $scope.miniBtnClasses + '" href="' + value + '" target="_blank" ng-click="hidePopup();">Follow Link</a>' +
-									  ' or <a class="' + $scope.miniBtnClasses + ' ade-edit-link">Edit Link</a>' +
-									  '<div class="ade-hidden"><input class="invisurl" type="text" /></div>' +
-									  '</div>';
+                          '<a class="' + $scope.miniBtnClasses + '" href="' + value + '" target="_blank" ng-click="hidePopup();">Follow Link</a>' +
+                          ' or <a class="' + $scope.miniBtnClasses + ' ade-edit-link">Edit Link</a>' +
+                          '<div class="ade-hidden"><input class="invisurl" type="text" /></div>' +
+                          '</div>';
 						$compile(html)($scope).insertAfter(element);
 
-						var editLink = element.next('.ade-links').find('.ade-edit-link');
- 						editLink.on('click', $scope.editUrl);
+						var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
+ 						editLinkNode.bind('click', editLink);
 
 						//There is an invisible input box that handles blur and keyboard events on the popup
 						var invisibleInput = element.next('.ade-links').find('.invisurl');
 						invisibleInput.focus(); //focus the invisible input
-						ADE.setupKeys(invisibleInput, $scope.saveUrl);
+
+						ADE.setupKeys(invisibleInput, saveEdit);
+
 						invisibleInput.bind('blur', function(e) {
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
@@ -134,7 +134,7 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 						});
 					}
 				} else { //the editing field is not a clickable link, so directly edit it
-				   $scope.editUrl();
+				   editLink();
 				}
 			});
 

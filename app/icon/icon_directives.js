@@ -23,10 +23,9 @@ adeModule.directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', func
 		len = icons.length,
 		iconsPopupTemplate = '';
 
-	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear" ng-click="saveIcon(0, \'_clear\')">clear</a>';
+	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear">clear</a>';
 	for (var i = 0; i < len; i++) {
-		var iconName = icons[i];
-		iconsPopupTemplate += '<span class="icon-' + icons[i] + '" ng-click="saveIcon(0, \'' + iconName + '\')"></span>';
+		iconsPopupTemplate += '<span class="icon-' + icons[i] + '"></span>';
 	}
 
 	return {
@@ -38,7 +37,6 @@ adeModule.directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', func
 			var options = {};
 			var value = '';
 			var oldValue = '';
-         var newValue = '';
 			var editing = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var input = null; //a reference to the invisible input DOM object
@@ -52,15 +50,13 @@ adeModule.directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', func
 				};
 			}
 
-			$scope.saveIcon = function(exited, newValue) {
-				console.log('saveIcon', exited, newValue);
+			var saveEdit = function(exited, newValue) {
+                //we are saving, so cancel any delayed blur saves that we might get
+                window.clearTimeout(timeout);
 
-				oldValue = value;
+                oldValue = value;
 				value = newValue || oldValue;
 				exit = exited;
-
-				//we are saving, so cancel any delayed blur saves that we might get
-				window.clearTimeout(timeout);
 
 				if (exit !== 3) {
 					//don't save value on esc
@@ -96,18 +92,40 @@ adeModule.directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', func
 						elOffset = element.offset();
 						posLeft = elOffset.left - 7;  // 7px = custom offset
 						posTop = elOffset.top + element[0].offsetHeight;
-						$compile('<div class="' + $scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div style="width: 0;height:0;overflow: hidden;"><input id="invisicon" type="text" /></div></div>')($scope).appendTo('body');
+						$compile('<div class="' + $scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')($scope).insertAfter(element);
 						input = angular.element('#invisicon');
+                        var nextElement = element.next('.ade-popup'),
+                            clearNode = nextElement.find('.icon-_clear'),
+                            iconNode = nextElement.find('span');
+
+                        clearNode.bind('click', function() {
+                            saveEdit(0, '_clear');
+                        });
+
+                        angular.forEach(iconNode, function(el) {
+                            var node = angular.element(el);
+                            node.bind('click', function() {
+                                window.clearTimeout(timeout);
+                                var iconClass =  node.attr('class');
+
+                                if (iconClass.match('icon')) {
+                                    var iconType = iconClass.substr(5);
+                                    saveEdit(0, iconType);
+                                }
+                            });
+
+                        });
+
 						input.focus();
 
-						ADE.setupKeys(input, $scope.saveIcon);
+						ADE.setupKeys(input, saveEdit);
 
 						//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
 						input.bind('blur', function(e) {
 							//We delay the closure of the popup to give the internal icons a chance to
 							//fire their click handlers and change the value.
 							timeout = window.setTimeout(function() {
-								$scope.saveIcon(0);
+								saveEdit(0);
 							},500);
 
 						});

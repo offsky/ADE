@@ -30,6 +30,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 input = null,
                 value = "",
                 oldValue = "",
+                timeout = null,
                 exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
@@ -42,7 +43,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 			}
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
-			$scope.saveEmail = function(exited) {
+			var saveEdit = function(exited) {
                 oldValue = value;
                 exit = exited;
 
@@ -58,7 +59,7 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
 
                 element.show();
                 $scope.hidePopup();
-                input.remove();
+                if (input) input.remove();
                 editing=false;
 
                 ADE.done(options,oldValue,value,exit);
@@ -67,10 +68,8 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 }
             };
 
-            $scope.editEmail = function() {
-                window.clearTimeout(timeout);
-                event.preventDefault();
-                event.stopPropagation();
+             var editLink = function() {
+                if (timeout) window.clearTimeout(timeout);
                 editing=true;
                 exit = 0;
 
@@ -83,8 +82,8 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                 input = element.next('input');
                 input.focus();
 
-                ADE.setupBlur(input,$scope.saveEmail);
-                ADE.setupKeys(input,$scope.saveEmail);
+                ADE.setupBlur(input,saveEdit);
+                ADE.setupKeys(input,saveEdit);
 
                 if(!$scope.$$phase) {
                     return $scope.$apply();
@@ -106,24 +105,27 @@ adeModule.directive('adeEmail', ['ADE','$compile','$rootScope', '$filter', funct
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="saveEmail(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editEmail()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisemail" type="text" /></div></div>')($scope).insertAfter(element);
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Email Link</a> or <a class="'+$scope.miniBtnClasses+' ade-edit-link">Edit Link</a><div class="ade-hidden"><input id="invisemail" type="text" /></div></div>')($scope).insertAfter(element);
 
-                        input = angular.element('#invisemail');
-                        input.focus();
+                        var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
+                        editLinkNode.bind('click', editLink);
 
-                        ADE.setupKeys(input,$scope.saveEmail);
+                        var invisibleInput = angular.element('#invisemail');
+                        invisibleInput.focus();
 
-                        input.bind("blur",function(e) {
+                        ADE.setupKeys(invisibleInput,saveEdit);
+
+                        invisibleInput.bind("blur",function(e) {
                             //We delay the closure of the popup to give the internal icons a chance to
                             //fire their click handlers and change the value.
                             timeout = window.setTimeout(function() {
-                                $scope.saveEmail(3);
+                                saveEdit(3);
                             },300);
 
                         });
                     }
                 } else {
-                    $scope.editEmail();
+                    editLink();
                 }
 			});
 

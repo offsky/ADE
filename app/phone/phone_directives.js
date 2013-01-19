@@ -30,6 +30,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 input = null,
                 value = "",
                 oldValue = "",
+                timeout = null,
                 exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
             //whenever the model changes, we get called so we can update our value
@@ -42,7 +43,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
             }
 
             //called once the edit is done, so we can save the new data	and remove edit mode
-            $scope.savePhone = function(exited) {
+            var saveEdit = function(exited) {
                 oldValue = value;
                 exit = exited;
 
@@ -56,7 +57,7 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
 
                 element.show();
                 $scope.hidePopup();
-                input.remove();
+                if (input) input.remove();
                 editing=false;
 
                 ADE.done(options,oldValue,value,exit);
@@ -65,10 +66,8 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 }
             };
 
-            $scope.editPhone = function() {
-                window.clearTimeout(timeout);
-                event.preventDefault();
-                event.stopPropagation();
+            var editLink = function() {
+                if (timeout) window.clearTimeout(timeout);
                 editing=true;
                 exit = 0;
 
@@ -80,8 +79,8 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                 input = element.next('input');
                 input.focus();
 
-                ADE.setupBlur(input,$scope.savePhone);
-                ADE.setupKeys(input,$scope.savePhone);
+                ADE.setupBlur(input,saveEdit);
+                ADE.setupKeys(input,saveEdit);
 
                 if(!$scope.$$phase) {
                     return $scope.$apply();
@@ -103,24 +102,27 @@ adeModule.directive('adePhone', ['ADE','$compile','$rootScope','$filter',functio
                         elOffset = element.offset();
                         posLeft = elOffset.left;
                         posTop = elOffset.top + element[0].offsetHeight;
-                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a ng-click="savePhone(3)" class="icon icon-remove">close</a><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Call</a> or <a class="'+$scope.miniBtnClasses+'" ng-click="editPhone()">Edit Link</a><div style="width: 0;height:0;overflow: hidden;"><input id="invisphone" type="text" /></div></div>')($scope).appendTo('body');
+                        $compile('<div class="'+ $scope.adePopupClass +' ade-links dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px"><a class="'+$scope.miniBtnClasses+'" href="'+linkString+'">Call</a> or <a class="'+$scope.miniBtnClasses+' ade-edit-link">Edit Link</a><div class="ade-hidden"><input id="invisphone" type="text" /></div></div>')($scope).insertAfter(element);
 
-                        input = angular.element('#invisphone');
-                        input.focus();
+                        var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
+                        editLinkNode.bind('click', editLink);
 
-                        ADE.setupKeys(input,$scope.savePhone);
+                        var invisibleInput = angular.element('#invisphone');
+                        invisibleInput.focus();
 
-                        input.bind("blur",function(e) {
+                        ADE.setupKeys(invisibleInput,saveEdit);
+
+                        invisibleInput.bind("blur",function(e) {
                             //We delay the closure of the popup to give the internal icons a chance to
                             //fire their click handlers and change the value.
                             timeout = window.setTimeout(function() {
-                                $scope.savePhone(3);
+                                saveEdit(3);
                             },300);
 
                         });
                     }
                 } else {
-                    $scope.editPhone();
+                    editLink();
                 }
 			});
 			
