@@ -43,7 +43,7 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 			}
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
-			$scope.saveEdit = function(exited) {
+			var saveEdit = function(exited) {
 				oldValue = value;
 				exit = exited;
 
@@ -67,7 +67,9 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                 }
             };
 
-            $scope.editLongText = function(showText) {
+            var editLongText = function(showText) {
+                $scope.hidePopup();
+
                 var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
                     elOffset, posLeft, posTop, content;
 
@@ -85,13 +87,14 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 
                 if (txtArea.length) {
                     txtArea.focus();
-
-                    ADE.setupBlur(txtArea,$scope.saveEdit);
-                    ADE.setupKeys(txtArea,$scope.saveEdit);
+                    ADE.setupBlur(txtArea,saveEdit);
+                    ADE.setupKeys(txtArea,saveEdit);
                 } else {
-                    input.bind('click', $scope.editLongText(false));
-                    ADE.setupBlur(input,$scope.saveEdit);
-                    ADE.setupKeys(input,$scope.saveEdit);
+                    input.bind('click', function() {
+                        editLongText(false);
+                    });
+                    ADE.setupBlur(input,saveEdit);
+                    ADE.setupKeys(input,saveEdit);
                 }
 
 
@@ -100,7 +103,14 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                     return $scope.$apply(); //This is necessary to get the model to match the value of the input
                 }
             };
-			
+
+            element.bind('mouseenter', function(e)  {
+                var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
+                if (!$linkPopup.length) {
+                    editLongText(true);
+                }
+            });
+
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
@@ -109,7 +119,7 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 
 				ADE.begin(options);
 
-                $scope.editLongText(false);
+                editLongText(false);
 			});
 			
 			// Watches for changes to the element

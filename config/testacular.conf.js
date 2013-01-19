@@ -49,7 +49,10 @@ files = [
   'test/unit/icon/*.js',
 
   'app/time/*.js',
-  'test/unit/time/*.js'
+  'test/unit/time/*.js',
+
+  'app/longtext/*.js',
+  'test/unit/longtext/*.js'
 
 ];
 
