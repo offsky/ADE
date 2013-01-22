@@ -48,8 +48,6 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//=========================================================================================
 	//broadcasts the message that we are starting editing
 	function begin(options) {
-		console.log('begin', options.id);
-
 		if (options.id) {
 			$rootScope.$broadcast('ADE-start', options.id);
 		}
@@ -58,7 +56,6 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//=========================================================================================
 	//broadcasts the message that we are done editing
 	function done(options, oldValue, value, exit) {
-		console.log('finish', options.id);
 		if (options.id) {
 			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'old': oldValue, 'new': value, 'exit': exit });
 		}
@@ -69,7 +66,6 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
 	function setupBlur(input, callback) {
 		input.bind('blur', function() {
-			//console.log("ade blur");
 			callback(0);
 		});
 	}
@@ -81,7 +77,6 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 	function setupKeys(input, callback) {
 
 		input.bind('keydown', function(e) {
-			//console.log("ade keydown",e.keyCode);
 			if (e.keyCode == 9) { //tab
 				e.preventDefault();
 				e.stopPropagation();
@@ -96,7 +91,6 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
 
 		//Handles return key pressed on in-line text box
 		input.bind('keypress', function(e) {
-			//console.log("ade keypress",e.keyCode);
 			if (e.keyCode == 13) { //return
 				e.preventDefault();
 				e.stopPropagation();
