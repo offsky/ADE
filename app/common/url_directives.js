@@ -1,9 +1,11 @@
 /* ==================================================================
 	AngularJS Datatype Editor - URL
-	A directive to edit a url field in place
+	A directive to edit a url field in place. You can also specify that
+	the url is an email address or phone number and it will customize
+	the link for those purposes.
 
 	Usage:
-	<div ade-url='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-url='{"class":"input-medium","id":"1234","type":"email"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -32,7 +34,6 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null;
-			var popup = null; //reference to the DOM popup object
 
 			if (controller != null) {
 				controller.$render = function() { //whenever the view needs to be updated
@@ -44,7 +45,6 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
-				console.log('saving', exited);
 				oldValue = value;
 				exit = exited;
 
@@ -93,34 +93,55 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 			element.bind('click', function(e) {
 				e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
 				e.stopPropagation();
-				var $linkPopup = element.next('.' + $scope.adePopupClass + '');
-				var elOffset;
-				var posLeft;
-				var posTop;
 
 				if (editing) return;
 
-				if (value !== '' && $filter('url')(value).match('http')) { //if it matches as a URL, then make the popup
-					if (!$linkPopup.length) { //don't make a duplicate popup
-						if (!value.match('http')) value = 'http://' + value; //put an http if omitted so the link is clickable
-
-						//get position of popup
-						elOffset = element.offset();
-						posLeft = elOffset.left;
-						posTop = elOffset.top + element[0].offsetHeight;
-
+				//generate html for the popup
+				var linkString = value;
+				var isurl = false;
+				var elOffset = element.offset();
+				var posLeft = elOffset.left;
+				var posTop = elOffset.top + element[0].offsetHeight;
+				switch (options.type) {
+					case 'email':
+						isurl = $filter('email')(value).match('mailto:');
+						if (!linkString.match('mailto:')) linkString = 'mailto:' + linkString; //put an http if omitted so the link is clickable
 						var html = '<div class="' + $scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-                          '<a class="' + $scope.miniBtnClasses + '" href="' + value + '" target="_blank" ng-click="hidePopup();">Follow Link</a>' +
-                          ' or <a class="' + $scope.miniBtnClasses + ' ade-edit-link">Edit Link</a>' +
-                          '<div class="ade-hidden"><input class="invisurl" type="text" /></div>' +
-                          '</div>';
+								'<a class="' + $scope.miniBtnClasses + '" href="' + linkString + '" ng-click="hidePopup();">Send Email</a>' +
+								' or <a class="' + $scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
+								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
+								'</div>';
+						break;
+					case 'phone':
+						isurl = $filter('phone')(value).match('tel:');
+						if (!linkString.match('tel:')) linkString = 'tel:' + linkString; //put an http if omitted so the link is clickable
+						var html = '<div class="' + $scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+								'<a class="' + $scope.miniBtnClasses + '" href="' + linkString + '" ng-click="hidePopup();">Call Number</a>' +
+								' or <a class="' + $scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
+								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
+								'</div>';
+						break;
+					default:
+						isurl = $filter('url')(value).match('http://');
+						if (!linkString.match('http://')) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
+						var html = '<div class="' + $scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+								'<a class="' + $scope.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="hidePopup();">Follow Link</a>' +
+								' or <a class="' + $scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
+								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
+								'</div>';
+				}
+
+				//if it matches as a URL, then make the popup
+				if (value !== '' && isurl) {
+					if (!element.next('.' + $scope.adePopupClass).length) { //don't make a duplicate popup
+
 						$compile(html)($scope).insertAfter(element);
 
 						var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
- 						editLinkNode.bind('click', editLink);
+						editLinkNode.bind('click', editLink);
 
 						//There is an invisible input box that handles blur and keyboard events on the popup
-						var invisibleInput = element.next('.ade-links').find('.invisurl');
+						var invisibleInput = element.next('.ade-links').find('.invisinput');
 						invisibleInput.focus(); //focus the invisible input
 
 						ADE.setupKeys(invisibleInput, saveEdit);
@@ -130,18 +151,17 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 							timeout = window.setTimeout(function() {
 								$scope.hidePopup();
 							},300);
-
 						});
 					}
 				} else { //the editing field is not a clickable link, so directly edit it
-				   editLink();
+					editLink();
 				}
 			});
 
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeUrl', function(settings) { //settings is the contents of the ade-url="" string
-				options = ADE.parseSettings(settings, {className: 'input-medium'});
+				options = ADE.parseSettings(settings, {className: 'input-medium', type: 'http'});
 				return element; //TODO: not sure what to return here
 			});
 		}

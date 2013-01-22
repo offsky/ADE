@@ -33,11 +33,11 @@
 
 		<br /><br />
 
-        <div class="ade-editable" ade-email='{"className":"input-medium","id":"123"}' ng-model="emailstring" ng-bind-html="emailstring | email"></div>
+        <div class="ade-editable" ade-url='{"className":"input-medium","id":"123","type":"email"}' ng-model="emailstring" ng-bind-html="emailstring | email"></div>
 
         <br >
             
-        <div class="ade-editable" ade-email='{"className":"input-medium","id":"1234"}' ng-model="emailstring2" ng-bind-html="emailstring2 | email"></div>
+        <div class="ade-editable" ade-url='{"className":"input-medium","id":"1234","type":"email"}' ng-model="emailstring2" ng-bind-html="emailstring2 | email"></div>
 
 		<br /><br />
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
@@ -56,8 +56,8 @@
 		
 		<script src="../common/ade.js"></script>
 		<script src="../common/demoCtrl.js"></script>
+		<script src="../common/url_directives.js"></script>
 		<script src="app.js"></script>
-		<script src="email_directives.js"></script>
       <script src="email_filters.js"></script>
 		
 	</body>
