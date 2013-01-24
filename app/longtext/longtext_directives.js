@@ -63,7 +63,19 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                         return $scope.$apply(); //This is necessary to get the model to match the value of the input
                     }
                 } else {
-                    txtArea.val(txtArea.val()+'\n');
+                    //Enter key should break on a new line
+                    var cursorPosition = txtArea[0].selectionStart;
+                    var txtAreaValue = txtArea.val();
+
+                    if (txtAreaValue.length <= cursorPosition) {
+                        txtArea.val(txtAreaValue+'\n');
+                    } else {
+                        var txtValBefore = txtAreaValue.substring(0, cursorPosition);
+                        var txtValAfter = txtAreaValue.substring(cursorPosition);
+
+                        txtArea.val(txtValBefore+'\n'+txtValAfter);
+                        txtArea[0].setSelectionRange((cursorPosition+1),(cursorPosition+1));
+                    }
                 }
             };
 
@@ -73,7 +85,21 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                 var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
                     elOffset, posLeft, posTop, content;
 
-                content = (showText) ? value : '<textarea class="class="'+options.className+'">'+value+'</textarea>';
+                if (!showText) {
+                    var valueLength = value.length;
+                    var numLines = parseInt(valueLength/35, 10); // about 35 letters per line
+                    var numNewLines = value.split(/\r?\n|\r/).length;
+                    var textareaHeight;
+
+                    // 16 is a line-height value
+                    if (numNewLines > numLines) {
+                        textareaHeight = numNewLines * 16;
+                    } else {
+                        textareaHeight = (numLines === 0) ? (numLines+1) * 16 : numLines * 16;
+                    }
+                }
+
+                content = (showText) ? value : '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>';
 
                 if (!$linkPopup.length) {
                     elOffset = element.offset();
@@ -89,6 +115,10 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                     txtArea.focus();
                     ADE.setupBlur(txtArea,saveEdit);
                     ADE.setupKeys(txtArea,saveEdit);
+                    txtArea.bind('keyup', function(e) {
+                        this.style.height = '1px';
+                        this.style.height = (this.scrollHeight)+'px';
+                    });
                 } else {
                     input.bind('click', function() {
                         editLongText(false);
@@ -108,6 +138,13 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
                 var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
                 if (!$linkPopup.length) {
                     editLongText(true);
+                }
+            });
+
+            element.bind('mouseleave', function(e) {
+                var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
+                if ($linkPopup.length && !$linkPopup.find('textarea').length) {
+                    $scope.hidePopup();
                 }
             });
 

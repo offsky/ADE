@@ -18,8 +18,8 @@
 .ade-links .icon.icon-remove{margin:3px 0 0 0;}
 
 /* Longtext Directive */
-.ade-longtext.dropdown-menu.open{padding:5px 10px;min-width:289px;width:auto;}
-.ade-longtext textarea{margin-top:15px;width:279px;}
+.ade-longtext.dropdown-menu.open{padding:5px 10px;min-width:289px;width:auto;max-width:400px;}
+.ade-longtext textarea{margin-top:15px;width:279px;line-height:16px;max-height:250px;}
 
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:23px;}
