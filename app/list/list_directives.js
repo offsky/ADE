@@ -31,7 +31,7 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
             var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
             //whenever the model changes, we get called so we can update our value
-            if (controller != null) {
+            if (controller) {
                 controller.$render = function() {
                     oldValue = value = controller.$modelValue;
                     if (value == undefined || value == null) value = "";
@@ -46,21 +46,32 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 
                 if (exited != 3) { //don't save value on esc
                     value = input.data().select2.data();
-                    /*if (angular.isObject(value) && value.length > 1) {
-                        var v="";
-                        angular.forEach(value, function(val, key) {
+                    var v="";
+                    if (angular.isArray(value) && value.length > 0) {
 
+                        angular.forEach(value, function(val, key) {
+                            //add new option if it doesn't exist
+                            if ($scope.listOptions.indexOf(val.text) == -1) {
+                                $scope.listOptions.push(val.text);
+                            }
                             val = (key < value.length-1) ? val.text +"," : val.text;
                             v += val;
                         });
-                    } else {
+                        value = v;
+                    } else if (angular.isObject(value) && value.text !== "") {
+                        //add new option if it doesn't exist
+                        if ($scope.listOptions.indexOf(value.text) == -1) {
+                            $scope.listOptions.push(value.text);
+                        }
                         value = value.text;
-                    }*/
+                    } else {
+                        value = (value) ? value.text : "";
+                    }
 
                     controller.$setViewValue(value);
                 }
 
-                //if (v) element[0].innerHTML = v;
+                if (v) element[0].innerHTML = v;
                 element.show();
                 input.select2('destroy'); //TODO: resolve console error when destroying this the second time for the same input
                 input.remove();
@@ -73,10 +84,6 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
                 }
             };
 
-            angular.element('body').bind('click', function(e) {
-                //if (e.target != element[0] && editing) saveEdit(3);
-            });
-
             //handles clicks on the read version of the data
             element.bind('click', function() {
                 if (editing) return;
@@ -84,45 +91,54 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
                 exit = 0;
 
                 ADE.begin(options);
-
+                console.log(options);
                 element.hide();
 
                 var multi = '';
-                if (options.multiple) multi = 'multiple="multiple"';
+                var placeholder = '';
 
-                var listid = '';
-                if (options.listid) listid = ',listid:\'' + options.listid + '\'';
-
-                console.log(value);
-
-
-
-                $compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:\'List...\',initSelection:selection' + listid + '} ' + multi + ' />')($scope)
-                    .insertAfter(element);
-                input = element.next('input');
-
-                setTimeout(function() {
-                    input.trigger("change");
-                    input.select2("open");
-
-                    input.select2("data", value);
-                });
-
-                if (!options.multiple) {
-                    input.on("change", function(e) {
-                        //saveEdit();
-                    });
+                if (options.multiple) {
+                    multi = 'multiple="multiple"';
                 } else {
-                    input.on("blur", function(e) {
-                       console.log("BLUR");
-                    });
+                    placeholder = ',placeholder:\'List...\'';
                 }
 
 
+                $compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
+                    .insertAfter(element);
+                input = element.next('input');
+
+                var data = [], stringData=value;
+                var cleanValue = (value) ? value.split(',') : [];
+
+                angular.forEach(cleanValue, function(value, key) {
+                    $scope.listOptions.map(function(v,i) {
+                        if (value === v) {
+                            data.push({'id':i,'text':v });
+                        }
+                    });
+                });
+
+                if (!options.multiple) data = data[0];
+
+                setTimeout(function() {
+                    input.select2("data", data);
+                    input.select2("open");
+                });
+
+                input.on("change", function(e) {
+                    saveEdit();
+                });
+
+                input.on("close", function(e) {
+                   //if (options.multiple) {
+                       saveEdit();
+                   //}
+                });
 
                 //TODO: make the list go back to read mode on ESC, blur and click outside
-                //ADE.setupBlur(input,saveEdit);
-                //ADE.setupKeys(input,saveEdit);
+                ADE.setupBlur(input,saveEdit);
+                ADE.setupKeys(input,saveEdit);
 
                 //make sure we aren't already digesting/applying before we apply the changes
                 if (!$scope.$$phase) {
