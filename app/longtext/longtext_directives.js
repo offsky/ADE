@@ -26,12 +26,12 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 		//The link step (after compile)
 		link: function($scope, element, attrs, controller) {
 			var options = {},
-                editing=false,
-                txtArea=null,
-                input = null,
-                value = "",
-                oldValue = "",
-                exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+				editing=false,
+				txtArea=null,
+				input = null,
+				value = "",
+				oldValue = "",
+				exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
 			if (controller != null) {
@@ -47,106 +47,108 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 				oldValue = value;
 				exit = exited;
 
-                if(exit != 2) {
-                    if(exited!=3) { //don't save value on esc
-                        value = txtArea.val();
-                        controller.$setViewValue(value);
-                    }
+				if(exit != 2) {
+					if(exited!=3) { //don't save value on esc
+						value = txtArea.val();
+						controller.$setViewValue(value);
+					}
 
-                    element.show();
-                    input.remove();
-                    editing=false;
+					element.show();
+					input.remove();
+					editing=false;
 
-                    ADE.done(options,oldValue,value,exit);
+					ADE.done(options,oldValue,value,exit);
 
-                    if(!$scope.$$phase) {
-                        return $scope.$apply(); //This is necessary to get the model to match the value of the input
-                    }
-                } else {
-                    //Enter key should break on a new line
-                    var cursorPosition = txtArea[0].selectionStart;
-                    var txtAreaValue = txtArea.val();
+					if(!$scope.$$phase) {
+						return $scope.$apply(); //This is necessary to get the model to match the value of the input
+					}
+				} else {
+					//Enter key should break on a new line
+					var cursorPosition = txtArea[0].selectionStart;
+					var txtAreaValue = txtArea.val();
 
-                    if (txtAreaValue.length <= cursorPosition) {
-                        txtArea.val(txtAreaValue+'\n');
-                    } else {
-                        var txtValBefore = txtAreaValue.substring(0, cursorPosition);
-                        var txtValAfter = txtAreaValue.substring(cursorPosition);
+					if (txtAreaValue.length <= cursorPosition) {
+						txtArea.val(txtAreaValue+'\n');
+					} else {
+						var txtValBefore = txtAreaValue.substring(0, cursorPosition);
+						var txtValAfter = txtAreaValue.substring(cursorPosition);
 
-                        txtArea.val(txtValBefore+'\n'+txtValAfter);
-                        txtArea[0].setSelectionRange((cursorPosition+1),(cursorPosition+1));
-                    }
-                }
-            };
+						txtArea.val(txtValBefore+'\n'+txtValAfter);
+						txtArea[0].setSelectionRange((cursorPosition+1),(cursorPosition+1));
+					}
+				}
+			};
 
-            var editLongText = function(showText) {
-                $scope.hidePopup();
+			var editLongText = function(showText) {
+				$scope.hidePopup();
 
-                var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
-                    elOffset, posLeft, posTop, content;
+				var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
+					elOffset, posLeft, posTop, content;
 
-                if (!showText) {
-                    var valueLength = value.length;
-                    var numLines = parseInt(valueLength/35, 10); // about 35 letters per line
-                    var numNewLines = value.split(/\r?\n|\r/).length;
-                    var textareaHeight;
+				if (!showText) {
+					var valueLength = value.length;
+					var numLines = parseInt(valueLength/35, 10); // about 35 letters per line
+					var numNewLines = value.split(/\r?\n|\r/).length;
+					var lineHeight = 16; //in pixels
+					var textareaHeight = 3*lineHeight; //minimum height
 
-                    // 16 is a line-height value
-                    if (numNewLines > numLines) {
-                        textareaHeight = numNewLines * 16;
-                    } else {
-                        textareaHeight = (numLines === 0) ? (numLines+1) * 16 : numLines * 16;
-                    }
-                }
+					// 16 is a line-height value
+					if (numNewLines > numLines) {
+						if (numNewLines >= 3) textareaHeight = numNewLines * lineHeight;
+					} else {
+						if (numLines >= 3) textareaHeight = numLines * lineHeight;
+					}
+					console.log(numLines,numNewLines,textareaHeight);
+				}
 
-                content = (showText) ? value : '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>';
+				content = (showText) ? value : '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>';
 
-                if (!$linkPopup.length) {
-                    elOffset = element.offset();
-                    posLeft = elOffset.left;
-                    posTop = elOffset.top + element[0].offsetHeight;
-                    $compile('<div class="'+ $scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px">'+content+'</div>')($scope).insertAfter(element);
-                }
+				if (!$linkPopup.length) {
+					elOffset = element.offset();
+					posLeft = elOffset.left;
+					posTop = elOffset.top + element[0].offsetHeight;
+					$compile('<div class="'+ $scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px">'+content+'</div>')($scope).insertAfter(element);
+				}
 
-                input = element.next('.ade-longtext');
-                txtArea = input.find('textarea');
+				input = element.next('.ade-longtext');
+				txtArea = input.find('textarea');
 
-                if (txtArea.length) {
-                    txtArea.focus();
-                    ADE.setupBlur(txtArea,saveEdit);
-                    ADE.setupKeys(txtArea,saveEdit);
-                    txtArea.bind('keyup', function(e) {
-                        this.style.height = '1px';
-                        this.style.height = (this.scrollHeight)+'px';
-                    });
-                } else {
-                    input.bind('click', function() {
-                        editLongText(false);
-                    });
-                    ADE.setupBlur(input,saveEdit);
-                    ADE.setupKeys(input,saveEdit);
-                }
+				if (txtArea.length) {
+					txtArea.focus();
+					ADE.setupBlur(txtArea,saveEdit);
+					ADE.setupKeys(txtArea,saveEdit);
+					txtArea.bind('keyup', function(e) {
+						this.style.height = '1px';
+						this.style.height = (this.scrollHeight)+'px';
+					});
+				} else {
+					input.bind('click', function() {
+						editLongText(false);
+					});
+					ADE.setupBlur(input,saveEdit);
+					ADE.setupKeys(input,saveEdit);
+				}
 
 
-                //make sure we aren't already digesting/applying before we apply the changes
-                if(!$scope.$$phase) {
-                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
-                }
-            };
+				//make sure we aren't already digesting/applying before we apply the changes
+				if(!$scope.$$phase) {
+					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				}
+			};
 
-            element.bind('mouseenter', function(e)  {
-                var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
-                if (!$linkPopup.length) {
-                    editLongText(true);
-                }
-            });
+			element.bind('mouseenter', function(e)  {
+				var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
+				if (!$linkPopup.length) {
+					editLongText(true);
+				}
+			});
 
-            element.bind('mouseleave', function(e) {
-                var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
-                if ($linkPopup.length && !$linkPopup.find('textarea').length) {
-                    $scope.hidePopup();
-                }
-            });
+			element.bind('mouseleave', function(e) {
+				var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
+				if ($linkPopup.length && !$linkPopup.find('textarea').length) {
+					$scope.hidePopup();
+				}
+			});
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
@@ -156,7 +158,7 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 
 				ADE.begin(options);
 
-                editLongText(false);
+				editLongText(false);
 			});
 			
 			// Watches for changes to the element
