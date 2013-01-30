@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
         <link rel="stylesheet" href="../common/ade.css"/>
 	</head>
-	<body ng-app="app" ng-init="data='click to edit this very very very very very very very very very very very very very very very very very very very very very very very very long text'" >
+	<body ng-app="app" ng-init="data='click to edit this very very very very very very very very very very very very very very very very very very very very very very very very long text';data2='edit me'" >
 		<div class="container">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -26,7 +26,9 @@
 		<br />
 		
 		<div class="ade-editable" ade-longtext='{"className":"input-xlarge","id":"1234"}' ng-model="data">{{data | longtext:25}}</div>
-		
+		<br />
+		<div class="ade-editable" ade-longtext='{"className":"input-xlarge","id":"1234"}' ng-model="data2">{{data2 | longtext:25}}</div>
+
 		<br /><br />
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 		<br />
