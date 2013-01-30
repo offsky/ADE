@@ -50,19 +50,11 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 					if (angular.isArray(value) && value.length > 0) {
 
 						angular.forEach(value, function(val, key) {
-							//add new option if it doesn't exist
-							if ($scope.listOptions.indexOf(val.text) == -1) {
-								$scope.listOptions.push(val.text);
-							}
 							val = (key < value.length-1) ? val.text +"," : val.text;
 							v += val;
 						});
 						value = v;
 					} else if (angular.isObject(value) && value.text !== "") {
-						//add new option if it doesn't exist
-						if ($scope.listOptions.indexOf(value.text) == -1) {
-							$scope.listOptions.push(value.text);
-						}
 						value = value.text;
 					} else {
 						value = (value) ? value.text : "";
@@ -106,7 +98,7 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				var query = '';
 				if(options.query) query = ",query:" + options.query; //the user's query function for providing the list data
 				var passthru = '';
-				if(options.passthru) passthru = ",passthru:" + options.passthru; //data that is passed through to the query function
+				if(options.passthru) passthru = ",passthru:'" + options.passthru + "'"; //data that is passed through to the query function
 
 				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true'+query+passthru+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
 					.insertAfter(element);
