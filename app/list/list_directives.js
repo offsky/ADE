@@ -104,9 +104,11 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				}
 				
 				var query = '';
-				if(options.query) query = ",query:" + options.query;
+				if(options.query) query = ",query:" + options.query; //the user's query function for providing the list data
+				var passthru = '';
+				if(options.passthru) passthru = ",passthru:" + options.passthru; //data that is passed through to the query function
 
-				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true'+query+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
+				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true'+query+passthru+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
 					.insertAfter(element);
 				input = element.next('input');
 
