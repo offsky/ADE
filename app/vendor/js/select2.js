@@ -654,7 +654,7 @@
             var select2 = this.opts.element.data("select2");
             if (select2 !== undefined) {
                 select2.container.remove();
-                select2.dropdown.remove();
+                select2.dropdown[0].remove();
                 select2.opts.element
                     .removeData("select2")
                     .unbind(".select2")

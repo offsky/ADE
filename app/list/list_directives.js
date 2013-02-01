@@ -83,7 +83,6 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				exit = 0;
 
 				ADE.begin(options);
-				console.log(options);
 				element.hide();
 
 				var multi = '';
