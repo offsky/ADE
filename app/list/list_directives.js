@@ -44,7 +44,6 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				oldValue = value;
 				exit = exited;
 
-                console.log("saveEdit");
 				if (exited != 3) { //don't save value on esc
 					value = input.data().select2.data();
 					var v="";
@@ -70,10 +69,6 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
                     input.select2('destroy'); //TODO: resolve console error when destroying this the second time for the same input
                     input.remove();
                     editing = false;
-                } else if (exited == 0) {
-                    setTimeout(function() {
-                        input.select2('open');
-                    });
                 }
 
 				ADE.done(options, oldValue, value, exit);
@@ -121,7 +116,7 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				var passthru = '';
 				if(options.passthru) passthru = ",passthru:'" + options.passthru + "'"; //data that is passed through to the query function
 
-				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,allowAddNewValues:true'+query+passthru+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
+				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,closeOnSelect:false,allowAddNewValues:true'+query+passthru+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
 					.insertAfter(element);
 				input = element.next('input');
 
@@ -146,11 +141,12 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				input.on("change", function(e) {
 					if (!options.multiple) {
                         saveEdit();
-                    } else {
-                        console.log("calling saveEdit");
-                        saveEdit(0);
                     }
 				});
+
+                input.on("close", function(e) {
+                   saveEdit();
+                });
 
 				//make sure we aren't already digesting/applying before we apply the changes
 				if (!$scope.$$phase) {
