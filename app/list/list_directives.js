@@ -44,6 +44,7 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				oldValue = value;
 				exit = exited;
 
+                console.log("saveEdit");
 				if (exited != 3) { //don't save value on esc
 					value = input.data().select2.data();
 					var v="";
@@ -63,11 +64,17 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 					controller.$setViewValue(value);
 				}
 
-				if (v) element[0].innerHTML = v;
-				element.show();
-				input.select2('destroy'); //TODO: resolve console error when destroying this the second time for the same input
-				input.remove();
-				editing = false;
+                if (exited !== 0) {
+                    if (v) element[0].innerHTML = v;
+                    element.show();
+                    input.select2('destroy'); //TODO: resolve console error when destroying this the second time for the same input
+                    input.remove();
+                    editing = false;
+                } else if (exited == 0) {
+                    setTimeout(function() {
+                        input.select2('open');
+                    });
+                }
 
 				ADE.done(options, oldValue, value, exit);
 
@@ -75,6 +82,21 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 					return $scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			};
+
+            $("body").bind("keyup", function(e) {
+                $(document).find("div.select2-drop-active").each(function () {
+                    if (e.keyCode == 27) { //esc
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var activeContainer = $(document).find('.select2-container-active');
+                        var activeInput = activeContainer.next();
+                        activeContainer.remove();
+                        activeInput.remove();
+                        element.show();
+                        editing=false;
+                    }
+                });
+            });
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
@@ -122,18 +144,13 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				});
 
 				input.on("change", function(e) {
-					saveEdit();
+					if (!options.multiple) {
+                        saveEdit();
+                    } else {
+                        console.log("calling saveEdit");
+                        saveEdit(0);
+                    }
 				});
-
-				input.on("close", function(e) {
-				   //if (options.multiple) {
-					   saveEdit();
-				   //}
-				});
-
-				//TODO: make the list go back to read mode on ESC, blur and click outside
-				ADE.setupBlur(input,saveEdit);
-				ADE.setupKeys(input,saveEdit);
 
 				//make sure we aren't already digesting/applying before we apply the changes
 				if (!$scope.$$phase) {
