@@ -98,10 +98,10 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 					} else {
 						if (numLines >= 3) textareaHeight = numLines * lineHeight;
 					}
-					console.log(numLines,numNewLines,textareaHeight);
-				}
-
-				content = (showText) ? value : '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>';
+                    content = '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>'
+				} else {
+                    content = value.replace(/\n/g, '<br />');;
+                }
 
 				if (!$linkPopup.length) {
 					elOffset = element.offset();
