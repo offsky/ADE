@@ -114,7 +114,9 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 				txtArea = input.find('textarea');
 
 				if (txtArea.length) {
+                    var pos = txtArea.val().length;
 					txtArea.focus();
+                    txtArea[0].setSelectionRange(pos,pos);
 					ADE.setupBlur(txtArea,saveEdit);
 					ADE.setupKeys(txtArea,saveEdit);
 					txtArea.bind('keyup', function(e) {
