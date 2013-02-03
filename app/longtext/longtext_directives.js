@@ -99,6 +99,7 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 						if (numLines >= 3) textareaHeight = numLines * lineHeight;
 					}
                     content = '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>'
+                    editing=true;
 				} else {
                     content = value.replace(/\n/g, '<br />');;
                 }
@@ -139,6 +140,7 @@ adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$
 			};
 
 			element.bind('mouseenter', function(e)  {
+                if (angular.element('.ade-longtext').hasClass('open')) return;
 				var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
 				if (!$linkPopup.length) {
 					editLongText(true);
