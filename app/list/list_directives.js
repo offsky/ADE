@@ -66,19 +66,19 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
                 if (exited !== 0) {
                     if (v) element[0].innerHTML = v;
                     element.show();
-                    input.select2('destroy'); //TODO: resolve console error when destroying this the second time for the same input
+                    input.select2('destroy');
                     input.remove();
-                    editing = false;
                 }
 
+                editing = false;
 				ADE.done(options, oldValue, value, exit);
 
 				if (!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+					return $scope.$apply();
 				}
 			};
 
-            $("body").bind("keyup", function(e) {
+            $(document).bind("keydown", function(e) {
                 $(document).find("div.select2-drop-active").each(function () {
                     if (e.keyCode == 27) { //esc
                         e.preventDefault();
@@ -116,11 +116,11 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				var passthru = '';
 				if(options.passthru) passthru = ",passthru:'" + options.passthru + "'"; //data that is passed through to the query function
 
-				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,closeOnSelect:false,allowAddNewValues:true'+query+passthru+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
+				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true'+query+passthru+',initSelection:selection'+placeholder+'} ' + multi + ' />')($scope)
 					.insertAfter(element);
 				input = element.next('input');
 
-				var data = [], stringData=value;
+				var data = [];
 				var cleanValue = (value) ? value.split(',') : [];
 
 				angular.forEach(cleanValue, function(value, key) {
@@ -139,14 +139,14 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 				});
 
 				input.on("change", function(e) {
-					if (!options.multiple) {
+                    if (e[0] === "singleRemove") {
+                        saveEdit(0);
+                    } else if (e[0] === "bodyClick") {
                         saveEdit();
+                    } else {
+                        if (!options.multiple) saveEdit();
                     }
 				});
-
-                input.on("close", function(e) {
-                   saveEdit();
-                });
 
 				//make sure we aren't already digesting/applying before we apply the changes
 				if (!$scope.$$phase) {

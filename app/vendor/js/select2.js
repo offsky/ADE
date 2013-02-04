@@ -1,3 +1,13 @@
+/* CUSTOMIZATION
+ 2.3.2013 - commented out killEvent on line 1870 & 1469 (approx) to make keydown event
+            propagate to listDirective, so that only one keypress is necessary to
+            dismiss the multi list picker.
+          - added closeOnRemove option to prevent list pickers from closing after
+            clicking on x.
+          - added searchClear option to enable search field clearing on multi list picker.
+
+ */
+
 /*
  Copyright 2012 Igor Vaynberg
 
@@ -505,6 +515,15 @@
                 $(document).find("div.select2-drop-active").each(function () {
                     if (this !== target) $(this).data("select2").blur();
                 });
+
+                /* Changed on 2.3.2013
+                Nessesary to detect body click: triggers change event that is caught
+                in directive.
+                */
+                if (($('.select2-container').length) && (e.target !== $('.select2-container'))) {
+                    $('.select2-container').data("select2").triggerChange(["bodyClick"]);
+
+                }
             }
 
             target=$(e.target);
@@ -654,7 +673,7 @@
             var select2 = this.opts.element.data("select2");
             if (select2 !== undefined) {
                 select2.container.remove();
-                select2.dropdown[0].remove();
+                select2.dropdown.remove();
                 select2.opts.element
                     .removeData("select2")
                     .unbind(".select2")
@@ -1455,7 +1474,8 @@
                             return;
                         case KEY.ESC:
                             this.cancel(e);
-                            killEvent(e);
+                            // Changed on 2.3.2013
+                            //killEvent(e);
                             return;
                     }
                 } else {
@@ -1531,10 +1551,11 @@
                     return;
                 }
 
-                if (e.which == KEY.DELETE) {
+                if (e.which == KEY.DELETE || e.which == KEY.BACKSPACE) {
                     if (this.opts.allowClear) {
                         this.clear();
                     }
+                    killEvent(e);
                     return;
                 }
 
@@ -1571,8 +1592,9 @@
                 if (!this.enabled) return;
                 this.clear();
                 killEvent(e);
-                this.close();
-                this.triggerChange();
+                // Changed on 2.3.2013
+                if (this.opts.closeOnRemove) this.close();
+                this.triggerChange(["singleRemove"]);
                 this.selection.focus();
             }));
 
@@ -1854,9 +1876,10 @@
                         this.selectHighlighted();
                         killEvent(e);
                         return;
-                    case KEY.ESC:
+                        case KEY.ESC:
                         this.cancel(e);
-                        killEvent(e);
+                        // Changed on 2.3.2013
+                        //killEvent(e);
                         return;
                     }
                 }
@@ -1931,6 +1954,7 @@
         // multi
         initSelection: function () {
             var data;
+
             if (this.opts.element.val() === "") {
                 this.updateSelection([]);
                 this.close();
@@ -2036,6 +2060,7 @@
         // multi
         onSelect: function (data) {
             this.addSelectedChoice(data);
+
             if (this.select) { this.postprocessResults(); }
 
             if (this.opts.closeOnSelect) {
@@ -2050,6 +2075,19 @@
                     // if nothing left to select close
                     this.close();
                 }
+            }
+
+            // Changed on 2.3.2013
+            if (this.opts.searchClear) {
+                if (this.countSelectableResults()>0) {
+                    this.clearSearch();
+                    this.close();
+                    this.open();
+                } else {
+                    this.clearSearch();
+                    this.open();
+                }
+
             }
 
             // since its not possible to select an element that has already been
@@ -2086,7 +2124,15 @@
                 $(e.target).closest(".select2-search-choice").fadeOut('fast', this.bind(function(){
                     this.unselect($(e.target));
                     this.selection.find(".select2-search-choice-focus").removeClass("select2-search-choice-focus");
-                    this.close();
+
+                    // Changed on 2.3.2013
+                    if (this.opts.closeOnRemove) {
+                        this.close();
+                    } else {
+                        this.close();
+                        this.open();
+                    }
+
                     this.focusSearch();
                 })).dequeue();
                 killEvent(e);
@@ -2350,6 +2396,8 @@
     $.fn.select2.defaults = {
         width: "copy",
         closeOnSelect: true,
+        closeOnRemove: true, // Changed on 2.3.2013
+        searchClear: false, // Changed on 2.3.2013
         openOnEnter: true,
         containerCss: {},
         dropdownCss: {},
