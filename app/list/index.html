@@ -25,10 +25,10 @@
 
 
         <b>Pick one:</b>
-        <!--<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" ng-model="datasingle" />
+        <input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" ng-model="datasingle" />
         <br /><br />
         <b>Pick Multiple:</b>
-        <input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" multiple="multiple" ng-model="datamulti" /> -->
+        <input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection: selection}" multiple="multiple" ng-model="datamulti" />
 
         <br /><br />
         <h1>List Directive</h1>
@@ -36,10 +36,10 @@
         <p>The directive will handle editing the list value for a non-input element.</p>
 
         <b>Pick one:</b> <br />
-        <div class="ade-editable" ade-list='{"id":123,"multiple":false,"query":"query"}' ng-model="datasingle2">{{datasingle2 | list:1}}</div>
+        <div class="ade-list ade-editable" ade-list='{"id":123,"multiple":false,"query":"query"}' ng-model="datasingle2">{{datasingle2 | list:1}}</div>
         <br />
         <b>Pick Multiple:</b> <br />
-        <div class="ade-editable" ade-list='{"id":1234,"multiple":true,"query":"query"}' ng-model="datamulti2">{{datamulti2 | list:0}}</div>
+        <div class="ade-list ade-editable" ade-list='{"id":1234,"multiple":true,"query":"query"}' ng-model="datamulti2">{{datamulti2 | list:0}}</div>
 
         <br /><br />
         <p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>

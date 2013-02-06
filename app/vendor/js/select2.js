@@ -517,12 +517,17 @@
                 });
 
                 /* Changed on 2.3.2013
-                Nessesary to detect body click: triggers change event that is caught
-                in directive.
+                Nessesary to detect body click: triggers change event that is caught in directive.
                 */
-                if (($('.select2-container').length) && (e.target !== $('.select2-container'))) {
-                    $('.select2-container').data("select2").triggerChange(["bodyClick"]);
-
+                var s2Container = $('.select2-container');
+                if (s2Container.length) {
+                    $.each(s2Container, function() {
+                        if (($(this).prev().hasClass("ade-list")) && (e.target !== $(this))) {
+                            if ($(this).find('.select2-drop').not(":visible")) {
+                                $(this).data("select2").triggerChange(["bodyClick"]);
+                            }
+                        }
+                    });
                 }
             }
 
