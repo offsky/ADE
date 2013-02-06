@@ -10,7 +10,7 @@
 	"id" will be used in messages broadcast to the app on state changes.
 
 	Messages:
-		name: ADE-start  
+		name: ADE-start 
 		data: id from config
 
 		name: ADE-finish
@@ -18,7 +18,7 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE,$compile,$rootScope) {
+adeModule.directive('adeLongtext', ['ADE','$compile','$rootScope',function(ADE, $compile, $rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>

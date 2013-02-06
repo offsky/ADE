@@ -10,8 +10,8 @@ describe('time', function() {
 		timeFilter = $filter('time');
 	})); 
 
-	it('should print a date', function() {
-		expect(timeFilter(1355517820)).toBe('2:43 pm');
+	it('should print a time', function() {
+		expect(timeFilter(1355517820)).toBe('12:43 pm');
 	});
 
 	it('should print a empty string for non-dates', function() {

@@ -1,30 +1,30 @@
 /* ==================================================================
  AngularJS Datatype Editor - Long Text
- A filter to display a long string.
- Wraps Angular's native linky filter so that we can handle more
- inputs
+ A filter to display a long string at a specified length
 
  Usage:
- {{ data | url }}
+ {{ data | longtext:20 }}
 
  ------------------------------------------------------------------*/
 
 'use strict';
 
-adeModule.filter('longtext', ['$filter',function($filter) {
-    return function(input, options) {
-        var len = options || 100,
-            output;
+adeModule.filter('longtext', ['$filter', function($filter) {
+	return function(input, options) {
+		if (!input) return '';
 
-        if(!input) return '';
+		var len = options || 100;
+		var output;
 
-        if (len < input.length) {
-            output = input.substring(0, len) + '...';
-        } else {
-            output = input;
-        }
+		input = input.split(/\r?\n|\r/)[0]; //get first line
 
-        return output;
-    };
+		if (len < input.length) {
+			output = input.substring(0, len) + '...';
+		} else {
+			output = input;
+		}
+
+		return output;
+	};
 }]);
 
