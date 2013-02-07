@@ -4,42 +4,28 @@
 
 describe('my app', function() {
 
-  beforeEach(function() {
-    browser().navigateTo('../../app/index.html');
-  });
-
-
-  it('should automatically redirect to /view1 when location hash/fragment is empty', function() {
-    expect(browser().location().url()).toBe("/view1");
-  });
-
-
-  describe('view1', function() {
-
     beforeEach(function() {
-      browser().navigateTo('#/view1');
+        browser().navigateTo('../../app/index.html');
     });
 
+    describe('email', function() {
+        beforeEach(function() {
+            browser().navigateTo('email/');
+            var adeUrlElement = angular.element('div').attr('ade-url');
+        });
 
-    it('should render view1 when user navigates to /view1', function() {
-      expect(element('[ng-view] p:first').text()).
-        toMatch(/partial for view 1/);
+        it('should render 2 controls', function() {
+            expect(adeUrlElement.count().tobe(2));
+        });
+
+        it('should go into edit mode', function() {
+            adeUrlElement.click();
+            expect(adeUrlElement.next('input').count().tobe(1));
+        });
+
+        it('should show a popup on click', function() {
+            adeUrlElement.click();
+            expect(adeUrlElement.next('div').hasClass('ade-popup').count().tobe(1));
+        });
     });
-
-  });
-
-
-  describe('view2', function() {
-
-    beforeEach(function() {
-      browser().navigateTo('#/view2');
-    });
-
-
-    it('should render view2 when user navigates to /view2', function() {
-      expect(element('[ng-view] p:first').text()).
-        toMatch(/partial for view 2/);
-    });
-
-  });
 });
