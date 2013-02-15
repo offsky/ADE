@@ -15,9 +15,10 @@ then
 		yeoman build
 		if [ $? == 0 ]
 		then
+			cp -r dist/common/adeImg dist/build
 			rm -r temp
 		else
-			rm -r temp
+			yeoman clean
 		fi
 	# else
 	#	echo "Failed"

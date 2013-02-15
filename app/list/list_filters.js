@@ -16,7 +16,7 @@ angular.module('ADE').filter('list', ['$filter', function($filter) {
 		if (isSingle) return input[0];
 
 		var ret = '';
-		$.each(input, function(i,v) {
+		$.each(input, function(i, v) {
 			if (ret) ret += ', ';
 			ret += v;
 		});
