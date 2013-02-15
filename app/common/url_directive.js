@@ -102,6 +102,7 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
+
 				switch (options.type) {
 					case 'email':
 						isurl = $filter('email')(value).match('mailto:');
@@ -149,7 +150,7 @@ adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', funct
 						invisibleInput.bind('blur', function(e) {
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
-								$scope.hidePopup();
+								$scope.hidePopup(element);
 							},300);
 						});
 					}

@@ -16,8 +16,8 @@ var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function
     $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
     $rootScope.adePopupClass = 'ade-popup';
 
-    $rootScope.hidePopup = function() {
-        var elPopup = angular.element('.' + $rootScope.adePopupClass);
+    $rootScope.hidePopup = function(elm) {
+        var elPopup = (elm) ? elm.next('.' + $rootScope.adePopupClass) : angular.element('.' + $rootScope.adePopupClass);
         if (elPopup.length && elPopup.hasClass('open')) {
             elPopup.removeClass('open').remove();
         }
