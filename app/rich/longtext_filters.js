@@ -9,7 +9,7 @@
 
 'use strict';
 
-adeModule.filter('longtext', ['$filter', function($filter) {
+angular.module('ADE').filter('longtext', ['$filter', function($filter) {
 	return function(input, options) {
 		if (!input) return '';
 
