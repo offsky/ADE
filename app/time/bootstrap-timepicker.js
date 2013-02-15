@@ -28,8 +28,6 @@
  * ========================================================= */
 !function($) {
 
-    'use strict'; // jshint ;_;
-
     /* TIMEPICKER PUBLIC CLASS DEFINITION
      * ================================== */
     var Timepicker = function(element, options) {

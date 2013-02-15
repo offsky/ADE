@@ -7,8 +7,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('phone', function() {
 	return function(input) {
 		if(!input) return "";

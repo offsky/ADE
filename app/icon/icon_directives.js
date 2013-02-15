@@ -33,7 +33,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 		restrict: 'A', //Attribute declaration eg: <div ade-icon=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var options = {};
 			var value = '';
 			var oldValue = '';
@@ -63,12 +63,12 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 					controller.$setViewValue(value);
 				}
 				editing = false;
-				$scope.hidePopup();
+				scope.hidePopup();
 
 				ADE.done(options, oldValue, value, exit);
 
-				if (!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if (!scope.$$phase) {
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			};
 
@@ -79,7 +79,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 
 				ADE.begin(options);
 
-				var $iconPopup = angular.element('.' + $scope.adePopupClass),
+				var $iconPopup = angular.element('.' + scope.adePopupClass),
 					clickTarget = angular.element(e.target),
 					attrClass = clickTarget.attr('class'),
 					elOffset,
@@ -92,7 +92,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 						elOffset = element.offset();
 						posLeft = elOffset.left - 7;  // 7px = custom offset
 						posTop = elOffset.top + element[0].offsetHeight;
-						$compile('<div class="' + $scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')($scope).insertAfter(element);
+						$compile('<div class="' + scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
 						input = angular.element('#invisicon');
                         var nextElement = element.next('.ade-popup'),
                             clearNode = nextElement.find('.icon-_clear'),
@@ -132,8 +132,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 					}
 				}
 
-				if (!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if (!scope.$$phase) {
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			});
 

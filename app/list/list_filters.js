@@ -7,8 +7,6 @@
 
  ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('list', ['$filter', function($filter) {
 	return function(input, isSingle) {
 		if (!input) return '';

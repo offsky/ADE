@@ -9,8 +9,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('decimal', ['$filter',function($filter) {
 
 	return function(input, fractionSize) {

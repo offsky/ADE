@@ -9,8 +9,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('email', ['$filter',function($filter) {
 
 	return function(input) {

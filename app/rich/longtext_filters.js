@@ -7,8 +7,6 @@
 
  ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('longtext', ['$filter', function($filter) {
 	return function(input, options) {
 		if (!input) return '';

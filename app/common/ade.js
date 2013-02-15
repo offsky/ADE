@@ -8,7 +8,7 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
+'use strict'; //http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 
 angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 

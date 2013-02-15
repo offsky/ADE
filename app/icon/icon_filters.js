@@ -7,8 +7,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('icon', function() {
 	return function(input, option) {
 		if (!input) input = '_clear';

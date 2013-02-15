@@ -7,8 +7,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('percent', function() {
     return function(input) {
         var clean = parseFloat(input);

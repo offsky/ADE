@@ -9,8 +9,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('rating', function() {
 	return function(input,options) {
 		var starW = 23,

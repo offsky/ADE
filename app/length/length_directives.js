@@ -24,7 +24,7 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 		restrict: 'A', //Attribute declaration eg: <div ade-length=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var options = {}; //The passed in options to the directive.
 			var editing=false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
@@ -52,7 +52,7 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 
 				// I think that the apply later is sufficient
 				// not sure what the significance is of doing the work inside the appy function
-				// $scope.$apply(function() {
+				// scope.$apply(function() {
 				// 	return controller.$setViewValue(value);
 				// });
 
@@ -62,7 +62,7 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 
 				ADE.done(options,oldValue,value,exit);
 
-				$scope.$apply();
+				scope.$apply();
 			};
 			
 			//handles clicks on the read version of the data
@@ -76,7 +76,7 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 				ADE.begin(options);
 
 				element.hide();
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')($scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
@@ -84,8 +84,8 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 				ADE.setupKeys(input,saveEdit);
 				
 				//make sure we aren't already digesting/applying before we apply the changes
-				if(!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if(!scope.$$phase) {
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				} 
 			});
 

@@ -24,7 +24,7 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var options = {},
 				editing=false,
 				txtArea=null,
@@ -59,8 +59,8 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 
 					ADE.done(options,oldValue,value,exit);
 
-					if(!$scope.$$phase) {
-						return $scope.$apply(); //This is necessary to get the model to match the value of the input
+					if(!scope.$$phase) {
+						return scope.$apply(); //This is necessary to get the model to match the value of the input
 					}
 				} else {
 					//Enter key should break on a new line
@@ -80,9 +80,9 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 			};
 
 			var editLongText = function(showText) {
-				$scope.hidePopup();
+				scope.hidePopup();
 
-				var $linkPopup = element.next('.'+ $scope.adePopupClass +''),
+				var $linkPopup = element.next('.'+ scope.adePopupClass +''),
 					elOffset, posLeft, posTop, content;
 
 				if (!showText) {
@@ -108,7 +108,7 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 					elOffset = element.offset();
 					posLeft = elOffset.left;
 					posTop = elOffset.top + element[0].offsetHeight;
-					$compile('<div class="'+ $scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px">'+content+'</div>')($scope).insertAfter(element);
+					$compile('<div class="'+ scope.adePopupClass +' ade-longtext dropdown-menu open" style="left:'+posLeft+'px;top:'+posTop+'px">'+content+'</div>')(scope).insertAfter(element);
 				}
 
 				input = element.next('.ade-longtext');
@@ -134,23 +134,23 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 
 
 				//make sure we aren't already digesting/applying before we apply the changes
-				if(!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if(!scope.$$phase) {
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			};
 
 			element.bind('mouseenter', function(e)  {
                 if (angular.element('.ade-longtext').hasClass('open')) return;
-				var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
+				var $linkPopup = element.next('.'+ scope.adePopupClass +'');
 				if (!$linkPopup.length) {
 					editLongText(true);
 				}
 			});
 
 			element.bind('mouseleave', function(e) {
-				var $linkPopup = element.next('.'+ $scope.adePopupClass +'');
+				var $linkPopup = element.next('.'+ scope.adePopupClass +'');
 				if ($linkPopup.length && !$linkPopup.find('textarea').length) {
-					$scope.hidePopup();
+					scope.hidePopup();
 				}
 			});
 

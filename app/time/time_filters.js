@@ -7,8 +7,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('time', function() {
     return function(input, format) {
         var output = '',

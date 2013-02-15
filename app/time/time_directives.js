@@ -8,7 +8,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
         restrict: 'A', //Attribute declaration eg: <div b-timepicker=""></div>
 
         //The link step (after compile)
-        link: function($scope, element, attrs, controller) {
+        link: function(scope, element, attrs, controller) {
             var validKey = false;
 
             //Handles return key pressed on in-line text box
@@ -65,9 +65,9 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
             var updateModel = function() {
                 var timeStr = element.val();
 
-                if(!$scope.$$phase) { //make sure we aren't already digesting/applying
+                if(!scope.$$phase) { //make sure we aren't already digesting/applying
                     //This is necessary to get the model to match the value of the input
-                    return $scope.$apply(function() {
+                    return scope.$apply(function() {
                         return controller.$setViewValue(timeStr);
                     });
                 }
@@ -113,7 +113,7 @@ angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$rootSc
         restrict: 'A', //Attribute declaration eg: <div ade-time=""></div>
 
         //The link step (after compile)
-        link: function($scope, element, attrs, controller) {
+        link: function(scope, element, attrs, controller) {
             var options = {}; //The passed in options to the directive.
             var editing=false;
             var input = null;
@@ -159,7 +159,7 @@ angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$rootSc
 
                 ADE.done(options,oldValue,value,exit);
 
-                $scope.$apply();
+                scope.$apply();
             };
 
             //handles clicks on the read version of the data
@@ -183,7 +183,7 @@ angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$rootSc
                     timeLength = 5;
                 }
 
-                $compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />')($scope).insertAfter(element);
+                $compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />')(scope).insertAfter(element);
 
                 input = element.next('input');
                 input.focus(); //I do not know why both of these are necessary, but they are
@@ -192,8 +192,8 @@ angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$rootSc
                 ADE.setupBlur(input,saveEdit);
                 ADE.setupKeys(input,saveEdit);
 
-                if(!$scope.$$phase) { //make sure we aren't already digesting/applying
-                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                if(!scope.$$phase) { //make sure we aren't already digesting/applying
+                    return scope.$apply(); //This is necessary to get the model to match the value of the input
                 }
             });
 

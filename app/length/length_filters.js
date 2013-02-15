@@ -8,8 +8,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('length', function() {
 
 	//Minutes are passed in and a more readable (hrs mins) string is returned

@@ -7,8 +7,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('toggle', function() {
 	return function(input, option) {
 		if(input) return '<span class="ade-'+option+' ade-on">';

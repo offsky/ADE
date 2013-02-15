@@ -8,8 +8,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('validDate', ['$filter',function($filter) {
     return function(input, dateFormat) {
         var output = '';

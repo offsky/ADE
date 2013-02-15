@@ -9,8 +9,6 @@
 
 ------------------------------------------------------------------*/
 
-'use strict';
-
 angular.module('ADE').filter('money', ['$filter',function($filter) {
     return function(input) {
         var output = '', clean;

@@ -8,7 +8,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var format = 'mm/dd/yyy';
 
 			//Handles return key pressed on in-line text box
@@ -28,9 +28,9 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				element.context.value = dateStr;
 
-				if (!$scope.$$phase) { //make sure we aren't already digesting/applying
+				if (!scope.$$phase) { //make sure we aren't already digesting/applying
 				 	//This is necessary to get the model to match the value of the input
-					return $scope.$apply(function() {
+					return scope.$apply(function() {
 						return controller.$setViewValue(dateStr);
 					});
 				}
@@ -77,7 +77,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 		restrict: 'A', //Attribute declaration eg: <div ade-date=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var options = {}; //The passed in options to the directive.
 			var editing = false;
 			var input = null;
@@ -111,7 +111,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 
 				ADE.done(options, oldValue, value, exit);
 
-				$scope.$apply();
+				scope.$apply();
 			};
 
 			//handles clicks on the read version of the data
@@ -126,7 +126,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				element.hide();
 				var extraDPoptions = '';
 				if (options.format == 'yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				$compile('<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />')($scope).insertAfter(element);
+				$compile('<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 
 				input.focus(); //I do not know why both of these are necessary, but they are
@@ -136,8 +136,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				ADE.setupBlur(input, saveEdit);
 				ADE.setupKeys(input, saveEdit);
 
-				if (!$scope.$$phase) { //make sure we aren't already digesting/applying
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if (!scope.$$phase) { //make sure we aren't already digesting/applying
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			});
 

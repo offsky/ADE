@@ -23,7 +23,7 @@ angular.module('ADE').directive('adeRating', ['ADE','$compile','$rootScope', '$f
         restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
 
         //The link step (after compile)
-        link: function($scope, element, attrs, controller) {
+        link: function(scope, element, attrs, controller) {
             var options = {},
                 value = "",
                 oldValue = "",
@@ -47,13 +47,13 @@ angular.module('ADE').directive('adeRating', ['ADE','$compile','$rootScope', '$f
 
                 ADE.done(options,oldValue,value,0);
 
-                $scope.$apply(function() {
+                scope.$apply(function() {
                     return controller.$setViewValue(value);
                 });
 
                 //make sure we aren't already digesting/applying before we apply the changes
-                if(!$scope.$$phase) {
-                    return $scope.$apply(); //This is necessary to get the model to match the value of the input
+                if(!scope.$$phase) {
+                    return scope.$apply(); //This is necessary to get the model to match the value of the input
                 }
             });
 
