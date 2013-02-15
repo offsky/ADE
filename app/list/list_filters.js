@@ -9,7 +9,7 @@
 
 'use strict';
 
-adeModule.filter('list', ['$filter', function($filter) {
+angular.module('ADE').filter('list', ['$filter', function($filter) {
 	return function(input, isSingle) {
 		if (!input) return '';
 		if (angular.isString(input)) return input;

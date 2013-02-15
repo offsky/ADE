@@ -17,7 +17,7 @@
 
  ------------------------------------------------------------------*/
 
-adeModule.directive('adeRating', ['ADE','$compile','$rootScope', '$filter', function(ADE, $compile,$rootScope,$filter) {
+angular.module('ADE').directive('adeRating', ['ADE','$compile','$rootScope', '$filter', function(ADE, $compile,$rootScope,$filter) {
     return {
         require: '?ngModel', //optional dependency for ngModel
         restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>

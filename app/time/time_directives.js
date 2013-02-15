@@ -2,7 +2,7 @@
  Directive to present a time picker on an input
  ------------------------------------------------------------------*/
 
-adeModule.directive('adeTimepop', ['$filter',function($filter){
+angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
     return {
         require: '?ngModel', //optional dependency for ngModel
         restrict: 'A', //Attribute declaration eg: <div b-timepicker=""></div>
@@ -107,7 +107,7 @@ adeModule.directive('adeTimepop', ['$filter',function($filter){
 /* ==================================================================
  Directive to display a calendar for picking a year
  ------------------------------------------------------------------*/
-adeModule.directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filter',function(ADE,$compile,$timeout,$rootScope, $filter) {
+angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filter',function(ADE,$compile,$timeout,$rootScope, $filter) {
     return {
         require: '?ngModel', //optional dependency for ngModel
         restrict: 'A', //Attribute declaration eg: <div ade-time=""></div>

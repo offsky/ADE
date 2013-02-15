@@ -10,7 +10,7 @@
 
 'use strict';
 
-var adeModule = angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
+angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
     // Common
     $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';

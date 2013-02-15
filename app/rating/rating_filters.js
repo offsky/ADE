@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('rating', function() {
+angular.module('ADE').filter('rating', function() {
 	return function(input,options) {
 		var starW = 23,
             starCount = 5,

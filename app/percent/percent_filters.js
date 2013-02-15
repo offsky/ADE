@@ -9,7 +9,7 @@
 
 'use strict';
 
-adeModule.filter('percent', function() {
+angular.module('ADE').filter('percent', function() {
     return function(input) {
         var clean = parseFloat(input);
         var output = '';

@@ -10,7 +10,7 @@
 
 'use strict';
 
-adeModule.filter('length', function() {
+angular.module('ADE').filter('length', function() {
 
 	//Minutes are passed in and a more readable (hrs mins) string is returned
 	function mins2Pretty(value) {

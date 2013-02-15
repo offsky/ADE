@@ -10,7 +10,7 @@
 
 'use strict';
 
-adeModule.filter('validDate', ['$filter',function($filter) {
+angular.module('ADE').filter('validDate', ['$filter',function($filter) {
     return function(input, dateFormat) {
         var output = '';
 

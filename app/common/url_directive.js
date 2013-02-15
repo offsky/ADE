@@ -20,7 +20,7 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', function(ADE, $compile, $rootScope, $filter) {
+angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$filter', function(ADE, $compile, $rootScope, $filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-url=""></div>

@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('integer', ['$filter',function($filter) {
+angular.module('ADE').filter('integer', ['$filter',function($filter) {
 
 	return function(input) {
 		var output = '';

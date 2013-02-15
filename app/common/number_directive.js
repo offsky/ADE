@@ -20,7 +20,7 @@
 
 ------------------------------------------------------------------*/
 
-adeModule.directive('adeNumber', ['ADE','$compile','$rootScope', function(ADE,$compile,$rootScope) {
+angular.module('ADE').directive('adeNumber', ['ADE','$compile','$rootScope', function(ADE,$compile,$rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-number=""></div>

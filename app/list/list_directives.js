@@ -16,7 +16,7 @@
  data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
-adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $compile, $rootScope) {
+angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $compile, $rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-list=""></div>
@@ -168,7 +168,7 @@ adeModule.directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $
 
 // Taken from Angular-UI and modified for our uses
 // https://github.com/angular-ui/angular-ui
-adeModule.directive('uiSelect2', ['$http', function($http) {
+angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 	var options = {};
 
 	return {

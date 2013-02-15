@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('url', ['$filter',function($filter) {
+angular.module('ADE').filter('url', ['$filter',function($filter) {
 	return function(input) {
 		var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 		var output = '';

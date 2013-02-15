@@ -9,7 +9,7 @@
 
 'use strict';
 
-adeModule.filter('time', function() {
+angular.module('ADE').filter('time', function() {
     return function(input, format) {
         var output = '',
             format = format || "12",

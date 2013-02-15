@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('decimal', ['$filter',function($filter) {
+angular.module('ADE').filter('decimal', ['$filter',function($filter) {
 
 	return function(input, fractionSize) {
 		var output = '';

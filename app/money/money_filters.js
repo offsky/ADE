@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('money', ['$filter',function($filter) {
+angular.module('ADE').filter('money', ['$filter',function($filter) {
     return function(input) {
         var output = '', clean;
 

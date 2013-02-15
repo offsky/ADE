@@ -9,7 +9,7 @@
 
 'use strict';
 
-adeModule.filter('phone', function() {
+angular.module('ADE').filter('phone', function() {
 	return function(input) {
 		if(!input) return "";
 		

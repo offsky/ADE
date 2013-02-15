@@ -11,7 +11,7 @@
 
 'use strict';
 
-adeModule.filter('email', ['$filter',function($filter) {
+angular.module('ADE').filter('email', ['$filter',function($filter) {
 
 	return function(input) {
 		if(!input) return '';
