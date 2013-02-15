@@ -28,7 +28,7 @@
  * ========================================================= */
 !function($) {
 
-    "use strict"; // jshint ;_;
+    'use strict'; // jshint ;_;
 
     /* TIMEPICKER PUBLIC CLASS DEFINITION
      * ================================== */
@@ -51,9 +51,7 @@
 
     Timepicker.prototype = {
 
-        constructor: Timepicker
-
-        ,
+        constructor: Timepicker,
         init: function() {
             if (this.$element.parent()
                 .hasClass('input-append')) {
@@ -143,7 +141,7 @@
                 this.$widget.css({
                     top: pos.top + pos.height,
                     left: pos.left
-                })
+                });
 
                 if (!this.open) {
                     this.$widget.addClass('open');
@@ -169,7 +167,7 @@
 
         ,
 
-        mousedown: function(e){
+        mousedown: function(e) {
             e.stopPropagation();
             e.preventDefault();
         },
@@ -436,7 +434,7 @@
                     var hours = dTime.getHours();
                     var minutes = Math.floor(dTime.getMinutes() / this.minuteStep) * this.minuteStep;
                     var seconds = Math.floor(dTime.getSeconds() / this.secondStep) * this.secondStep;
-                    var meridian = "am";
+                    var meridian = 'am';
                     if (this.showMeridian) {
                         if (hours === 0) {
                             hours = 12;
@@ -444,9 +442,9 @@
                             if (hours > 12) {
                                 hours = hours - 12;
                             }
-                            meridian = "pm";
+                            meridian = 'pm';
                         } else {
-                            meridian = "am";
+                            meridian = 'am';
                         }
                     }
                     this.hour = hours;
@@ -807,7 +805,7 @@
     /* TIMEPICKER PLUGIN DEFINITION
      * =========================== */
 
-    $.fn.timepicker = function(option,val) {
+    $.fn.timepicker = function(option, val) {
         return this.each(function() {
             var $this = $(this),
                 data = $this.data('timepicker'),
@@ -818,8 +816,8 @@
             if (typeof option == 'string') {
                 data[option](val);
             }
-        })
-    }
+        });
+    };
 
     $.fn.timepicker.defaults = {
         minuteStep: 15,
@@ -832,7 +830,7 @@
         template: 'dropdown',
         modalBackdrop: false,
         templates: {} // set custom templates
-    }
+    };
 
-    $.fn.timepicker.Constructor = Timepicker
+    $.fn.timepicker.Constructor = Timepicker;
 }(window.jQuery);
