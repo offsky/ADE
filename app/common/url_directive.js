@@ -151,10 +151,14 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$fi
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 								$scope.hidePopup(element);
 =======
 								scope.hidePopup();
 >>>>>>> Renaming $scope to scope to avoid conflict with Batarand plugin and debuggin
+=======
+								scope.hidePopup(element);
+>>>>>>> Merge
 							},300);
 						});
 					}

@@ -12,6 +12,7 @@
 
 angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
+<<<<<<< HEAD
     // Common
     $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
     $rootScope.adePopupClass = 'ade-popup';
@@ -22,6 +23,18 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
             elPopup.removeClass('open').remove();
         }
     };
+=======
+	 // Common
+	 $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
+	 $rootScope.adePopupClass = 'ade-popup';
+
+	 $rootScope.hidePopup = function(elm) {
+		var elPopup = (elm) ? elm.next('.' + $rootScope.adePopupClass) : angular.element('.' + $rootScope.adePopupClass);
+		if (elPopup.length && elPopup.hasClass('open')) {
+			elPopup.removeClass('open').remove();
+		 }
+	 };
+>>>>>>> Merge
 
 	//=========================================================================================
 	//incorporates the default settings into the passed in settings and returns the combination
