@@ -1,9 +1,9 @@
-basePath = '../';
+basePath = '../../';
 
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  'app/vendor/js/jquery-1.8.2.min.js',
+  'app/vendor/js/jquery-1.9.1.min.js',
   'app/vendor/js/angular.js',
   'app/vendor/js/angular-*.js',
   'test/lib/angular/angular-mocks.js',
@@ -51,14 +51,14 @@ files = [
   'app/time/*.js',
   'test/unit/time/*.js',
 
-  'app/longtext/*.js',
-  'test/unit/longtext/*.js'
+  'app/rich/*.js',
+  'test/unit/rich/*.js'
 
 ];
 
 autoWatch = true;
 
-browsers = ['Chrome'];
+browsers = ['PhantomJS']; //'Firefox', 'Safari', 'Chrome'
 
 junitReporter = {
   outputFile: 'test_out/unit.xml',

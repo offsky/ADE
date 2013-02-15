@@ -25,7 +25,7 @@
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:23px;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:23px;}
 .ade-rating .ade-rate-container:hover .ade-off{background-position:-23px -23px;}
-.ade-rating .ade-rate-one{width:23px;height:23px;display:inline-block;cursor:pointer;background: url(adeImg/star.png) 0 0;}
+.ade-rating .ade-rate-one{width:23px;height:23px;display:inline-block;cursor:pointer;background: url(../common/adeImg/star.png) 0 0;}
 .ade-rating .ade-on{background-position:-23px 0;}
 .ade-rating .ade-on:hover{background-position:-23px -23px;}
 .ade-rating .ade-off:hover{background-position:0 -23px;}
@@ -38,7 +38,7 @@
 .ade-rating_s{position:relative;overflow:hidden;z-index:1;height:16px;}
 .ade-rating_s .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
 .ade-rating_s .ade-rate-container:hover .ade-off{background-position:-16px -16px;}
-.ade-rating_s .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;background: url(adeImg/star_s.png) 0 0;}
+.ade-rating_s .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;background: url(../common/adeImg/star_s.png) 0 0;}
 .ade-rating_s .ade-on{background-position:-16px 0;}
 .ade-rating_s .ade-on:hover{background-position:-16px -16px;}
 .ade-rating_s .ade-off:hover{background-position:-16px -16px;}
@@ -52,8 +52,8 @@
 .ade-rate-one.ade-zero{text-decoration:none;}
 
 /* Toggle Directive */
-.ade-star{display:inline-block;width:16px;height:16px;background:url(adeImg/star_s.png) no-repeat 0 0;cursor:pointer;}
-.ade-check{display:inline-block;width:16px;height:16px;background:url(adeImg/check.png) no-repeat 0 0;cursor:pointer;}
+.ade-star{display:inline-block;width:16px;height:16px;background:url(../common/adeImg/star_s.png) no-repeat 0 0;cursor:pointer;}
+.ade-check{display:inline-block;width:16px;height:16px;background:url(../common/adeImg/check.png) no-repeat 0 0;cursor:pointer;}
 
 .ade-off{background-position:0px 0px;}
 .ade-on{background-position:-16px 0px;}
