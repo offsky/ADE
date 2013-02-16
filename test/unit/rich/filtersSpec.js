@@ -23,4 +23,10 @@ describe('date', function() {
         expect(longtextFilter('first\rsecond')).toBe('first');
         expect(longtextFilter('first\r\nsecond', 4)).toBe('firs...');
 	});
+
+	it('should convert to string if not a string', function() {
+        expect(longtextFilter(12345)).toBe('12345');
+        expect(longtextFilter(true)).toBe('true');
+	});
+
 });

@@ -14,6 +14,8 @@ angular.module('ADE').filter('longtext', ['$filter', function($filter) {
 		var len = options || 100;
 		var output;
 
+		if (!input.split) input = input.toString(); //convert to string if not string (to prevent split==undefined)
+
 		input = input.split(/\r?\n|\r/)[0]; //get first line
 
 		if (len < input.length) {

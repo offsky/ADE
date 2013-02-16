@@ -88,7 +88,7 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 				if (!showText) {
 					var valueLength = value.length;
 					var numLines = parseInt(valueLength/35, 10); // about 35 letters per line
-					var numNewLines = value.split(/\r?\n|\r/).length;
+					var numNewLines = value.split ? value.split(/\r?\n|\r/).length : 0; //if not string, split==undefined
 					var lineHeight = 16; //in pixels
 					var textareaHeight = 3*lineHeight; //minimum height
 
@@ -98,11 +98,11 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 					} else {
 						if (numLines >= 3) textareaHeight = numLines * lineHeight;
 					}
-                    content = '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>'
-                    editing=true;
+					content = '<textarea class="'+options.className+'" style="height:'+textareaHeight+'px">'+value+'</textarea>'
+					editing=true;
 				} else {
-                    content = value.replace(/\n/g, '<br />');;
-                }
+					content = value.replace ? value.replace(/\n/g, '<br />') : value;
+				}
 
 				if (!$linkPopup.length) {
 					elOffset = element.offset();
@@ -115,9 +115,9 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 				txtArea = input.find('textarea');
 
 				if (txtArea.length) {
-                    var pos = txtArea.val().length;
+						  var pos = txtArea.val().length;
 					txtArea.focus();
-                    txtArea[0].setSelectionRange(pos,pos);
+						  txtArea[0].setSelectionRange(pos,pos);
 					ADE.setupBlur(txtArea,saveEdit);
 					ADE.setupKeys(txtArea,saveEdit);
 					txtArea.bind('keyup', function(e) {
@@ -140,7 +140,7 @@ angular.module('ADE').directive('adeLongtext', ['ADE','$compile','$rootScope',fu
 			};
 
 			element.bind('mouseenter', function(e)  {
-                if (angular.element('.ade-longtext').hasClass('open')) return;
+					 if (angular.element('.ade-longtext').hasClass('open')) return;
 				var $linkPopup = element.next('.'+ scope.adePopupClass +'');
 				if (!$linkPopup.length) {
 					editLongText(true);
