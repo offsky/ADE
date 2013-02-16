@@ -4,7 +4,7 @@
 .ade-hidden{width: 0;height:0;overflow: hidden;}
 
 /* Icon Directive */
-.ade-popup.dropdown-menu.open{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;}
+.ade-popup.dropdown-menu.open{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;white-space:normal;}
 .ade-popup.dropdown-menu:before {border-bottom: 7px solid rgba(0, 0, 0, 0.2);border-left: 7px solid transparent;border-right: 7px solid transparent;content: "";left: 6px;position: absolute;top: -7px;}
 .ade-popup.dropdown-menu:after {border-bottom: 6px solid #FFF;border-left: 6px solid transparent;border-right: 6px solid transparent;content: "";left: 7px;position: absolute;top: -6px;}
 .ade-popup span{padding:3px;margin:0;cursor:pointer;}
