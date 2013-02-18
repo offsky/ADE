@@ -21,5 +21,6 @@ describe('url', function() {
     it('should echo non-link results', function() {
         expect(urlFilter('')).toBe('');
         expect(urlFilter('abcd')).toBe('abcd');
+        expect(urlFilter(1234)).toBe('1234');
     });
 });

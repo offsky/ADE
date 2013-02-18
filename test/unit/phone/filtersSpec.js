@@ -25,5 +25,6 @@ describe('phone', function() {
     it('should be empty string/or entered value for invalid', function() {
         expect(phoneFilter("")).toEqual("");
         expect(phoneFilter("foo")).toEqual("foo");
+        expect(phoneFilter(1234)).toEqual("1234");
     });
 });

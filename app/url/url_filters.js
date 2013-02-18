@@ -1,7 +1,7 @@
 /* ==================================================================
 	AngularJS Datatype Editor - URL
 	A filter to display a string as a clickable URL.
-	Wraps Angular's native linky filter so that we can handle more 
+	Wraps Angular's native linky filter so that we can handle more
 	inputs
 	
 	Usage:
@@ -16,7 +16,8 @@ angular.module('ADE').filter('url', ['$filter',function($filter) {
 		var html = '';
 
 		if(!input) return '';
-
+		if(!angular.isString(input)) input = input.toString();
+		
 		if (URL_REGEXP.test(input)) {
 			html = $filter('linky')(input);
 		} else {

@@ -9,15 +9,15 @@
 ------------------------------------------------------------------*/
 
 angular.module('ADE').filter('validDate', ['$filter',function($filter) {
-    return function(input, dateFormat) {
-        var output = '';
+	return function(input, dateFormat) {
+		var output = '';
 
-        if(!input) return output;
-        if(angular.isUndefined(input)) return output;
-        if(input==0) return output;
+		if(!input) return output;
+		if(angular.isUndefined(input)) return output;
+		if(angular.isString(input)) input = parseDateString(input);
 
-        if(angular.isNumber(input)) output = $filter('date')(input*1000,dateFormat);
+		if(angular.isNumber(input)) output = $filter('date')(input*1000,dateFormat);
 
-        return output;
-    };
+		return output;
+	};
 }]);

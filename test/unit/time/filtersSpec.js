@@ -20,4 +20,8 @@ describe('time', function() {
 		expect(timeFilter(0)).toBe('');
 		expect(timeFilter('')).toBe('');
 	});
+
+	xit('should print a time when it was specifed already as a string', function() {
+		expect(timeFilter('12:43 pm')).toBe('12:43 pm');
+	});
 });

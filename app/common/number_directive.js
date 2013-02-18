@@ -1,6 +1,6 @@
 /* ==================================================================
 	AngularJS Datatype Editor - Number
-	A directive to edit a number in place. 
+	A directive to edit a number in place.
 
 	Used for percent, money, decimal, integer
 
@@ -12,7 +12,7 @@
 	"id" will be used in messages broadcast to the app on state changes.
 
 	Messages:
-		name: ADE-start  
+		name: ADE-start
 		data: id from config
 
 		name: ADE-finish
@@ -35,10 +35,10 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile','$rootScope', fun
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
-			if (controller != null) {
-				controller.$render = function() { 
+			if (controller !== null) {
+				controller.$render = function() {
 					oldValue = value = controller.$modelValue;
-					if(value==undefined || value==null) value="";
+					if(value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
 			}
@@ -58,7 +58,7 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile','$rootScope', fun
 				// I think that the apply later is sufficient
 				// not sure what the significance is of doing the work inside the appy function
 				// scope.$apply(function() {
-				// 	return controller.$setViewValue(value);
+				//	return controller.$setViewValue(value);
 				// });
 
 				element.show();
@@ -78,7 +78,10 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile','$rootScope', fun
 
 				ADE.begin(options);
 
-				element.hide();				
+				if(!angular.isNumber(value)) value = parseFloat(value.replace(/[$]/g, ''));
+				value = value ? value : '';
+
+				element.hide();
 				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
@@ -89,7 +92,7 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile','$rootScope', fun
 				//make sure we aren't already digesting/applying before we apply the changes
 				if(!scope.$$phase) {
 					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				} 
+				}
 			});
 
 			// Watches for changes to the element

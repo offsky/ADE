@@ -29,7 +29,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				element.context.value = dateStr;
 
 				if (!scope.$$phase) { //make sure we aren't already digesting/applying
-				 	//This is necessary to get the model to match the value of the input
+					//This is necessary to get the model to match the value of the input
 					return scope.$apply(function() {
 						return controller.$setViewValue(dateStr);
 					});
@@ -37,7 +37,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			};
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller != null) {
+			if (controller !== null) {
 				controller.$render = function() {
 					if (controller.$viewValue) {
 						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary?
@@ -86,10 +86,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller != null) {
+			if (controller !== null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
-					if (value == undefined || value == null) value = 0;
+					if (value === undefined || value === null) value = 0;
 					return controller.$viewValue;
 				};
 			}
@@ -120,6 +120,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				editing = true;
 				exit = 0;
 				value = value || 0;
+				if(!angular.isNumber(value)) value = parseDateString(value);
 
 				ADE.begin(options);
 

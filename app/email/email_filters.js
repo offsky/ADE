@@ -16,6 +16,6 @@ angular.module('ADE').filter('email', ['$filter',function($filter) {
 		if(!angular.isString(input)) return input+"";
 
 		return $filter('linky')(input);
-	 };
+	};
 }]);
 

@@ -69,7 +69,6 @@ function SelectCtrl(scope, rootScope) {
 	//handles finishing of the selection.  For this demo, we are adding new values to
 	//the array for future selection
 	scope.$on('ADE-finish', function(e, data) {
-		console.log('done',data);
 		if(data.id==123) { //the single input
 			var found = false; 
 			$.each(scope.listOptions['list1'], function(i, v) {

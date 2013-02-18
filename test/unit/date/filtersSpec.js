@@ -14,6 +14,10 @@ describe('date', function() {
 		expect(dateFilter(1355517820)).toBe('Dec 14, 2012');
 	});
 
+	it('should passthrough a date string', function() {
+		expect(dateFilter('Dec 14, 2012')).toBe('Dec 14, 2012');
+	});
+
 	it('should print a empty string for non-dates', function() {
 		expect(dateFilter(undefined)).toBe('');
 		expect(dateFilter(null)).toBe('');
