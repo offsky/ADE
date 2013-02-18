@@ -19,9 +19,9 @@
 
 angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', function(ADE, $compile, $rootScope, $filter) {
 
-	var icons = ['envelope', 'heart', 'star', 'user', 'film', 'music', 'search', 'ok', 'signal', 'trash', 'home', 'file', 'time', 'road', 'inbox', 'refresh', 'lock', 'flag', 'headphones', 'barcode', 'tag', 'book', 'print', 'camera', 'off', 'list', 'picture', 'pencil', 'share', 'move'],
-		len = icons.length,
-		iconsPopupTemplate = '';
+	var icons = ['envelope', 'heart', 'star', 'user', 'film', 'music', 'search', 'ok', 'signal', 'trash', 'home', 'file', 'time', 'road', 'inbox', 'refresh', 'lock', 'flag', 'headphones', 'barcode', 'tag', 'book', 'print', 'camera', 'off', 'list', 'picture', 'pencil', 'share', 'move'];
+	var len = icons.length;
+	var iconsPopupTemplate = '';
 
 	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear">clear</a>';
 	for (var i = 0; i < len; i++) {
@@ -42,19 +42,19 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 
-			if (controller != null) {
+			if (controller !== null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
-					if (value == undefined || value == null) value = '';
+					if (value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
 			}
 
 			var saveEdit = function(exited, newValue) {
-                //we are saving, so cancel any delayed blur saves that we might get
-                window.clearTimeout(timeout);
+				//we are saving, so cancel any delayed blur saves that we might get
+				window.clearTimeout(timeout);
 
-                oldValue = value;
+				oldValue = value;
 				value = newValue || oldValue;
 				exit = exited;
 
@@ -94,27 +94,28 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 						posTop = elOffset.top + element[0].offsetHeight;
 						$compile('<div class="' + scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
 						input = angular.element('#invisicon');
-                        var nextElement = element.next('.ade-popup'),
-                            clearNode = nextElement.find('.icon-_clear'),
-                            iconNode = nextElement.find('span');
+						
+						var nextElement = element.next('.ade-popup');
+						var clearNode = nextElement.find('.icon-_clear');
+						var iconNode = nextElement.find('span');
 
-                        clearNode.bind('click', function() {
-                            saveEdit(0, '_clear');
-                        });
+						clearNode.bind('click', function() {
+							saveEdit(0, '_clear');
+						});
 
-                        angular.forEach(iconNode, function(el) {
-                            var node = angular.element(el);
-                            node.bind('click', function() {
-                                window.clearTimeout(timeout);
-                                var iconClass =  node.attr('class');
+						angular.forEach(iconNode, function(el) {
+							var node = angular.element(el);
+							node.bind('click', function() {
+								window.clearTimeout(timeout);
+								var iconClass =  node.attr('class');
 
-                                if (iconClass.match('icon')) {
-                                    var iconType = iconClass.substr(5);
-                                    saveEdit(0, iconType);
-                                }
-                            });
+								if (iconClass.match('icon')) {
+									var iconType = iconClass.substr(5);
+									saveEdit(0, iconType);
+								}
+							});
 
-                        });
+						});
 
 						input.focus();
 
@@ -127,7 +128,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 							timeout = window.setTimeout(function() {
 								saveEdit(0);
 							},500);
-
 						});
 					}
 				}
