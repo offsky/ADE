@@ -23,7 +23,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$rootScope','$fi
 		restrict: 'A', //Attribute declaration eg: <div ade-toggle=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var options = {}; //The passed in options to the directive.
 			var value = "";
 			var oldValue = "";
@@ -54,8 +54,8 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$rootScope','$fi
 				ADE.done(options,oldValue,value,0);
 
 				//make sure we aren't already digesting/applying before we apply the changes
-				if(!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if(!scope.$$phase) {
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			});
 

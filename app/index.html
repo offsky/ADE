@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="vendor/css/timepicker.css"/>
     	<link rel="stylesheet" href="vendor/css/select2.css"/>
     	
-    	<!-- build:css build/styles.css -->
+    	<!-- build:css build/ade-1.0.min.css -->
 		<link rel="stylesheet" href="common/ade.css"/>
 		<!-- endbuild -->
 
@@ -27,7 +27,7 @@
 		<script src="common/demoApp.js"></script>
 		<script src="common/demoListCtrl.js"></script>
 		
-		<!-- build:js build/scripts.js -->
+		<!-- build:js build/ade-1.0.min.js -->
 		<script src="common/ade.js"></script>
 		<script src="common/date.js"></script>
 		<script src="common/number_directive.js"></script>
@@ -141,11 +141,11 @@
 		<div ng-controller="SelectCtrl">
 
 		<a href="list/">List (pick one)</a> - Presents a popup list to choose one value from.<br />
-			Example:  <div class="ade-list sample" ade-list='{"id":123,"multiple":false,"query":"query"}' ng-model="datasingle">{{datasingle | list:1}}</div>
+			Example:  <div class="ade-list sample" ade-list='{"id":123,"multiple":false,"query":"query","listId":"list1"}' ng-model="datasingle">{{datasingle | list:1}}</div>
 			<br /><br />
 
 		<a href="list/">List (pick multiple)</a> - Presents a popup list to choose multiple values from. <br />
-			Example: <div class="ade-list sample" ade-list='{"id":123,"multiple":true,"query":"query"}' ng-model="datamulti">{{datamulti | list:0}}</div>
+			Example: <div class="ade-list sample" ade-list='{"id":123,"multiple":true,"query":"query","listId":"list1"}' ng-model="datamulti">{{datamulti | list:0}}</div>
 			<br /><br />
 		</div>
 		
