@@ -522,7 +522,7 @@
                 var s2Container = $('.select2-container');
                 if (s2Container.length) {
                     $.each(s2Container, function() {
-                        if (($(this).prev().hasClass("ade-list")) && (e.target !== $(this))) {
+                        if (($(this).next().hasClass("ade-list-input")) && (e.target !== $(this))) {
                             if ($(this).find('.select2-drop').not(":visible")) {
                                 $(this).data("select2").triggerChange(["bodyClick"]);
                             }
@@ -1401,7 +1401,7 @@
             var container = $("<div></div>", {
                 "class": "select2-container"
             }).html([
-                "    <a href='#' onclick='return false;' class='select2-choice'>",
+                "    <a class='select2-choice'>", //ADE: edited to prevent hash from getting removed on click
                 "   <span></span><abbr class='select2-search-choice-close' style='display:none;'></abbr>",
                 "   <div><b></b></div>" ,
                 "</a>",
@@ -1635,7 +1635,7 @@
                         self.close();
                         self.setPlaceholder();
                     }
-                });
+                },this.opts.listId); //ADE: added this to pass listid through to controller
             }
         },
 
@@ -2113,7 +2113,7 @@
             var choice=$(
                     "<li class='select2-search-choice'>" +
                     "    <div></div>" +
-                    "    <a href='#' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a>" +
+                    "    <a href='#select2Line2116' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a>" + //ADE: added this so I would know if it ever happened where to look
                     "</li>"),
                 id = this.id(data),
                 val = this.getVal(),

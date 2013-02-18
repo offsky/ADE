@@ -22,7 +22,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 		restrict: 'A', //Attribute declaration eg: <div ade-list=""></div>
 
 		//The link step (after compile)
-		link: function($scope, element, attrs, controller) {
+		link: function(scope, element, attrs, controller) {
 			var options = {}; //The passed in options to the directive.
 			var editing = false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
@@ -49,11 +49,20 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 					var v = '';
 					if (angular.isArray(value) && value.length > 0) {
 
+						//to have value stored as array
+						var vals = [];
 						angular.forEach(value, function(val, key) {
-							val = (key < value.length - 1) ? val.text + ',' : val.text;
-							v += val;
+							vals.push(val.text)
 						});
-						value = v;
+						value = vals;
+
+						// to have value stored as string
+						// angular.forEach(value, function(val, key) {
+						// 	val = (key < value.length - 1) ? val.text + ',' : val.text;
+						// 	v += val;
+						// });
+						// value = v;
+
 					} else if (angular.isObject(value) && value.text !== '') {
 						value = value.text;
 					} else {
@@ -63,35 +72,35 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 					controller.$setViewValue(value);
 				}
 
-                if (exited !== 0) {
-                    if (v) element[0].innerHTML = v;
-                    element.show();
-                    input.select2('destroy');
-                    input.remove();
-                }
+				if (exited !== 0) {
+					if (v) element[0].innerHTML = v;
+					element.show();
+					input.select2('destroy');
+					input.remove();
+				}
 
-                editing = false;
+				editing = false;
 				ADE.done(options, oldValue, value, exit);
 
-				if (!$scope.$$phase) {
-					return $scope.$apply();
+				if (!scope.$$phase) {
+					return scope.$apply();
 				}
 			};
 
-            $(document).bind('keydown', function(e) {
-                $(document).find('div.select2-drop-active').each(function() {
-                    if (e.keyCode == 27) { //esc
-                        e.preventDefault();
-                        e.stopPropagation();
-                        var activeContainer = $(document).find('.select2-container-active');
-                        var activeInput = activeContainer.next();
-                        activeContainer.remove();
-                        activeInput.remove();
-                        element.show();
-                        editing = false;
-                    }
-                });
-            });
+			$(document).bind('keydown', function(e) {
+				$(document).find('div.select2-drop-active').each(function() {
+					if (e.keyCode == 27) { //esc
+						e.preventDefault();
+						e.stopPropagation();
+						var activeContainer = $(document).find('.select2-container-active');
+						var activeInput = activeContainer.next();
+						activeContainer.remove();
+						activeInput.remove();
+						element.show();
+						editing = false;
+					  }
+				 });
+			});
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
@@ -113,44 +122,40 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 
 				var query = '';
 				if (options.query) query = ',query:' + options.query; //the user's query function for providing the list data
-				var passthru = '';
-				if (options.passthru) passthru = ",passthru:'" + options.passthru + "'"; //data that is passed through to the query function
+				var selection = '';
+				if (options.selection) selection = ',initSelection:' + options.selection; //the user's selection function for providing the initial selection
+		
+				var listId = '';
+				if (options.listId) listId = ",listId:'" + options.listId + "'"; //data that is passed through to the query function
 
-				$compile('<input type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + passthru + ',initSelection:selection' + placeholder + '} ' + multi + ' />')($scope)
+				$compile('<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId  + selection + placeholder + '} ' + multi + ' />')(scope)
 					.insertAfter(element);
 				input = element.next('input');
 
-				var data = [];
-				var cleanValue = (value) ? value.split(',') : [];
+				if(angular.isString(value)) value = value.split(',');				
+				input.val(value);
 
-				angular.forEach(cleanValue, function(value, key) {
-					$scope.listOptions.map(function(v,i) {
-						if (value === v) {
-							data.push({'id': i, 'text': v });
-						}
-					});
-				});
-
-				if (!options.multiple) data = data[0];
-
+				//must initialize select2 in timeout to give the DOM a chance to exist	
 				setTimeout(function() {
-					input.select2('data', data);
-					input.select2('open');
+					scope.selection(input,function(data) { //get preseleted data
+						input.select2('data', data);
+						input.select2('open');
+					},options.listId);
 				});
 
 				input.on('change', function(e) {
-                    if (e[0] === 'singleRemove') {
-                        saveEdit(0);
-                    } else if (e[0] === 'bodyClick') {
-                        saveEdit();
-                    } else {
-                        if (!options.multiple) saveEdit();
-                    }
+					if (e[0] === 'singleRemove') {
+						saveEdit(0);
+					} else if (e[0] === 'bodyClick') {
+						saveEdit();
+					} else {
+						if (!options.multiple) saveEdit();
+					}
 				});
 
 				//make sure we aren't already digesting/applying before we apply the changes
-				if (!$scope.$$phase) {
-					return $scope.$apply(); //This is necessary to get the model to match the value of the input
+				if (!scope.$$phase) {
+					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			});
 
@@ -229,7 +234,7 @@ angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 								initSelection(element, function(value) {
 									controller.$setViewValue(value);
 									callback(value);
-								});
+								},opts.listId);
 							};
 						}
 					}
