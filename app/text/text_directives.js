@@ -51,19 +51,13 @@ angular.module('ADE').directive('adeText', ['ADE','$compile','$rootScope',functi
 					controller.$setViewValue(value);
 				}
 
-				// I think that the apply later is sufficient
-				// not sure what the significance is of doing the work inside the appy function
-				// scope.$apply(function() {
-				// 	return controller.$setViewValue(value);
-				// });
-
 				element.show();
 				input.remove();
 				editing=false;
 
 				ADE.done(options,oldValue,value,exit);
 
-				scope.$apply();
+				scope.$digest();
 			};
 			
 			//handles clicks on the read version of the data
@@ -74,18 +68,13 @@ angular.module('ADE').directive('adeText', ['ADE','$compile','$rootScope',functi
 
 				ADE.begin(options);
 
-				element.hide();				
+				element.hide();
 				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
-
-				//make sure we aren't already digesting/applying before we apply the changes
-				if(!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				} 
 			});
 			
 			// Watches for changes to the element
