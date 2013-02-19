@@ -62,9 +62,8 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$fi
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
-				if (!scope.$$phase) {
-					return scope.$apply();
-				}
+			
+				scope.$digest();
 			};
 
 			//called to enter edit mode on a url. happens immediatly for non-urls or after a popup confirmation for urls
@@ -83,10 +82,6 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$fi
 
 				ADE.setupBlur(input, saveEdit);
 				ADE.setupKeys(input, saveEdit);
-
-				if (!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				}
 			};
 
 			//handles clicks on the read version of the data
@@ -102,12 +97,12 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$fi
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
-
+				var html = '';
 				switch (options.type) {
 					case 'email':
 						isurl = $filter('email')(value).match('mailto:');
 						if (!linkString.match('mailto:')) linkString = 'mailto:' + linkString; //put an http if omitted so the link is clickable
-						var html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+						html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
 								'<a class="' + scope.miniBtnClasses + '" href="' + linkString + '" ng-click="hidePopup();">Send Email</a>' +
 								' or <a class="' + scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
@@ -116,7 +111,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$fi
 					case 'phone':
 						isurl = $filter('phone')(value).match('tel:');
 						if (!linkString.match('tel:')) linkString = 'tel:' + linkString; //put an http if omitted so the link is clickable
-						var html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+						html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
 								'<a class="' + scope.miniBtnClasses + '" href="' + linkString + '" ng-click="hidePopup();">Call Number</a>' +
 								' or <a class="' + scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
@@ -125,7 +120,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$rootScope', '$fi
 					default:
 						isurl = $filter('url')(value).match('http://');
 						if (!linkString.match('http://')) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
-						var html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+						html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
 								'<a class="' + scope.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="hidePopup();">Follow Link</a>' +
 								' or <a class="' + scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +

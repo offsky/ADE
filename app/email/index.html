@@ -10,42 +10,34 @@
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
-        <link rel="stylesheet" href="../common/ade.css" />
+		<link rel="stylesheet" href="../common/demo.css"/>
+      <link rel="stylesheet" href="../common/ade.css" />
 	</head>
 	<body ng-app="app" ng-init="emailstring='admin@toodledo.com'" >
-		<div class="container">
+		<div class="container" ng-controller="ctrl">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
 		<a href="../index.html">back</a>
-
-        <br /><br />
-        <h1>Email Filter</h1><br />
-        <p>Angular's built in linky filter is sufficient for email addresses.</p>
+      <h1>Email Filter</h1>
+      <p>Angular's built in linky filter is sufficient for email addresses.</p>
         <ul>
             <li>Email admin@toodledo.com: <span ng-bind-html="'admin@toodledo.com' | linky"></span> </li>
             <li>Invalid email "email": <span ng-bind-html='"email" | linky'></span></li>
         </ul>
 
-		<br /><br />
-		<h1>Email editing directive</h1><br />
+		<h1>Email editing directive</h1>
 		<p>A directive that makes an email address editable.</p>
 
-		<br /><br />
 
-        <div class="ade-editable" ade-url='{"className":"input-medium","id":"123","type":"email"}' ng-model="emailstring" ng-bind-html="emailstring | email"></div>
+      <div class="ade-editable" ade-url='{"className":"input-medium","id":"123","type":"email"}' ng-model="emailstring" ng-bind-html="emailstring | email"></div>
+      
+      <div class="ade-editable" ade-url='{"className":"input-medium","id":"1234","type":"email"}' ng-model="emailstring2" ng-bind-html="emailstring2 | email"></div>
 
-        <br >
-            
-        <div class="ade-editable" ade-url='{"className":"input-medium","id":"1234","type":"email"}' ng-model="emailstring2" ng-bind-html="emailstring2 | email"></div>
-
-		<br /><br />
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-		<br />
 
 		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
 
-		<br /><br /><br /><br />
 		</div>
 		
 		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
