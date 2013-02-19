@@ -12,16 +12,16 @@
 
 angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
-	 // Common
-	 $rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
-	 $rootScope.adePopupClass = 'ade-popup';
+	// Common
+	$rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
+	$rootScope.adePopupClass = 'ade-popup';
 
-	 $rootScope.hidePopup = function(elm) {
+	$rootScope.hidePopup = function(elm) {
 		var elPopup = (elm) ? elm.next('.' + $rootScope.adePopupClass) : angular.element('.' + $rootScope.adePopupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
 			elPopup.removeClass('open').remove();
 		}
-	 };
+	};
 
 	//=========================================================================================
 	//incorporates the default settings into the passed in settings and returns the combination
@@ -57,7 +57,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//broadcasts the message that we are done editing
 	function done(options, oldValue, value, exit) {
 		if (options.id) {
-			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'old': oldValue, 'new': value, 'exit': exit });
+			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
 		}
 	}
 
