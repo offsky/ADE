@@ -30,10 +30,10 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$rootScope','$fi
 			var newValue = "";
 			var id = "";
 
-			if (controller != null) {
+			if (controller !== null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
-					if(value==undefined || value==null) value="";
+					if(value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
 			}
@@ -53,10 +53,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$rootScope','$fi
 
 				ADE.done(options,oldValue,value,0);
 
-				//make sure we aren't already digesting/applying before we apply the changes
-				if(!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				}
+				scope.$digest(); //This is necessary to get the model to match the value of the input
 			});
 
 			// Watches for changes to the element
