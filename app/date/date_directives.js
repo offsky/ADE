@@ -106,7 +106,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
-				if(!scope.$$phase) scope.$digest();
+				scope.$digest();
 			};
 
 			//handles clicks on the read version of the data
@@ -132,6 +132,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				ADE.setupBlur(input, saveEdit);
 				ADE.setupKeys(input, saveEdit);
 
+				//TODO: need to get rid of the apply here and find a more efficient way to get the popup to appear
 				//if(!scope.$$phase) scope.$parent.$digest(); //This is necessary to get the model to match the value of the input
 				scope.$apply();
 			});
