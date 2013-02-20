@@ -10,7 +10,7 @@
 	"id" will be used in messages broadcast to the app on state changes.
 
 	Messages:
-		name: ADE-start  
+		name: ADE-start
 		data: id from config
 
 		name: ADE-finish
@@ -32,10 +32,10 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 			var oldValue = "";
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
-			if (controller != null) {
+			if (controller !== null) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
-					if(value==undefined || value==null) value="";
+					if(value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
 			}
@@ -50,19 +50,13 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 					controller.$setViewValue(value);
 				}
 
-				// I think that the apply later is sufficient
-				// not sure what the significance is of doing the work inside the appy function
-				// scope.$apply(function() {
-				// 	return controller.$setViewValue(value);
-				// });
-
 				element.show();
 				input.remove();
 				editing=false;
 
 				ADE.done(options,oldValue,value,exit);
 
-				scope.$apply();
+				scope.$digest();
 			};
 			
 			//handles clicks on the read version of the data
@@ -82,11 +76,6 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$
 				
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
-				
-				//make sure we aren't already digesting/applying before we apply the changes
-				if(!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				} 
 			});
 
 			// Watches for changes to the element
