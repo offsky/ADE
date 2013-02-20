@@ -1,5 +1,5 @@
 /* ==================================================================
-	Directive to present a date picker on an input
+	Directive to present a date picker popup on an input element
 ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
@@ -28,12 +28,8 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				element.context.value = dateStr;
 
-				if (!scope.$$phase) { //make sure we aren't already digesting/applying
-					//This is necessary to get the model to match the value of the input
-					return scope.$apply(function() {
-						return controller.$setViewValue(dateStr);
-					});
-				}
+				controller.$setViewValue(dateStr);
+				if(!scope.$$phase) scope.$digest();
 			};
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
@@ -69,7 +65,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 }]);
 
 /* ==================================================================
-	Directive to display a calendar for picking a year
+	Directive to display an input box and a popup date picker on a div that is clicked on
 ------------------------------------------------------------------*/
 angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$rootScope', function(ADE, $compile, $timeout, $rootScope) {
 	return {
@@ -110,8 +106,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
-
-				scope.$apply();
+				if(!scope.$$phase) scope.$digest();
 			};
 
 			//handles clicks on the read version of the data
@@ -131,15 +126,14 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				input = element.next('input');
 
 				input.focus(); //I do not know why both of these are necessary, but they are
-				$timeout(function() { input.focus(); },1);
+				$timeout(function() { input.focus(); },1,false);
 
 				//Handles blur of in-line text box
 				ADE.setupBlur(input, saveEdit);
 				ADE.setupKeys(input, saveEdit);
 
-				if (!scope.$$phase) { //make sure we aren't already digesting/applying
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				}
+				//if(!scope.$$phase) scope.$parent.$digest(); //This is necessary to get the model to match the value of the input
+				scope.$apply();
 			});
 
 			// Initialization code run for each directive instance once
