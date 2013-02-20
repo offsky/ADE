@@ -58,8 +58,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 				value = newValue || oldValue;
 				exit = exited;
 
-				if (exit !== 3) {
-					//don't save value on esc
+				if (exit !== 3) { //don't save value on esc
 					controller.$setViewValue(value);
 				}
 				editing = false;
@@ -67,9 +66,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 
 				ADE.done(options, oldValue, value, exit);
 
-				if (!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				}
+				scope.$digest();
 			};
 
 			//handles clicks on the read version of the data
@@ -79,12 +76,12 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 
 				ADE.begin(options);
 
-				var $iconPopup = angular.element('.' + scope.adePopupClass),
-					clickTarget = angular.element(e.target),
-					attrClass = clickTarget.attr('class'),
-					elOffset,
-					posLeft,
-					posTop;
+				var $iconPopup = angular.element('.' + scope.adePopupClass);
+				var clickTarget = angular.element(e.target);
+				var attrClass = clickTarget.attr('class');
+				var elOffset;
+				var posLeft;
+				var posTop;
 
 				if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]) {
 					if (!$iconPopup.length) {   //don't popup a second one
@@ -103,6 +100,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 							saveEdit(0, '_clear');
 						});
 
+						//handles click on an icon
 						angular.forEach(iconNode, function(el) {
 							var node = angular.element(el);
 							node.bind('click', function() {
@@ -130,10 +128,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$f
 							},500);
 						});
 					}
-				}
-
-				if (!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
 				}
 			});
 
