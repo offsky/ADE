@@ -16,6 +16,8 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	$rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
 	$rootScope.adePopupClass = 'ade-popup';
 
+	//=========================================================================================
+	// Removes a popup
 	$rootScope.hidePopup = function(elm) {
 		var elPopup = (elm) ? elm.next('.' + $rootScope.adePopupClass) : angular.element('.' + $rootScope.adePopupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
@@ -74,7 +76,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//registers the keyboard events on the input so we know how we left edit mode
 	//sends an integer to the callback to indicate how we exited edit mode
 	// 1 = tab, -1 = shift+tab, 2=return, -2=shift+return, 3=esc
-	function setupKeys(input, callback) {
+	function setupKeys(input, callback, ignoreReturn) {
 
 		input.bind('keydown', function(e) {
 			if (e.keyCode == 9) { //tab
@@ -89,15 +91,17 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			}
 		});
 
-		//Handles return key pressed on in-line text box
-		input.bind('keypress', function(e) {
-			if (e.keyCode == 13) { //return
-				e.preventDefault();
-				e.stopPropagation();
-				var exit = e.shiftKey ? -2 : 2;
-				callback(exit);
-			}
-		});
+		if(ignoreReturn !== true) {
+			//Handles return key pressed on in-line text box
+			input.bind('keypress', function(e) {
+				if (e.keyCode == 13) { //return
+					e.preventDefault();
+					e.stopPropagation();
+					var exit = e.shiftKey ? -2 : 2;
+					callback(exit);
+				}
+			});
+		}
 	}
 
 	//=========================================================================================
