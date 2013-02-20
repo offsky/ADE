@@ -18,51 +18,45 @@
  ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeRating', ['ADE','$compile','$rootScope', '$filter', function(ADE, $compile,$rootScope,$filter) {
-    return {
-        require: '?ngModel', //optional dependency for ngModel
-        restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
+	return {
+		require: '?ngModel', //optional dependency for ngModel
+		restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
 
-        //The link step (after compile)
-        link: function(scope, element, attrs, controller) {
-            var options = {},
-                value = "",
-                oldValue = "",
-                newValue = "";
+		//The link step (after compile)
+		link: function(scope, element, attrs, controller) {
+			var options = {},
+				value = "",
+				oldValue = "",
+				newValue = "";
 
-            if (controller != null) {
-                controller.$render = function() { //whenever the view needs to be updated
-                    oldValue = value = controller.$modelValue;
-                    return controller.$viewValue;
-                };
-            }
+			if (controller !== null) {
+				controller.$render = function() { //whenever the view needs to be updated
+					oldValue = value = controller.$modelValue;
+					return controller.$viewValue;
+				};
+			}
 
-            //handles clicks on the read version of the data
-            element.bind('click', function(event) {
+			//handles clicks on the read version of the data
+			element.bind('click', function(event) {
 
-                ADE.begin(options);
+				ADE.begin(options);
 
-                oldValue = value;
-                value = angular.element(event.target).data('position');
-                newValue = value;
+				oldValue = value;
+				value = angular.element(event.target).data('position');
+				newValue = value;
 
-                ADE.done(options,oldValue,value,0);
+				ADE.done(options,oldValue,value,0);
 
-                scope.$apply(function() {
-                    return controller.$setViewValue(value);
-                });
+				controller.$setViewValue(value);
+				scope.$digest(); //This is necessary to get the model to match the value of the input
+			});
 
-                //make sure we aren't already digesting/applying before we apply the changes
-                if(!scope.$$phase) {
-                    return scope.$apply(); //This is necessary to get the model to match the value of the input
-                }
-            });
+			// Watches for changes to the element
+			return attrs.$observe('adeRating', function(settings) { //settings is the contents of the ade-rating="" string
+				options = ADE.parseSettings(settings, {});
+				return element; //TODO: not sure what to return here
+			});
 
-            // Watches for changes to the element
-            return attrs.$observe('adeRating', function(settings) { //settings is the contents of the ade-rating="" string
-                options = ADE.parseSettings(settings, {});
-                return element; //TODO: not sure what to return here
-            });
-
-        }
-    };
+		}
+	};
 }]);
