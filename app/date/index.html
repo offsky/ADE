@@ -48,7 +48,7 @@
 			<td><input ade-calpop='{"format":"MMM d, yyyy h:mm:ss a"}' ng-model="date1c" type="text" class="input-large" /></td>
 		</tr>
 		</table>
-		{{ date1a }}
+
 		<p>There is also a directive for making a non-input element editable:</p>
 
 		<div class="ade-editable" ade-date='{"className":"input-small","format":"yyyy","id":"1234"}' ng-model="date2a">{{date2a | validDate:'yyyy'}}</div>
@@ -60,9 +60,6 @@
 		<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
 
 		</div>
-		TODO: This is leaking bindnigns
-
-				<span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span><span ng-click="foo=2">{{foo}}</span>
 
 		<!-- Scripts -->
 
@@ -81,8 +78,6 @@
 		<script src="date_directives.js"></script>
 		
 		<script type="text/javascript">
-			
-
 			function updateDate() {
 				var unix = parseDateString($("#input").val());
 				$('#unix').text(unix);

@@ -67,7 +67,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 /* ==================================================================
 	Directive to display an input box and a popup date picker on a div that is clicked on
 ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$rootScope', function(ADE, $compile, $timeout, $rootScope) {
+angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$rootScope', function(ADE, $compile, $rootScope) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-date=""></div>
@@ -102,7 +102,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 
 				element.show();
 				input.datepicker('remove');
-				input.remove();
+				input.remove(); //TODO: angular still has a reference to the ngModel bound to the input. We need to fix that leak
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
@@ -122,19 +122,23 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$timeout', '$roo
 				element.hide();
 				var extraDPoptions = '';
 				if (options.format == 'yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				$compile('<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />')(scope).insertAfter(element);
+				var html = '<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
+				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
 				input.focus(); //I do not know why both of these are necessary, but they are
-				$timeout(function() { input.focus(); },1,false);
+				setTimeout(function() {
+					input.focus();
+				});
 
 				//Handles blur of in-line text box
 				ADE.setupBlur(input, saveEdit);
 				ADE.setupKeys(input, saveEdit);
 
-				//TODO: need to get rid of the apply here and find a more efficient way to get the popup to appear
-				//if(!scope.$$phase) scope.$parent.$digest(); //This is necessary to get the model to match the value of the input
-				scope.$apply();
+				//because we have a nested directive, we need to digest the entire parent scope
+				if(scope.$parent.$localApply) scope.$parent.$localApply();
+				else scope.$apply();
+
 			});
 
 			// Initialization code run for each directive instance once

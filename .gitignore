@@ -3,3 +3,4 @@
 .idea/*
 *sublime-*
 dist/*
+app/vendor/js/angular2.js

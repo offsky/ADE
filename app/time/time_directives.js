@@ -36,10 +36,8 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 						pickerData.minute = validMins;
 						pickerData.meridian = ampm;
 						element.timepicker('updateWidget');
-
 					}
 				}
-
 			});
 
 			element.bind('keypress', function(e) {
@@ -103,7 +101,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 /* ==================================================================
  Directive to display a calendar for picking a year
  ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$filter',function(ADE,$compile,$timeout, $filter) {
+angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-time=""></div>
@@ -179,16 +177,21 @@ angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$filter
 					timeLength = 5;
 				}
 
-				$compile('<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />')(scope).insertAfter(element);
+				var html = '<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />';
+				$compile(html)(scope).insertAfter(element);
 
 				input = element.next('input');
 				input.focus(); //I do not know why both of these are necessary, but they are
-				$timeout(function() { input.focus(); },1,false);
+				setTimeout(function() {
+					input.focus();
+				});
 
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
 
-				scope.$apply(); //This is necessary to get the model to match the value of the input
+				//because we have a nested directive, we need to digest the entire parent scope
+				if(scope.$parent.$localApply) scope.$parent.$localApply();
+				else scope.$apply();
 			});
 
 			// Initialization code run for each directive instance once

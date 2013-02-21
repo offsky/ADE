@@ -8,6 +8,7 @@
 		So you can type "next week" and it should work
 	5) Got rid of date formatting and allowed caller to take care of this
 	6) Method for destroying the calendar DOM object
+	7) Remove unnecessary changeDate events
  * ========================================================= */
 
 
@@ -325,11 +326,12 @@
 						}
 						if (this.viewMode !== 0) {
 							this.date = new Date(this.viewDate);
-							this.element.trigger({
-								type: 'changeDate',
-								date: this.date,
-								viewMode: DPGlobal.modes[this.viewMode].clsName
-							});
+							// ADE: Dont need this hear because it happens in set() three lines down
+							// this.element.trigger({
+							// 	type: 'changeDate',
+							// 	date: this.date,
+							// 	viewMode: DPGlobal.modes[this.viewMode].clsName
+							// });
 						}
 						this.showMode(-1);
 						this.fill();
