@@ -25,9 +25,11 @@ function SelectCtrl(scope, rootScope) {
 		//filter options based on typing
 		var exactMatch = false; //tracks if we found an exact match or just a partial match
 		$.each(listOptions, function(i, v) {
-			if (!angular.isString(v)) v = v.toString();
-			if (v.indexOf(options.term) >= 0) results.push({id: i, text: v + ''});
-			if (v == options.term) exactMatch = true;
+			if(v !== undefined) {
+				if (!angular.isString(v)) v = v.toString();
+				if (v.indexOf(options.term) >= 0) results.push({id: i, text: v + ''});
+				if (v == options.term) exactMatch = true;
+			}
 		});
 
 		//if we didn't get an exact match, add an "add new option" option if wanted.
@@ -41,13 +43,13 @@ function SelectCtrl(scope, rootScope) {
 	scope.selection = function(element, callback, listId) {
 		var data = [], results;
 		results = element.val().split(',');
-		if(!listId==undefined) listId = element.attr('data-listId');
+		if(listId === undefined) listId = element.attr('data-listId');
 
 		var listOptions = [];
 		if(listId && scope.listOptions && scope.listOptions[listId]) {
 			listOptions = scope.listOptions[listId];
-	 	}
-		  
+		}
+ 
 		angular.forEach(results, function(value, key) {
 			if(listOptions && listOptions.map) {
 				listOptions.map(function(v, i) {
@@ -70,19 +72,19 @@ function SelectCtrl(scope, rootScope) {
 	//the array for future selection
 	scope.$on('ADE-finish', function(e, data) {
 		if(data.id==123) { //the single input
-			var found = false; 
+			var found = false;
 			$.each(scope.listOptions['list1'], function(i, v) {
 				if (!angular.isString(v)) v = v.toString();
-				if (v == data.new) found = true;
+				if (v == data.newVal) found = true;
 			});
-			if(!found) scope.listOptions['list1'].push(data.new);
+			if(!found) scope.listOptions['list1'].push(data.newVal);
 
-		} else if(data.id=1234) { //the multi input
+		} else if(data.id == 1234) { //the multi input
 
-			values = data.new;
+			values = data.newVal;
 
 			$.each(values, function(j, val) {
-				var found = false; 
+				var found = false;
 				$.each(scope.listOptions['list2'], function(i, v) {
 					if (!angular.isString(v)) v = v.toString();
 					if (v == val) found = true;

@@ -34,7 +34,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 			if (controller) {
 				controller.$render = function() {
 					oldValue = value = controller.$modelValue;
-					if (value == undefined || value == null) value = '';
+					if (value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
 			}
@@ -46,17 +46,17 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 
 				if (exited != 3) { //don't save value on esc
 					value = input.data().select2.data();
-					var v = '';
 					if (angular.isArray(value) && value.length > 0) {
 
 						//to have value stored as array
 						var vals = [];
 						angular.forEach(value, function(val, key) {
-							vals.push(val.text)
+							vals.push(val.text);
 						});
 						value = vals;
 
 						// to have value stored as string
+						// var v = '';
 						// angular.forEach(value, function(val, key) {
 						// 	val = (key < value.length - 1) ? val.text + ',' : val.text;
 						// 	v += val;
@@ -73,7 +73,6 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 				}
 
 				if (exited !== 0) {
-					if (v) element[0].innerHTML = v;
 					element.show();
 					input.select2('destroy');
 					input.remove();
@@ -82,9 +81,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 				editing = false;
 				ADE.done(options, oldValue, value, exit);
 
-				if (!scope.$$phase) {
-					return scope.$apply();
-				}
+				if (!scope.$$phase) scope.$digest();
 			};
 
 			$(document).bind('keydown', function(e) {
@@ -98,8 +95,8 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 						activeInput.remove();
 						element.show();
 						editing = false;
-					  }
-				 });
+					}
+				});
 			});
 
 			//handles clicks on the read version of the data
@@ -128,14 +125,14 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 				var listId = '';
 				if (options.listId) listId = ",listId:'" + options.listId + "'"; //data that is passed through to the query function
 
-				$compile('<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId  + selection + placeholder + '} ' + multi + ' />')(scope)
-					.insertAfter(element);
+				var html = '<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId  + selection + placeholder + '} ' + multi + ' />';
+				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
-				if(angular.isString(value)) value = value.split(',');				
+				if(angular.isString(value)) value = value.split(',');
 				input.val(value);
 
-				//must initialize select2 in timeout to give the DOM a chance to exist	
+				//must initialize select2 in timeout to give the DOM a chance to exist
 				setTimeout(function() {
 					scope.selection(input,function(data) { //get preseleted data
 						input.select2('data', data);
@@ -152,11 +149,6 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', fun
 						if (!options.multiple) saveEdit();
 					}
 				});
-
-				//make sure we aren't already digesting/applying before we apply the changes
-				if (!scope.$$phase) {
-					return scope.$apply(); //This is necessary to get the model to match the value of the input
-				}
 			});
 
 			// Watches for changes to the element
@@ -179,20 +171,17 @@ angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 	return {
 		require: '?ngModel',
 		compile: function(tElm, tAttrs) {
-			var watch,
-				repeatOption,
-				repeatAttr,
-				isSelect = tElm.is('select'),
-				isMultiple = (tAttrs.multiple !== undefined);
-
+			var watch;
+			var repeatOption;
+			var repeatAttr;
+			var isSelect = tElm.is('select');
+			var isMultiple = (tAttrs.multiple !== undefined);
 
 			return function(scope, elm, attrs, controller) {
 				// instance-specific options
 				var opts = angular.extend({}, options, scope.$eval(attrs.uiSelect2));
 
-				if (isMultiple) {
-					opts.multiple = true;
-				}
+				if (isMultiple) opts.multiple = true;
 
 				if (controller) {
 					// Watch the model for programmatic changes
@@ -223,9 +212,8 @@ angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 					if (!isSelect) {
 						// Set the view and model value and update the angular template manually for the ajax/multiple select2.
 						elm.bind('change', function() {
-							scope.$apply(function() {
-								controller.$setViewValue(elm.select2('data'));
-							});
+							controller.$setViewValue(elm.select2('data'));
+							scope.$digest();
 						});
 
 						if (opts.initSelection) {
