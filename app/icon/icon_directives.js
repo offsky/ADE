@@ -19,7 +19,10 @@
 
 angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', function(ADE, $compile, $rootScope, $filter) {
 
-	var icons = ['envelope', 'heart', 'star', 'user', 'film', 'music', 'search', 'ok', 'signal', 'trash', 'home', 'file', 'time', 'road', 'inbox', 'refresh', 'lock', 'flag', 'headphones', 'barcode', 'tag', 'book', 'print', 'camera', 'off', 'list', 'picture', 'pencil', 'share', 'move'];
+	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift', 'calendar', 'time',
+					'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign', 'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign',
+					'leaf', 'tint', 'fire', 'magnet', 'envelope', 'inbox', 'bookmark', 'file', 'bell', 'asterisk',
+					'globe','plane','road','lock','book','wrench','home','briefcase','map-marker','eye-open'];
 	var len = icons.length;
 	var iconsPopupTemplate = '';
 
