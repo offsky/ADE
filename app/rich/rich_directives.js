@@ -19,7 +19,7 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$rootScope', function(ADE, $compile, $rootScope) {
+angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $compile) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-rich=""></div>

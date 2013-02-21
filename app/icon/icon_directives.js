@@ -17,7 +17,7 @@
 
  ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$rootScope', '$filter', function(ADE, $compile, $rootScope, $filter) {
+angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
 
 	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift', 'calendar', 'time',
 					'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign', 'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign',

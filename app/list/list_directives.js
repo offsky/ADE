@@ -16,7 +16,7 @@
  data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeList', ['ADE', '$compile', '$rootScope', function(ADE, $compile, $rootScope) {
+angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $compile) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-list=""></div>

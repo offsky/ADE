@@ -18,7 +18,7 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeLength', ['ADE', '$compile','$rootScope', '$filter', function(ADE, $compile,$rootScope,$filter) {
+angular.module('ADE').directive('adeLength', ['ADE', '$compile', '$filter', function(ADE, $compile,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-length=""></div>

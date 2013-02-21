@@ -1,5 +1,5 @@
 
-function SelectCtrl(scope, rootScope) {
+function SelectCtrl(scope) {
 	//==================================================================
 	// Handles the select2.js smart select lists data matching.
 	// options.term has the typed in terms.  options.callback is called
@@ -96,4 +96,4 @@ function SelectCtrl(scope, rootScope) {
 
 }
 
-SelectCtrl.$inject = ['$scope', '$rootScope'];
+SelectCtrl.$inject = ['$scope'];

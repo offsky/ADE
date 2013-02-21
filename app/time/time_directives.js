@@ -103,7 +103,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 /* ==================================================================
  Directive to display a calendar for picking a year
  ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$rootScope','$filter',function(ADE,$compile,$timeout,$rootScope, $filter) {
+angular.module('ADE').directive('adeTime', ['ADE','$compile','$timeout','$filter',function(ADE,$compile,$timeout, $filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-time=""></div>
