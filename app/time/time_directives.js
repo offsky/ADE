@@ -63,7 +63,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			var updateModel = function() {
 				var timeStr = element.val();
 
-				controller.$setViewValue(dateStr);
+				controller.$setViewValue(timeStr);
 				if(!scope.$$phase) scope.$digest();
 			};
 
@@ -71,7 +71,10 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			if (controller !== null) {
 				controller.$render = function() {
 					if(controller.$viewValue) {
-						element.timepicker('setValues', $filter('time')(controller.$viewValue));
+                        var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
+                        var filteredValue = (timeFormat) ? $filter('time')(controller.$viewValue)
+                                                         : $filter('time')(controller.$viewValue, "24");
+						element.timepicker('setValues', filteredValue);
 						element.timepicker('update');
 					} else if(controller.$viewValue===null) {
 						element.timepicker('setValues',null);
