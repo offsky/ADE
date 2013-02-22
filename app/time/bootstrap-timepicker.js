@@ -148,9 +148,8 @@
 
             this.open = true;
             this.$element.trigger('shown');
-        }
+        },
 
-        ,
         hideWidget: function(saveData) {
             // added by toodledo: shouldSave (on hide) and time value
             this.time = Date.parse(this.$element.val()).getTime()/1000;
@@ -168,9 +167,7 @@
             }
             this.open = false;
             this.$element.trigger('hidden');
-        }
-
-        ,
+        },
 
         mousedown: function(e) {
             e.stopPropagation();

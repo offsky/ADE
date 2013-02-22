@@ -28,12 +28,12 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				element.context.value = dateStr;
 
-				controller.$setViewValue(dateStr);
+				if (controller !== undefined && controller !== null) controller.$setViewValue(dateStr);
 				if(!scope.$$phase) scope.$digest();
 			};
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null) {
+			if (controller !== undefined && controller !== null) {
 				controller.$render = function() {
 					if (controller.$viewValue) {
 						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary?
