@@ -151,8 +151,15 @@
         }
 
         ,
-        hideWidget: function() {
-            this.$element.trigger('hide');
+        hideWidget: function(saveData) {
+            // added by toodledo: shouldSave (on hide) and time value
+            this.time = Date.parse(this.$element.val()).getTime()/1000;
+            this.save = (saveData) ? true : false;
+            this.$element.trigger({
+                type: 'hide',
+                time: this.time,
+                shouldSave : this.save
+            });
 
             if (this.template === 'modal') {
                 this.$widget.modal('hide');

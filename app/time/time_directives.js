@@ -18,8 +18,8 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 					element.timepicker('hideWidget');
 					element.blur();
 				} else if (e.keyCode==27) {
-					element.timepicker('hideWidget');
-				} else {
+					element.timepicker('hideWidget', false);
+                }  else {
 					if (validKey) {
 						var timeStr = controller.$viewValue,
 							pickerData = element.timepicker().data().timepicker,
@@ -39,6 +39,13 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 					}
 				}
 			});
+
+            element.bind('keydown', function(e) {
+               if(e.keyCode==9) { //tab key detection
+                    element.timepicker('updateWidget');
+                    element.timepicker('hideWidget', true);
+                }
+            });
 
 			element.bind('keypress', function(e) {
 				//valid keys: 1-0, p, a, m,backspace, space,return,esc,space
@@ -60,11 +67,22 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			});
 
 			//creates a callback for when something is picked from the popup
-			var updateModel = function() {
-				var timeStr = element.val();
+			var updateModel = function(ev) {
 
-				controller.$setViewValue(timeStr);
-				if(!scope.$$phase) scope.$digest();
+                var timeStr = '';
+                var format = format || "12";
+
+                if (!ev.shouldSave) {
+                    element.context.value = $filter('time')(controller.$viewValue, format);
+                    return;
+                }
+
+                if (ev.time) timeStr = $filter('time')(ev.time, format);
+
+                element.context.value = timeStr;
+
+                controller.$setViewValue(ev.time);
+                if(!scope.$$phase) scope.$digest();
 			};
 
 			// called at the beginning if there is pre-filled data that needs to be preset in the popup
@@ -95,7 +113,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 
 				if(options.format) format = options.format;
 
-				return element.timepicker(options).on('updateWidget', updateModel);
+				return element.timepicker(options).on('hide.timepicker', updateModel);
 			});
 		}
 	};
