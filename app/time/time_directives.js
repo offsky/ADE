@@ -211,7 +211,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				ADE.setupKeys(input,saveEdit);
 
 				//because we have a nested directive, we need to digest the entire parent scope
-				if(scope.$parent.$localApply) scope.$parent.$localApply();
+				if(scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
 				else scope.$apply();
 			});
 
