@@ -33,7 +33,8 @@ function SelectCtrl(scope) {
 		});
 
 		//if we didn't get an exact match, add an "add new option" option if wanted.
-		if (this.allowAddNewValues && options.term && !exactMatch) results.push({id: listOptions.length + 1, text: options.term});
+        console.log(listOptions.length);
+		if (this.allowAddNewValues && options.term && !exactMatch) results.push({id: options.term, text: options.term});
 
 		options.callback({more: false, context: '', results: results});
 	};
