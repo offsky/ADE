@@ -19,7 +19,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 					element.blur();
 				} else if (e.keyCode==27) {
 					element.timepicker('hideWidget', false);
-                }  else {
+				}  else {
 					if (validKey) {
 						var timeStr = controller.$viewValue,
 							pickerData = element.timepicker().data().timepicker,
@@ -40,12 +40,12 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 				}
 			});
 
-            element.bind('keydown', function(e) {
-               if(e.keyCode==9) { //tab key detection
-                    element.timepicker('updateWidget');
-                    element.timepicker('hideWidget', true);
-                }
-            });
+			element.bind('keydown', function(e) {
+				if(e.keyCode==9) { //tab key detection
+					element.timepicker('updateWidget');
+					element.timepicker('hideWidget', true);
+				}
+			});
 
 			element.bind('keypress', function(e) {
 				//valid keys: 1-0, p, a, m,backspace, space,return,esc,space
@@ -68,30 +68,28 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 
 			//creates a callback for when something is picked from the popup
 			var updateModel = function(ev) {
+				var timeStr = '';
+				var format = format || "12";
 
-                var timeStr = '';
-                var format = format || "12";
+				if (!ev.shouldSave) {
+					element.context.value = $filter('time')(controller.$viewValue, format);
+					return;
+				}
 
-                if (!ev.shouldSave) {
-                    element.context.value = $filter('time')(controller.$viewValue, format);
-                    return;
-                }
+				if (ev.time) timeStr = $filter('time')(ev.time, format);
 
-                if (ev.time) timeStr = $filter('time')(ev.time, format);
+				element.context.value = timeStr;
 
-                element.context.value = timeStr;
-
-                controller.$setViewValue(ev.time);
-                if(!scope.$$phase) scope.$digest();
+				if (controller !== undefined && controller !== null) controller.$setViewValue(ev.time);
+				if (!scope.$$phase) scope.$digest();
 			};
 
 			// called at the beginning if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null) {
+			if (controller !== undefined && controller !== null) {
 				controller.$render = function() {
 					if(controller.$viewValue) {
-                        var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
-                        var filteredValue = (timeFormat) ? $filter('time')(controller.$viewValue)
-                                                         : $filter('time')(controller.$viewValue, "24");
+						var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
+						var filteredValue = (timeFormat) ? $filter('time')(controller.$viewValue) : $filter('time')(controller.$viewValue, "24");
 						element.timepicker('setValues', filteredValue);
 						element.timepicker('update');
 					} else if(controller.$viewValue===null) {
@@ -161,7 +159,6 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 						validMins = (mins <= 59) ? mins : 59,
 						cleanedValue = validHrs+":"+validMins+" "+ampm;
 
-
 					value = Date.parse(cleanedValue).getTime() / 1000;
 					controller.$setViewValue(value);
 				}
@@ -200,8 +197,8 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 
 				var html = '<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />';
 				$compile(html)(scope).insertAfter(element);
-
 				input = element.next('input');
+
 				input.focus(); //I do not know why both of these are necessary, but they are
 				setTimeout(function() {
 					input.focus();
@@ -211,7 +208,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				ADE.setupKeys(input,saveEdit);
 
 				//because we have a nested directive, we need to digest the entire parent scope
-				if(scope.$parent.$localApply) scope.$parent.$localApply();
+				if(scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
 				else scope.$apply();
 			});
 

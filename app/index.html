@@ -25,6 +25,7 @@
       <script src="vendor/js/angular-sanitize.js"></script>
 		<script src="vendor/js/bootstrap.js"></script>
 		<script src="common/demoApp.js"></script>
+		<script src="common/demoCtrl.js"></script>
 		<script src="common/demoListCtrl.js"></script>
 		
 		<!-- build:js build/ade-1.0.min.js -->
@@ -65,8 +66,8 @@
 			.sample { background-color: #eee; height:19px; padding:10px; cursor:pointer; display:inline-block;}
 		</style>
 	</head>
-	<body ng-app="app" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9;datasingle='apple';datamulti='pear,cherry'" >
-		<div class="container">
+	<body ng-app="app" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9;datasingle='apple';datamulti=['dog','cat']" >
+		<div class="container" ng-controller="ctrl">
 
 		<h1>AngularJS Datatype Editors (ADE)</h1>
 		<p>ADE is a bunch of modules for displaying and editing various types of data, using <a href="http://angularjs.org/">AngularJS</a>. The typical way that we have seen this done is to have hidden input boxes that toggle to visible when clicked.  The important difference with ADE is that the input box is created and destroyed only when needed, so the DOM is not filled with unused elements. This can be a benefit when you have lots of editable things on the page.</p>
@@ -139,13 +140,12 @@
 		<br /><h2>Other</h2><br />
 	
 		<div ng-controller="SelectCtrl">
-
 		<a href="list/">List (pick one)</a> - Presents a popup list to choose one value from.<br />
 			Example:  <div class="ade-list sample" ade-list='{"id":123,"multiple":false,"query":"query","listId":"list1"}' ng-model="datasingle">{{datasingle | list:1}}</div>
 			<br /><br />
 
 		<a href="list/">List (pick multiple)</a> - Presents a popup list to choose multiple values from. <br />
-			Example: <div class="ade-list sample" ade-list='{"id":123,"multiple":true,"query":"query","listId":"list1"}' ng-model="datamulti">{{datamulti | list:0}}</div>
+			Example: <div class="ade-list sample" ade-list='{"id":1234,"multiple":true,"query":"query","listId":"list2"}' ng-model="datamulti">{{datamulti | list:0}}</div>
 			<br /><br />
 		</div>
 		
@@ -161,7 +161,7 @@
 			Example: <a ade-icon ng-model="dataicon" ng-bind-html="dataicon | icon"></a>
 			<br /><br />
 
-		<br /><br /><br /><br /><br />
 		</div>
+		
 	</body>
 </html>
