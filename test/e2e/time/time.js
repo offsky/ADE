@@ -1,9 +1,20 @@
 'use strict';
 
 describe('time', function() {
+    var expectedHour = 23; //this is the UTC hour of the time used in the demo page
+    var expectedAmPM = 'am';
 
     beforeEach(function() {
         browser().navigateTo('../../app/time/index.html');
+
+        //calculating what the expected local time is
+        var myTz = (new Date().getTimezoneOffset())/60;     
+        expectedHour = 23 - myTz;
+        expectedAmPM = 'am';
+        if(expectedHour>12) {
+            expectedAmPM = 'pm';
+            expectedHour-=12;
+        }
     });
 
     it('should render 2 controls', function() {
@@ -26,7 +37,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('7:59 am');
+        expect(element('.ade-editable:eq(0)').text()).toBe(expectedHour+':59 '+expectedAmPM);
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -36,7 +47,17 @@ describe('time', function() {
             elm.val('abcd');
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('7:59 am');
+        expect(element('.ade-editable:eq(0)').text()).toBe('');
+        expect(element('.ade-editable + input').count()).toEqual(0);
+    });
+
+    it('should allow clearing of input', function() {
+        element('.ade-editable:eq(0)').click();
+        appElement('.ade-editable + input', function(elm) {
+            elm.val('');
+            elm.trigger({ type : 'keypress', keyCode: 13 });
+        });
+        expect(element('.ade-editable:eq(0)').text()).toBe('');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -54,7 +75,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('8:00 am');
+        expect(element('.ade-editable:eq(0)').text()).toBe((expectedHour+1)+':00 '+expectedAmPM); //TODO: if you are in the right timezone, this will fail becaus we are not switching am to pm
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -72,7 +93,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 9 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('4:59 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe((expectedHour+1)+':59 '+expectedAmPM); //TODO: if you are in the right timezone, this will fail becaus we are not switching am to pm
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -90,7 +111,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 27 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('11:59 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe(expectedHour+':59 '+expectedAmPM);
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 });

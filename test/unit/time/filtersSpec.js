@@ -11,7 +11,11 @@ describe('time', function() {
 	})); 
 
 	it('should print a time', function() {
-		expect(timeFilter(1355517820)).toBe('8:43 pm');
+		var myTz = (new Date().getTimezoneOffset())/60;		
+		var expectedHour = 20-myTz;
+
+		expect(timeFilter(1355517820)).toContain(expectedHour+':43 pm');
+
 	});
 
 	it('should print a empty string for non-dates', function() {
