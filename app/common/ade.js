@@ -15,6 +15,11 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	// Common
 	$rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
 	$rootScope.adePopupClass = 'ade-popup';
+    var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
+        'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
+        'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign', 'leaf', 'tint', 'fire', 'magnet', 'envelope',
+        'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe','plane','road','lock','book','wrench','home',
+        'briefcase','map-marker','eye-open'];
 
 	//=========================================================================================
 	// Removes a popup
@@ -111,6 +116,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		begin: begin,
 		done: done,
 		setupBlur: setupBlur,
-		setupKeys: setupKeys
+		setupKeys: setupKeys,
+        icons: icons
 	};
 }]);

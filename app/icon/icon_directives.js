@@ -17,18 +17,15 @@
 
  ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
+angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', '$rootScope', function(ADE, $compile, $filter, $rootScope) {
 
-	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift', 'calendar', 'time',
-					'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign', 'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign',
-					'leaf', 'tint', 'fire', 'magnet', 'envelope', 'inbox', 'bookmark', 'file', 'bell', 'asterisk',
-					'globe','plane','road','lock','book','wrench','home','briefcase','map-marker','eye-open'];
-	var len = icons.length;
+
+	var len = ADE.icons.length;
 	var iconsPopupTemplate = '';
 
 	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear">clear</a>';
 	for (var i = 0; i < len; i++) {
-		iconsPopupTemplate += '<span class="icon-' + icons[i] + '"></span>';
+		iconsPopupTemplate += '<span class="icon-' + ADE.icons[i] + '"></span>';
 	}
 
 	return {

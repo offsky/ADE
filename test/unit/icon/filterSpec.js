@@ -4,21 +4,25 @@
 describe('icon', function() {
     beforeEach(module('ADE'));
 
-    var iconFilter;
+    var iconFilter, $rootScope;
 
     beforeEach(inject(function($filter) {
         iconFilter = $filter('icon');
     }));
 
-    it('should return a glass icon', function() {
-        expect(iconFilter('glass')).toEqual('<span class="ade-icon icon-glass">');
+    beforeEach(angular.mock.inject(function ($injector) {
+        $rootScope  = $injector.get('$rootScope');
+    }));
+
+    it('should return a music icon', function() {
+        expect(iconFilter('music')).toEqual('<span class="ade-icon icon-music">');
     });
 
     it('should return a clear (square with grey background) icon', function() {
         expect(iconFilter('_clear')).toEqual('<span class="ade-icon icon-_clear">');
     });
 
-    xit('should return a clear icon because we gave it a bad icon', function() {
+    it('should return a clear icon because we gave it a bad icon', function() {
         expect(iconFilter('doesntexist')).toEqual('<span class="ade-icon icon-_clear">');
         expect(iconFilter(123)).toEqual('<span class="ade-icon icon-_clear">');
     });
