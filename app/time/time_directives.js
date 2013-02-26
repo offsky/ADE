@@ -12,7 +12,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			var validKey = false;
 
 			//Handles return key pressed on in-line text box
-			element.bind('keyup', function(e) {
+			element.bind('keydown', function(e) {
 				if(e.keyCode==13) { //return key
 					element.timepicker('updateWidget');
 					element.timepicker('hideWidget');
@@ -159,7 +159,8 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 						validMins = (mins <= 59) ? mins : 59,
 						cleanedValue = validHrs+":"+validMins+" "+ampm;
 
-					value = Date.parse(cleanedValue).getTime() / 1000;
+                    value = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
+
 					controller.$setViewValue(value);
 				}
 
