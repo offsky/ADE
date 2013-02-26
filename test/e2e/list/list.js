@@ -10,87 +10,48 @@ describe('list', function() {
         expect(element('.ade-editable').count()).toEqual(2);
     });
 
-    it('should go into edit mode', function() {
-        element('.ade-editable').click();
-        expect(element('.ade-editable + input').count()).toEqual(1);
+    it('should go into edit mode (show popup)', function() {
+        element('.ade-editable:eq(0)').click();
+        sleep(1);
+        expect(element('.ade-editable:eq(0) + .select2-dropdown-open').count()).toEqual(1);
     });
 
-    it('should show a popup on click', function() {
+    xit('should detect Enter key and dismiss the popup', function() {
         element('.ade-editable:eq(0)').click();
-        expect(element('.ade-editable + input').count()).toEqual(1);
-        expect(element('.bootstrap-timepicker.dropdown-menu:visible').count()).toEqual(1);
-    });
-
-    it('should dismiss a popup on ENTER', function() {
-        element('.ade-editable:eq(0)').click();
-        appElement('.ade-editable + input', function(elm) {
-            elm.trigger({ type : 'keypress', keyCode: 13 });
+        sleep(1);
+        appElement('.select2-drop-active .select2-input', function(elm) {
+            elm.trigger({ type : 'keydown', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('5:59 pm');
-        expect(element('.ade-editable + input').count()).toEqual(0);
+        sleep(1);
+        expect(element('.ade-editable:eq(0) + .select2-dropdown-open').count()).toEqual(0);
     });
 
-    it('should not allow invalid input', function() {
+    xit('should detect TAB key and dismiss the popup', function() {
         element('.ade-editable:eq(0)').click();
-        appElement('.ade-editable + input', function(elm) {
-            elm.val('abcd');
-            elm.trigger({ type : 'keypress', keyCode: 13 });
-        });
-        expect(element('.ade-editable:eq(0)').text()).toBe('11:59 pm');
-        expect(element('.ade-editable + input').count()).toEqual(0);
-    });
-
-    it('should detect ENTER key', function() {
-        element('.ade-editable').click();
-        appElement('.ade-editable + input', function(elm) {
-            elm.trigger({ type : 'keypress', keyCode: 13 });
-        });
-        expect(element('.ade-editable + input').count()).toEqual(0);
-    });
-
-    it('should edit/save entry with ENTER', function() {
-        element('.ade-editable:eq(0)').click();
-        element('a[data-action=incrementMinute]').click();
-        appElement('.ade-editable + input', function(elm) {
-            elm.trigger({ type : 'keypress', keyCode: 13 });
-        });
-        expect(element('.ade-editable:eq(0)').text()).toBe('6:00 pm');
-        expect(element('.ade-editable + input').count()).toEqual(0);
-    });
-
-    it('should detect TAB key', function() {
-        element('.ade-editable:eq(0)').click();
-        appElement('.ade-editable + input', function(elm) {
+        sleep(1);
+        appElement('.select2-drop-active .select2-input', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 9 });
-        });
-        expect(element('.ade-editable + input').count()).toEqual(0);
+        });;
+        sleep(1);
+        expect(element('.ade-editable:eq(0) + .select2-dropdown-open').count()).toEqual(0);
     });
 
-    it('should edit/save entry with TAB', function() {
+    it('should detect ESC key and dismiss popup', function() {
         element('.ade-editable:eq(0)').click();
-        element('a[data-action=incrementHour]').click();
-        appElement('.ade-editable + input', function(elm) {
-            elm.trigger({ type : 'keydown', keyCode: 9 });
-        });
-        expect(element('.ade-editable:eq(0)').text()).toBe('6:59 pm');
-        expect(element('.ade-editable + input').count()).toEqual(0);
-    });
-
-    it('should detect ESC key', function() {
-        element('.ade-editable:eq(0)').click();
-        appElement('.ade-editable + input', function(elm) {
+        sleep(1);
+        appElement('.ade-editable:eq(0) + .select2-dropdown-open', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 27 });
         });
-        expect(element('.ade-editable + input').count()).toEqual(0);
+        expect(element('.select2-dropdown-open').count()).toEqual(0);
     });
 
     it('should abort editing entry', function() {
-        element('.ade-editable:eq(0)').click();
-        element('a[data-action=incrementHour]').click();
-        appElement('.ade-editable + input', function(elm) {
+        element('.ade-editable:eq(1)').click();
+        sleep(1);
+        element('.select2-highlighted span').click();
+        appElement('.ade-editable:eq(1) + .select2-dropdown-open', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 27 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('5:59 pm');
-        expect(element('.ade-editable + input').count()).toEqual(0);
+        expect(element('.ade-editable:eq(1)').text()).toBe('dog, cat');
     });
 });

@@ -153,7 +153,7 @@
         hideWidget: function(saveData) {
             // added by toodledo: shouldSave (on hide) and time value
             var dateValue = Date.parse(this.$element.val());
-            this.time = (dateValue !== null) ? dateValue.getTime()/1000 : '';
+            this.time = (dateValue !== null) ? dateValue.getTime()/1000 - (dateValue.getTimezoneOffset() * 60) : '';
             this.save = (saveData) ? true : false;
             this.$element.trigger({
                 type: 'hide',

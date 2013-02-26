@@ -26,7 +26,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('5:59 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe('7:59 am');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -36,7 +36,7 @@ describe('time', function() {
             elm.val('abcd');
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('11:59 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe('7:59 am');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -54,7 +54,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('6:00 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe('8:00 am');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -72,7 +72,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 9 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('6:59 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe('4:59 pm');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -90,7 +90,7 @@ describe('time', function() {
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 27 });
         });
-        expect(element('.ade-editable:eq(0)').text()).toBe('5:59 pm');
+        expect(element('.ade-editable:eq(0)').text()).toBe('11:59 pm');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 });

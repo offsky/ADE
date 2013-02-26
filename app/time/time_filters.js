@@ -18,7 +18,7 @@ angular.module('ADE').filter('time', function() {
         if (angular.isNumber(input)) date = new Date(input*1000);
         if (!angular.isDate(date)) return output;
 
-        hours = date.getHours();
+        hours = date.getUTCHours();
         minutes = date.getMinutes();
 
         if (format === "12") {
