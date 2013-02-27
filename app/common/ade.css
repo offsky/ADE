@@ -1,11 +1,12 @@
 /* Popups Directive */
 .ade-hidden{width: 0;height:0;overflow: hidden;}
-.ade-popup.dropdown-menu.open{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;white-space:normal;}
+.ade-popup.dropdown-menu.open{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;white-space:normal;font-weight:normal;}
 .ade-popup.dropdown-menu:before {border-bottom: 7px solid rgba(0, 0, 0, 0.2);border-left: 7px solid transparent;border-right: 7px solid transparent;content: "";left: 6px;position: absolute;top: -7px;}
 .ade-popup.dropdown-menu:after {border-bottom: 6px solid #FFF;border-left: 6px solid transparent;border-right: 6px solid transparent;content: "";left: 7px;position: absolute;top: -6px;}
 .ade-popup span{padding:3px;margin:0;cursor:pointer;}
 
 /* Icon Directive */
+.ade-icon{cursor:pointer;}
 .ade-icon.icon-_clear{background:#ccc;padding:0;}
 .ade-popup a.icon-_clear{background:none;float:right;margin:-30px 0 0 0;color:#08c;font-size:12px;}
 
@@ -20,7 +21,7 @@
 .ade-rich textarea{margin-top:15px;width:279px;line-height:16px;min-height:50px; max-height:250px;}
 
 /* Rating/Star Directives */
-.ade-rating{position:relative;overflow:hidden;z-index:1;height:23px;}
+.ade-rating{position:relative;overflow:hidden;z-index:1;height:23px;padding-right:10px;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:23px;}
 .ade-rating .ade-rate-container:hover .ade-off{background-position:-23px -23px;}
 .ade-rating .ade-rate-one{width:23px;height:23px;display:inline-block;cursor:pointer;background: url(adeImg/star.png) 0 0;}
@@ -33,7 +34,7 @@
 .ade-rating .ade-zero:hover~.ade-off,
 .ade-rating .ade-zero:hover~.ade-on{background-position:0 0;}
 
-.ade-rating_s{position:relative;overflow:hidden;z-index:1;height:16px;}
+.ade-rating_s{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;}
 .ade-rating_s .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
 .ade-rating_s .ade-rate-container:hover .ade-off{background-position:-16px -16px;}
 .ade-rating_s .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;background: url(adeImg/star_s.png) 0 0;}
