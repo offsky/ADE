@@ -24,8 +24,8 @@
 		<p>A directive that makes a text string editable.</p>
 
 		
-		<div class="ade-editable" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data">{{data | longtext:25}}</div>
-		<div class="ade-editable" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data2">{{data2 | longtext:25}}</div>
+		<div class="ade-editable" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data">{{data | rich:25}}</div>
+		<div class="ade-editable" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data2">{{data2 | rich:25}}</div>
 
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
