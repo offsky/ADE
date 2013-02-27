@@ -1,6 +1,7 @@
 /* ==================================================================
  AngularJS Datatype Editor - Icon
  A directive to choose an icon from a list of many bootstrap icons
+ Specify the allowed icons in ade.js
 
  Usage:
  <a ade-icon='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
@@ -17,7 +18,7 @@
 
  ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', '$rootScope', function(ADE, $compile, $filter, $rootScope) {
+angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $compile) {
 
 
 	var len = ADE.icons.length;
@@ -62,7 +63,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', '$root
 					controller.$setViewValue(value);
 				}
 				editing = false;
-				scope.hidePopup();
+				scope.ADE_hidePopup();
 
 				ADE.done(options, oldValue, value, exit);
 
@@ -76,7 +77,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', '$root
 
 				ADE.begin(options);
 
-				var iconPopup = angular.element('.' + scope.adePopupClass);
+				var iconPopup = angular.element('.' + ADE.popupClass);
 				var clickTarget = angular.element(e.target);
 				var attrClass = clickTarget.attr('class');
 				var elOffset;
@@ -88,7 +89,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', '$root
 					elOffset = element.offset();
 					posLeft = elOffset.left - 7;  // 7px = custom offset
 					posTop = elOffset.top + element[0].offsetHeight;
-					$compile('<div class="' + scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
+					$compile('<div class="' + ADE.popupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
 					input = angular.element('#invisicon');
 					
 					var nextElement = element.next('.ade-popup');

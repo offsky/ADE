@@ -13,18 +13,18 @@
 angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	// Common
-	$rootScope.miniBtnClasses = 'btn btn-mini btn-primary';
-	$rootScope.adePopupClass = 'ade-popup';
-    var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
+	var miniBtnClasses = 'btn btn-mini btn-primary';
+	var popupClass = 'ade-popup';
+	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
         'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
         'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign', 'leaf', 'tint', 'fire', 'magnet', 'envelope',
-        'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe','plane','road','lock','book','wrench','home',
-        'briefcase','map-marker','eye-open'];
+        'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
+        'briefcase', 'map-marker', 'eye-open'];
 
 	//=========================================================================================
 	// Removes a popup
-	$rootScope.hidePopup = function(elm) {
-		var elPopup = (elm) ? elm.next('.' + $rootScope.adePopupClass) : angular.element('.' + $rootScope.adePopupClass);
+	$rootScope.ADE_hidePopup = function(elm) {
+		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
 			elPopup.removeClass('open').remove();
 		}
@@ -96,7 +96,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			}
 		});
 
-		if(ignoreReturn !== true) {
+		if (ignoreReturn !== true) {
 			//Handles return key pressed on in-line text box
 			input.bind('keypress', function(e) {
 				if (e.keyCode == 13) { //return
@@ -117,6 +117,8 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		done: done,
 		setupBlur: setupBlur,
 		setupKeys: setupKeys,
-        icons: icons
+     	icons: icons,
+     	popupClass: popupClass,
+     	miniBtnClasses: miniBtnClasses
 	};
 }]);

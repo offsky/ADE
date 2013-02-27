@@ -1,6 +1,7 @@
 /* ==================================================================
 	AngularJS Datatype Editor - Icon
-	A filter to display a bootstrap icon
+	A filter to display a bootstrap icon (or any icon with a css name)
+    Specify the allowed icons in ade.js
 
 	Usage:
 	{{ data | icon:'star' }}

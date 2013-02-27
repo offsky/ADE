@@ -58,24 +58,23 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
-			
 				scope.$digest();
 			};
 
 			//shows a popup with the full text in read mode
 			//TODO: handle scrolling of very long text blobs
 			var viewRichText = function() {
-				scope.hidePopup();
+				scope.ADE_hidePopup();
 
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
 				var content = value.replace ? value.replace(/\n/g, '<br />') : value; //what is inside the popup
-				
-				if(!content) return; //dont show popup if there is nothing to show
 
-				$compile('<div class="' + scope.adePopupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
-				
+				if (!content) return; //dont show popup if there is nothing to show
+
+				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+
 				input = element.next('.ade-rich');
 			};
 
@@ -88,14 +87,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			//enters edit mode for the text
 			var editRichText = function() {
-				scope.hidePopup();
+				scope.ADE_hidePopup();
 
 				var content = '<textarea class="' + options.className + '" style="height:30px">' + value + '</textarea>';
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
-				$compile('<div class="' + scope.adePopupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>')(scope).insertAfter(element);
-				
+				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>')(scope).insertAfter(element);
+
 				editing = true;
 
 				input = element.next('.ade-rich');
@@ -104,7 +103,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				var pos = txtArea.val().length;
 				txtArea.focus();
 				txtArea[0].setSelectionRange(pos, pos); //put cursor at end
-				
+
 				ADE.setupBlur(txtArea, saveEdit);
 				ADE.setupKeys(txtArea, saveEdit, true);
 
@@ -117,7 +116,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			//TODO: put this in a timeout delay
 			element.bind('mouseenter', function(e)  {
 				if (angular.element('.ade-rich').hasClass('open')) return;
-				var linkPopup = element.next('.' + scope.adePopupClass + '');
+				var linkPopup = element.next('.' + ADE.popupClass + '');
 				if (!linkPopup.length) {
 					viewRichText();
 				}
@@ -126,9 +125,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			//if the mouse leaves, hide the popup note view if in read mode
 			//TODO put this in a timeout delay and allow mouseover of the popup so you can scroll it
 			element.bind('mouseleave', function(e) {
-				var linkPopup = element.next('.' + scope.adePopupClass + '');
+				var linkPopup = element.next('.' + ADE.popupClass + '');
 				if (linkPopup.length && !linkPopup.find('textarea').length) {
-					scope.hidePopup();
+					scope.ADE_hidePopup();
 				}
 			});
 

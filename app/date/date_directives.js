@@ -67,7 +67,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 /* ==================================================================
 	Directive to display an input box and a popup date picker on a div that is clicked on
 ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$rootScope', function(ADE, $compile, $rootScope) {
+angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $compile) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-date=""></div>

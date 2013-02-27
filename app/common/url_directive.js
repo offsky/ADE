@@ -57,7 +57,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				}
 
 				element.show();
-				scope.hidePopup();
+				scope.ADE_hidePopup();
 				if (input) input.remove();
 				editing = false;
 
@@ -75,7 +75,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				ADE.begin(options);
 
 				element.hide(); //hide the read only data
-				scope.hidePopup();
+				scope.ADE_hidePopup();
 				$compile('<input type="text" class="' + options.className + '" value="' + value + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
@@ -102,34 +102,34 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					case 'email':
 						isurl = $filter('email')(value).match('mailto:');
 						if (!linkString.match('mailto:')) linkString = 'mailto:' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + scope.miniBtnClasses + '" href="' + linkString + '" ng-click="hidePopup();">Send Email</a>' +
-								' or <a class="' + scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
+						html = '<div class="' + ADE.popupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE_hidePopup();">Send Email</a>' +
+								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 						break;
 					case 'phone':
 						isurl = $filter('phone')(value).match('tel:');
 						if (!linkString.match('tel:')) linkString = 'tel:' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + scope.miniBtnClasses + '" href="' + linkString + '" ng-click="hidePopup();">Call Number</a>' +
-								' or <a class="' + scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
+						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE_hidePopup();">Call Number</a>' +
+								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 						break;
 					default:
 						isurl = $filter('url')(value).match('http://');
 						if (!linkString.match('http://')) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + scope.adePopupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + scope.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="hidePopup();">Follow Link</a>' +
-								' or <a class="' + scope.miniBtnClasses + ' ade-edit-link">Edit</a>' +
+						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE_hidePopup();">Follow Link</a>' +
+								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 				}
 
 				//if it matches as a URL, then make the popup
 				if (value !== '' && isurl) {
-					if (!element.next('.' + scope.adePopupClass).length) { //don't make a duplicate popup
+					if (!element.next('.' + ADE.popupClass ).length) { //don't make a duplicate popup
 
 						$compile(html)(scope).insertAfter(element);
 
@@ -145,7 +145,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 						invisibleInput.bind('blur', function(e) {
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
-								scope.hidePopup(element);
+								scope.ADE_hidePopup(element);
 							},300);
 						});
 					}
