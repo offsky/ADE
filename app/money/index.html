@@ -22,6 +22,7 @@
 		<p>A filter that appends a dollar sign to a valid number. We wrapped Angular's native currency filter so that we can properly display invalid inputs.</p>
 		  <ul>
 				<li>Currency 123.4: {{ 123.4 | money }} </li>
+				<li>Currency string "123.4": {{ "123.4" | money }} </li>
 				<li>Invalid Currency "abc": {{ "abc" | money }}</li>
 		  </ul>
 
