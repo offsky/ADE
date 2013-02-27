@@ -159,7 +159,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 						validMins = (mins <= 59) ? mins : 59,
 						cleanedValue = validHrs+":"+validMins+" "+ampm;
 
-                    value = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
+                  value = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
 
 					controller.$setViewValue(value);
 				}

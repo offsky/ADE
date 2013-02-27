@@ -76,58 +76,56 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', '$root
 
 				ADE.begin(options);
 
-				var $iconPopup = angular.element('.' + scope.adePopupClass);
+				var iconPopup = angular.element('.' + scope.adePopupClass);
 				var clickTarget = angular.element(e.target);
 				var attrClass = clickTarget.attr('class');
 				var elOffset;
 				var posLeft;
 				var posTop;
 
-				if (angular.isDefined(attrClass) && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]) {
-					if (!$iconPopup.length) {   //don't popup a second one
-						editing = true;
-						elOffset = element.offset();
-						posLeft = elOffset.left - 7;  // 7px = custom offset
-						posTop = elOffset.top + element[0].offsetHeight;
-						$compile('<div class="' + scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
-						input = angular.element('#invisicon');
-						
-						var nextElement = element.next('.ade-popup');
-						var clearNode = nextElement.find('.icon-_clear');
-						var iconNode = nextElement.find('span');
+				if (angular.isDefined(attrClass) && attrClass.match('icon') && attrClass.match('icon').length && clickTarget.parent()[0] == element[0] && (!iconPopup || !iconPopup.length)) {   //don't popup a second one
+					editing = true;
+					elOffset = element.offset();
+					posLeft = elOffset.left - 7;  // 7px = custom offset
+					posTop = elOffset.top + element[0].offsetHeight;
+					$compile('<div class="' + scope.adePopupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
+					input = angular.element('#invisicon');
+					
+					var nextElement = element.next('.ade-popup');
+					var clearNode = nextElement.find('.icon-_clear');
+					var iconNode = nextElement.find('span');
 
-						clearNode.bind('click', function() {
-							saveEdit(0, '_clear');
+					clearNode.bind('click', function() {
+						saveEdit(0, '_clear');
+					});
+
+					//handles click on an icon
+					angular.forEach(iconNode, function(el) {
+						var node = angular.element(el);
+						node.bind('click', function() {
+							window.clearTimeout(timeout);
+							var iconClass =  node.attr('class');
+
+							if (iconClass.match('icon')) {
+								var iconType = iconClass.substr(5);
+								saveEdit(0, iconType);
+							}
 						});
 
-						//handles click on an icon
-						angular.forEach(iconNode, function(el) {
-							var node = angular.element(el);
-							node.bind('click', function() {
-								window.clearTimeout(timeout);
-								var iconClass =  node.attr('class');
+					});
 
-								if (iconClass.match('icon')) {
-									var iconType = iconClass.substr(5);
-									saveEdit(0, iconType);
-								}
-							});
+					input.focus();
 
-						});
+					ADE.setupKeys(input, saveEdit);
 
-						input.focus();
-
-						ADE.setupKeys(input, saveEdit);
-
-						//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-						input.bind('blur', function(e) {
-							//We delay the closure of the popup to give the internal icons a chance to
-							//fire their click handlers and change the value.
-							timeout = window.setTimeout(function() {
-								saveEdit(0);
-							},500);
-						});
-					}
+					//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
+					input.bind('blur', function(e) {
+						//We delay the closure of the popup to give the internal icons a chance to
+						//fire their click handlers and change the value.
+						timeout = window.setTimeout(function() {
+							saveEdit(0);
+						},500);
+					});
 				}
 			});
 
