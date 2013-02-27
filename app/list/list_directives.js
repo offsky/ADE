@@ -46,24 +46,26 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = input.data().select2.data();
-					if (angular.isArray(value) && value.length > 0) {
+					if (angular.isArray(value)) {
+						if(value.length > 0) {
+							//to have value stored as array
+							var vals = [];
+							angular.forEach(value, function(val, key) {
+								vals.push(val.text);
+							});
+							value = vals;
 
-						//to have value stored as array
-						var vals = [];
-						angular.forEach(value, function(val, key) {
-							vals.push(val.text);
-						});
-						value = vals;
-
-						// to have value stored as string
-						// var v = '';
-						// angular.forEach(value, function(val, key) {
-						// 	val = (key < value.length - 1) ? val.text + ',' : val.text;
-						// 	v += val;
-						// });
-						// value = v;
-
-					} else if (angular.isObject(value) && value.text !== '') {
+							// to have value stored as string
+							// var v = '';
+							// angular.forEach(value, function(val, key) {
+							// 	val = (key < value.length - 1) ? val.text + ',' : val.text;
+							// 	v += val;
+							// });
+							// value = v;
+						} else {
+							value = '';
+						}
+					} else if (angular.isObject(value) && value.text) {
 						value = value.text;
 					} else {
 						value = (value) ? value.text : '';
@@ -79,6 +81,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				}
 
 				editing = false;
+				console.log(oldValue,value);
 				ADE.done(options, oldValue, value, exit);
 
 				if (!scope.$$phase) scope.$digest();
