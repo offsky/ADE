@@ -19,5 +19,7 @@ describe('email', function() {
 		expect(filter("")).toEqual('');
 		expect(filter("foo")).toEqual('foo');
 		expect(filter(1234)).toEqual('1234');
+		expect(filter(null)).toEqual('');
+		expect(filter(undefined)).toEqual('');
 	});
 });

@@ -54,7 +54,8 @@ angular.module('ADE').filter('length', function() {
 
 		//if it is already a number, just prettify it
 		if (!isNaN(input)) return mins2Pretty(input);
-
+		if(!angular.isString(input)) return '';
+		
 		var values = input.split(' ');
 		switch(values.length) {
 			case 1: //only one number specified (1hr or 60min)

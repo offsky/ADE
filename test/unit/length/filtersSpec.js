@@ -57,5 +57,9 @@ describe('length', function() {
 		expect(lengthFilter(-1)).toBe("");
 		expect(lengthFilter("")).toBe("");
 		expect(lengthFilter("abcd")).toBe("");
+		expect(lengthFilter(null)).toBe("");
+		expect(lengthFilter(undefined)).toBe("");
+		expect(lengthFilter({foo:1})).toBe("");
+		expect(lengthFilter(['1','2'])).toBe("");
 	});
 });
