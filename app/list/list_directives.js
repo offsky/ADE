@@ -81,7 +81,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				}
 
 				editing = false;
-				console.log(oldValue,value);
+
 				ADE.done(options, oldValue, value, exit);
 
 				if (!scope.$$phase) scope.$digest();
@@ -145,7 +145,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 
 				input.on('change', function(e) {
 					if (e[0] === 'singleRemove') {
-						saveEdit(0);
+						saveEdit();
 					} else if (e[0] === 'bodyClick') {
 						saveEdit();
 					} else {

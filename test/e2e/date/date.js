@@ -39,6 +39,16 @@ describe('date', function() {
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
+    it('should allow entering value into input', function() {
+        element('.ade-editable:eq(0)').click();
+        appElement('.ade-editable + input', function(elm) {
+            elm.val('2009');
+            elm.trigger({ type : 'keypress', keyCode: 13 });
+        });
+        expect(element('.ade-editable:eq(0)').text()).toBe('2009');
+        expect(element('.ade-editable + input').count()).toEqual(0);
+    });
+
     it('should detect ENTER key', function() {
         element('.ade-editable').click();
         appElement('.ade-editable + input', function(elm) {
@@ -51,7 +61,6 @@ describe('date', function() {
         element('.ade-editable:eq(0)').click();
         element('span.year:contains(2019)').click();
         appElement('.ade-editable + input', function(elm) {
-           elm.val('2019');
            elm.trigger({ type : 'keypress', keyCode: 13 });
         });
         expect(element('.ade-editable:eq(0)').text()).toBe('2019');
