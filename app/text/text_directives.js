@@ -3,12 +3,13 @@
 	A directive to edit text in place
 
 	Usage:
-	<div ade-text='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-text='{"class":"input-large","id":"1234","maxlength":"64"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
 	"id" will be used in messages broadcast to the app on state changes.
-
+	"maxlength" will constrain the length of the string (optional)
+	
 	Messages:
 		name: ADE-start
 		data: id from config
@@ -68,8 +69,11 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 
 				ADE.begin(options);
 
+				var maxlength = '';
+				if(options.maxlength!==undefined) maxlength = "maxlength='"+options.maxlength+"'";
+
 				element.hide();
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')(scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value+'" '+maxlength+' />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
