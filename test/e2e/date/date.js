@@ -77,7 +77,6 @@ describe('date', function() {
 
     it('should edit/save entry with TAB', function() {
         element('.ade-editable:eq(0)').click();
-        element('span.year:contains(2019)').click();
         appElement('.ade-editable + input', function(elm) {
             elm.val('2019');
             elm.trigger({ type : 'keydown', keyCode: 9 });
