@@ -25,5 +25,6 @@ ADE currently supports the following datatypes:
 - Boolean
 - Icon
 
+<a href="http://toodledo.github.com/ADE/">Demo</a>
 
 ADE is released with an MIT License.
