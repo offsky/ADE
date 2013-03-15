@@ -11,7 +11,17 @@ describe('time', function() {
 	})); 
 
 	it('should print a time', function() {
-		var myTz = (new Date().getTimezoneOffset())/60;		
+		var today = new Date();
+		var myTz = (today.getTimezoneOffset())/60;
+
+		//adjust timezone based on daylight savings
+    	var jan = new Date(today.getFullYear(), 0, 1);
+    	var jul = new Date(today.getFullYear(), 6, 1);
+    	var std = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+		var dst = today.getTimezoneOffset() < std;
+		if(dst) myTz+=1;
+
+
 		var expectedHour = 20-myTz;
 
 		expect(timeFilter(1355517820)).toContain(expectedHour+':43 pm');

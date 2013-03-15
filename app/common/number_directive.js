@@ -72,7 +72,8 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 
 				ADE.begin(options);
 
-				if(!angular.isNumber(value)) value = parseFloat(value.replace(/[$]/g, ''));
+				if(angular.isString(value)) value = parseFloat(value.replace(/[$]/g, ''));
+				else if(!angular.isNumber(value)) value = '';
 				value = value ? value : '';
 
 				element.hide();
