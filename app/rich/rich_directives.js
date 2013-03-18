@@ -89,7 +89,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var editRichText = function() {
 				scope.ADE_hidePopup();
 
-				var content = '<textarea class="' + options.className + '" style="height:30px">' + value + '</textarea>';
+        var model = element.attr("ng-model");
+				var content = '<textarea ng-model="'+ model +'" ui-tinymce class="' + options.className + '" style="height:30px">' + value + '</textarea>';
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
@@ -100,9 +101,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				input = element.next('.ade-rich');
 				txtArea = input.find('textarea');
 
-				var pos = txtArea.val().length;
-				txtArea.focus();
-				txtArea[0].setSelectionRange(pos, pos); //put cursor at end
+				//var pos = txtArea.val().length;
+				//txtArea.focus();
+				//txtArea[0].setSelectionRange(pos, pos); //put cursor at end
 
 				ADE.setupBlur(txtArea, saveEdit);
 				ADE.setupKeys(txtArea, saveEdit, true);
@@ -150,4 +151,40 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			});
 		}
 	};
+}]);
+
+/**
+ * Binds a TinyMCE widget to <textarea> elements.
+ */
+angular.module('ADE').directive('uiTinymce', [function () {
+  return {
+    require: "?ngModel",
+    link: function (scope, elm, attrs, ngModel) {
+      setTimeout(function() {
+        elm.tinymce({
+          // Location of TinyMCE script
+          script_url: 'tiny_mce_src.js',
+
+          // General options
+          theme: "simple",
+
+          // Change from local directive scope -> "parent" scope
+          // Update Textarea and Trigger change event
+          // you can also use handle_event_callback which fires more often
+          onchange_callback: function(e) {
+
+            if (this.isDirty()) {
+              this.save();
+
+              // tinymce inserts the value back to the textarea element, so we get the val from element (work's only for textareas)
+              ngModel.$setViewValue(elm.val());
+              scope.$apply();
+
+              return true;
+            }
+          }
+         });
+      });
+    }
+  };
 }]);
