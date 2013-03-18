@@ -29,7 +29,7 @@ angular.module('ADE').directive('adeRating', ['ADE','$compile', '$filter', funct
 				oldValue = "",
 				newValue = "";
 
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					return controller.$viewValue;

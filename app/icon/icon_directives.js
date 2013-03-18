@@ -43,7 +43,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = '';

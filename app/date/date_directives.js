@@ -82,7 +82,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = 0;

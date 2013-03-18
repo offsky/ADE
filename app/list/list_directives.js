@@ -31,7 +31,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
-			if (controller) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() {
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = '';

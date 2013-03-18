@@ -30,7 +30,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 			var newValue = "";
 			var id = "";
 
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if(value === undefined || value === null) value = '';

@@ -35,7 +35,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null;
 
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = '';
