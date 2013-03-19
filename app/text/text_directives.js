@@ -73,7 +73,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				if(options.maxlength!==undefined) maxlength = "maxlength='"+options.maxlength+"'";
 
 				element.hide();
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" '+maxlength+' />')(scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value.replace(/"/g,'&quot;')+'" '+maxlength+' />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
