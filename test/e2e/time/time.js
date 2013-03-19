@@ -8,13 +8,27 @@ describe('time', function() {
         browser().navigateTo('../../app/time/index.html');
 
         //calculating what the expected local time is
-        var myTz = (new Date().getTimezoneOffset())/60;     
-        expectedHour = 23 - myTz;
+        var today = new Date();
+        var myTz = (today.getTimezoneOffset())/60;
+
+        //adjust timezone based on daylight savings
+        var jan = new Date(today.getFullYear(), 0, 1);
+        var jul = new Date(today.getFullYear(), 6, 1);
+        var std = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+        var dst = today.getTimezoneOffset() < std;
+        if(dst) myTz+=1;
+
+
+        expectedHour = 23-myTz;
+
         expectedAmPM = 'am';
         if(expectedHour>12) {
             expectedAmPM = 'pm';
             expectedHour-=12;
         }
+
+        
+
     });
 
     it('should render 2 controls', function() {

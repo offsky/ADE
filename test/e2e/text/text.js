@@ -6,8 +6,8 @@ describe('text', function() {
         browser().navigateTo('../../app/text/index.html');
     });
 
-    it('should render 1 control', function() {
-        expect(element('.ade-editable').count()).toEqual(1);
+    it('should render 2 controls', function() {
+        expect(element('.ade-editable').count()).toEqual(2);
     });
 
     it('should go into edit mode', function() {
@@ -29,7 +29,7 @@ describe('text', function() {
             elm.val('testing ade text');
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable').text()).toBe('testing ade text');
+        expect(element('.ade-editable:eq(0)').text()).toBe('testing ade text');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -47,7 +47,7 @@ describe('text', function() {
             elm.val('testing ade text');
             elm.trigger({ type : 'keydown', keyCode: 9 });
         });
-        expect(element('.ade-editable').text()).toBe('testing ade text');
+        expect(element('.ade-editable:eq(0)').text()).toBe('testing ade text');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
@@ -65,7 +65,7 @@ describe('text', function() {
             elm.val('testing ade text');
             elm.trigger({ type : 'keydown', keyCode: 27 });
         });
-        expect(element('.ade-editable').text()).toBe('click to edit me');
+        expect(element('.ade-editable:eq(0)').text()).toBe('click to edit me');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 });
