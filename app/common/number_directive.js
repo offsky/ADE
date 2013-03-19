@@ -72,6 +72,7 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 
 				ADE.begin(options);
 
+				if(angular.isArray(value) && value.length>0) value = value[0];
 				if(angular.isString(value)) value = parseFloat(value.replace(/[$]/g, ''));
 				else if(!angular.isNumber(value)) value = '';
 				value = value ? value : '';
