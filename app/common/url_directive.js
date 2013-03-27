@@ -74,6 +74,8 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 				ADE.begin(options);
 
+				if(!angular.isString(value)) value = value.toString();
+
 				element.hide(); //hide the read only data
 				scope.ADE_hidePopup();
 				$compile('<input type="text" class="' + options.className + '" value="' + value.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
