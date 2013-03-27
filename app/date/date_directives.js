@@ -10,6 +10,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
 			var format = 'mm/dd/yyy';
+			console.log("link");
 
 			//Handles return key pressed on in-line text box
 			element.bind('keyup', function(e) {
@@ -23,18 +24,22 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//creates a callback for when something is picked from the popup
 			var updateModel = function(ev) {
+				console.log("update");
+
 				var dateStr = '';
 				if (ev.date) dateStr = $filter('date')(ev.date, format);
 
+				//these two lines cause orphaned datepickers
 				element.context.value = dateStr;
-
 				if (controller !== undefined && controller !== null) controller.$setViewValue(dateStr);
+
 				if (!scope.$$phase) scope.$digest();
 			};
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
 			if (controller !== undefined && controller !== null) {
 				controller.$render = function() {
+					console.log("render"); //this section is getting called multiple times
 					if (controller.$viewValue) {
 						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary?
 						element.datepicker('setValue', controller.$viewValue);
@@ -49,6 +54,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			// Initialization code run for each directive instance.  Enables the bootstrap datepicker object
 			return attrs.$observe('adeCalpop', function(value) { //value is the contents of the b-datepicker="" string
+				console.log("observe");
 				var options = {};
 				if (angular.isObject(value)) options = value;
 
@@ -97,11 +103,15 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = parseDateString(input.val());
-					controller.$setViewValue(value);
+					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
 				}
 
 				element.show();
+				console.log("remove");
 				input.datepicker('remove');
+
+				//TODO: date picker not getting fully removed
+
 				input.remove(); //TODO: angular still has a reference to the ngModel bound to the input. We need to fix that leak
 				editing = false;
 
@@ -111,6 +121,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
+				console.log("click");
 				if (editing) return;
 				editing = true;
 				exit = 0;
@@ -125,6 +136,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				var html = '<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
+				console.log("add");
 
 				input.focus(); //I do not know why both of these are necessary, but they are
 				setTimeout(function() {
@@ -138,12 +150,12 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				//because we have a nested directive, we need to digest the entire parent scope
 				if(scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
 				else scope.$apply();
-
 			});
 
 			// Initialization code run for each directive instance once
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-text="" string
+
 				options = ADE.parseSettings(settings, {className: 'input-medium', format: 'MMM d, yyyy'});
 				return element; //TODO: not sure what to return here
 			});
