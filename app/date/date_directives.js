@@ -10,7 +10,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
 			var format = 'mm/dd/yyy';
-			console.log("link");
 
 			//Handles return key pressed on in-line text box
 			element.bind('keyup', function(e) {
@@ -24,7 +23,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//creates a callback for when something is picked from the popup
 			var updateModel = function(ev) {
-				console.log("update");
 
 				var dateStr = '';
 				if (ev.date) dateStr = $filter('date')(ev.date, format);
@@ -39,7 +37,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
 			if (controller !== undefined && controller !== null) {
 				controller.$render = function() {
-					console.log("render"); //this section is getting called multiple times
 					if (controller.$viewValue) {
 						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary?
 						element.datepicker('setValue', controller.$viewValue);
@@ -54,7 +51,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			// Initialization code run for each directive instance.  Enables the bootstrap datepicker object
 			return attrs.$observe('adeCalpop', function(value) { //value is the contents of the b-datepicker="" string
-				console.log("observe");
 				var options = {};
 				if (angular.isObject(value)) options = value;
 
@@ -107,12 +103,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				}
 
 				element.show();
-				console.log("remove");
-				input.datepicker('remove');
 
-				//TODO: date picker not getting fully removed
-
-				input.remove(); //TODO: angular still has a reference to the ngModel bound to the input. We need to fix that leak
+				input.datepicker('remove'); //tell datepicker to remove self
+				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
+				var test = input.remove(); //remove the input
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
@@ -121,22 +115,20 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
-				console.log("click");
 				if (editing) return;
 				editing = true;
 				exit = 0;
 				value = value || 0;
-				if(!angular.isNumber(value)) value = parseDateString(value);
+				if (!angular.isNumber(value)) value = parseDateString(value);
 
 				ADE.begin(options);
 
 				element.hide();
 				var extraDPoptions = '';
 				if (options.format == 'yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				var html = '<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
+				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
-				console.log("add");
 
 				input.focus(); //I do not know why both of these are necessary, but they are
 				setTimeout(function() {
@@ -148,7 +140,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				ADE.setupKeys(input, saveEdit);
 
 				//because we have a nested directive, we need to digest the entire parent scope
-				if(scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
+				if (scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
 				else scope.$apply();
 			});
 
@@ -164,7 +156,13 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 	};
 }]);
 
-
+/* ==================================================================
+	Angular needs to have a controller in order to make a fresh scope (to my knowledge)
+	and we need a fresh scope for the input that we are going to create because we need
+	to be able to destroy that scope without bothering its siblings/parent. We need to
+	destroy the scope to prevent leaking memory with ngModelWatchers
+------------------------------------------------------------------*/
+function adeDateDummyCtrl() { }
 
 /*
 References
