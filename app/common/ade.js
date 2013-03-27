@@ -17,9 +17,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	var popupClass = 'ade-popup';
 	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
         'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
-        'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign', 'leaf', 'tint', 'fire', 'magnet', 'envelope',
+        'exclamation-sign', 'trophy', 'pushpin', 'warning-sign', 'leaf', 'tint', 'coffee', 'magnet', 'envelope',
         'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
-        'briefcase', 'map-marker', 'eye-open'];
+        'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
 
 	//=========================================================================================
 	// Removes a popup

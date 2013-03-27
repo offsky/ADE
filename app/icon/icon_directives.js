@@ -24,7 +24,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 	var len = ADE.icons.length;
 	var iconsPopupTemplate = '';
 
-	if (len > 0) iconsPopupTemplate = '<a class="icon-_clear">clear</a>';
+	if (len > 0) iconsPopupTemplate = '<a class="ade-clear">clear</a>';
 	for (var i = 0; i < len; i++) {
 		iconsPopupTemplate += '<span class="icon-' + ADE.icons[i] + '"></span>';
 	}
@@ -89,15 +89,15 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 					elOffset = element.offset();
 					posLeft = elOffset.left - 7;  // 7px = custom offset
 					posTop = elOffset.top + element[0].offsetHeight;
-					$compile('<div class="' + ADE.popupClass + ' dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
+					$compile('<div class="' + ADE.popupClass + ' ade-icons dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
 					input = angular.element('#invisicon');
 					
 					var nextElement = element.next('.ade-popup');
-					var clearNode = nextElement.find('.icon-_clear');
+					var clearNode = nextElement.find('.ade-clear');
 					var iconNode = nextElement.find('span');
 
 					clearNode.bind('click', function() {
-						saveEdit(0, '_clear');
+						saveEdit(0, 'ban-circle');
 					});
 
 					//handles click on an icon

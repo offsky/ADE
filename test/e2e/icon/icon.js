@@ -18,8 +18,8 @@ describe('icon', function() {
     it('should clear when clicked on clear', function() {
         element('a[ade-icon]:eq(0) span').click();
         expect(element('.ade-popup').count()).toEqual(1);
-        element('.ade-popup .icon-_clear').click();
-        expect(element('a[ade-icon]:eq(0)').html()).toBe('<span class="ade-icon icon-_clear"></span>');
+        element('.ade-popup .ade-clear').click();
+        expect(element('a[ade-icon]:eq(0)').html()).toBe('<span class="ade-icon icon-ban-circle"></span>');
         expect(element('.ade-popup').count()).toEqual(0);
     });
 
