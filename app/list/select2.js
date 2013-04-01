@@ -524,6 +524,7 @@
                     $.each(s2Container, function() {
                         if (($(this).next().hasClass("ade-list-input")) && (e.target !== $(this))) {
                             if ($(this).find('.select2-drop').not(":visible")) {
+                                $(this).data("select2").exit = 0; //reset the exit condition
                                 $(this).data("select2").triggerChange(["bodyClick"]);
                             }
                         }
@@ -848,7 +849,7 @@
         triggerChange: function (details) {
 
             details = details || {};
-            details= $.extend({}, details, { type: "change", val: this.val() });
+            details= $.extend({}, details, { type: "change", val: this.val(), exit:this.exit });
             // prevents recursive triggering
             this.opts.element.data("select2-change-triggered", true);
             this.opts.element.trigger(details);
@@ -1112,7 +1113,7 @@
         },
 
         // abstract
-        highlight: function (index) {
+        highlight: function (index,search) {
             var choices = this.results.find(".select2-result-selectable").not(".select2-disabled");
 
             if (arguments.length === 0) {
@@ -1124,7 +1125,7 @@
 
             choices.removeClass("select2-highlighted");
 
-            $(choices[index]).addClass("select2-highlighted");
+            if(search!=='') $(choices[index]).addClass("select2-highlighted");
             this.ensureHighlightVisible();
 
         },
@@ -1282,7 +1283,7 @@
                     window.setTimeout(function() { self.loadMoreIfNeeded(); }, 10);
                 }
 
-                this.postprocessResults(data, initial);
+                this.postprocessResults(data, initial, search.val()); //ADE: added last paramater
 
                 postRender();
             })});
@@ -1291,6 +1292,7 @@
         // abstract
         cancel: function () {
             this.close();
+            this.opts.element.trigger($.Event("cancel")); //ADE: added to get ESC to work
         },
 
         // abstract
@@ -1329,6 +1331,10 @@
                 highlighted.addClass("select2-disabled");
                 this.highlight(index);
                 this.onSelect(data);
+            } else { //ADE: added this clause so we could exit multi on tab/return with nothing selecteed
+                this.close();
+                this.focusSearch();
+                this.triggerChange(["emptyTabReturn"]);
             }
         },
 
@@ -1473,14 +1479,19 @@
                             killEvent(e);
                             return;
                         case KEY.TAB:
+                            this.exit = e.shiftKey ? -1 : 1; //ADE: added to handle exit condition
+                            this.selectHighlighted();
+                            killEvent(e);
+                            return;
                         case KEY.ENTER:
+                            this.exit = e.shiftKey ? -2 : 2; //ADE: added to handle exit condition
                             this.selectHighlighted();
                             killEvent(e);
                             return;
                         case KEY.ESC:
                             this.cancel(e);
-                            // Changed on 2.3.2013
-                            //killEvent(e);
+                            // ADE. this next line was commented out, but now we use it
+                            killEvent(e);
                             return;
                     }
                 } else {
@@ -1711,7 +1722,10 @@
             this.close();
             this.selection.focus();
 
-            if (!equal(old, this.id(data))) { this.triggerChange(); }
+            //ADE: we want it to trigger a change always, even if selection hasn't changed
+            //if (!equal(old, this.id(data))) { 
+                this.triggerChange(); 
+            //}
         },
 
         // single
@@ -1877,14 +1891,19 @@
                         killEvent(e);
                         return;
                     case KEY.ENTER:
-                    case KEY.TAB:
+                        this.exit = e.shiftKey ? -2 : 2; //ADE: added to handle exit condition
                         this.selectHighlighted();
                         killEvent(e);
                         return;
-                        case KEY.ESC:
+                    case KEY.TAB:
+                        this.exit = e.shiftKey ? -1 : 1; //ADE: added to handle exit condition
+                        this.selectHighlighted();
+                        killEvent(e);
+                        return;
+                    case KEY.ESC:
                         this.cancel(e);
-                        // Changed on 2.3.2013
-                        //killEvent(e);
+                        // ADE: this line was commented out, but now we use it
+                        killEvent(e);
                         return;
                     }
                 }
@@ -2106,6 +2125,7 @@
         cancel: function () {
             this.close();
             this.focusSearch();
+            this.opts.element.trigger($.Event("cancel")); //ADE: added to get ESC to work
         },
 
         // multi
@@ -2180,12 +2200,13 @@
         },
 
         // multi
-        postprocessResults: function () {
+        postprocessResults: function (data,initial,search) { //ADE: added args
             var val = this.getVal(),
-                choices = this.results.find(".select2-result-selectable"),
+                choices = this.results.find(".select2-result-selectable"), //all the LI elements
                 compound = this.results.find(".select2-result-with-children"),
                 self = this;
 
+            //disable the LIs that are already selected and enable the rest
             choices.each2(function (i, choice) {
                 var id = self.id(choice.data("select2-data"));
                 if (indexOf(id, val) >= 0) {
@@ -2205,7 +2226,7 @@
 
             choices.each2(function (i, choice) {
                 if (!choice.hasClass("select2-disabled") && choice.hasClass("select2-result-selectable")) {
-                    self.highlight(0);
+                    self.highlight(0,search); //ADE: added second paramater
                     return false;
                 }
             });

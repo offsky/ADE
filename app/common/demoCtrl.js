@@ -10,7 +10,7 @@ function ctrl($rootScope) {
 			case 1: exit = 'Exited via tab'; break;
 			case -1: exit = 'Exited via shift+tab'; break;
 			case 2: exit = 'Exited via return'; break;
-			case -1: exit = 'Exited via shift+return'; break;
+			case -2: exit = 'Exited via shift+return'; break;
 			case 3: exit = 'Exited via esc key'; break;
 		}
 		var oldvalue = data.oldVal;

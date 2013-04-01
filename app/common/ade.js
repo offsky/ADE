@@ -62,6 +62,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
+	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc
 	function done(options, oldValue, value, exit) {
 		if (options.id) {
 			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
