@@ -27,6 +27,7 @@ function ctrl($rootScope) {
 			if (oldvalue != newvalue) {
 				$rootScope.lastMessage = 'Finished edit with changes. Was: '+ data.oldVal + '. Now: '+ data.newVal + '. '+ exit;
 			}
+			$rootScope.$digest();
 		});
 	}
 }
