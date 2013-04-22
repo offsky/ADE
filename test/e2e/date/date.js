@@ -39,7 +39,7 @@ describe('date', function() {
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 
-    it('should allow entering value into input', function() {
+    xit('should allow entering value into input', function() {
         element('.ade-editable:eq(0)').click();
         appElement('.ade-editable + input', function(elm) {
             elm.val('2009');
