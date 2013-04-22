@@ -12,8 +12,10 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			var format = 'mm/dd/yyy';
 
 			//Handles return key pressed on in-line text box
-			element.bind('keyup', function(e) {
+			element.bind('keypress', function(e) {
 				if (e.keyCode == 13) { //return key
+					e.preventDefault();
+					e.stopPropagation();
 					element.datepicker('hide');
 					element.blur();
 				} else if (e.keyCode == 27) { //esc
@@ -99,11 +101,14 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = parseDateString(input.val());
-					if(value==null) value = 0;
+					if (value == null) value = 0;
 					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
 				}
 
 				element.show();
+
+				ADE.teardownBlur(input);
+				ADE.teardownKeys(input);
 
 				input.datepicker('remove'); //tell datepicker to remove self
 				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
