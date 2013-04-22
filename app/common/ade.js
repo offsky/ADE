@@ -73,18 +73,23 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//registers a blur event on the input so we can know when we clicked outside
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
 	function setupBlur(input, callback) {
-		input.bind('blur', function() {
+		input.bind('blur.ADE', function() {
 			callback(0);
 		});
+	}
+	function teardownBlur(input) {
+		input.unbind('blur.ADE');
 	}
 
 	//=========================================================================================
 	//registers the keyboard events on the input so we know how we left edit mode
 	//sends an integer to the callback to indicate how we exited edit mode
 	// 1 = tab, -1 = shift+tab, 2=return, -2=shift+return, 3=esc
+	var bound = false; //There may be a better way to prevent the current event from finishing when I have unbound the event handler, but I couldnt find it
 	function setupKeys(input, callback, ignoreReturn) {
 
-		input.bind('keydown', function(e) {
+		bound = true;
+		input.bind('keydown.ADE', function(e) {
 			if (e.keyCode == 9) { //tab
 				e.preventDefault();
 				e.stopPropagation();
@@ -99,8 +104,8 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 		if (ignoreReturn !== true) {
 			//Handles return key pressed on in-line text box
-			input.bind('keypress', function(e) {
-				if (e.keyCode == 13) { //return
+			input.bind('keypress.ADE', function(e) {
+				if (e.keyCode == 13 && bound) { //return
 					e.preventDefault();
 					e.stopPropagation();
 					var exit = e.shiftKey ? -2 : 2;
@@ -108,6 +113,12 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				}
 			});
 		}
+	}
+	function teardownKeys(input) {
+		input.unbind('keydown.ADE');
+		input.unbind('keypress.ADE');
+		bound = false; //tells the key event listener to stop processing the current event
+							//this seems to be necessary since stopPropigation wasn't working.
 	}
 
 	//=========================================================================================
@@ -117,7 +128,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		begin: begin,
 		done: done,
 		setupBlur: setupBlur,
+		teardownBlur: teardownBlur,
 		setupKeys: setupKeys,
+		teardownKeys: teardownKeys,
      	icons: icons,
      	popupClass: popupClass,
      	miniBtnClasses: miniBtnClasses
