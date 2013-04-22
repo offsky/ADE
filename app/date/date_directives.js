@@ -99,6 +99,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = parseDateString(input.val());
+					if(value==null) value = 0;
 					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
 				}
 
