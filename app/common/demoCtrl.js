@@ -8,7 +8,6 @@ function ctrl($rootScope) {
 		});
 
 		$rootScope.$on('ADE-finish', function(e,data) {
-			console.log(data);
 			var exit = 'Exited via clicking outside';
 			switch (data.exit) {
 				case 1: exit = 'Exited via tab'; break;
