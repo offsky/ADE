@@ -36,24 +36,59 @@ angular.module('ADE').directive('adeRating', ['ADE','$compile', '$filter', funct
 				};
 			}
 
-			//handles clicks on the read version of the data
-			element.bind('click', function(event) {
-
+			//handles the click or keyboard events
+			var change = function(val) {
 				ADE.begin(options);
 
+				//cap val at max
+				console.log(val,options);
+				if(val>options.num) val = options.num;
+				if(val<0) val = 0;
+
 				oldValue = value;
-				value = angular.element(event.target).data('position');
+				value = val;
 				newValue = value;
 
 				ADE.done(options,oldValue,value,0);
 
 				controller.$setViewValue(value);
 				scope.$digest(); //This is necessary to get the model to match the value of the input
+			}
+
+			//handles clicks on the read version of the data
+			element.bind('click', function(event) {
+				var val = angular.element(event.target).data('position');
+				change(val);
 			});
+
+			//handles focus events
+			element.bind('focus', function(e) {
+				element.bind('keydown.ADE', function(e) {
+					if (e.keyCode>=48 && e.keyCode<=57) { //numbers
+						e.preventDefault();
+						e.stopPropagation();
+						change(e.keyCode-48);
+					} else if(e.keyCode==37) { //left
+						e.preventDefault();
+						e.stopPropagation();
+						change(value-1);
+					} else if(e.keyCode==39) { //right
+						e.preventDefault();
+						e.stopPropagation();
+						change(value+1);
+					}
+				});
+			});
+
+			//handles focus events
+			element.bind('blur', function(e) {
+				element.unbind('keydown.ADE');
+			});
+
 
 			// Watches for changes to the element
 			return attrs.$observe('adeRating', function(settings) { //settings is the contents of the ade-rating="" string
-				options = ADE.parseSettings(settings, {});
+				options = ADE.parseSettings(settings, {"num":5});
 				return element; //TODO: not sure what to return here
 			});
 
