@@ -54,10 +54,22 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				}
 
 				element.show();
+
 				input.remove();
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
+
+				if (exit == 1) {
+					element.dontclick = true; //tells the focus handler not to click
+					element.focus();
+					//TODO: would prefer to advance the focus to the next logical element on the page
+				} else if (exit == -1) {
+					element.dontclick = true; //tells the focus handler not to click
+					element.focus();
+					//TODO: would prefer to advance the focus to the previous logical element on the page
+				}
+
 				scope.$digest();
 			};
 
@@ -133,6 +145,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
+				element.unbind('keypress.ADE');
+
 				if (editing) return;
 				editing = true;
 				exit = 0;
@@ -140,6 +154,36 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				ADE.begin(options);
 
 				editRichText();
+			});
+
+			//handles focus events
+			element.bind('focus', function(e) {
+
+				//if this is an organic focus, then do a click to make the popup appear.
+				//if this was a focus caused my myself then don't do the click
+				if (!element.dontclick) {
+					element.click();
+					return;
+				}
+				element.dontclick = false;
+
+				//listen for keys pressed while the element is focused but not clicked
+				element.bind('keypress.ADE', function(e) {
+					if (e.keyCode == 13) { //return
+						e.preventDefault();
+						e.stopPropagation(); //to prevent return key from going into text box
+						element.click();
+					} else if (e.keyCode != 9) { //not tab
+						//for a key other than tab we want it to go into the text box
+						element.click();
+					}
+				});
+
+			});
+
+			//handles blur events
+			element.bind('blur', function(e) {
+				element.unbind('keypress.ADE');
 			});
 
 			// Watches for changes to the element
