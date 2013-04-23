@@ -67,11 +67,23 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 
 				ADE.done(options, oldValue, value, exit);
 
+				if (exit == 1) {
+					element.dontclick = true; //tells the focus handler not to click
+					element.focus();
+					//TODO: would prefer to advance the focus to the next logical element on the page
+				} else if (exit == -1) {
+					element.dontclick = true; //tells the focus handler not to click
+					element.focus();
+					//TODO: would prefer to advance the focus to the previous logical element on the page
+				}
+
 				scope.$digest();
 			};
 
 			//handles clicks on the read version of the data
 			element.bind('click', function(e) {
+				element.unbind('keypress.ADE');
+
 				e.preventDefault();
 				e.stopPropagation();
 
@@ -84,7 +96,10 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				var posLeft;
 				var posTop;
 
-				if (angular.isDefined(attrClass) && attrClass.match('icon') && attrClass.match('icon').length && clickTarget.parent()[0] == element[0] && (!iconPopup || !iconPopup.length)) {   //don't popup a second one
+				var isMySpan = (angular.isDefined(attrClass) && attrClass.match('icon')!==null && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]);
+				var isMyDiv = (clickTarget[0]==element[0]);
+
+				if ((isMySpan || isMyDiv)  && (!iconPopup || !iconPopup.length)) {   //don't popup a second one
 					editing = true;
 					elOffset = element.offset();
 					posLeft = elOffset.left - 7;  // 7px = custom offset
@@ -119,6 +134,17 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 
 					ADE.setupKeys(input, saveEdit);
 
+					// TODO: handle keyboard inputs to change icons
+					// input.bind('keydown.ADE', function(e) {
+					// 	if(e.keyCode==37) { //left
+					// 		e.preventDefault();
+					// 		e.stopPropagation();
+					// 	} else if(e.keyCode==39) { //right
+					// 		e.preventDefault();
+					// 		e.stopPropagation();
+					// 	}
+					// });
+
 					//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
 					input.bind('blur', function(e) {
 						//We delay the closure of the popup to give the internal icons a chance to
@@ -128,6 +154,31 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 						},500);
 					});
 				}
+			});
+
+			//handles focus events
+			element.bind('focus', function(e) {
+				//if this is an organic focus, then do a click to make the popup appear.
+				//if this was a focus caused my myself then don't do the click
+				if (!element.dontclick) {
+					element.click();
+					return;
+				}
+				element.dontclick = false;
+
+				//listen for keys pressed while the element is focused but not clicked
+				element.bind('keypress.ADE', function(e) {
+					if (e.keyCode == 13) { //return
+						e.preventDefault();
+						e.stopPropagation(); //to prevent return key from going into text box
+						element.click();
+					}
+				});
+			});
+
+			//handles blur events
+			element.bind('blur', function(e) {
+				element.unbind('keypress.ADE');
 			});
 
 			// Watches for changes to the element

@@ -21,11 +21,11 @@
 				<![endif]-->
 				<a href="../index.html">back</a>
 				<h1>Icon Directive</h1>
-				<p>A directive that allows to pick an icon from a selection of <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> icons.</p>
+				<p>A directive that allows you to pick an icon from a selection of <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> icons.</p>
 
 			
-				<a ade-icon='{"id":"1001"}' ng-model="icon" ng-bind-html="icon | icon"></a>
-				<a ade-icon='{"id":"1002"}' ng-model="icon2" ng-bind-html="icon2 | icon"></a>
+				<div ade-icon='{"id":"1001"}' tabindex="1" ng-model="icon" ng-bind-html="icon | icon"></div>
+				<div ade-icon='{"id":"1002"}' tabindex="2" ng-model="icon2" ng-bind-html="icon2 | icon"></div>
 				
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
