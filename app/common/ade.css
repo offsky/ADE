@@ -61,3 +61,5 @@
 .ade-on{background-position:-16px 0px;}
 .ade-off:hover{background-position:0px -16px;}
 .ade-on:hover{background-position:-16px -16px;}
+
+.datepicker { min-width:210px; }
