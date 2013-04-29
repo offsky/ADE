@@ -6,26 +6,21 @@ echo ""
 echo "Starting Build Process"
 echo "-------------------------------------------------------------------"
 
-yeoman test
-if [ $? == 0 ]
-then
-	# yeoman test:e2e
-	# if [ $? == 0 ]
-	# then
-		yeoman build
-		if [ $? == 0 ]
-		then
-			cp -r dist/common/adeImg dist/build
-			rm -r temp
-		else
-			yeoman clean
-		fi
-	# else
-	#	echo "Failed"
-	#	yeoman clean
-	# fi
-else
-	echo "Failed"
-	yeoman clean
-fi
 
+grunt build
+if [ $? == 0 ] #if unit tests pass
+then
+	#build
+	grunt test-dist
+	if [ $? == 0 ]
+	then
+		echo "Success"
+
+	else 
+		echo "Tests Failed"
+		#grunt clean
+	fi
+else
+	echo "Build Failed"
+	grunt clean
+fi
