@@ -78,7 +78,7 @@ function SelectCtrl(scope) {
 				if (!angular.isString(v)) v = v.toString();
 				if (v == data.newVal) found = true;
 			});
-			if(!found) scope.listOptions['list1'].push(data.newVal);
+			if(!found && val!='') scope.listOptions['list1'].push(data.newVal);
 
 		} else if(data.id == 1234) { //the multi input
 
@@ -90,7 +90,7 @@ function SelectCtrl(scope) {
 					if (!angular.isString(v)) v = v.toString();
 					if (v == val) found = true;
 				});
-				if(!found) scope.listOptions['list2'].push(val);
+				if(!found && val!='') scope.listOptions['list2'].push(val);
 			});
 		}
 	});
