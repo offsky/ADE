@@ -41,6 +41,17 @@ describe('length', function() {
 		expect(lengthFilter("1min")).toBe('1min');
 	});
 
+	xit('should allow spaces', function() {
+		expect(lengthFilter("11 hrs")).toBe('11hrs');
+		expect(lengthFilter("1 hr 5 mins")).toBe('1hr 5mins');
+		expect(lengthFilter("1 min")).toBe('1min');
+	});
+
+	xit('should ignore unrecognized parts', function() {
+		expect(lengthFilter("11hrs and cheese")).toBe('11hrs');
+		expect(lengthFilter("5 mins 20 seconds")).toBe('5mins');
+	});
+
 	xit('should work when units are out of order', function() {
         expect(lengthFilter("5mins 1hr")).toBe('1hr 5mins');
    });
