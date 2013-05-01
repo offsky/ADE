@@ -1685,7 +1685,7 @@
         },
 
         // single
-        postprocessResults: function (data, initial) {
+        postprocessResults: function (data, initial, search) { //ADE added last paramater
             var selected = 0, self = this, showSearchInput = true;
 
             // find the selected element in the result list
@@ -1699,7 +1699,7 @@
 
             // and highlight it
 
-            this.highlight(selected);
+            this.highlight(selected, search);
 
             // hide the search box if this is the first we got the results and there are a few of them
 
