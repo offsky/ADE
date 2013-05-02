@@ -54,8 +54,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					controller.$setViewValue(value);
 				}
 
-				element.show();
-
 				input.remove();
 				editing = false;
 
@@ -134,8 +132,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
 				window.clearTimeout(timeout);
-				if (angular.element('.ade-rich').hasClass('open')) return;
-				var linkPopup = element.next('.' + ADE.popupClass + '');
+				//if (angular.element('.ade-rich').hasClass('open')) return;
+				var linkPopup = element.next('.ade-rich');
 				if (!linkPopup.length) {
 					viewRichText();
 				}
@@ -145,7 +143,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var mouseout = function() {
 				var linkPopup = element.next('.' + ADE.popupClass + '');
 				if (linkPopup.length && !linkPopup.find('textarea').length) {
-					timeout = window.setTimeout(scope.ADE_hidePopup,400);
+					timeout = window.setTimeout(function() {
+						scope.ADE_hidePopup(element);
+					},400);
 				}
 			};
 
