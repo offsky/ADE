@@ -33,6 +33,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var value = '';
 			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+			var timeout = null; //the delay when mousing out of the ppopup
 
 			//whenever the model changes, we get called so we can update our value
 			if (controller !== null && controller !== undefined) {
@@ -88,6 +89,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
 
 				input = element.next('.ade-rich');
+				input.bind('mouseenter.ADE', mousein);
+				input.bind('mouseleave.ADE', mouseout);
+				input.bind('click.ADE', mouseclick);
 			};
 
 			//sets the height of the textarea based on the actual height of the contents.
@@ -99,6 +103,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			//enters edit mode for the text
 			var editRichText = function() {
+				window.clearTimeout(timeout);
+				if(input) input.unbind('.ADE');
+
 				scope.ADE_hidePopup();
 
 				var content = '<textarea class="' + options.className + '" style="height:30px">' + value + '</textarea>';
@@ -121,32 +128,31 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				//sets height of textarea
 				textareaHeight(txtArea[0]);
-				txtArea.bind('keyup', function(e) { textareaHeight(this); });
+				txtArea.bind('keyup.ADE', function(e) { textareaHeight(this); });
 			};
 
 			//When the mouse enters, show the popup view of the note
-			//TODO: put this in a timeout delay
-			element.bind('mouseenter', function(e)  {
+			var mousein = function()  {
+				window.clearTimeout(timeout);
 				if (angular.element('.ade-rich').hasClass('open')) return;
 				var linkPopup = element.next('.' + ADE.popupClass + '');
 				if (!linkPopup.length) {
 					viewRichText();
 				}
-			});
+			};
 
 			//if the mouse leaves, hide the popup note view if in read mode
-			//TODO put this in a timeout delay and allow mouseover of the popup so you can scroll it
-			element.bind('mouseleave', function(e) {
+			var mouseout = function() {
 				var linkPopup = element.next('.' + ADE.popupClass + '');
 				if (linkPopup.length && !linkPopup.find('textarea').length) {
-					scope.ADE_hidePopup();
+					timeout = window.setTimeout(scope.ADE_hidePopup,400);
 				}
-			});
+			};
 
 			//handles clicks on the read version of the data
-			element.bind('click', function() {
-				element.unbind('keypress.ADE');
-
+			var mouseclick = function() {
+				if(element) element.unbind('keypress.ADE');
+				window.clearTimeout(timeout);
 				if (editing) return;
 				editing = true;
 				exit = 0;
@@ -154,10 +160,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				ADE.begin(options);
 
 				editRichText();
-			});
+			};
+
+			element.bind('mouseenter.ADE', mousein);
+			element.bind('mouseleave.ADE', mouseout);
+			element.bind('click.ADE', mouseclick);
 
 			//handles focus events
-			element.bind('focus', function(e) {
+			element.bind('focus.ADE', function(e) {
 
 				//if this is an organic focus, then do a click to make the popup appear.
 				//if this was a focus caused my myself then don't do the click
@@ -182,8 +192,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			});
 
 			//handles blur events
-			element.bind('blur', function(e) {
-				element.unbind('keypress.ADE');
+			element.bind('blur.ADE', function(e) {
+				if(element) element.unbind('keypress.ADE');
 			});
 
 			// Watches for changes to the element
