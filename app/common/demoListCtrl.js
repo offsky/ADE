@@ -7,8 +7,8 @@ function SelectCtrl(scope) {
 	// do it because it is the only way to get an "add new option" option
 
 	scope.listOptions = {
-		list1 : ['apple', 'pear', 'cherry', 'pineapple', 'watermelon'],
-		list2 : ['dog', 'cat', 'elephant', 'dolphin', 'chicken']
+		list1: ['apple', 'pear', 'cherry', 'pineapple', 'watermelon'],
+		list2: ['dog', 'cat', 'elephant', 'dolphin', 'chicken']
 	};
 
 	scope.query = function(options) {
@@ -27,13 +27,13 @@ function SelectCtrl(scope) {
 		$.each(listOptions, function(i, v) {
 			if(v !== undefined) {
 				if (!angular.isString(v)) v = v.toString();
-				if (v.indexOf(options.term) >= 0) results.push({id: i, text: v + ''});
-				if (v == options.term) exactMatch = true;
+				if (v.toLowerCase().indexOf(options.term.toLowerCase()) >= 0) results.push({id: i, text: v + ''});
+				if (v.toLowerCase() == options.term.toLowerCase()) exactMatch = true;
 			}
 		});
 
 		//if we didn't get an exact match, add an "add new option" option if wanted.
-        console.log(listOptions.length);
+      //console.log(listOptions.length);
 		if (this.allowAddNewValues && options.term && !exactMatch) results.push({id: options.term, text: options.term});
 
 		options.callback({more: false, context: '', results: results});
@@ -78,7 +78,7 @@ function SelectCtrl(scope) {
 				if (!angular.isString(v)) v = v.toString();
 				if (v == data.newVal) found = true;
 			});
-			if(!found && val!='') scope.listOptions['list1'].push(data.newVal);
+			if(!found && data.newVal!='') scope.listOptions['list1'].push(data.newVal);
 
 		} else if(data.id == 1234) { //the multi input
 
