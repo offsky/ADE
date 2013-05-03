@@ -34,6 +34,8 @@ describe('icon', function() {
 
     it('should detect TAB key', function() {
         element('div[ade-icon]:eq(0)').click();
+        expect(element('.ade-popup').count()).toEqual(1);
+
         appElement('#invisicon', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 9 });
         });

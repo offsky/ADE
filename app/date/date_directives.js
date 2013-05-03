@@ -63,7 +63,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				return element.datepicker(options).on('changeDate', updateModel);
 			});
-
 		}
 	};
 }]);

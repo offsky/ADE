@@ -11,7 +11,7 @@ describe('text', function() {
 	});
 
 	it('should go into edit mode', function() {
-		element('.ade-editable').click();
+		element('.ade-editable:eq(0)').click();
 		expect(element('.ade-editable + input').count()).toEqual(1);
 	});
 
