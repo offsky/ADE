@@ -153,11 +153,11 @@
 		</div>
 		
 		<a href="rating/">Rating</a> - Presents an integer as a specificed number of stars so you can rate things.<br />
-			Example: <div style="display:inline-block;" ade-rating ng-model="datarate" ng-bind-html-unsafe='datarate | rating:{className:"rating_s",width:16,num:10}'></div>
+			Example: <div style="display:inline-block;" ade-rating='{"num":10}' ng-model="datarate" ng-bind-html-unsafe='datarate | rating:{className:"rating_s",width:16,num:10}'></div>
 			<br /><br />
 		
 		<a href="toggle/">Toggle Icon (Star/Checkbox)</a> - A boolean that is represented as an image that can be toggled between two states.<br />
-			Example: <div style="display:inline-block;" ade-toggle ng-model="datatoggle" ng-bind-html="datatoggle | toggle:'star'"></div>
+			Example: <div style="display:inline-block;" ade-toggle ng-model="datatoggle" ng-bind-html="datatoggle | toggle:'star'"></div> <div style="display:inline-block;" ade-toggle ng-model="datatoggle2" ng-bind-html="datatoggle2 | toggle:'check'"></div>
 			<br /><br />
 		
 		<a href="icon/">Icon</a> - An icon that can be switched between a number of different options with a popup editor.<br />
