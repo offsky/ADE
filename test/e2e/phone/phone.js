@@ -6,6 +6,18 @@ describe('phone', function() {
         browser().navigateTo('../../app/phone/index.html');
     });
 
+     it('should echo invalid input', function() {
+        element('.ade-editable:contains(760-555-1234)').click();
+        element('a:contains(Edit)').click();
+        appElement('.ade-editable + input', function(elm) {
+            elm.val('abc');
+            elm.trigger({ type : 'keypress', keyCode: 13 });
+        });
+        expect(element('.ade-editable:eq(0)').text()).toBe('abc');
+        expect(element('.ade-editable + input').count()).toEqual(0);
+    });
+
+
     it('should render 2 controls', function() {
         expect(element('.ade-editable').count()).toEqual(2);
     });
@@ -26,17 +38,7 @@ describe('phone', function() {
         expect(element('.ade-editable + input').count()).toEqual(1);
     });
 
-    it('should echo invalid input', function() {
-        element('.ade-editable:contains(760-555-1234)').click();
-        element('a:contains(Edit)').click();
-        appElement('.ade-editable + input', function(elm) {
-            elm.val('abc');
-            elm.trigger({ type : 'keypress', keyCode: 13 });
-        });
-        expect(element('.ade-editable:eq(0)').text()).toBe('abc');
-        expect(element('.ade-editable + input').count()).toEqual(0);
-    });
-
+   
     it('should detect ENTER key', function() {
         element('.ade-editable:contains(760-555-1234)').click();
         element('a:contains(Edit)').click();

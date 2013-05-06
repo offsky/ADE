@@ -18,7 +18,6 @@ describe('time', function() {
         var dst = today.getTimezoneOffset() < std;
         if(dst) myTz+=1;
 
-
         expectedHour = 23-myTz;
 
         expectedAmPM = 'am';
@@ -26,9 +25,6 @@ describe('time', function() {
             expectedAmPM = 'pm';
             expectedHour-=12;
         }
-
-        
-
     });
 
     it('should render 2 controls', function() {
@@ -132,9 +128,11 @@ describe('time', function() {
     it('should abort editing entry', function() {
         element('.ade-editable:eq(0)').click();
         element('a[data-action=incrementHour]').click();
+     
         appElement('.ade-editable + input', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 27 });
         });
+     
         expect(element('.ade-editable:eq(0)').text()).toBe(expectedHour+':59 '+expectedAmPM);
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
