@@ -60,11 +60,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				ADE.done(options, oldValue, value, exit);
 
 				if (exit == 1) {
-					element.dontclick = true; //tells the focus handler not to click
+					element.data('dontclick', true); //tells the focus handler not to click
 					element.focus();
 					//TODO: would prefer to advance the focus to the next logical element on the page
 				} else if (exit == -1) {
-					element.dontclick = true; //tells the focus handler not to click
+					element.data('dontclick', true); //tells the focus handler not to click
 					element.focus();
 					//TODO: would prefer to advance the focus to the previous logical element on the page
 				}
@@ -171,11 +171,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				//if this is an organic focus, then do a click to make the popup appear.
 				//if this was a focus caused my myself then don't do the click
-				if (!element.dontclick) {
+				if (!element.data('dontclick')) {
 					element.click();
 					return;
 				}
-				element.dontclick = false;
+				window.setTimeout(function() { //IE needs this delay because it fires 2 focus events in quick succession.
+					element.data('dontclick',false);
+				},100);
 
 				//listen for keys pressed while the element is focused but not clicked
 				element.bind('keypress.ADE', function(e) {

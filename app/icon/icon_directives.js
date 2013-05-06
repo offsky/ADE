@@ -157,7 +157,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 			});
 
 			//handles focus events
-			element.unbind('focus');
 			element.bind('focus', function(e) {
 				//if this is an organic focus, then do a click to make the popup appear.
 				//if this was a focus caused my myself then don't do the click
