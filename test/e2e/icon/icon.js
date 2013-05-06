@@ -36,6 +36,8 @@ describe('icon', function() {
         element('div[ade-icon]:eq(0)').click();
         expect(element('.ade-popup').count()).toEqual(1);
 
+        //element('#invisicon').tab();
+
         appElement('#invisicon', function(elm) {
             elm.trigger({ type : 'keydown', keyCode: 9 });
         });

@@ -10,7 +10,10 @@ echo "-------------------------------------------------------------------"
 grunt build
 if [ $? == 0 ] #if unit tests pass
 then
-	#build
+   #build passed
+	
+	cp -r dist/common/adeImg dist/build
+	
 	grunt test-dist
 	if [ $? == 0 ]
 	then

@@ -41,7 +41,7 @@ angular.module('ADE').directive('adeRating', ['ADE','$compile', '$filter', funct
 				ADE.begin(options);
 
 				//cap val at max
-				console.log(val,options);
+				// console.log(val,options);
 				if(val>options.num) val = options.num;
 				if(val<0) val = 0;
 
