@@ -993,7 +993,7 @@
                     if (s2.length == 0) {
                         $(this).unbind(scroll);
                     }
-                    s2.select2("close");
+                    //s2.select2("close"); //ADE: comment this out because it was causing problems with IE instantly closing the popup that just appeared (multi-list only, and only when integrating into external project ??)
                 });
             });
 
