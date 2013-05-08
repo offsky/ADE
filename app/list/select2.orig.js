@@ -1,3 +1,5 @@
+//Included for reference. We based our implementation on this (select2.js)
+
 /*
  Copyright 2012 Igor Vaynberg
 
