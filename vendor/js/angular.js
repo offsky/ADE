@@ -7779,7 +7779,7 @@ function $RootScopeProvider(){
                 try {
                   watch = watchers[length];
                   
-                  console.log('databindings'); //Toodledo added for debugging purposes
+                  //console.log('databindings'); //Toodledo added for debugging purposes
                   
                   // Most common watches are on primitives, in which case we can short
                   // circuit it with === operator, only when === fails do we use .equals

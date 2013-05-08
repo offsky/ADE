@@ -135,7 +135,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
 			// called at the beginning if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if(value === undefined || value === null) value = '';
@@ -167,7 +167,8 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				element.show();
 
 				input.timepicker('removeWidget');
-				input.remove();
+				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
+				input.remove(); //remove the input
 				editing=false;
 
 				ADE.done(options,oldValue,value,exit);
@@ -196,7 +197,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 					timeLength = 5;
 				}
 
-				var html = '<input ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />';
+				var html = '<input ng-controller="adeTimeDummyCtrl" ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
@@ -223,7 +224,13 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 	};
 }]);
 
-
+/* ==================================================================
+	Angular needs to have a controller in order to make a fresh scope (to my knowledge)
+	and we need a fresh scope for the input that we are going to create because we need
+	to be able to destroy that scope without bothering its siblings/parent. We need to
+	destroy the scope to prevent leaking memory with ngModelWatchers
+------------------------------------------------------------------*/
+function adeTimeDummyCtrl() { }
 
 /*
  References

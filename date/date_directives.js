@@ -12,8 +12,10 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			var format = 'mm/dd/yyy';
 
 			//Handles return key pressed on in-line text box
-			element.bind('keyup', function(e) {
+			element.bind('keypress', function(e) {
 				if (e.keyCode == 13) { //return key
+					e.preventDefault();
+					e.stopPropagation();
 					element.datepicker('hide');
 					element.blur();
 				} else if (e.keyCode == 27) { //esc
@@ -23,12 +25,14 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//creates a callback for when something is picked from the popup
 			var updateModel = function(ev) {
+
 				var dateStr = '';
 				if (ev.date) dateStr = $filter('date')(ev.date, format);
 
+				//these two lines cause orphaned datepickers
 				element.context.value = dateStr;
-
 				if (controller !== undefined && controller !== null) controller.$setViewValue(dateStr);
+
 				if (!scope.$$phase) scope.$digest();
 			};
 
@@ -59,7 +63,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				return element.datepicker(options).on('changeDate', updateModel);
 			});
-
 		}
 	};
 }]);
@@ -82,7 +85,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
 			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = 0;
@@ -97,12 +100,18 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = parseDateString(input.val());
-					controller.$setViewValue(value);
+					if (value == null) value = 0;
+					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
 				}
 
 				element.show();
-				input.datepicker('remove');
-				input.remove(); //TODO: angular still has a reference to the ngModel bound to the input. We need to fix that leak
+
+				ADE.teardownBlur(input);
+				ADE.teardownKeys(input);
+
+				input.datepicker('remove'); //tell datepicker to remove self
+				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
+				var test = input.remove(); //remove the input
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
@@ -115,14 +124,14 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				editing = true;
 				exit = 0;
 				value = value || 0;
-				if(!angular.isNumber(value)) value = parseDateString(value);
+				if (!angular.isNumber(value)) value = parseDateString(value);
 
 				ADE.begin(options);
 
 				element.hide();
 				var extraDPoptions = '';
 				if (options.format == 'yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				var html = '<input ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
+				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
@@ -136,14 +145,14 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				ADE.setupKeys(input, saveEdit);
 
 				//because we have a nested directive, we need to digest the entire parent scope
-				if(scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
+				if (scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
 				else scope.$apply();
-
 			});
 
 			// Initialization code run for each directive instance once
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-text="" string
+
 				options = ADE.parseSettings(settings, {className: 'input-medium', format: 'MMM d, yyyy'});
 				return element; //TODO: not sure what to return here
 			});
@@ -152,7 +161,13 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 	};
 }]);
 
-
+/* ==================================================================
+	Angular needs to have a controller in order to make a fresh scope (to my knowledge)
+	and we need a fresh scope for the input that we are going to create because we need
+	to be able to destroy that scope without bothering its siblings/parent. We need to
+	destroy the scope to prevent leaking memory with ngModelWatchers
+------------------------------------------------------------------*/
+function adeDateDummyCtrl() { }
 
 /*
 References

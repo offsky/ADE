@@ -17,9 +17,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	var popupClass = 'ade-popup';
 	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
         'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
-        'exclamation-sign', 'repeat', 'ban-circle', 'warning-sign', 'leaf', 'tint', 'fire', 'magnet', 'envelope',
+        'exclamation-sign', 'trophy', 'pushpin', 'warning-sign', 'leaf', 'tint', 'coffee', 'magnet', 'envelope',
         'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
-        'briefcase', 'map-marker', 'eye-open'];
+        'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
 
 	//=========================================================================================
 	// Removes a popup
@@ -62,6 +62,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
+	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc
 	function done(options, oldValue, value, exit) {
 		if (options.id) {
 			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
@@ -72,18 +73,23 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//registers a blur event on the input so we can know when we clicked outside
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
 	function setupBlur(input, callback) {
-		input.bind('blur', function() {
+		input.bind('blur.ADE', function() {
 			callback(0);
 		});
+	}
+	function teardownBlur(input) {
+		input.unbind('blur.ADE');
 	}
 
 	//=========================================================================================
 	//registers the keyboard events on the input so we know how we left edit mode
 	//sends an integer to the callback to indicate how we exited edit mode
 	// 1 = tab, -1 = shift+tab, 2=return, -2=shift+return, 3=esc
+	var bound = false; //There may be a better way to prevent the current event from finishing when I have unbound the event handler, but I couldnt find it
 	function setupKeys(input, callback, ignoreReturn) {
 
-		input.bind('keydown', function(e) {
+		bound = true;
+		input.bind('keydown.ADE', function(e) {
 			if (e.keyCode == 9) { //tab
 				e.preventDefault();
 				e.stopPropagation();
@@ -98,8 +104,8 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 		if (ignoreReturn !== true) {
 			//Handles return key pressed on in-line text box
-			input.bind('keypress', function(e) {
-				if (e.keyCode == 13) { //return
+			input.bind('keypress.ADE', function(e) {
+				if (e.keyCode == 13 && bound) { //return
 					e.preventDefault();
 					e.stopPropagation();
 					var exit = e.shiftKey ? -2 : 2;
@@ -107,6 +113,12 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				}
 			});
 		}
+	}
+	function teardownKeys(input) {
+		input.unbind('keydown.ADE');
+		input.unbind('keypress.ADE');
+		bound = false; //tells the key event listener to stop processing the current event
+							//this seems to be necessary since stopPropigation wasn't working.
 	}
 
 	//=========================================================================================
@@ -116,7 +128,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		begin: begin,
 		done: done,
 		setupBlur: setupBlur,
+		teardownBlur: teardownBlur,
 		setupKeys: setupKeys,
+		teardownKeys: teardownKeys,
      	icons: icons,
      	popupClass: popupClass,
      	miniBtnClasses: miniBtnClasses

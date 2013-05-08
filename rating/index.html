@@ -22,10 +22,10 @@
 				<h1>Rating edit directive</h1>
 				<p>A simple directive that makes a star rating clickable. Supports customizable icons, sizes and number of stars.</p>
 
-				<div ade-rating='{"id":"1001"}' ng-model="value" ng-bind-html-unsafe='value | rating'></div>
+				<div ade-rating='{"id":"1001"}' tabindex="1" ng-model="value" ng-bind-html-unsafe='value | rating'></div>
 				<br />
 
-				<div ade-rating='{"id":"1002"}' ng-model="value2" ng-bind-html-unsafe='value2 | rating:{className:"rating_s",width:16,num:10}'></div>
+				<div ade-rating='{"id":"1002","num":10}' tabindex="2" ng-model="value2" ng-bind-html-unsafe='value2 | rating:{className:"rating_s",width:16,num:10}'></div>
 
 
 				<br /><br />
@@ -35,11 +35,10 @@
 
 		</div>
 
-		<script src="../vendor/js/jquery-1.8.2.min.js"></script>
+		<script src="../vendor/js/jquery-1.9.1.min.js"></script>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
 		<script src="../vendor/js/angular-sanitize.js"></script>
-		<script src="../vendor/js/bootstrap.js"></script>
 		
 		<script src="../common/ade.js"></script>
 		<script src="../common/demoCtrl.js"></script>

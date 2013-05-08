@@ -1,12 +1,4 @@
-/* CUSTOMIZATION
- 2.3.2013 - commented out killEvent on line 1870 & 1469 (approx) to make keydown event
-            propagate to listDirective, so that only one keypress is necessary to
-            dismiss the multi list picker.
-          - added closeOnRemove option to prevent list pickers from closing after
-            clicking on x.
-          - added searchClear option to enable search field clearing on multi list picker.
-
- */
+//Included for reference. We based our implementation on this (select2.js)
 
 /*
  Copyright 2012 Igor Vaynberg
@@ -515,21 +507,6 @@
                 $(document).find("div.select2-drop-active").each(function () {
                     if (this !== target) $(this).data("select2").blur();
                 });
-
-                /* Changed on 2.3.2013
-                Nessesary to detect body click: triggers change event that is caught in directive.
-                */
-                var s2Container = $('.select2-container');
-                if (s2Container.length) {
-                    $.each(s2Container, function() {
-                        if (($(this).next().hasClass("ade-list-input")) && (e.target !== $(this))) {
-                            if ($(this).find('.select2-drop').not(":visible")) {
-                                $(this).data("select2").exit = 0; //reset the exit condition
-                                $(this).data("select2").triggerChange(["bodyClick"]);
-                            }
-                        }
-                    });
-                }
             }
 
             target=$(e.target);
@@ -849,7 +826,7 @@
         triggerChange: function (details) {
 
             details = details || {};
-            details= $.extend({}, details, { type: "change", val: this.val(), exit:this.exit });
+            details= $.extend({}, details, { type: "change", val: this.val() });
             // prevents recursive triggering
             this.opts.element.data("select2-change-triggered", true);
             this.opts.element.trigger(details);
@@ -993,7 +970,7 @@
                     if (s2.length == 0) {
                         $(this).unbind(scroll);
                     }
-                    //s2.select2("close"); //ADE: comment this out because it was causing problems with IE instantly closing the popup that just appeared (multi-list only, and only when integrating into external project ??)
+                    s2.select2("close");
                 });
             });
 
@@ -1113,7 +1090,7 @@
         },
 
         // abstract
-        highlight: function (index,search) {
+        highlight: function (index) {
             var choices = this.results.find(".select2-result-selectable").not(".select2-disabled");
 
             if (arguments.length === 0) {
@@ -1125,7 +1102,7 @@
 
             choices.removeClass("select2-highlighted");
 
-            if(search!=='') $(choices[index]).addClass("select2-highlighted");
+            $(choices[index]).addClass("select2-highlighted");
             this.ensureHighlightVisible();
 
         },
@@ -1283,7 +1260,7 @@
                     window.setTimeout(function() { self.loadMoreIfNeeded(); }, 10);
                 }
 
-                this.postprocessResults(data, initial, search.val()); //ADE: added last paramater
+                this.postprocessResults(data, initial);
 
                 postRender();
             })});
@@ -1292,7 +1269,6 @@
         // abstract
         cancel: function () {
             this.close();
-            this.opts.element.trigger($.Event("cancel")); //ADE: added to get ESC to work
         },
 
         // abstract
@@ -1331,10 +1307,6 @@
                 highlighted.addClass("select2-disabled");
                 this.highlight(index);
                 this.onSelect(data);
-            } else { //ADE: added this clause so we could exit multi on tab/return with nothing selecteed
-                this.close();
-                this.focusSearch();
-                this.triggerChange(["emptyTabReturn"]);
             }
         },
 
@@ -1407,7 +1379,7 @@
             var container = $("<div></div>", {
                 "class": "select2-container"
             }).html([
-                "    <a class='select2-choice'>", //ADE: edited to prevent hash from getting removed on click
+                "    <a href='#' onclick='return false;' class='select2-choice'>",
                 "   <span></span><abbr class='select2-search-choice-close' style='display:none;'></abbr>",
                 "   <div><b></b></div>" ,
                 "</a>",
@@ -1479,18 +1451,12 @@
                             killEvent(e);
                             return;
                         case KEY.TAB:
-                            this.exit = e.shiftKey ? -1 : 1; //ADE: added to handle exit condition
-                            this.selectHighlighted();
-                            killEvent(e);
-                            return;
                         case KEY.ENTER:
-                            this.exit = e.shiftKey ? -2 : 2; //ADE: added to handle exit condition
                             this.selectHighlighted();
                             killEvent(e);
                             return;
                         case KEY.ESC:
                             this.cancel(e);
-                            // ADE. this next line was commented out, but now we use it
                             killEvent(e);
                             return;
                     }
@@ -1567,11 +1533,10 @@
                     return;
                 }
 
-                if (e.which == KEY.DELETE || e.which == KEY.BACKSPACE) {
+                if (e.which == KEY.DELETE) {
                     if (this.opts.allowClear) {
                         this.clear();
                     }
-                    killEvent(e);
                     return;
                 }
 
@@ -1608,9 +1573,8 @@
                 if (!this.enabled) return;
                 this.clear();
                 killEvent(e);
-                // Changed on 2.3.2013
-                if (this.opts.closeOnRemove) this.close();
-                this.triggerChange(["singleRemove"]);
+                this.close();
+                this.triggerChange();
                 this.selection.focus();
             }));
 
@@ -1646,7 +1610,7 @@
                         self.close();
                         self.setPlaceholder();
                     }
-                },this.opts.listId); //ADE: added this to pass listid through to controller
+                });
             }
         },
 
@@ -1685,7 +1649,7 @@
         },
 
         // single
-        postprocessResults: function (data, initial, search) { //ADE added last paramater
+        postprocessResults: function (data, initial) {
             var selected = 0, self = this, showSearchInput = true;
 
             // find the selected element in the result list
@@ -1699,7 +1663,7 @@
 
             // and highlight it
 
-            this.highlight(selected, search);
+            this.highlight(selected);
 
             // hide the search box if this is the first we got the results and there are a few of them
 
@@ -1722,10 +1686,7 @@
             this.close();
             this.selection.focus();
 
-            //ADE: we want it to trigger a change always, even if selection hasn't changed
-            //if (!equal(old, this.id(data))) { 
-                this.triggerChange(); 
-            //}
+            if (!equal(old, this.id(data))) { this.triggerChange(); }
         },
 
         // single
@@ -1891,18 +1852,12 @@
                         killEvent(e);
                         return;
                     case KEY.ENTER:
-                        this.exit = e.shiftKey ? -2 : 2; //ADE: added to handle exit condition
-                        this.selectHighlighted();
-                        killEvent(e);
-                        return;
                     case KEY.TAB:
-                        this.exit = e.shiftKey ? -1 : 1; //ADE: added to handle exit condition
                         this.selectHighlighted();
                         killEvent(e);
                         return;
                     case KEY.ESC:
                         this.cancel(e);
-                        // ADE: this line was commented out, but now we use it
                         killEvent(e);
                         return;
                     }
@@ -1978,7 +1933,6 @@
         // multi
         initSelection: function () {
             var data;
-
             if (this.opts.element.val() === "") {
                 this.updateSelection([]);
                 this.close();
@@ -2084,7 +2038,6 @@
         // multi
         onSelect: function (data) {
             this.addSelectedChoice(data);
-
             if (this.select) { this.postprocessResults(); }
 
             if (this.opts.closeOnSelect) {
@@ -2101,19 +2054,6 @@
                 }
             }
 
-            // Changed on 2.3.2013
-            if (this.opts.searchClear) {
-                if (this.countSelectableResults()>0) {
-                    this.clearSearch();
-                    this.close();
-                    this.open();
-                } else {
-                    this.clearSearch();
-                    this.open();
-                }
-
-            }
-
             // since its not possible to select an element that has already been
             // added we do not need to check if this is a new element before firing change
             this.triggerChange({ added: data });
@@ -2125,7 +2065,6 @@
         cancel: function () {
             this.close();
             this.focusSearch();
-            this.opts.element.trigger($.Event("cancel")); //ADE: added to get ESC to work
         },
 
         // multi
@@ -2133,7 +2072,7 @@
             var choice=$(
                     "<li class='select2-search-choice'>" +
                     "    <div></div>" +
-                    "    <a href='#select2Line2116' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a>" + //ADE: added this so I would know if it ever happened where to look
+                    "    <a href='#' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a>" +
                     "</li>"),
                 id = this.id(data),
                 val = this.getVal(),
@@ -2149,15 +2088,7 @@
                 $(e.target).closest(".select2-search-choice").fadeOut('fast', this.bind(function(){
                     this.unselect($(e.target));
                     this.selection.find(".select2-search-choice-focus").removeClass("select2-search-choice-focus");
-
-                    // Changed on 2.3.2013
-                    if (this.opts.closeOnRemove) {
-                        this.close();
-                    } else {
-                        this.close();
-                        this.open();
-                    }
-
+                    this.close();
                     this.focusSearch();
                 })).dequeue();
                 killEvent(e);
@@ -2200,13 +2131,12 @@
         },
 
         // multi
-        postprocessResults: function (data,initial,search) { //ADE: added args
+        postprocessResults: function () {
             var val = this.getVal(),
-                choices = this.results.find(".select2-result-selectable"), //all the LI elements
+                choices = this.results.find(".select2-result-selectable"),
                 compound = this.results.find(".select2-result-with-children"),
                 self = this;
 
-            //disable the LIs that are already selected and enable the rest
             choices.each2(function (i, choice) {
                 var id = self.id(choice.data("select2-data"));
                 if (indexOf(id, val) >= 0) {
@@ -2226,7 +2156,7 @@
 
             choices.each2(function (i, choice) {
                 if (!choice.hasClass("select2-disabled") && choice.hasClass("select2-result-selectable")) {
-                    self.highlight(0,search); //ADE: added second paramater
+                    self.highlight(0);
                     return false;
                 }
             });
@@ -2422,8 +2352,6 @@
     $.fn.select2.defaults = {
         width: "copy",
         closeOnSelect: true,
-        closeOnRemove: true, // Changed on 2.3.2013
-        searchClear: false, // Changed on 2.3.2013
         openOnEnter: true,
         containerCss: {},
         dropdownCss: {},

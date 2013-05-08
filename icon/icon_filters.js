@@ -10,7 +10,7 @@
 
 angular.module('ADE').filter('icon', ['ADE', function(ADE) {
 	return function(input, option) {
-		if (!input) input = '_clear';
+		if (!input) input = 'ban-circle';
         var matchFound = false;
         var iconsLength = ADE.icons.length;
 
@@ -20,7 +20,7 @@ angular.module('ADE').filter('icon', ['ADE', function(ADE) {
                 break;
             }
         }
-        if (!matchFound) input = '_clear';
+        if (!matchFound) input = 'ban-circle';
 
         return '<span class="ade-icon icon-' + input + '">';
 	};

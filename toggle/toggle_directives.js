@@ -30,7 +30,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 			var newValue = "";
 			var id = "";
 
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if(value === undefined || value === null) value = '';
@@ -54,6 +54,22 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 				ADE.done(options,oldValue,value,0);
 
 				scope.$digest(); //This is necessary to get the model to match the value of the input
+			});
+
+			//handles focus events
+			element.bind('focus', function(e) {
+				element.bind('keypress.ADE', function(e) {
+					if (e.keyCode == 13) { //return
+						e.preventDefault();
+						e.stopPropagation();
+						element.click();
+					}
+				});
+			});
+
+			//handles blur events
+			element.bind('blur', function(e) {
+				element.unbind('keypress.ADE');
 			});
 
 			// Watches for changes to the element

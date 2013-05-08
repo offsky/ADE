@@ -31,7 +31,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
-			if (controller) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() {
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = '';
@@ -47,7 +47,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				if (exited != 3) { //don't save value on esc
 					value = input.data().select2.data();
 					if (angular.isArray(value)) {
-						if(value.length > 0) {
+						if (value.length > 0) {
 							//to have value stored as array
 							var vals = [];
 							angular.forEach(value, function(val, key) {
@@ -74,11 +74,9 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 					controller.$setViewValue(value);
 				}
 
-				if (exited !== 0) {
-					element.show();
-					input.select2('destroy');
-					input.remove();
-				}
+				element.show();
+				input.select2('destroy');
+				input.remove();
 
 				editing = false;
 
@@ -87,20 +85,29 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				if (!scope.$$phase) scope.$digest();
 			};
 
-			$(document).bind('keydown', function(e) {
-				$(document).find('div.select2-drop-active').each(function() {
-					if (e.keyCode == 27) { //esc
-						e.preventDefault();
-						e.stopPropagation();
-						var activeContainer = $(document).find('.select2-container-active');
-						var activeInput = activeContainer.next();
-						activeContainer.remove();
-						activeInput.remove();
-						element.show();
-						editing = false;
-					}
-				});
-			});
+			//when the edit is canceled by ESC
+			var cancel = function() {
+				input.select2('destroy');
+				input.remove();
+
+				element.show();
+				ADE.done(options, oldValue, value, 3);
+				editing = false;
+			};
+
+			//when the list is changed we get this event
+			var change = function(e) {
+				//console.log('change', e.exit);
+				if (e[0] === 'singleRemove') {
+					saveEdit(e.exit);
+				} else if (e[0] === 'emptyTabReturn') { //Tab or return on multi with nothing typed
+					saveEdit(e.exit);
+				} else if (e[0] === 'bodyClick') {
+					saveEdit(0);
+				} else {
+					if (!options.multiple) saveEdit(e.exit);
+				}
+			};
 
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
@@ -124,34 +131,27 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				if (options.query) query = ',query:' + options.query; //the user's query function for providing the list data
 				var selection = '';
 				if (options.selection) selection = ',initSelection:' + options.selection; //the user's selection function for providing the initial selection
-		
+
 				var listId = '';
 				if (options.listId) listId = ",listId:'" + options.listId + "'"; //data that is passed through to the query function
 
-				var html = '<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId  + selection + placeholder + '} ' + multi + ' />';
+				var html = '<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId + selection + placeholder + '} ' + multi + ' />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
-				if(angular.isString(value)) value = value.split(',');
+				if (angular.isString(value)) value = value.split(',');
 				input.val(value);
 
 				//must initialize select2 in timeout to give the DOM a chance to exist
 				setTimeout(function() {
-					scope.selection(input,function(data) { //get preseleted data
+					scope.selection(input, function(data) { //get preseleted data
 						input.select2('data', data);
 						input.select2('open');
 					},options.listId);
 				});
 
-				input.on('change', function(e) {
-					if (e[0] === 'singleRemove') {
-						saveEdit();
-					} else if (e[0] === 'bodyClick') {
-						saveEdit();
-					} else {
-						if (!options.multiple) saveEdit();
-					}
-				});
+				input.on('cancel', cancel); //registers for esc key events
+				input.on('change', change); //registers for any change event
 			});
 
 			// Watches for changes to the element
@@ -197,7 +197,6 @@ angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 							elm.select2('val', controller.$modelValue);
 						}
 					};
-
 
 					// Watch the options dataset for changes
 					if (watch) {

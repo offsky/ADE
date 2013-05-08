@@ -34,7 +34,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() {
 					oldValue = value = controller.$modelValue;
 					if(value === undefined || value === null) value='';
@@ -72,8 +72,10 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				var maxlength = '';
 				if(options.maxlength!==undefined) maxlength = "maxlength='"+options.maxlength+"'";
 
+				if(!angular.isString(value)) value = value.toString();
+				
 				element.hide();
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" '+maxlength+' />')(scope).insertAfter(element);
+				$compile('<input type="text" class="'+options.className+'" value="'+value.replace(/"/g,'&quot;')+'" '+maxlength+' />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				

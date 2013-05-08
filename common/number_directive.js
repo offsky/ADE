@@ -35,7 +35,7 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
 			//whenever the model changes, we get called so we can update our value
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() {
 					oldValue = value = controller.$modelValue;
 					if(value === undefined || value === null) value = '';
@@ -52,6 +52,7 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 					value = input.val();
 					value = value.replace(/[^0-9.]/g, '');
 					value = parseFloat(value);
+					if(isNaN(value)) value = '';
 					controller.$setViewValue(value);
 				}
 
@@ -72,7 +73,9 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 
 				ADE.begin(options);
 
-				if(!angular.isNumber(value)) value = parseFloat(value.replace(/[$]/g, ''));
+				if(angular.isArray(value) && value.length>0) value = value[0];
+				if(angular.isString(value)) value = parseFloat(value.replace(/[$]/g, ''));
+				else if(!angular.isNumber(value)) value = '';
 				value = value ? value : '';
 
 				element.hide();

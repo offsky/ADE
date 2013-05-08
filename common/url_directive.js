@@ -35,7 +35,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null;
 
-			if (controller !== null) {
+			if (controller !== null && controller !== undefined) {
 				controller.$render = function() { //whenever the view needs to be updated
 					oldValue = value = controller.$modelValue;
 					if (value === undefined || value === null) value = '';
@@ -74,9 +74,11 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 				ADE.begin(options);
 
+				if(!angular.isString(value)) value = value.toString();
+
 				element.hide(); //hide the read only data
 				scope.ADE_hidePopup();
-				$compile('<input type="text" class="' + options.className + '" value="' + value + '" />')(scope).insertAfter(element);
+				$compile('<input type="text" class="' + options.className + '" value="' + value.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 
