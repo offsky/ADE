@@ -86,6 +86,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
 
+				editing = false;
+
 				input = element.next('.ade-rich');
 				input.bind('mouseenter.ADE', mousein);
 				input.bind('mouseleave.ADE', mouseout);
@@ -132,7 +134,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
 				window.clearTimeout(timeout);
-				//if (angular.element('.ade-rich').hasClass('open')) return;
+				
+				//if any other popup is open in edit mode, don't do this view
+				if (angular.element('.ade-rich').hasClass('open') && angular.element('.ade-rich').find('textarea').length) return;
+
 				var linkPopup = element.next('.ade-rich');
 				if (!linkPopup.length) {
 					viewRichText();
@@ -142,7 +147,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			//if the mouse leaves, hide the popup note view if in read mode
 			var mouseout = function() {
 				var linkPopup = element.next('.' + ADE.popupClass + '');
-				if (linkPopup.length && !linkPopup.find('textarea').length) {
+				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
 						scope.ADE_hidePopup(element);
 					},400);
