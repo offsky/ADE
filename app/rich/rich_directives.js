@@ -101,6 +101,54 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				elem.style.height = (elem.scrollHeight) + 'px';
 			};
 
+			// don't blur on initialization
+			var ready = false;
+
+			// detect clicks outside tinymce textarea
+			var outerBlur = function(e) {
+				// check where click occurred
+				//   1: inside ade popup
+				//   0: outside ade popup
+				var outerClick = $('.ade-popup').has(e.target).length === 0;
+
+				// check if modal for link is shown
+				var modalShown = $('.mce-floatpanel').css('display') === 'block';
+				
+				if (ready && !modalShown && outerClick) {
+					// some elements are outside popup but belong to mce
+					// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
+					// the latter include texcolor color pickup background element, link ok and cancel buttons
+					
+					// check if id starts with 'mce_'
+					//   0: true
+					//  -1: false
+					var parent = e.target;
+					var startsMce = false;
+					while (parent) {
+						if (parent.id.search('mce_') === 0) {
+							startsMce = true;
+							break;
+						}
+						parent = parent.parentElement;
+					}
+
+					// blur and save changes
+					if (!startsMce) {
+						mouseout();
+						saveEdit(0);
+
+						// we're done, no need to listen to page clicks
+						$(document).off('click.ADE');
+
+						// reset ready
+						ready = false;
+					}
+				} else {
+					// set a timeout so it doesn't trigger during initialization
+					setTimeout(function() { ready = true}, 500);
+				}
+			};
+
 			//enters edit mode for the text
 			var editRichText = function() {
 				window.clearTimeout(timeout);
@@ -134,54 +182,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				// Handle blur case
 				// save when user blurs out of text editor
-
-				// don't blur on initialization
-				var ready = false;
-
 				// listen to clicks on all elements in page
 				// this will determine when to blur
-				$(document).bind('click.ADE',
-					function(e) {
-						// check where click occurred
-						//   1: inside ade popup
-						//   0: outside ade popup
-						var outerClick = $('.ade-popup').has(e.target).length === 0;
-
-						// check if modal for link is shown
-						var modalShown = $('.mce-floatpanel').css('display') === 'block';
-						
-						if (ready && !modalShown && outerClick) {
-							// some elements are outside popup but belong to mce
-							// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
-							// the latter include texcolor color pickup background element, link ok and cancel buttons
-							
-							// check if id starts with 'mce_'
-							//   0: true
-							//  -1: false
-							var parent = e.target;
-							var startsMce = false;
-							while (parent) {
-								if (parent.id.search('mce_') === 0) {
-									startsMce = true;
-									break;
-								}
-								parent = parent.parentElement;
-							}
-
-							// blur and save changes
-							if (!startsMce) {
-								mouseout();
-								saveEdit(0);
-
-								// we're done, no need to listen to page clicks
-								$(document).off('click.ADE');
-							}
-						} else {
-							// set a timeout so it doesn't trigger during initialization
-							setTimeout(function() { ready = true}, 500);
-						}
-					}
-				);
+				$(document).bind('click.ADE', outerBlur);
 			};
 
 			//When the mouse enters, show the popup view of the note
