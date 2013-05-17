@@ -15,7 +15,7 @@
       <link rel="stylesheet" href="../common/ade.css"/>
 	</head>
 	<body ng-app="app" ng-init="data='click to edit this very very very very very very very very very very very very very very very very very very very very very very very very long text';data2='edit me'" >
-			<div class="container" ng-controller="ctrl">
+		<div class="container" ng-controller="ctrl">
 			<!--[if lt IE 7]>
 				<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 			<![endif]-->
@@ -23,20 +23,19 @@
 			<h1>Text editing directive</h1>
 			<p>A directive that makes a text string editable.</p>
 
-			
-			<div class="ade-editable" tabindex="1" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data">{{data | rich:25}}</div>
-			<div class="ade-editable" tabindex="2" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data2">{{data2 | rich:25}}</div>
+			<div class="ade-editable ade-editable-rich" tabindex="1" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data" ng-bind-html="data | rich:25"></div>
+			<div class="ade-editable ade-editable-rich" tabindex="2" ade-rich='{"className":"input-xlarge","id":"1234"}' ng-model="data2">{{data2 | rich:25}}</div>
 
 			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
 			<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
-
 		</div>
 		
 		<script src="../vendor/js/jquery-1.9.1.min.js"></script>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
 		<script src="../vendor/js/angular-sanitize.js"></script>
+		<script src="../vendor/tinymce/tinymce.min.js"></script>
 		
 		<script src="../common/ade.js"></script>
 		<script src="../common/demoCtrl.js"></script>
