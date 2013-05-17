@@ -140,7 +140,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				// listen to clicks on all elements in page
 				// this will determine when to blur
-				$(document).bind('click',
+				$(document).bind('click.ADE',
 					function(e) {
 						// check where click occurred
 						//   1: inside ade popup
@@ -174,7 +174,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 								saveEdit(0);
 
 								// we're done, no need to listen to page clicks
-								$(document).unbind('click');
+								$(document).off('click.ADE');
 							}
 						} else {
 							// set a timeout so it doesn't trigger during initialization
