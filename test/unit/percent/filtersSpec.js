@@ -12,10 +12,12 @@ describe('percent', function() {
 
 	it('should convert integer value to percentage', function() {
 		expect(percentFilter(34)).toBe('34\u0025');
+		expect(percentFilter(-34)).toBe('-34\u0025');
 	});
 
 	it('should pass through already converted value', function() {
 		expect(percentFilter("34%")).toBe('34\u0025');
+		expect(percentFilter("-34%")).toBe('-34\u0025');
 	});
 
 	it('should return empty string', function() {

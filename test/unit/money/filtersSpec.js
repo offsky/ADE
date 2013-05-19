@@ -12,10 +12,12 @@ describe('money', function() {
 
     it('should format dollar currency', function() {
         expect(moneyFilter(123.00)).toBe('$123.00');
+        expect(moneyFilter(-123.00)).toBe('($123.00)');
     });
 
     it('should format dollar currency even if already formatted', function() {
         expect(moneyFilter("$123.00")).toBe('$123.00');
+        expect(moneyFilter("$-123.00")).toBe('($123.00)');
     });
 
     it('should be empty string for invalid', function() {

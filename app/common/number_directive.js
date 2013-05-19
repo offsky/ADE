@@ -50,7 +50,7 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 
 				if(exited!=3) { //don't save value on esc
 					value = input.val();
-					value = value.replace(/[^0-9.]/g, '');
+					value = value.replace(/[^0-9.-]/g, '');
 					value = parseFloat(value);
 					if(isNaN(value)) value = '';
 					controller.$setViewValue(value);

@@ -13,11 +13,13 @@ describe('integer', function() {
     it('should format integer', function() {
         expect(numberFilter(1234)).toBe('1,234');
         expect(numberFilter(1234.237)).toEqual('1,234');
+        expect(numberFilter(-1234.237)).toEqual('-1,234');
     });
 
     it('should format integer string', function() {
         expect(numberFilter('1234')).toBe('1,234');
         expect(numberFilter('1234.237')).toEqual('1,234');
+        expect(numberFilter('-1234.237')).toEqual('-1,234');
     });
 
     it('should properly format empty or invalid as empty string', function() {
