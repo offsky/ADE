@@ -10,7 +10,7 @@ describe('longtext directive', function() {
 			$provide.value('data', 'TEST_VER');
 		});
 		inject(function($compile, $rootScope) {
-			var element = $compile('<div ade-longtext ng-model="data"></div>')($rootScope);
+			var element = $compile('<div ade-rich ng-model="data"></div>')($rootScope);
 			expect(element.text()).toEqual('');
 		});
 	});
