@@ -123,8 +123,15 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				if (editing) return;
 				editing = true;
 				exit = 0;
-				value = value || 0;
-				if (!angular.isNumber(value)) value = parseDateString(value);
+				
+				if(angular.isArray(value) && value.length>0) value = value[0];
+				if(angular.isString(value)) {
+					var number = parseInt(value.replace(/[$]/g, ''));
+					if(value===number+'') value = number;
+					else value = parseDateString(value);
+					
+				} else if(!angular.isNumber(value)) value = 0;
+				value = value ? value : 0;
 
 				ADE.begin(options);
 

@@ -10,11 +10,15 @@
 
 angular.module('ADE').filter('validDate', ['$filter',function($filter) {
 	return function(input, dateFormat) {
-		var output = '';
+		var output = '';		
 
 		if(!input) return output;
 		if(angular.isUndefined(input)) return output;
-		if(angular.isString(input)) input = parseDateString(input);
+		if(angular.isString(input)) {
+			var number = parseInt(input);
+			if(input===number+'') input = number;
+			else input = parseDateString(input);
+		}
 
 		if(angular.isNumber(input)) output = $filter('date')(input*1000,dateFormat);
 
