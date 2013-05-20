@@ -50,7 +50,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				exit = exited;
 
 				if (exited != 3) { //don't save value on esc
-					value = txtArea.val();
+					value = $('#tinyText_ifr').contents().find('#tinymce')[0].innerHTML;
 					controller.$setViewValue(value);
 				}
 
@@ -101,6 +101,54 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				elem.style.height = (elem.scrollHeight) + 'px';
 			};
 
+			// don't blur on initialization
+			var ready = false;
+
+			// detect clicks outside tinymce textarea
+			var outerBlur = function(e) {
+				// check where click occurred
+				//   1: inside ade popup
+				//   0: outside ade popup
+				var outerClick = $('.ade-popup').has(e.target).length === 0;
+
+				// check if modal for link is shown
+				var modalShown = $('.mce-floatpanel').css('display') === 'block';
+				
+				if (ready && !modalShown && outerClick) {
+					// some elements are outside popup but belong to mce
+					// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
+					// the latter include texcolor color pickup background element, link ok and cancel buttons
+					
+					// check if id starts with 'mce_'
+					//   0: true
+					//  -1: false
+					var parent = e.target;
+					var startsMce = false;
+					while (parent) {
+						if (parent.id.search('mce_') === 0) {
+							startsMce = true;
+							break;
+						}
+						parent = parent.parentElement;
+					}
+
+					// blur and save changes
+					if (!startsMce) {
+						mouseout();
+						saveEdit(0);
+
+						// we're done, no need to listen to page clicks
+						$(document).off('click.ADE');
+
+						// reset ready
+						ready = false;
+					}
+				} else {
+					// set a timeout so it doesn't trigger during initialization
+					setTimeout(function() { ready = true}, 500);
+				}
+			};
+
 			//enters edit mode for the text
 			var editRichText = function() {
 				window.clearTimeout(timeout);
@@ -108,27 +156,35 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				scope.ADE_hidePopup();
 
-				var content = '<textarea class="' + options.className + '" style="height:30px">' + value + '</textarea>';
+				var content = '<textarea id="tinyText" class="' + options.className + '" style="height:30px">' + value + '</textarea>';
+				
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
-				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>')(scope).insertAfter(element);
+				var html = '<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
+				$compile(html)(scope).insertAfter(element);
+
+				// Initialize tinymce
+				// Full example:
+				//   http://www.tinymce.com/tryit/full.php
+
+				tinymce.init({
+					selector: "#tinyText",
+					theme: "modern",
+					menubar: "false",
+					plugins: ["textcolor", "link"],
+					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
+				});
 
 				editing = true;
 
 				input = element.next('.ade-rich');
-				txtArea = input.find('textarea');
 
-				var pos = txtArea.val().length;
-				txtArea.focus();
-				txtArea[0].setSelectionRange(pos, pos); //put cursor at end
-
-				ADE.setupBlur(txtArea, saveEdit);
-				ADE.setupKeys(txtArea, saveEdit, true);
-
-				//sets height of textarea
-				textareaHeight(txtArea[0]);
-				txtArea.bind('keyup.ADE', function(e) { textareaHeight(this); });
+				// Handle blur case
+				// save when user blurs out of text editor
+				// listen to clicks on all elements in page
+				// this will determine when to blur
+				$(document).bind('click.ADE', outerBlur);
 			};
 
 			//When the mouse enters, show the popup view of the note
