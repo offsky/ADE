@@ -10,7 +10,8 @@
 angular.module('ADE').filter('toggle', function() {
 	return function(input, option) {
 		if(angular.isString(input)) {
-			if(input=='false' || input=='no' || input=='0') input = false;
+			input = input.toLowerCase();
+			if(input=='false' || input=='no' || input=='0' || input=='o') input = false;
 		}
 		if(input) return '<span class="ade-'+option+' ade-on">';
 
