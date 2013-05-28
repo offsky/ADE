@@ -51,6 +51,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = $('#tinyText_ifr').contents().find('#tinymce')[0].innerHTML;
+					// check if contents are empty
+					if (value === '<p><br data-mce-bogus="1"></p>') {
+						value = '';
+					}
 					controller.$setViewValue(value);
 				}
 
