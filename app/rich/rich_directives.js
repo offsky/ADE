@@ -108,9 +108,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				elem.style.height = (elem.scrollHeight) + 'px';
 			};
 
-			// don't blur on initialization
-			var ready = false;
-
 			// detect clicks outside tinymce textarea
 			var outerBlur = function(e) {
 				// check where click occurred
@@ -121,7 +118,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// check if modal for link is shown
 				var modalShown = $('.mce-floatpanel').css('display') === 'block';
 				
-				if (ready && !modalShown && outerClick) {
+				if (!modalShown && outerClick) {
 					// some elements are outside popup but belong to mce
 					// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
 					// the latter include texcolor color pickup background element, link ok and cancel buttons
@@ -143,12 +140,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					if (!startsMce) {
 						mouseout();
 						saveEdit(0);
-						// reset ready
-						ready = false;
 					}
-				} else {
-					// set a timeout so it doesn't trigger during initialization
-					setTimeout(function() { ready = true}, 500);
 				}
 			};
 
@@ -235,7 +227,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				if(element) element.unbind('keypress.ADE');
 				window.clearTimeout(timeout);
 				if (editing) return;
 				editing = true;
