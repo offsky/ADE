@@ -26,6 +26,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
+			var id = Math.floor(Math.random() * 100000);
 			var options = {};
 			var editing = false;
 			var txtArea = null;
@@ -48,9 +49,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var saveEdit = function(exited) {
 				oldValue = value;
 				exit = exited;
-
+				
 				if (exited != 3) { //don't save value on esc
-					value = $('#tinyText_ifr').contents().find('#tinymce')[0].innerHTML;
+					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+					value = editor.innerHTML;
 					// check if contents are empty
 					if (value === '<p><br data-mce-bogus="1"></p>') {
 						value = '';
@@ -169,7 +171,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				scope.ADE_hidePopup();
 
-				var content = '<textarea id="tinyText" class="' + options.className + '" style="height:30px">' + value + '</textarea>';
+				var content = '<textarea id="tinyText' + id + '" class="' + options.className + '" style="height:30px">' + value + '</textarea>';
 				
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
@@ -182,7 +184,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				//   http://www.tinymce.com/tryit/full.php
 
 				tinymce.init({
-					selector: "#tinyText",
+					selector: "#tinyText" + id,
 					theme: "modern",
 					menubar: "false",
 					plugins: ["textcolor", "link"],
