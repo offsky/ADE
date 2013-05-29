@@ -26,6 +26,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
+			// each tinyMCE editor get its own id
+			// this is not needed but makes it clearer that were dealing with separate editors
 			var id = Math.floor(Math.random() * 100000);
 			var options = {};
 			var editing = false;
