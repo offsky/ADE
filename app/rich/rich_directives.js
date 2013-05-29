@@ -73,6 +73,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					//TODO: would prefer to advance the focus to the previous logical element on the page
 				}
 
+				// we're done, no need to listen to events
+				$(document).off('click.ADE');
+
 				scope.$digest();
 			};
 
@@ -140,16 +143,30 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					if (!startsMce) {
 						mouseout();
 						saveEdit(0);
-
-						// we're done, no need to listen to page clicks
-						$(document).off('click.ADE');
-
 						// reset ready
 						ready = false;
 					}
 				} else {
 					// set a timeout so it doesn't trigger during initialization
 					setTimeout(function() { ready = true}, 500);
+				}
+			};
+
+			// handle special keyboard events
+			var handleKeyEvents = function(e) {
+				switch(e.keyCode) {
+					case 27: // esc
+						mouseout();
+						saveEdit(3); // don't save results
+						e.preventDefault();
+						break;
+					case 9: // tab
+						mouseout();
+						saveEdit(0); // blur and save
+						e.preventDefault();
+						break;
+					default:
+						break;
 				}
 			};
 
@@ -178,6 +195,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					menubar: "false",
 					plugins: ["textcolor", "link"],
 					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
+					// CHANGE: Added to TinyMCE pluging
+					handleKeyEvents: handleKeyEvents
 				});
 
 				editing = true;
@@ -189,6 +208,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// listen to clicks on all elements in page
 				// this will determine when to blur
 				$(document).bind('click.ADE', outerBlur);
+
+				// Handle special keyboard events (escape and tab)
+				$(document).bind('keydown.ADE', handleKeyEvents);
 			};
 
 			//When the mouse enters, show the popup view of the note
