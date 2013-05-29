@@ -194,6 +194,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					handleKeyEvents: handleKeyEvents
 				});
 
+				// focus on the textarea
+				tinymce.execCommand('mceFocus',false,"tinyText" + id);
+
 				editing = true;
 
 				input = element.next('.ade-rich');
