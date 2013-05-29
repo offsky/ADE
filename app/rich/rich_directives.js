@@ -142,6 +142,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					if (!startsMce) {
 						mouseout();
 						saveEdit(0);
+						$(document).off('mousedown.ADE');
 					}
 				}
 			};
@@ -201,7 +202,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// save when user blurs out of text editor
 				// listen to clicks on all elements in page
 				// this will determine when to blur
-				$(document).bind('click.ADE', outerBlur);
+				$(document).bind('mousedown.ADE', outerBlur);
 			};
 
 			//When the mouse enters, show the popup view of the note
