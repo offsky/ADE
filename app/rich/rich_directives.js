@@ -26,6 +26,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
+			var id = Math.floor(Math.random() * 100000);
 			var options = {};
 			var editing = false;
 			var txtArea = null;
@@ -48,9 +49,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var saveEdit = function(exited) {
 				oldValue = value;
 				exit = exited;
-
+				
 				if (exited != 3) { //don't save value on esc
-					value = $('#tinyText_ifr').contents().find('#tinymce')[0].innerHTML;
+					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+					value = editor.innerHTML;
 					// check if contents are empty
 					if (value === '<p><br data-mce-bogus="1"></p>') {
 						value = '';
@@ -72,6 +74,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					element.focus();
 					//TODO: would prefer to advance the focus to the previous logical element on the page
 				}
+
+				// we're done, no need to listen to events
+				$(document).off('click.ADE');
 
 				scope.$digest();
 			};
@@ -105,9 +110,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				elem.style.height = (elem.scrollHeight) + 'px';
 			};
 
-			// don't blur on initialization
-			var ready = false;
-
 			// detect clicks outside tinymce textarea
 			var outerBlur = function(e) {
 				// check where click occurred
@@ -118,7 +120,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// check if modal for link is shown
 				var modalShown = $('.mce-floatpanel').css('display') === 'block';
 				
-				if (ready && !modalShown && outerClick) {
+				if (!modalShown && outerClick) {
 					// some elements are outside popup but belong to mce
 					// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
 					// the latter include texcolor color pickup background element, link ok and cancel buttons
@@ -140,16 +142,26 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					if (!startsMce) {
 						mouseout();
 						saveEdit(0);
-
-						// we're done, no need to listen to page clicks
-						$(document).off('click.ADE');
-
-						// reset ready
-						ready = false;
+						$(document).off('mousedown.ADE');
 					}
-				} else {
-					// set a timeout so it doesn't trigger during initialization
-					setTimeout(function() { ready = true}, 500);
+				}
+			};
+
+			// handle special keyboard events
+			var handleKeyEvents = function(e) {
+				switch(e.keyCode) {
+					case 27: // esc
+						mouseout();
+						saveEdit(3); // don't save results
+						e.preventDefault();
+						break;
+					case 9: // tab
+						mouseout();
+						saveEdit(0); // blur and save
+						e.preventDefault();
+						break;
+					default:
+						break;
 				}
 			};
 
@@ -160,7 +172,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				scope.ADE_hidePopup();
 
-				var content = '<textarea id="tinyText" class="' + options.className + '" style="height:30px">' + value + '</textarea>';
+				var content = '<textarea id="tinyText' + id + '" class="' + options.className + '" style="height:30px">' + value + '</textarea>';
 				
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
@@ -173,12 +185,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				//   http://www.tinymce.com/tryit/full.php
 
 				tinymce.init({
-					selector: "#tinyText",
+					selector: "#tinyText" + id,
 					theme: "modern",
 					menubar: "false",
 					plugins: ["textcolor", "link"],
 					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
+					// CHANGE: Added to TinyMCE plugin
+					handleKeyEvents: handleKeyEvents
 				});
+
+				// focus on the textarea
+				tinymce.execCommand('mceFocus',false,"tinyText" + id);
 
 				editing = true;
 
@@ -188,7 +205,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// save when user blurs out of text editor
 				// listen to clicks on all elements in page
 				// this will determine when to blur
-				$(document).bind('click.ADE', outerBlur);
+				$(document).bind('mousedown.ADE', outerBlur);
 			};
 
 			//When the mouse enters, show the popup view of the note
@@ -216,7 +233,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				if(element) element.unbind('keypress.ADE');
 				window.clearTimeout(timeout);
 				if (editing) return;
 				editing = true;
@@ -230,38 +246,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			element.bind('mouseenter.ADE', mousein);
 			element.bind('mouseleave.ADE', mouseout);
 			element.bind('click.ADE', mouseclick);
-
-			//handles focus events
-			element.bind('focus.ADE', function(e) {
-
-				//if this is an organic focus, then do a click to make the popup appear.
-				//if this was a focus caused my myself then don't do the click
-				if (!element.data('dontclick')) {
-					element.click();
-					return;
-				}
-				window.setTimeout(function() { //IE needs this delay because it fires 2 focus events in quick succession.
-					element.data('dontclick',false);
-				},100);
-
-				//listen for keys pressed while the element is focused but not clicked
-				element.bind('keypress.ADE', function(e) {
-					if (e.keyCode == 13) { //return
-						e.preventDefault();
-						e.stopPropagation(); //to prevent return key from going into text box
-						element.click();
-					} else if (e.keyCode != 9) { //not tab
-						//for a key other than tab we want it to go into the text box
-						element.click();
-					}
-				});
-
-			});
-
-			//handles blur events
-			element.bind('blur.ADE', function(e) {
-				if(element) element.unbind('keypress.ADE');
-			});
 
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
