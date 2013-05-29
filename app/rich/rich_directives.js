@@ -208,9 +208,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// listen to clicks on all elements in page
 				// this will determine when to blur
 				$(document).bind('click.ADE', outerBlur);
-
-				// Handle special keyboard events (escape and tab)
-				$(document).bind('keydown.ADE', handleKeyEvents);
 			};
 
 			//When the mouse enters, show the popup view of the note
