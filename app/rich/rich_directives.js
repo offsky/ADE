@@ -195,7 +195,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					menubar: "false",
 					plugins: ["textcolor", "link"],
 					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
-					// CHANGE: Added to TinyMCE pluging
+					// CHANGE: Added to TinyMCE plugin
 					handleKeyEvents: handleKeyEvents
 				});
 
