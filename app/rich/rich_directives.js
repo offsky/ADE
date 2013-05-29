@@ -250,38 +250,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			element.bind('mouseleave.ADE', mouseout);
 			element.bind('click.ADE', mouseclick);
 
-			//handles focus events
-			element.bind('focus.ADE', function(e) {
-
-				//if this is an organic focus, then do a click to make the popup appear.
-				//if this was a focus caused my myself then don't do the click
-				if (!element.data('dontclick')) {
-					element.click();
-					return;
-				}
-				window.setTimeout(function() { //IE needs this delay because it fires 2 focus events in quick succession.
-					element.data('dontclick',false);
-				},100);
-
-				//listen for keys pressed while the element is focused but not clicked
-				element.bind('keypress.ADE', function(e) {
-					if (e.keyCode == 13) { //return
-						e.preventDefault();
-						e.stopPropagation(); //to prevent return key from going into text box
-						element.click();
-					} else if (e.keyCode != 9) { //not tab
-						//for a key other than tab we want it to go into the text box
-						element.click();
-					}
-				});
-
-			});
-
-			//handles blur events
-			element.bind('blur.ADE', function(e) {
-				if(element) element.unbind('keypress.ADE');
-			});
-
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeRich', function(settings) { //settings is the contents of the ade-rich="" string
