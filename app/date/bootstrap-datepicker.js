@@ -224,6 +224,9 @@
 			var d = new Date(this.viewDate);
 			var year = d.getFullYear();
 			var month = d.getMonth();
+      var today = new Date();
+      var todayDay = today.getDate();
+      var todayMonth = today.getMonth();
 
 			//set currentDate to timestamp of date without time component
 			var currentDate = null;
@@ -256,6 +259,9 @@
 				if (prevMonth.valueOf() === currentDate) {
 					clsName += ' active';
 				}
+        if (prevMonth.getMonth() === todayMonth && prevMonth.getDate() === todayDay) {
+          clsName += ' today';
+        }
 				html.push('<td class="day' + clsName + '">' + prevMonth.getDate() + '</td>');
 				if (prevMonth.getDay() === this.weekEnd) {
 					html.push('</tr>');
