@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="vendor/css/timepicker.css"/>
     	<link rel="stylesheet" href="vendor/css/select2.css"/>
     	
-    	<!-- build:css build/ade-1.1.min.css -->
+    	<!-- build:css build/ade-1.2.min.css -->
 		<link rel="stylesheet" href="common/ade.css"/>
 		<!-- endbuild -->
 
@@ -23,11 +23,12 @@
 		<script src="vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="vendor/js/angular.js"></script>
       <script src="vendor/js/angular-sanitize.js"></script>
+		<script src="vendor/tinymce/tinymce.min.js"></script>
 		<script src="common/demoApp.js"></script>
 		<script src="common/demoCtrl.js"></script>
 		<script src="common/demoListCtrl.js"></script>
 		
-		<!-- build:js build/ade-1.1.min.js -->
+		<!-- build:js build/ade-1.2.min.js -->
 		<script src="common/date-min.js"></script>
 		<script src="common/ade.js"></script>
 		<script src="common/number_directive.js"></script>
@@ -47,7 +48,6 @@
 		<script src="list/select2.js"></script>
 		<script src="rich/rich_filters.js"></script>
 		<script src="rich/rich_directives.js"></script>
-		<script src="vendor/tinymce/tinymce.min.js"></script>
 		<script src="money/money_filters.js"></script>
 		<script src="percent/percent_filters.js"></script>
 		<script src="phone/phone_filters.js"></script>
@@ -83,7 +83,7 @@
 			<br /><br />
 
 		<a href="rich/">Text (Long)</a> - A popup text area for editing large amounts of richly formatted text.<br />
-			Example: <div class="sample ade-editable-rich" ade-rich='{"className":"input-xlarge"}' ng-model="datalongtext" ng-bind-html="datalongtext | rich:25"></div>
+			Example: <div class="sample" ade-rich='{"className":"input-xlarge"}' ng-model="datalongtext" ng-bind-html="datalongtext | rich:25"></div>
 			<br /><br />
 
 		<a href="url/">URL</a> - A filter to make links clickable, and a way to edit them in place.<br />
