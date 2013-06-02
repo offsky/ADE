@@ -118,8 +118,31 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				scope.$digest();
 			};
 
+      element.bind('mouseover', function() {
+        var value = element.text();
+        if (value === "") return;
+        var elOffset = element.offset();
+        var posLeft = elOffset.left;
+        var posTop = elOffset.top + element[0].offsetHeight;
+        var today = Date.today();
+        var inputDate = Date.parse(value);
+        var dayOfWeek = inputDate.toString("dddd");
+        var future = (today.isAfter(inputDate)) ? false : true;
+        var diff = Math.abs(new TimeSpan(inputDate - today).days);
+        var dayOrDays = (diff === 1) ? " day" : " days";
+        var content = (future) ? "In " + diff + dayOrDays : diff + dayOrDays + " ago";
+        if (diff === 0) content = "Today is ";
+        var html = '<div class="' + ADE.popupClass + ' ade-date-popup dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><p>' + content + '. ' + dayOfWeek + '.</p></div>';
+        $compile(html)(scope).insertAfter(element);
+      });
+
+      element.bind('mouseout', function() {
+        scope.ADE_hidePopup();
+      });
+
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
+        scope.ADE_hidePopup();
 				if (editing) return;
 				editing = true;
 				exit = 0;
