@@ -79,6 +79,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				// we're done, no need to listen to events
 				$(document).off('click.ADE');
+				$(document).off('keydown.ADE');
 
 				scope.$digest();
 			};
@@ -156,11 +157,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 						mouseout();
 						saveEdit(3); // don't save results
 						e.preventDefault();
+						$(document).off('mousedown.ADE');
 						break;
 					case 9: // tab
 						mouseout();
 						saveEdit(0); // blur and save
 						e.preventDefault();
+						$(document).off('mousedown.ADE');
 						break;
 					default:
 						break;
@@ -245,9 +248,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				editRichText();
 			};
 
+			//handles enter keydown on the read version of the data
+			var enter = function(e) {
+				if (e.keyCode === 13) { // enter
+					mouseclick();
+				}
+			};
+
 			element.bind('mouseenter.ADE', mousein);
 			element.bind('mouseleave.ADE', mouseout);
 			element.bind('click.ADE', mouseclick);
+			element.bind('keydown.ADE', enter);
 
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
