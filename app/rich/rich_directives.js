@@ -156,11 +156,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 						mouseout();
 						saveEdit(3); // don't save results
 						e.preventDefault();
+						$(document).off('mousedown.ADE');
 						break;
 					case 9: // tab
 						mouseout();
 						saveEdit(0); // blur and save
 						e.preventDefault();
+						$(document).off('mousedown.ADE');
 						break;
 					default:
 						break;
