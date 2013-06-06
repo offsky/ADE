@@ -106,6 +106,24 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				input.bind('click.ADE', mouseclick);
 			};
 
+			//place the popup in the proper place on the screen
+			var place = function() {
+				var richText = $('#richText');
+				var offset = richText.offset();
+
+				//flip up top if off bottom of page
+				var windowH = $(window).height();
+				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
+				var textHeight = richText[0].offsetTop + richText[0].offsetHeight;
+
+				if (textHeight - scroll > windowH) {
+					richText.css({
+						top: offset.top - richText[0].offsetHeight - element.height() - 10,
+						left: offset.left
+					});
+				}
+			};
+
 			//sets the height of the textarea based on the actual height of the contents.
 			//min and max are set in css
 			var textareaHeight = function(elem) {
@@ -182,7 +200,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
-				var html = '<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
+				var html = '<div id="richText" class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
 				$compile(html)(scope).insertAfter(element);
 
 				// Initialize tinymce
@@ -246,6 +264,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				ADE.begin(options);
 
 				editRichText();
+				place();
 			};
 
 			//handles enter keydown on the read version of the data
