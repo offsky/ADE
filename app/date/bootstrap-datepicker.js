@@ -178,10 +178,12 @@
 
 			if (pickerHeight - scroll > windowH) {
 				this.picker.css({
-					top: offset.top - this.picker[0].offsetHeight,
+					top: offset.top - this.picker[0].offsetHeight - 5,
 					left: offset.left
-				});
-			}
+				}).addClass("flipped");
+			} else {
+        this.picker.removeClass("flipped");
+      }
 		},
 
 		//each time a keystroke is fired on the input
