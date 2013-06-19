@@ -28,7 +28,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				var dateStr = '';
 
-        console.log(ev.date);
+        		console.log(ev.date[1]);
 
 				if (ev.date.length) dateStr = $filter('date')(ev.date[0], format);
 				//these two lines cause orphaned datepickers

@@ -137,17 +137,12 @@
 
 		//value is set by clicking, on hide, or external setting
 		set: function() {
-      var returnObj = [];
-      if (this.date) {
-        if (this.viewMode === 2) {
-          //year picker
-          returnObj = [this.date.getTime(), this.date.getTimezoneOffset()*60];
-        } else {
-          returnObj = [this.date.getTime(), this.date];
-        }
-      } else {
-        returnObj = null;
-      }
+			var returnObj = [];
+			if (this.date) {
+			 	returnObj = [this.date.getTime(), this.date.getTimezoneOffset() * 60];
+			} else {
+			  	returnObj = null;
+			}
 
 			this.element.trigger({
 				type: 'changeDate',
@@ -236,9 +231,9 @@
 			var d = new Date(this.viewDate);
 			var year = d.getFullYear();
 			var month = d.getMonth();
-      var today = new Date();
-      var todayDay = today.getDate();
-      var todayMonth = today.getMonth();
+		var today = new Date();
+		var todayDay = today.getDate();
+		var todayMonth = today.getMonth();
 
 			//set currentDate to timestamp of date without time component
 			var currentDate = null;
@@ -271,9 +266,9 @@
 				if (prevMonth.valueOf() === currentDate) {
 					clsName += ' active';
 				}
-        if (prevMonth.getMonth() === todayMonth && prevMonth.getDate() === todayDay) {
-          clsName += ' today';
-        }
+		  if (prevMonth.getMonth() === todayMonth && prevMonth.getDate() === todayDay) {
+			 clsName += ' today';
+		  }
 				html.push('<td class="day' + clsName + '">' + prevMonth.getDate() + '</td>');
 				if (prevMonth.getDay() === this.weekEnd) {
 					html.push('</tr>');
@@ -369,7 +364,7 @@
 							this.viewDate = new Date(year, month, Math.min(28, day), 0, 0, 0, 0);
 							this.fill();
 							this.set();
-              // ADE: Dont need this hear because it happens in set() right up
+					 		// ADE: Dont need this hear because it happens in set() one line up
 							//this.element.trigger({
 							//	type: 'changeDate',
 							//	date: this.date,
