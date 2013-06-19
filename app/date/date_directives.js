@@ -27,8 +27,10 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			var updateModel = function(ev) {
 
 				var dateStr = '';
-				if (ev.date) dateStr = $filter('date')(ev.date, format);
 
+        console.log(ev.date);
+
+				if (ev.date.length) dateStr = $filter('date')(ev.date[0], format);
 				//these two lines cause orphaned datepickers
 				element.context.value = dateStr;
 				if (controller !== undefined && controller !== null) controller.$setViewValue(dateStr);
@@ -47,12 +49,14 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 						element.datepicker('setValue', null);
 						element.datepicker('update');
 					}
+
 					return controller.$viewValue;
 				};
 			}
 
 			// Initialization code run for each directive instance.  Enables the bootstrap datepicker object
-			return attrs.$observe('adeCalpop', function(value) { //value is the contents of the b-datepicker="" string
+			return attrs.$observe('adeCalpop', function(value) {
+			  //value is the contents of the b-datepicker="" string
 				var options = {};
 				if (angular.isObject(value)) options = value;
 
