@@ -19,7 +19,7 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $compile) {
+angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$parse', function(ADE, $compile, $parse) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-rich=""></div>
@@ -51,6 +51,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				if (exited != 3) { //don't save value on esc
 					value = txtArea.val();
 					controller.$setViewValue(value);
+
+                    $parse(attrs.onChange)(scope);
 				}
 
 				element.show();
