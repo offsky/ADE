@@ -1,9 +1,9 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Length
-	A directive to edit a length field in place
+	AngularJS Datatype Editor - Duration
+	A directive to edit a duration field in place
 
 	Usage:
-	<div ade-length='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-duration='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
 
 	Config:
 	"class" will be added to the input box so you can style it.
@@ -18,10 +18,10 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeLength', ['ADE', '$compile', '$filter', function(ADE, $compile,$filter) {
+angular.module('ADE').directive('adeDuration', ['ADE', '$compile', '$filter', function(ADE, $compile,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-length=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-duration=""></div>
 
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
@@ -65,7 +65,7 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile', '$filter', func
 				editing=true;
 				exit = 0;
 				
-				value = $filter('length')(value);
+				value = $filter('duration')(value);
 
 				ADE.begin(options);
 
@@ -80,7 +80,7 @@ angular.module('ADE').directive('adeLength', ['ADE', '$compile', '$filter', func
 
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeLength', function(settings) { //settings is the contents of the ade-length="" string
+			return attrs.$observe('adeDuration', function(settings) { //settings is the contents of the ade-duration="" string
 				options = ADE.parseSettings(settings, {className:"input-medium"});
 				return element; //TODO: not sure what to return here
 			});
