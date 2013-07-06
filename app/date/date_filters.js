@@ -1,27 +1,31 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Date
-	A filter to display a date. It is a wrapper for Angular's date filter
-	that provides better display for invalid values.
-	
-	Usage:
-	{{ data | validDate:'yyyy' }}
+  AngularJS Datatype Editor - Date
+  A filter to display a date. It is a wrapper for Angular's date filter
+  that provides better display for invalid values.
+
+  Usage:
+  {{ data | validDate:'yyyy' }}
 
 ------------------------------------------------------------------*/
 
 angular.module('ADE').filter('validDate', ['$filter',function($filter) {
-	return function(input, dateFormat) {
-		var output = '';		
+  return function(input, dateFormat) {
+    var output = "";
 
-		if(!input) return output;
-		if(angular.isUndefined(input)) return output;
-		if(angular.isString(input)) {
-			var number = parseInt(input);
-			if(input===number+'') input = number;
-			else input = parseDateString(input);
-		}
+    if(angular.isUndefined(input)) return output;
+    var inputDate = input[0];
 
-		if(angular.isNumber(input)) output = $filter('date')(input*1000,dateFormat);
+    if(!input || !inputDate) return output;
 
-		return output;
-	};
+    if(angular.isString(inputDate)) {
+      var number = parseInt(inputDate);
+      if(inputDate===number+'') inputDate = number;
+      else inputDate = parseDateString(inputDate);
+    }
+
+    if(angular.isNumber(inputDate)) {
+      output = $filter('date')(inputDate*1000,dateFormat);
+    }
+    return output;
+  };
 }]);

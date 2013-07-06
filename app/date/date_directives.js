@@ -28,8 +28,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 				var dateStr = '';
 
-        		console.log(ev.date[1]);
-
 				if (ev.date.length) dateStr = $filter('date')(ev.date[0], format);
 				//these two lines cause orphaned datepickers
 				element.context.value = dateStr;
@@ -105,6 +103,9 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				if (exited != 3) { //don't save value on esc
 					value = parseDateString(input.val());
 					if (value == null) value = 0;
+
+					value = [value, new Date(value).getTimezoneOffset() * 60];
+
 					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
 				}
 
@@ -127,14 +128,14 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				if (editing) return;
 				editing = true;
 				exit = 0;
-				
+
 				if(angular.isArray(value) && value.length>0) value = value[0];
 				if(angular.isString(value)) {
 					var number = parseInt(value.replace(/[$]/g, ''));
 					if(value===number+'') value = number;
 					else value = parseDateString(value);
-					
 				} else if(!angular.isNumber(value)) value = 0;
+
 				value = value ? value : 0;
 
 				ADE.begin(options);
@@ -142,7 +143,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				element.hide();
 				var extraDPoptions = '';
 				if (options.format == 'yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value + '" type="text" class="' + options.className + '" />';
+				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + value[0] + '" type="text" class="' + options.className + '" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
