@@ -3,7 +3,7 @@
 describe('length', function() {
 
     beforeEach(function() {
-        browser().navigateTo('../../app/length/index.html');
+        browser().navigateTo('../../app/duration/index.html');
     });
 
     it('should render 1 control', function() {
