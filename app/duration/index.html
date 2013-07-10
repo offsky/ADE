@@ -22,12 +22,12 @@
 		<p>A filter that convert an integer into formatted hours and minutes.</p>
 
 		  <ul>
-				<li>Length "360": {{ 360 | duration }} </li>
-				<li>Invalid length "abcd": {{ "abcd" | duration }}</li>
+				<li>Duration "360": {{ 360 | duration }} </li>
+				<li>Invalid duration "abcd": {{ "abcd" | duration }}</li>
 		  </ul>
 
 		<h1>Duration editing directive</h1>
-		<p>A directive to edit a length string. You can enter time in hours, minutes or a combination.</p>
+		<p>A directive to edit a time duration string. You can enter time in hours, minutes or a combination.</p>
 	
 		<div class="ade-editable" ade-duration='{"className":"input-medium", "id":"1234"}' ng-model="durationstring">{{ durationstring | duration }}</div>
 		
