@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.0.0rc12
+ * @license AngularJS v1.0.7
  * (c) 2010-2012 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -129,7 +129,7 @@ var START_TAG_REGEXP = /^<\s*([\w:-]+)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:
   BEGING_END_TAGE_REGEXP = /^<\s*\//,
   COMMENT_REGEXP = /<!--(.*?)-->/g,
   CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g,
-  URI_REGEXP = /^((ftp|https?):\/\/|mailto:|tel:|#)/,
+  URI_REGEXP = /^((ftp|https?):\/\/|mailto:|#)/,
   NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g; // Match everything outside of normal chars and " (quote character)
 
 
@@ -416,12 +416,13 @@ angular.module('ngSanitize', []).value('$sanitize', $sanitize);
 angular.module('ngSanitize').directive('ngBindHtml', ['$sanitize', function($sanitize) {
   return function(scope, element, attr) {
     element.addClass('ng-binding').data('$binding', attr.ngBindHtml);
-    scope.$watch(attr.ngBindHtml, function(value) {
+    scope.$watch(attr.ngBindHtml, function ngBindHtmlWatchAction(value) {
       value = $sanitize(value);
       element.html(value || '');
     });
   };
 }]);
+
 /**
  * @ngdoc filter
  * @name ngSanitize.filter:linky
@@ -433,6 +434,9 @@ angular.module('ngSanitize').directive('ngBindHtml', ['$sanitize', function($san
  *
  * @param {string} text Input text.
  * @returns {string} Html-linkified text.
+ *
+ * @usage
+   <span ng-bind-html="linky_expression | linky"></span>
  *
  * @example
    <doc:example module="ngSanitize">
@@ -528,5 +532,6 @@ angular.module('ngSanitize').filter('linky', function() {
     return html.join('');
   };
 });
+
 
 })(window, window.angular);
