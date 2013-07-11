@@ -9,7 +9,7 @@
 	"class" will be added to the input box so you can style it.
 	"id" will be used in messages broadcast to the app on state changes.
 	"maxlength" will constrain the length of the string (optional)
-	
+
 	Messages:
 		name: ADE-start
 		data: id from config
@@ -19,7 +19,7 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compile) {
+angular.module('ADE').directive('adeText', ['ADE','$compile', '$parse', function(ADE,$compile, $parse) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
@@ -50,7 +50,8 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				if(exited!=3) { //don't save value on esc
 					value = input.val();
 					controller.$setViewValue(value);
-				}
+                    $parse(attrs.onChange)(scope);
+                }
 
 				element.show();
 				input.remove();
@@ -60,7 +61,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 
 				scope.$digest();
 			};
-			
+
 			//handles clicks on the read version of the data
 			element.bind('click', function() {
 				if(editing) return;
@@ -73,16 +74,16 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				if(options.maxlength!==undefined) maxlength = "maxlength='"+options.maxlength+"'";
 
 				if(!angular.isString(value)) value = value.toString();
-				
+
 				element.hide();
 				$compile('<input type="text" class="'+options.className+'" value="'+value.replace(/"/g,'&quot;')+'" '+maxlength+' />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
-				
+
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
 			});
-			
+
 			// Watches for changes to the element
 			// TODO: understand why I have to return the observer and why the observer returns element
 			return attrs.$observe('adeText', function(settings) { //settings is the contents of the ade-text="" string
