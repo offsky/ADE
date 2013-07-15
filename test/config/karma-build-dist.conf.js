@@ -13,7 +13,7 @@ files = [
   'test/unit/decimal/*.js',
   'test/unit/email/*.js',
   'test/unit/integer/*.js',
-  'test/unit/length/*.js',
+  'test/unit/duration/*.js',
   'test/unit/money/*.js',
   'test/unit/percent/*.js',
   'test/unit/phone/*.js',

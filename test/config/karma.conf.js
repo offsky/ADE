@@ -24,8 +24,8 @@ files = [
   'app/integer/*.js',
   'test/unit/integer/*.js',
 
-  'app/length/*.js',
-  'test/unit/length/*.js',
+  'app/duration/*.js',
+  'test/unit/duration/*.js',
 
   'app/money/*.js',
   'test/unit/money/*.js',

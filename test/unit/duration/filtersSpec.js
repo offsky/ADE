@@ -3,10 +3,10 @@
 describe('duration', function() {
 	beforeEach(module('ADE'));
 
-	var lengthFilter;
+	var durationFilter;
 
 	beforeEach(inject(function($filter) {
-		lengthFilter = $filter('duration');
+		durationFilter = $filter('duration');
 	}));
 
 	it('should convert minutes to hours + minutes', function() {

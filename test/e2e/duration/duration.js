@@ -1,6 +1,6 @@
 'use strict';
 
-describe('length', function() {
+describe('duration', function() {
 
     beforeEach(function() {
         browser().navigateTo('../../app/duration/index.html');
