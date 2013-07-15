@@ -99,11 +99,10 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				var pickerHeight = iconBox[0].offsetTop + iconBox[0].offsetHeight;
 
 				if (pickerHeight - scroll > windowH) {
-					console.log('flip');
 					iconBox.css({
-						top: posTop - iconBox[0].offsetHeight - element.height() - 10,
+						top: posTop - iconBox[0].offsetHeight - element.height() - 5,
 						left: posLeft
-					});
+					}).addClass("flip");
 				}
 			};
 

@@ -51,7 +51,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var saveEdit = function(exited) {
 				oldValue = value;
 				exit = exited;
-				
+
 				if (exited != 3) { //don't save value on esc
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
 					value = editor.innerHTML;
@@ -91,7 +91,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight;
+				var posTop = elOffset.top + element[0].offsetHeight-2;
 				var content = value.replace ? value.replace(/\n/g, '<br />') : value; //what is inside the popup
 
 				if (!content) return; //dont show popup if there is nothing to show
@@ -118,9 +118,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				if (textHeight - scroll > windowH) {
 					richText.css({
-						top: offset.top - richText[0].offsetHeight - element.height() - 10,
+						top: offset.top - richText[0].offsetHeight - element.height() - 13,
 						left: offset.left
-					});
+					}).addClass("flip");
 				}
 			};
 
