@@ -16,6 +16,7 @@ angular.module('ADE').filter('time', function() {
             date, ampm, hours, minutes;
 
         if (angular.isUndefined(input)) return output;
+        if (angular.isArray(input)) input = input[0];
         if (input==0) return output;
         if (angular.isNumber(input)) date = new Date(input*1000);
         if (!angular.isDate(date)) return output;

@@ -13,6 +13,8 @@ angular.module('ADE').filter('rich', ['$filter', function($filter) {
 
 		var len = options || 100;
 		var output;
+		
+		if (angular.isArray(input)) input = input[0];
 
 		if (!input.split) input = input.toString(); //convert to string if not string (to prevent split==undefined)
 		// strip html

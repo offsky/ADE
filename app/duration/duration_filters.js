@@ -49,7 +49,8 @@ angular.module('ADE').filter('duration', function() {
 
 	return function(input) {
 		if(!input) return '';
-
+		if (angular.isArray(input)) input = input[0];
+		
 		var output = '';
 
 		//if it is already a number, just prettify it

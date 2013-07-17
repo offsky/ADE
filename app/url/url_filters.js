@@ -16,6 +16,7 @@ angular.module('ADE').filter('url', ['$filter',function($filter) {
 		var html = '';
 
 		if(!input) return '';
+		if(angular.isArray(input)) input = input[0];
 		if(!angular.isString(input)) input = input.toString();
 		
 		if (URL_REGEXP.test(input)) {

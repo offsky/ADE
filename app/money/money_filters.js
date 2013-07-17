@@ -15,6 +15,7 @@ angular.module('ADE').filter('money', ['$filter',function($filter) {
 		var clean;
 
 		if (angular.isUndefined(input)) return output;
+		if (angular.isArray(input)) input = input[0];
 
 		if (angular.isString(input)) {
 			input = parseFloat(input.replace(/[$]/g, ''));
