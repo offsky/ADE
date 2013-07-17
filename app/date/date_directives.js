@@ -102,7 +102,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					value = parseDateString(input.val());
-					if (value == null || value==0) {
+					if (value == null || value<=0) {
 						value = [0,0,0];
 					} else {
 						var offset = new Date().getTimezoneOffset();
@@ -137,7 +137,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 					preset = value[0];
 					if(options.absolute && value[1]!==undefined) {
 						preset = value[1]; //the GMT time we want to display, so need to offset this by user's offset
-						preset += new Date().getTimezoneOffset()*60;
+						if(preset) preset += new Date().getTimezoneOffset()*60;
 					}
 				}
 				if(angular.isString(preset)) {

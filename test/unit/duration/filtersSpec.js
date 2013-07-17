@@ -14,6 +14,7 @@ describe('duration', function() {
 		expect(durationFilter(65)).toBe("1hr 5mins");
 		expect(durationFilter(100)).toBe("1hr 40mins");
 		expect(durationFilter(1)).toBe("1min");
+		expect(durationFilter([1,'2'])).toBe("1min");
 	});
 
 	it('should convert user entered strings to hours + minutes', function() {
@@ -71,6 +72,5 @@ describe('duration', function() {
 		expect(durationFilter(null)).toBe("");
 		expect(durationFilter(undefined)).toBe("");
 		expect(durationFilter({foo:1})).toBe("");
-		expect(durationFilter(['1','2'])).toBe("");
 	});
 });
