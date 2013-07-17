@@ -137,16 +137,17 @@
 
 		//value is set by clicking, on hide, or external setting
 		set: function() {
-			var returnObj = [];
-			if (this.date) {
-			 	returnObj = [this.date.getTime(), this.date.getTimezoneOffset() * 60];
-			} else {
-			  	returnObj = null;
-			}
+			// var returnObj = [];
+			// if (this.date) {
+			//  	returnObj = [this.date.getTime(), this.date.getTime()-this.date.getTimezoneOffset()*60000, this.date.getTimezoneOffset()];
+			// } else {
+			//   	returnObj = null;
+			// }
 
 			this.element.trigger({
 				type: 'changeDate',
-				date: returnObj
+				date: this.date ? this.date.getTime() : null
+				//date: returnObj
 			});
 			return;
 		},
