@@ -56,6 +56,9 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 					controller.$setViewValue(value);
 				}
 
+				ADE.teardownKeys(input);
+				ADE.teardownBlur(input);
+
 				element.show();
 				input.remove();
 				editing=false;
@@ -85,6 +88,16 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 				
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
+
+				input.bind('keypress.ADE', function(e) {
+					if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105) || e.keyCode==44 || e.keyCode==45 || e.keyCode==46) { //0-9 and .,-
+						;//allowed characters
+					} else {
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				});
+
 			});
 
 			// Watches for changes to the element
