@@ -1,1 +1,15 @@
 Installation Instructions
+=========================
+
+1) Download the minified css and js files and adeImg image directory, and place into your project. 
+	These are located in the build directory
+
+
+2) Inject ADE in your angular project
+
+	var app = angular.module('app', ['ADE', 'ngSanitize']);
+
+
+3) Use the directives and filters
+
+	<div class="sample" ade-url='{"className":"input-medium"}' ng-model="dataurl" ng-bind-html="dataurl | url"></div>

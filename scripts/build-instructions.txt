@@ -1,0 +1,6 @@
+Build Instructions
+==================
+
+1) Run scripts/build.sh which uses grunt to compile the javascript.
+2) Look in dist/build for the resulting files.
+3) The build script will also create a zip file that you can rename and distribute
