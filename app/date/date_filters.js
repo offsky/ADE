@@ -9,7 +9,7 @@
 								For example if someone in California chooses "July 15, 2013 6:00:00 PM"
 								it will store 1373936400 (16 Jul 2013 01:00:00 GMT)
 
-	absolutetimestamp  = a timestamp that represents the user's selected date converted to GMT timezone
+	absolutetimestamp  = a timestamp that represents the user's selected date as if they were in the GMT timezone
 								For example, if someone in California chooses "July 15, 2013 6:00:00 PM"
 								it will store 1373911200 (15 Jul 2013 18:00:00 GMT)
 
