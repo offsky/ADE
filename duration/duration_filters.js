@@ -1,14 +1,14 @@
 /* ==================================================================
-	AngularJS Datatype Editor - Length
+	AngularJS Datatype Editor - Duration
 	A filter to display a number that represents minutes, and format it
 	into a pretty version, such as "2hrs".
 
 	Usage:
-	{{ data | length }}
+	{{ data | duration }}
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').filter('length', function() {
+angular.module('ADE').filter('duration', function() {
 
 	//Minutes are passed in and a more readable (hrs mins) string is returned
 	function mins2Pretty(value) {
@@ -34,14 +34,14 @@ angular.module('ADE').filter('length', function() {
 		return output;
 	}
 
-	//Length was specified as a single unit (1hr or 60min). Return minutes
+	//Duration was specified as a single unit (1hr or 60min). Return minutes
 	function single2Mins(value) {
 		var clean = parseFloat(value, 10);
 		if((value.indexOf('h') !== -1)) clean = clean*60;
 		return Math.round(clean);
 	}
 
-	//Length was specified as two units (1hrs 90mins). Return minutes
+	//Duration was specified as two units (1hrs 90mins). Return minutes
 	function double2Mins(value) {
 		var values = value.split(' ');
 		return parseFloat(values[0],10)*60+parseFloat(values[1],10);
@@ -49,7 +49,8 @@ angular.module('ADE').filter('length', function() {
 
 	return function(input) {
 		if(!input) return '';
-
+		if (angular.isArray(input)) input = input[0];
+		
 		var output = '';
 
 		//if it is already a number, just prettify it

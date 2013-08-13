@@ -80,6 +80,32 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				scope.$digest();
 			};
 
+			//place the popup in the proper place on the screen
+			var place = function() {
+				var iconBox = $('#adeIconBox');
+
+				var elOffset = element.offset();
+				var posLeft = elOffset.left - 7;  // 7px = custom offset
+				var posTop = elOffset.top + element[0].offsetHeight;
+
+				iconBox.css({
+					left: posLeft,
+					top: posTop
+				});
+				
+				//flip up top if off bottom of page
+				var windowH = $(window).height();
+				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
+				var pickerHeight = iconBox[0].offsetTop + iconBox[0].offsetHeight;
+
+				if (pickerHeight - scroll > windowH) {
+					iconBox.css({
+						top: posTop - iconBox[0].offsetHeight - element.height() - 5,
+						left: posLeft
+					}).addClass("flip");
+				}
+			};
+
 			//handles clicks on the read version of the data
 			element.bind('click', function(e) {
 				element.unbind('keypress.ADE');
@@ -92,19 +118,15 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				var iconPopup = angular.element('.' + ADE.popupClass);
 				var clickTarget = angular.element(e.target);
 				var attrClass = clickTarget.attr('class');
-				var elOffset;
-				var posLeft;
-				var posTop;
 
 				var isMySpan = (angular.isDefined(attrClass) && attrClass.match('icon')!==null && attrClass.match('icon').length && clickTarget.parent()[0] == element[0]);
 				var isMyDiv = (clickTarget[0]==element[0]);
 
 				if ((isMySpan || isMyDiv)  && (!iconPopup || !iconPopup.length)) {   //don't popup a second one
 					editing = true;
-					elOffset = element.offset();
-					posLeft = elOffset.left - 7;  // 7px = custom offset
-					posTop = elOffset.top + element[0].offsetHeight;
-					$compile('<div class="' + ADE.popupClass + ' ade-icons dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
+					$compile('<div id="adeIconBox" class="' + ADE.popupClass + ' ade-icons dropdown-menu open"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
+					place();
+
 					input = angular.element('#invisicon');
 					
 					var nextElement = element.next('.ade-popup');

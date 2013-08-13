@@ -10,6 +10,7 @@
 angular.module('ADE').filter('phone', function() {
 	return function(input) {
 		if(!input) return "";
+		if(angular.isArray(input)) input = input[0];
 		if(!angular.isString(input)) input = input.toString();
 		
 		var clean = input.replace(/[\-\.() ]/g, "");

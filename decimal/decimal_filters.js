@@ -15,6 +15,7 @@ angular.module('ADE').filter('decimal', ['$filter',function($filter) {
 		var output = '';
 		var fractionSize = fractionSize || 2;
 
+		if (angular.isArray(input)) input = input[0];
 		if (angular.isString(input)) input = parseFloat(input);
 		if (angular.isUndefined(input) || !angular.isNumber(input)) return output;
 

@@ -50,11 +50,14 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 
 				if(exited!=3) { //don't save value on esc
 					value = input.val();
-					value = value.replace(/[^0-9.]/g, '');
+					value = value.replace(/[^0-9.-]/g, '');
 					value = parseFloat(value);
 					if(isNaN(value)) value = '';
 					controller.$setViewValue(value);
 				}
+
+				ADE.teardownKeys(input);
+				ADE.teardownBlur(input);
 
 				element.show();
 				input.remove();
@@ -85,6 +88,16 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 				
 				ADE.setupBlur(input,saveEdit);
 				ADE.setupKeys(input,saveEdit);
+
+				input.bind('keypress.ADE', function(e) {
+					if ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode==36 || e.keyCode==37 || e.keyCode==44 || e.keyCode==45 || e.keyCode==46) { //0-9 and .,-%$
+						;//allowed characters
+					} else {
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				});
+
 			});
 
 			// Watches for changes to the element

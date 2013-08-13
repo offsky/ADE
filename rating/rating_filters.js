@@ -17,6 +17,8 @@ angular.module('ADE').filter('rating', function() {
 		var starStatusClass = "off";
 		var zeroRateW = 10;
 
+		if(angular.isArray(input)) input = input[0];
+
 		if(options && options.width) starW = options.width;
 		if(options && options.num) starCount = options.num;
 		if(options && options.className) starClass = options.className;

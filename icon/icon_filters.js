@@ -10,6 +10,8 @@
 
 angular.module('ADE').filter('icon', ['ADE', function(ADE) {
 	return function(input, option) {
+        if (angular.isArray(input)) input = input[0];
+        
 		if (!input) input = 'ban-circle';
         var matchFound = false;
         var iconsLength = ADE.icons.length;

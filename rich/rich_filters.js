@@ -13,8 +13,13 @@ angular.module('ADE').filter('rich', ['$filter', function($filter) {
 
 		var len = options || 100;
 		var output;
+		
+		if (angular.isArray(input)) input = input[0];
 
 		if (!input.split) input = input.toString(); //convert to string if not string (to prevent split==undefined)
+		// strip html
+		var text = $(input).text();
+		if (text) input = text;
 
 		var lines = input.split(/\r?\n|\r/);
 		input = lines[0]; //get first line

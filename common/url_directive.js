@@ -120,8 +120,8 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 								'</div>';
 						break;
 					default:
-						isurl = $filter('url')(value).match('http://');
-						if (!linkString.match('http://')) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
+						isurl = $filter('url')(value).match(/https?:/);
+						if (!linkString.match(/https?:/)) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
 						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
 								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE_hidePopup();">Follow Link</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +

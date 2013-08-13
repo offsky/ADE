@@ -2823,12 +2823,20 @@ if (Date.CultureInfo)
     };
 }());
 
-var parseDateString = function(s, debug)
+/**
+Toodledo
+    if gmt is true, the string will be interpreted in GMT time instead of local time
+*/
+var parseDateString = function(s, debug, gmt)
 {
     var date = Date.parse(s);
     if (date != null)
     {
-        return debug ? date.toString() : date.toUnixTimestamp();
+        var time = date.toUnixTimestamp();
+        if(gmt) {
+            time -= date.getTimezoneOffset()*60;
+        }
+        return debug ? date.toString() : time;
     }
     return null;
 };

@@ -9,6 +9,7 @@
 
 angular.module('ADE').filter('percent', function() {
     return function(input) {
+        if(angular.isArray(input)) input = input[0];
         var clean = parseFloat(input);
         var output = '';
 
