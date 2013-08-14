@@ -98,6 +98,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
 
+				// Convert relative urls to absolute urls
+				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
+				$('.ade-richview').find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+					var href = this.getAttribute('href');
+					var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
+					this.setAttribute('href', hrefType + href);
+				});
+
 				editing = false;
 
 				input = element.next('.ade-rich');
