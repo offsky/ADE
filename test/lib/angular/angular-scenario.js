@@ -25857,6 +25857,25 @@ angular.scenario.dsl('element', function() {
   ];
   var chain = {};
 
+  // AM:
+  chain.enterRichText = function(text) {
+    return this.addFutureAction("element enter rich text", function($window, $document, done) {
+      $('iframe').contents().find('iframe').contents().find('body p').text(text);
+      done();
+    });
+  };  
+
+  // AM:
+  chain.simulateClick = function(index, event) {
+    return this.addFutureAction("element '" + "' tabs", function($window, $document, done) {
+		var elements = $document.elements();
+      var element = elements[index];
+      appWindow().simulateMouse(element, event);
+
+      done();
+    });
+  };
+
   chain.count = function() {
     return this.addFutureAction("element '" + this.label + "' count", function($window, $document, done) {
       try {

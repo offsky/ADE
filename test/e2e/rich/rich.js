@@ -1,6 +1,15 @@
 'use strict';
 
 describe('rich', function() {
+// https://groups.google.com/forum/?fromgroups=#!searchin/angular/e2e$20iframe/angular/eUEVKUsif8U/W4rnLAVF8P0J
+
+function appWindow() {
+  return document.getElementsByTagName('iframe')[0].contentWindow;
+}
+function appAngular() {
+  return appWindow().angular;
+}
+
 
 	beforeEach(function() {
 		browser().navigateTo('../../app/rich/index.html');
@@ -15,13 +24,10 @@ describe('rich', function() {
 		expect(element('.ade-editable + .ade-popup').count()).toEqual(1);
 	});
 
-	//TODO: fix
-	xit('should detect click outside to save edit', function() {
+	it('should detect click outside to save edit', function() {
 		element('.ade-editable:eq(0)').click();
-		
-		element('.ade-editable:eq(0) + .ade-popup textarea').text('testing rich editor');
-		//TODO: click outside
-
+		element().enterRichText('testing rich editor');
+		element('h1').simulateClick(0, 'mousedown');
 		expect(element('.ade-editable:eq(0)').text()).toContain('testing rich editor');
 	});
 
