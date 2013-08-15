@@ -11,6 +11,10 @@
 //1373936400 (16 Jul 2013 01:00:00 GMT)
 //1373914800 (15 Jul 2013 19:00:00 GMT)
 
+//Jan 1, 2013 0:00:00 PT
+//1357027200 (Tue, 01 Jan 2013 08:00:00 GMT)
+//1356998400 (Tue, 01 Jan 2013 00:00:00 GMT)
+
 describe('date', function() {		
 	beforeEach(module('ADE'));
 
@@ -57,6 +61,18 @@ describe('date', function() {
 	it('should print Jul 15 7pm in absolute with timezone', function() {
 		expect(dateFilter([1373936400,1373914800,360],['medium',true,false])).toContain('Jul 15, 2013 7:00:00 PM'); 
 		expect(dateFilter([1373936400,1373914800,360],['medium',true,true])).toContain('Jul 15, 2013 7:00:00 PM ('); //to work in all timezones, this test cant inspect the actual offset
+	});
+
+	it('should work for daylight savings time', function() {
+		//test jan 1  12:00am
+		expect(dateFilter([1357027200,1356998400,420],['medium',true,false])).toContain('Jan 1, 2013 12:00:00 AM'); 
+		expect(dateFilter([1357027200,1356998400,420],['medium',true,true])).toContain('Jan 1, 2013 12:00:00 AM');
+		if(inProperTimezone) expect(dateFilter([1357027200,1356998400,420],['medium',false,false])).toContain('Jan 1, 2013 12:00:00 AM'); 
+
+		//test july 1 6:00pm
+		expect(dateFilter([1373936400,1373911200,420],['medium',true,false])).toContain('Jul 15, 2013 6:00:00 PM'); 
+		expect(dateFilter([1373936400,1373911200,420],['medium',true,true])).toContain('Jul 15, 2013 6:00:00 PM');
+		if(inProperTimezone) expect(dateFilter([1373936400,1373911200,420],['medium',false,true])).toContain('Jul 15, 2013 6:00:00 PM');
 	});
 
 	it('should print Jul 15 6pm in floating time even though setter set it to 7pm in their timezone', function() {

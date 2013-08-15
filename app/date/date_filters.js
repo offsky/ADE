@@ -3,7 +3,8 @@
   	A filter to display a date. It is a wrapper for Angular's date filter
   	that provides better display for invalid values and handles timezones differently.
 
-	The input is an array [timestamp,absolutetimestamp,timezone]
+	The input can be a unix timestamp(integer), a human readable time string(string) or 
+	an array [timestamp,absolutetimestamp,timezone]. If it is an array:
 
 	timestamp 			 = the true unix timestamp that represents this date.
 								For example if someone in California chooses "July 15, 2013 6:00:00 PM"
@@ -17,6 +18,13 @@
 								to (timestamp-absolutetimestamp)/60, but may not if daylight savings time is in 
 								affect. It should be the value returned from getTimezoneOffset() for the user.
 
+	The filter parameter can be a dateFormat string, or an array [format, absolute, showTimezone]
+
+	dateFormat 			 = a string format for the date "medium" or "mediumData" or "yyyy" or ...
+
+	absolute 	 = a boolean if we should display the time as absolute(true) or relative(false)
+
+	showTimezone	 = a boolean if we should display the user's timezone.
 
 	There are two scenarios for picking and displaying dates.
 
@@ -24,8 +32,8 @@
 	The user picks July 15 6:00pm and you want to display July 15 6:00pm regardless of there the user is.
 	If the user travels from California to New York, it will still display 6:00pm. This is what we are
 	calling "absolute time" and you tell this filter to display dates in this way by passing true
-	to the second option. The third boolean controls if the timezone offset is appended to the end of the string if different 
-	from the display user's timezone.  For example (+1 h)
+	to the second option. The third boolean controls if the timezone offset is appended to the end of the 
+	string if different from the display user's timezone.  For example (+1 h)
 
 	Scenario #2
 	The user picks July 15 6:00pm and you want to display July 15 6:00pm as long as they stay put. If the
@@ -34,6 +42,8 @@
 	this way by passing false to the second option. The third boolean is ignored in this scenario.
 
   	Usage:
+  	{{ "2013-01-01" | validDate:'yyyy' }}
+  	{{ 1373936400 | validDate:'yyyy' }}
   	{{ [1373936400,1373911200,420] | validDate:['yyyy',true,true] }}
 
 ------------------------------------------------------------------*/
@@ -82,22 +92,24 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 
 		//console.log(timestamp,absolutetimestamp,timezone,dateFormat,absolute,showTimezone);
 
-		var currentOffset = new Date().getTimezoneOffset(); //minutes
 		var output = '';
-		if (angular.isNumber(timestamp)) {
-			if (absolute) {
-				//we want to display fixed GMT time regardless of user's timezone
-				absolutetimestamp += currentOffset * 60;
-				output = $filter('date')(absolutetimestamp * 1000, dateFormat);
-			} else {
-				output = $filter('date')(timestamp * 1000, dateFormat);
-			}
-		}
+	
+		if (absolute) { //we want to display fixed GMT time regardless of user's timezone
+			//need to get timezoneoffset of absolute time to account for daylight savings time
+			var currentOffset = new Date(absolutetimestamp*1000).getTimezoneOffset(); //minutes
 
-		if(absolute && showTimezone && currentOffset !== timezone) {
-			var offset = (currentOffset-timezone)/60;
-			if(offset>0) offset = "+"+offset;
-			output += " ("+offset+" h)";
+			//to do this, we need to artifically offset the time by the user's timezone offset
+			absolutetimestamp += currentOffset * 60;
+			output = $filter('date')(absolutetimestamp * 1000, dateFormat);
+
+			//determine if we need to append the timezone information to the string
+			if(showTimezone && currentOffset !== timezone) {
+				var offset = (currentOffset-timezone)/60;
+				if(offset>0) offset = "+"+offset;
+				output += " ("+offset+" h)";
+			}
+		} else { //display in local time
+			output = $filter('date')(timestamp * 1000, dateFormat);
 		}
 
 		return output;

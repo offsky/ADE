@@ -105,12 +105,11 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 					if (value == null || value<=0) {
 						value = [0,0,0];
 					} else {
-						var offset = new Date().getTimezoneOffset();
+						var offset = new Date(value*1000).getTimezoneOffset();
 						value = [value, value-offset*60, offset];
 					}
 					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
 				}
-
 				element.show();
 
 				ADE.teardownBlur(input);
@@ -137,7 +136,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 					preset = value[0];
 					if(options.absolute && value[1]!==undefined) {
 						preset = value[1]; //the GMT time we want to display, so need to offset this by user's offset
-						if(preset) preset += new Date().getTimezoneOffset()*60;
+						if(preset) preset += new Date(preset*1000).getTimezoneOffset()*60;
 					}
 				}
 				if(angular.isString(preset)) {
