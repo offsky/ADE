@@ -25858,7 +25858,7 @@ angular.scenario.dsl('element', function() {
   var chain = {};
 
   // AM:
-  chain.enterRichText = function(text) {
+  chain.richTextEnter = function(text) {
     return this.addFutureAction("element enter rich text", function($window, $document, done) {
       $('iframe').contents().find('iframe').contents().find('body p').text(text);
       done();
@@ -25867,7 +25867,7 @@ angular.scenario.dsl('element', function() {
 
   // AM:
   chain.simulateClick = function(index, event) {
-    return this.addFutureAction("element '" + "' tabs", function($window, $document, done) {
+    return this.addFutureAction("element '" + "' clicks", function($window, $document, done) {
 		var elements = $document.elements();
       var element = elements[index];
       appWindow().simulateMouse(element, event);

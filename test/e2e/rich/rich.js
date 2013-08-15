@@ -26,7 +26,7 @@ function appAngular() {
 
 	it('should detect click outside to save edit', function() {
 		element('.ade-editable:eq(0)').click();
-		element().enterRichText('testing rich editor');
+		element().richTextEnter('testing rich editor');
 		element('h1').simulateClick(0, 'mousedown');
 		expect(element('.ade-editable:eq(0)').text()).toContain('testing rich editor');
 	});
