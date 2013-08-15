@@ -25866,6 +25866,36 @@ angular.scenario.dsl('element', function() {
   };  
 
   // AM:
+  chain.richTextTab = function() {
+    return this.addFutureAction("element tabs", function($window, $document, done) {
+      var element = $('iframe').contents().find('iframe').contents().find('body')[0];
+		// Use Event instead of KeyboardEvent due to a bug on Webkit assigning keyCode
+		// http://stackoverflow.com/questions/1897333/firing-a-keyboard-event-on-chrome
+		var pressEvent = document.createEvent('Event');
+		pressEvent.keyCode = 9;
+		pressEvent.initEvent('keydown');
+		element.dispatchEvent(pressEvent);
+
+      done();
+    });
+  };
+
+  // AM:
+  chain.richTextEsc = function() {
+    return this.addFutureAction("element tabs", function($window, $document, done) {
+      var element = $('iframe').contents().find('iframe').contents().find('body')[0];
+		// Use Event instead of KeyboardEvent due to a bug on Webkita ssigning keyCode
+		// http://stackoverflow.com/questions/1897333/firing-a-keyboard-event-on-chrome
+		var pressEvent = document.createEvent('Event');
+		pressEvent.keyCode = 27;
+		pressEvent.initEvent('keydown');
+		element.dispatchEvent(pressEvent);
+
+      done();
+    });
+  };
+
+  // AM:
   chain.simulateClick = function(index, event) {
     return this.addFutureAction("element '" + "' clicks", function($window, $document, done) {
 		var elements = $document.elements();
