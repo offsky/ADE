@@ -225,9 +225,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					handleKeyEvents: handleKeyEvents
 				});
 
-				// focus on the textarea
-				tinymce.execCommand('mceFocus',false,"tinyText" + id);
-
 				editing = true;
 
 				input = element.next('.ade-rich');
@@ -237,6 +234,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// listen to clicks on all elements in page
 				// this will determine when to blur
 				$(document).bind('mousedown.ADE', outerBlur);
+
+				// ie9: Put the following line at the end. Otherwhise the rest does not get executed.
+				// focus on the textarea
+				tinymce.execCommand('mceFocus',false,"tinyText" + id);
 			};
 
 			//When the mouse enters, show the popup view of the note
