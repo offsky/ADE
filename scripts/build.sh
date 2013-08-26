@@ -13,6 +13,7 @@ then
    #build passed
 	
 	cp -r $BASE_DIR/../dist/common/adeImg $BASE_DIR/../dist/build
+	cp -r $BASE_DIR/../dist/common/skins $BASE_DIR/../dist/build
 
 	grunt test-dist
 	if [ $? == 0 ]
