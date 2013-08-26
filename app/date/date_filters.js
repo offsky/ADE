@@ -62,8 +62,6 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 			timestamp = input[0];
 			absolutetimestamp = input[1];
 			timezone = input[2];
-			if(absolutetimestamp<0) absolutetimestamp=0;
-			if(timestamp<0) timestamp=0;
 			if(!absolutetimestamp) absolutetimestamp = timestamp;
 			if(!timestamp) timestamp = absolutetimestamp;
 		}
