@@ -63,6 +63,11 @@ describe('date', function() {
 		expect(dateFilter([1373936400,1373914800,360],['medium',true,true])).toContain('Jul 15, 2013 7:00:00 PM ('); //to work in all timezones, this test cant inspect the actual offset
 	});
 
+	it('should handle dates prior to 1970', function() {
+		expect(dateFilter([-1373936400,-1373914800,360],['medium',true,false])).toContain('Jun 19, 1926 5:00:00 AM'); 
+		expect(dateFilter([-1373936400,-1373914800,360],['medium',true,true])).toContain('Jun 19, 1926 5:00:00 AM ('); //to work in all timezones, this test cant inspect the actual offset
+	});
+
 	it('should work for daylight savings time', function() {
 		//test jan 1  12:00am
 		expect(dateFilter([1357027200,1356998400,420],['medium',true,false])).toContain('Jan 1, 2013 12:00:00 AM'); 
