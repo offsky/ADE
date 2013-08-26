@@ -1,0 +1,1 @@
+This version of tinymce has been modified from the original to support the tab and esc keys.

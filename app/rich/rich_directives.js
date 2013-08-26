@@ -56,9 +56,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
 					value = editor.innerHTML;
 					// check if contents are empty
-					if (value === '<p><br data-mce-bogus="1"></p>') {
+					if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
 						value = '';
 					}
+					value = $.trim(value);
 					controller.$setViewValue(value);
 				}
 
@@ -235,11 +236,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// this will determine when to blur
 				$(document).bind('mousedown.ADE', outerBlur);
 
-				// I realize that this is a horrible hack, but tinymce has a bug 
-				// that crashes IE8,9,10 if we run this line
-				if (navigator.appName != 'Microsoft Internet Explorer') {
-					tinymce.execCommand('mceFocus',false,"tinyText" + id); // focus on the textarea
-				}
+				//focus the text area. In a timer to allow tinymce to initialize.
+				timeout = window.setTimeout(function() {
+					tinymce.execCommand('mceFocus',false,"tinyText" + id);
+				},100);
 			};
 
 			//When the mouse enters, show the popup view of the note
