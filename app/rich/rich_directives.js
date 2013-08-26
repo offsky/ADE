@@ -221,8 +221,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					menubar: "false",
 					plugins: ["textcolor", "link"],
 					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
-					// CHANGE: Added to TinyMCE plugin
-					handleKeyEvents: handleKeyEvents
+					baseURL: "",
+					handleKeyEvents: handleKeyEvents //This interacts with a 1 line modification that we made to TinyMCE
 				});
 
 				editing = true;
@@ -235,9 +235,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// this will determine when to blur
 				$(document).bind('mousedown.ADE', outerBlur);
 
-				// ie9: Put the following line at the end. Otherwhise the rest does not get executed.
-				// focus on the textarea
-				tinymce.execCommand('mceFocus',false,"tinyText" + id);
+				// I realize that this is a horrible hack, but tinymce has a bug 
+				// that crashes IE8,9,10 if we run this line
+				if (navigator.appName != 'Microsoft Internet Explorer') {
+					tinymce.execCommand('mceFocus',false,"tinyText" + id); // focus on the textarea
+				}
 			};
 
 			//When the mouse enters, show the popup view of the note
