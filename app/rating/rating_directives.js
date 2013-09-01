@@ -63,7 +63,12 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 			var focusHandler = function(e) {
 				element.bind('keydown.ADE', function(e) {
-					if (e.keyCode >= 48 && e.keyCode <= 57) { //numbers
+					console.log(e.keyCode);
+					if (e.keyCode >= 96 && e.keyCode <= 105) { //num pad
+						e.preventDefault();
+						e.stopPropagation();
+						change(e.keyCode - 96);
+					} else if (e.keyCode >= 48 && e.keyCode <= 57) { //numbers
 						e.preventDefault();
 						e.stopPropagation();
 						change(e.keyCode - 48);

@@ -9,6 +9,7 @@
 
 angular.module('ADE').filter('toggle', function() {
 	return function(input, option) {
+		if(angular.isArray(input)) input = input[0];
 		if(angular.isString(input)) {
 			input = input.toLowerCase();
 			if(input=='false' || input=='no' || input=='0' || input=='o') input = false;

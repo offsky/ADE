@@ -11,17 +11,18 @@
 
 angular.module('ADE').filter('url', ['$filter',function($filter) {
 	return function(input) {
-		var URL_REGEXP = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 		var output = '';
 		var html = '';
 
 		if(!input) return '';
+		if(angular.isArray(input)) input = input[0];
 		if(!angular.isString(input)) input = input.toString();
 		
-		if (URL_REGEXP.test(input)) {
-			html = $filter('linky')(input);
-		} else {
-			if (input.indexOf(".") >= 0) {
+		input = $.trim(input);
+
+		html = $filter('linky')(input);
+		if (html==input) {
+			if (input.indexOf(".") >= 0 && input.indexOf("http")!=0) {
 				output = 'http://' + input;
 				html = '<a href="' + output + '">' + output + '</a>';
 			} else {

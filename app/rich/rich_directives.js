@@ -51,14 +51,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var saveEdit = function(exited) {
 				oldValue = value;
 				exit = exited;
-				
+
 				if (exited != 3) { //don't save value on esc
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
 					value = editor.innerHTML;
 					// check if contents are empty
-					if (value === '<p><br data-mce-bogus="1"></p>') {
+					if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
 						value = '';
 					}
+					value = $.trim(value);
 					controller.$setViewValue(value);
 				}
 
@@ -91,12 +92,20 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight;
+				var posTop = elOffset.top + element[0].offsetHeight-2;
 				var content = value.replace ? value.replace(/\n/g, '<br />') : value; //what is inside the popup
 
 				if (!content) return; //dont show popup if there is nothing to show
 
 				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+
+				// Convert relative urls to absolute urls
+				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
+				$('.ade-richview').find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+					var href = this.getAttribute('href');
+					var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
+					this.setAttribute('href', hrefType + href);
+				});
 
 				editing = false;
 
@@ -118,9 +127,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				if (textHeight - scroll > windowH) {
 					richText.css({
-						top: offset.top - richText[0].offsetHeight - element.height() - 10,
+						top: offset.top - richText[0].offsetHeight - element.height() - 13,
 						left: offset.left
-					});
+					}).addClass("flip");
 				}
 			};
 
@@ -213,12 +222,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					menubar: "false",
 					plugins: ["textcolor", "link"],
 					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
-					// CHANGE: Added to TinyMCE plugin
-					handleKeyEvents: handleKeyEvents
+					baseURL: "",
+					handleKeyEvents: handleKeyEvents //This interacts with a 1 line modification that we made to TinyMCE
 				});
-
-				// focus on the textarea
-				tinymce.execCommand('mceFocus',false,"tinyText" + id);
 
 				editing = true;
 
@@ -229,6 +235,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// listen to clicks on all elements in page
 				// this will determine when to blur
 				$(document).bind('mousedown.ADE', outerBlur);
+
+				//focus the text area. In a timer to allow tinymce to initialize.
+				timeout = window.setTimeout(function() {
+					tinymce.execCommand('mceFocus',false,"tinyText" + id);
+				},100);
 			};
 
 			//When the mouse enters, show the popup view of the note

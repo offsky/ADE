@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title></title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+	</head>
+	<body ng-app="app" ng-init="durationstring='960'">
+		<div class="container" ng-controller="ctrl">
+		<!--[if lt IE 7]>
+			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+		<![endif]-->
+		<a href="../index.html">back</a>
+		<h1>Duration filter</h1>
+		<p>A filter that convert an integer into formatted hours and minutes.</p>
+
+		  <ul>
+				<li>Duration "360": {{ 360 | duration }} </li>
+				<li>Invalid duration "abcd": {{ "abcd" | duration }}</li>
+		  </ul>
+
+		<h1>Duration editing directive</h1>
+		<p>A directive to edit a time duration string. You can enter time in hours, minutes or a combination.</p>
+	
+		<div class="ade-editable" ade-duration='{"className":"input-medium", "id":"1234"}' ng-model="durationstring">{{ durationstring | duration }}</div>
+		
+		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+
+		<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+
+		</div>
+				
+		<script src="../vendor/js/jquery-1.10.2.min.js"></script>
+		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
+		<script src="../vendor/js/angular.js"></script>
+		<script src="../vendor/js/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
+		<script src="duration_filters.js"></script>
+		<script src="duration_directives.js"></script>
+		
+	</body>
+</html>

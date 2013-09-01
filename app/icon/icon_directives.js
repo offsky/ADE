@@ -99,11 +99,10 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				var pickerHeight = iconBox[0].offsetTop + iconBox[0].offsetHeight;
 
 				if (pickerHeight - scroll > windowH) {
-					console.log('flip');
 					iconBox.css({
-						top: posTop - iconBox[0].offsetHeight - element.height() - 10,
+						top: posTop - iconBox[0].offsetHeight - element.height() - 5,
 						left: posLeft
-					});
+					}).addClass("flip");
 				}
 			};
 
@@ -182,7 +181,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 			//handles focus events
 			element.bind('focus', function(e) {
 				//if this is an organic focus, then do a click to make the popup appear.
-				//if this was a focus caused my myself then don't do the click
+				//if this was a focus caused by myself then don't do the click
 				if (!element.data('dontclick')) {
 					element.click();
 					return;

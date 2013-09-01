@@ -14,6 +14,7 @@ angular.module('ADE').filter('integer', ['$filter',function($filter) {
 	return function(input) {
 		var output = '';
 
+		if (angular.isArray(input)) input = input[0];
 		if (angular.isString(input)) input = parseFloat(input);
 		if (angular.isUndefined(input) || !angular.isNumber(input)) return output;
 

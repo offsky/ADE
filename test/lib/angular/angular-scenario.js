@@ -25857,6 +25857,55 @@ angular.scenario.dsl('element', function() {
   ];
   var chain = {};
 
+  // AM:
+  chain.richTextEnter = function(text) {
+    return this.addFutureAction("element enter rich text", function($window, $document, done) {
+      $('iframe').contents().find('iframe').contents().find('body p').text(text);
+      done();
+    });
+  };  
+
+  // AM:
+  chain.richTextTab = function() {
+    return this.addFutureAction("element tabs", function($window, $document, done) {
+      var element = $('iframe').contents().find('iframe').contents().find('body')[0];
+		// Use Event instead of KeyboardEvent due to a bug on Webkit assigning keyCode
+		// http://stackoverflow.com/questions/1897333/firing-a-keyboard-event-on-chrome
+		var pressEvent = document.createEvent('Event');
+		pressEvent.keyCode = 9;
+		pressEvent.initEvent('keydown');
+		element.dispatchEvent(pressEvent);
+
+      done();
+    });
+  };
+
+  // AM:
+  chain.richTextEsc = function() {
+    return this.addFutureAction("element tabs", function($window, $document, done) {
+      var element = $('iframe').contents().find('iframe').contents().find('body')[0];
+		// Use Event instead of KeyboardEvent due to a bug on Webkita ssigning keyCode
+		// http://stackoverflow.com/questions/1897333/firing-a-keyboard-event-on-chrome
+		var pressEvent = document.createEvent('Event');
+		pressEvent.keyCode = 27;
+		pressEvent.initEvent('keydown');
+		element.dispatchEvent(pressEvent);
+
+      done();
+    });
+  };
+
+  // AM:
+  chain.simulateClick = function(index, event) {
+    return this.addFutureAction("element '" + "' clicks", function($window, $document, done) {
+		var elements = $document.elements();
+      var element = elements[index];
+      appWindow().simulateMouse(element, event);
+
+      done();
+    });
+  };
+
   chain.count = function() {
     return this.addFutureAction("element '" + this.label + "' count", function($window, $document, done) {
       try {

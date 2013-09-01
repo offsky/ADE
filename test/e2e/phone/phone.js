@@ -55,8 +55,8 @@ describe('phone', function() {
             elm.val('700-555-1234');
             elm.trigger({ type : 'keypress', keyCode: 13 });
         });
-        expect(element('.ade-editable').html()).
-            toBe('<a href="tel:7005551234">700-555-1234</a>');
+        
+        expect(element('.ade-editable').html()).toBe('<a href="tel:7005551234">700-555-1234</a>');
         expect(element('.ade-editable + input').count()).toEqual(0);
     });
 

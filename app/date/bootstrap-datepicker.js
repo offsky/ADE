@@ -137,9 +137,17 @@
 
 		//value is set by clicking, on hide, or external setting
 		set: function() {
+			// var returnObj = [];
+			// if (this.date) {
+			//  	returnObj = [this.date.getTime(), this.date.getTime()-this.date.getTimezoneOffset()*60000, this.date.getTimezoneOffset()];
+			// } else {
+			//   	returnObj = null;
+			// }
+
 			this.element.trigger({
 				type: 'changeDate',
 				date: this.date ? this.date.getTime() : null
+				//date: returnObj
 			});
 			return;
 		},
@@ -226,9 +234,9 @@
 			var d = new Date(this.viewDate);
 			var year = d.getFullYear();
 			var month = d.getMonth();
-      var today = new Date();
-      var todayDay = today.getDate();
-      var todayMonth = today.getMonth();
+			var today = new Date();
+			var todayDay = today.getDate();
+			var todayMonth = today.getMonth();
 
 			//set currentDate to timestamp of date without time component
 			var currentDate = null;
@@ -261,9 +269,9 @@
 				if (prevMonth.valueOf() === currentDate) {
 					clsName += ' active';
 				}
-        if (prevMonth.getMonth() === todayMonth && prevMonth.getDate() === todayDay) {
-          clsName += ' today';
-        }
+				if (prevMonth.getMonth() === todayMonth && prevMonth.getDate() === todayDay) {
+					clsName += ' today';
+				}
 				html.push('<td class="day' + clsName + '">' + prevMonth.getDate() + '</td>');
 				if (prevMonth.getDay() === this.weekEnd) {
 					html.push('</tr>');
@@ -359,11 +367,12 @@
 							this.viewDate = new Date(year, month, Math.min(28, day), 0, 0, 0, 0);
 							this.fill();
 							this.set();
-							this.element.trigger({
-								type: 'changeDate',
-								date: this.date,
-								viewMode: DPGlobal.modes[this.viewMode].clsName
-							});
+					 		// ADE: Dont need this hear because it happens in set() one line up
+							//this.element.trigger({
+							//	type: 'changeDate',
+							//	date: this.date,
+							//	viewMode: DPGlobal.modes[this.viewMode].clsName
+							//});
 						}
 						break;
 				}

@@ -13,23 +13,23 @@
 		<link rel="stylesheet" href="vendor/css/font-awesome.css"/>
 		<link rel="stylesheet" href="vendor/css/datepicker.css"/>
 		<link rel="stylesheet" href="vendor/css/timepicker.css"/>
-    	<link rel="stylesheet" href="vendor/css/select2.css"/>
-    	
-    	<!-- build:css build/ade-1.2.min.css -->
+		<link rel="stylesheet" href="vendor/css/select2.css"/>
+		
+		<!-- build:css build/ade-1.2.min.css -->
 		<link rel="stylesheet" href="common/ade.css"/>
 		<!-- endbuild -->
 
-		<script src="vendor/js/jquery-1.9.1.min.js"></script>
+		<script src="vendor/js/jquery-1.10.2.min.js"></script>
 		<script src="vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="vendor/js/angular.js"></script>
-      <script src="vendor/js/angular-sanitize.js"></script>
-		<script src="vendor/tinymce/tinymce.min.js"></script>
+		<script src="vendor/js/angular-sanitize.js"></script>
+		<script src="rich/tinymce/tinymce.min.js"></script>
 		<script src="common/demoApp.js"></script>
 		<script src="common/demoCtrl.js"></script>
 		<script src="common/demoListCtrl.js"></script>
 		
 		<!-- build:js build/ade-1.2.min.js -->
-		<script src="common/date-min.js"></script>
+		<script src="common/date.js"></script>
 		<script src="common/ade.js"></script>
 		<script src="common/number_directive.js"></script>
 		<script src="common/url_directive.js"></script>
@@ -41,8 +41,8 @@
 		<script src="icon/icon_directives.js"></script>
 		<script src="icon/icon_filters.js"></script>
 		<script src="integer/integer_filters.js"></script>
-		<script src="length/length_directives.js"></script>
-		<script src="length/length_filters.js"></script>
+		<script src="duration/duration_directives.js"></script>
+		<script src="duration/duration_filters.js"></script>
 		<script src="list/list_directives.js"></script>
 		<script src="list/list_filters.js"></script>
 		<script src="list/select2.js"></script>
@@ -75,6 +75,10 @@
 		<p>ADE is a bunch of modules for displaying and editing various types of data, using <a href="http://angularjs.org/">AngularJS</a>. The typical way that we have seen this done is to have hidden input boxes that toggle to visible when clicked.  The important difference with ADE is that the input box is created and destroyed only when needed, so the DOM is not filled with unused elements. This can be a benefit when you have lots of editable things on the page.</p>
 
 		<p>ADE requiers jquery, bootstrap, and angular.  You can find us on <a href="https://github.com/Toodledo/ADE">GitHub</a>.</p>
+
+		<b>Download:</b> <a href="build/ade-1.2.zip">ADE 1.2b</a> 
+
+		<br />
 
 		<br /><h2>Text</h2><br />
 
@@ -135,8 +139,8 @@
 			Example: <div class="sample" ade-number='{"className":"input-small"}' ng-model="datapercent">{{ datapercent | percent}}</div>
 			<br /><br />
 
-		<a href="length/">Length</a> - Formats a number as a length (4hrs 24mins). <br />
-			Example: <div class="sample" ade-length='{"className":"input-medium"}' ng-model="datalen">{{ datalen | length }}</div>
+		<a href="duration/">Duration</a> - Formats a number as a time duration (4hrs 24mins). <br />
+			Example: <div class="sample" ade-duration='{"className":"input-medium"}' ng-model="datalen">{{ datalen | duration }}</div>
 			<br /><br />
 		
 		<br /><h2>Other</h2><br />

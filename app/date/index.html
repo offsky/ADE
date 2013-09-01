@@ -14,7 +14,7 @@
 		<link rel="stylesheet" href="../common/demo.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
-	<body ng-app="app" ng-init="date2a=1350400702;">
+	<body ng-app="app" ng-init="date2a=[1357027200, 1356998400, 420];">
 		<div class="container" ng-controller="ctrl">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -29,15 +29,33 @@
 		</ul>
 		
 		
-		<h1>AngularJS Filter</h1>
-		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. We just wrote a simple wrapper filter that displays an empty string for 0 instead of Dec 31, 1969 and uses seconds instead of milliseconds, since this is more standard.</p>
+		<h1>Date Filter</h1>
+		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. However, it only works in one scenario where you want the date/time printed in the user's local timezone.  If you want to print the absolute time, it didn't work. Our filter wraps angular's date filter and allows the display of absolute time.  To do this, you need to pass an array to our filter that has some additional information.</p>
 		
+		<p>The input is an array [timestamp,absolutetimestamp,timezone]</p>	
+			<ul>
+			<li>timestamp  = The true unix timestamp that represents this date. For example if someone in California chooses "July 15, 2013 6:00:00 PM" it will store 1373936400 (16 Jul 2013 01:00:00 GMT)</li>
+
+			<li>absolutetimestamp = a timestamp that represents the user's selected date converted to GMT timezone. For example, if someone in California chooses "July 15, 2013 6:00:00 PM" it will store 1373911200 (15 Jul 2013 18:00:00 GMT)
+
+			<li>timezone = the number of minutes that the setter is off from GMT. Typically this will be equal	to (timestamp-absolutetimestamp)/60, but may not if daylight savings time is in affect. It should be the value returned from getTimezoneOffset() for the user.</li>
+			</ul>
+		<p>The options passed are also an array [format,absolute,showTimezone]</p>
+			<ul>
+			<li>format = a string such as "medium" just like AngularJS uses for their filter</li>
+			<li>absolute = a boolean whether to show the absolute time without converting for timezone</li>
+			<li>showTimezone = a boolean that controls whether to show the offset from the current timezone if different.</li>
+			</ul>
+
+		<p>Examples (set your computer's clock to different timezones to see the changes):</p>
 		<ul>
-		<li>Date 1350400707: {{ 1350400707 | validDate: 'mediumDate' }} </li>
-		<li>Date 0: {{ 0 | validDate: 'mediumDate' }} </li>
+		<li>[1373936400,1373911200,420] | validDate:['medium',true,false] : {{ [1373936400,1373911200,420] | validDate:['medium',true,false] }} </li>
+		<li>[1373936400,1373911200,420] | validDate:['mediumDate',true,true] : {{ [1373936400,1373911200,420] | validDate:['medium',true,true] }} </li>
+		<li>[1373936400,1373911200,420] | validDate:['mediumDate',false,true] : {{ [1373936400,1373911200,420] | validDate:['medium',false,true] }} </li>
+		<li>[0,0] | validDate:['medium'] : {{ [0,0] | validDate:['medium'] }} </li>
 		</ul>
 		
-		<h1>AngularJS Directives</h1>
+		<h1>Date Directives</h1>
 		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to clicking on the popup calendar, you can also type in things like "today" or "next week". Try it.</p>
 
 		
@@ -55,9 +73,9 @@
 
 
 		<div ng-controller="ctrl">
-			<div class="ade-editable" ade-date='{"className":"input-small","format":"yyyy","id":"1234"}' ng-model="date2a">{{date2a | validDate:'yyyy'}}</div>
-			<div class="ade-editable" ade-date='{"className":"input-medium","format":"MMM d, yyyy","id":"1234"}' ng-model="date2b">{{date2b | validDate:'MMM d, yyyy'}}</div>
-			<div class="ade-editable" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234"}' ng-model="date2c">{{date2c | validDate:'MMM d, yyyy h:mm:ss a'}}</div>
+			<div class="ade-editable" ade-date='{"className":"input-small","format":"yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['yyyy',true,false] }}</div>
+			<div class="ade-editable" ade-date='{"className":"input-medium","format":"MMM d, yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy',true,false]}}</div>
+			<div class="ade-editable" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy h:mm:ss a',true,false]}}</div>
 		</div>
 		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
@@ -67,7 +85,7 @@
 
 		<!-- Scripts -->
 
-		<script src="../vendor/js/jquery-1.9.1.min.js"></script>
+		<script src="../vendor/js/jquery-1.10.2.min.js"></script>
 		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
       <script src="../vendor/js/angular-sanitize.js"></script>
@@ -81,6 +99,8 @@
 		<script src="date_directives.js"></script>
 		
 		<script type="text/javascript">
+			var currentOffset = new Date().getTimezoneOffset(); //seconds
+
 			function updateDate() {
 				var unix = parseDateString($("#input").val());
 				$('#unix').text(unix);

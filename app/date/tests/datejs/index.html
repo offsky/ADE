@@ -206,6 +206,16 @@
             equal(dp("1-5-13"), t1, "'1-5-13' parses to " + t1);
         });
 
+         test("With time", function () {
+
+            DateJSLoadCultureInfo('en');
+
+            var thedate = new Date(Date.UTC(2013, 0, 1, 12));
+            var t1 = thedate.toUnixTimestamp(); //1357041600
+
+            equal(dp("January 1, 2013 12:00:00 ",0,1), t1, "'January 1, 2013 12:00:00' parses to " + t1);
+        });
+
         test("Numeric/String in past without specified year", function () {
             /*
             NOTE:  As written, these tests will fail when a new year rolls around
