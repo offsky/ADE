@@ -1,4 +1,37 @@
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  background-color: #ffffff;
+}
+
 h1 { margin:20px 0px 20px 0px;}
 p { margin:10px 0px 20px 0px;}
 .ade-editable{margin:20px 0px 20px 0px; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
-.container { margin-bottom:200px;}
+.container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:940px;}
+
+input[type="text"] {
+	display: inline-block;
+	height: 19px;
+	padding: 4px 6px;
+	margin-top:4px;
+	margin-bottom: 8px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555555;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+
+	background-color: #ffffff;
+	border: 1px solid #cccccc;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	 box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+	-moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+	-o-transition: border linear 0.2s, box-shadow linear 0.2s;
+	 transition: border linear 0.2s, box-shadow linear 0.2s;
+}

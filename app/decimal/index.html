@@ -1,22 +1,15 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
 	<head>
 		<meta charset="utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-		<title></title>
+		<title>ADE - Decimal</title>
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
-		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
 		<link rel="stylesheet" href="../common/demo.css"/>
 	</head>
 	<body ng-app="app" ng-init="dec=1234.324545" >
 		<div class="container" ng-controller="ctrl">
-		<!--[if lt IE 7]>
-			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-		<![endif]-->
 		<a href="../index.html">back</a>
 
       <h1>Decimal filter</h1>
@@ -29,7 +22,7 @@
         </ul>
 
 		<h1>Decimal editing directive</h1>
-		<p>A directive that makes a decimal editable (uses the same directive as money, percent and integer).</p>
+		<p>A directive that makes a decimal editable.</p>
 
 		
 		<div class="ade-editable" ade-number='{"className":"input-medium","id":"1234"}' ng-model="dec">{{ dec | decimal }}</div>
@@ -41,7 +34,6 @@
 		</div>
 
 		<script src="../vendor/js/jquery-1.10.2.min.js"></script>
-		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
 		<script src="../vendor/js/angular.js"></script>
       <script src="../vendor/js/angular-sanitize.js"></script>
 		

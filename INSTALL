@@ -2,7 +2,16 @@ Installation Instructions
 =========================
 
 1) Download the minified css and js files and adeImg image directory, and place into your project. 
-	These are located in the build directory
+	These are located in the build directory.
+
+	External Dependencies: You will need to install the following external dependencies
+		a) Jquery 1.10.2
+		b) Angular 1.0.x and angular-sanitize
+		c) Font Awesome (for icon directive only)
+		d) Bootstrap v2.3.2 css. (for date, email, icon, list, phone, rich, time, url)
+		e) TinyMCE 4.0.4 (for rich directive only) Use our modified version if you want keyboard commands to work.
+
+	We are working to reduce external dependencies as much as possible.
 
 
 2) Inject ADE in your angular project
