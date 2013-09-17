@@ -1,46 +1,53 @@
+// Generated on 2013-08-28 using generator-angular 0.4.0
 'use strict';
-var lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet;
+var LIVERELOAD_PORT = 35729;
+var lrSnippet = require('connect-livereload')({ port: LIVERELOAD_PORT });
 var mountFolder = function (connect, dir) {
   return connect.static(require('path').resolve(dir));
 };
 
+// # Globbing
+// for performance reasons we're only matching one level down:
+// 'test/spec/{,*/}*.js'
+// use this if you want to recursively match all subfolders:
+// 'test/spec/**/*.js'
+
 module.exports = function (grunt) {
-  // load all grunt tasks
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-
-  // configurable paths
-  var yeomanConfig = {
-    app: 'app',
-    dist: 'dist'
-  };
-
-  try {
-    yeomanConfig.app = require('./component.json').appPath || yeomanConfig.app;
-  } catch (e) {}
+  require('load-grunt-tasks')(grunt);
+  require('time-grunt')(grunt);
 
   grunt.initConfig({
-    yeoman: yeomanConfig,
     watch: {
-      coffee: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-        tasks: ['coffee:dist']
-      },
-      coffeeTest: {
-        files: ['test/spec/{,*/}*.coffee'],
-        tasks: ['coffee:test']
-      },
-      compass: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['compass']
+      // not used
+      // coffee: {
+      // },
+      // coffeeTest: {
+      // },
+      styles: {
+        files: ['app/styles/{,*/}*.css'],
+        tasks: ['copy:styles', 'autoprefixer']
       },
       livereload: {
+        options: {
+          livereload: LIVERELOAD_PORT
+        },
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
-          '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
-          '{.tmp,<%= yeoman.app %>}/js/{,*/}*.js',
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-        ],
-        tasks: ['livereload']
+          'app/{,*/}*.html',
+          '.tmp/styles/{,*/}*.css',
+          '{.tmp,app}/js/{,*/}*.js',
+          'app/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        ]
+      }
+    },
+    autoprefixer: {
+      options: ['last 1 version'],
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/styles/',
+          src: '{,*/}*.css',
+          dest: '.tmp/styles/'
+        }]
       }
     },
     connect: {
@@ -69,7 +76,7 @@ module.exports = function (grunt) {
             ];
           }
         }
-      }
+      },
     },
     open: {
       server: {
@@ -82,8 +89,8 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
-            '<%= yeoman.dist %>/*',
-            '!<%= yeoman.dist %>/.git*'
+            'dist/*',
+            '!dist/.git*'
           ]
         }]
       },
@@ -95,13 +102,130 @@ module.exports = function (grunt) {
       },
       all: [
         'Gruntfile.js',
-        '<%= yeoman.app %>/js/{,*/}*.js'
+        'app/js/{,*/}*.js'
+      ]
+    },
+    // not used
+    /*coffee: {
+      dist: {}
+    },*/
+    // not used since Uglify task does concat,
+    // but still available if needed
+    /*concat: {
+      dist: {}
+    },*/
+    rev: {
+      dist: {
+        files: {
+          src: [
+            'dist/js/{,*/}*.js',
+            'dist/styles/{,*/}*.css',
+            'dist/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+            'dist/styles/fonts/*'
+          ]
+        }
+      }
+    },
+    useminPrepare: {
+      html: 'app/index.html',
+      options: {
+        dest: 'dist'
+      }
+    },
+    usemin: {
+      html: ['dist/{,*/}*.html'],
+      css: ['dist/styles/{,*/}*.css'],
+      options: {
+        dirs: ['dist']
+      }
+    },
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'app/images',
+          src: '{,*/}*.{png,jpg,jpeg}',
+          dest: 'dist/images'
+        }]
+      }
+    },
+    svgmin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'app/images',
+          src: '{,*/}*.svg',
+          dest: 'dist/images'
+        }]
+      }
+    },
+    // By default, your `index.html` <!-- Usemin Block --> will take care of minification.
+    // cssmin: {
+    //   
+    // },
+    htmlmin: {
+      dist: {
+        options: {
+        },
+        files: [{
+          expand: true,
+          cwd: 'app',
+          src: ['views/*.html'],
+          dest: 'dist'
+        }]
+      }
+    },
+    // Put files not handled in other tasks here
+    copy: {
+      dist: {
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: 'app',
+          dest: 'dist',
+          src: [
+            '**/*',
+            'index.html'
+          ]
+        }, {
+          expand: true,
+          cwd: '.tmp/images',
+          dest: 'dist/images',
+          src: [
+            'generated/*'
+          ]
+        }]
+      },
+      styles: {
+        expand: true,
+        cwd: 'app/styles',
+        dest: '.tmp/styles/',
+        src: '{,*/}*.css'
+      }
+    },
+    concurrent: {
+      server: [
+        // 'coffee:dist',
+        'copy:styles'
+      ],
+      test: [
+        // 'coffee',
+        'copy:styles'
+      ],
+      dist: [
+        // 'coffee',
+        'copy:styles',
+        // 'imagemin',
+        'svgmin',
+        'htmlmin'
       ]
     },
     karma: {
       unit: {
-        configFile: 'test/config/karma-build.conf.js',
-        singleRun: true
+        configFile: 'test/config/karma.conf.js',
+        singleRun: true,
+        reporters: ['progress'],
+        browsers: ['PhantomJS']
       },
       dist: {
         configFile: 'test/config/karma-build-dist.conf.js',
@@ -112,207 +236,67 @@ module.exports = function (grunt) {
         singleRun: true
       }
     },
-    coffee: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/js',
-          src: '{,*/}*.coffee',
-          dest: '.tmp/scripts',
-          ext: '.js'
-        }]
-      },
-      test: {
-        files: [{
-          expand: true,
-          cwd: 'test/spec',
-          src: '{,*/}*.coffee',
-          dest: '.tmp/spec',
-          ext: '.js'
-        }]
-      }
-    },
-    compass: {
-      options: {
-        sassDir: '<%= yeoman.app %>/styles',
-        cssDir: '.tmp/styles',
-        imagesDir: '<%= yeoman.app %>/images',
-        javascriptsDir: '<%= yeoman.app %>/js',
-        fontsDir: '<%= yeoman.app %>/styles/fonts',
-        importPath: '<%= yeoman.app %>/components',
-        relativeAssets: true
-      },
-      dist: {},
-      server: {
-        options: {
-          debugInfo: true
-        }
-      }
-    },
-    concat: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/js/scripts.js': [
-            '.tmp/scripts/{,*/}*.js',
-            '<%= yeoman.app %>/js/{,*/}*.js'
-          ]
-        }
-      }
-    },
-    useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
-      options: {
-        dest: '<%= yeoman.dist %>'
-      }
-    },
-    usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      options: {
-        dirs: ['<%= yeoman.dist %>']
-      }
-    },
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-    cssmin: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/styles/main.css': [
-            '.tmp/styles/{,*/}*.css',
-            '<%= yeoman.app %>/styles/{,*/}*.css'
-          ]
-        }
-      }
-    },
-    htmlmin: {
-      dist: {
-        options: {
-          /*removeCommentsFromCDATA: true,
-          // https://github.com/yeoman/grunt-usemin/issues/44
-          //collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeAttributeQuotes: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true*/
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>',
-          src: ['*.html', 'views/*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
-      }
-    },
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
-      }
-    },
     ngmin: {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>/js',
+          cwd: 'dist/js',
           src: '*.js',
-          dest: '<%= yeoman.dist %>/js'
+          dest: 'dist/js'
         }]
       }
     },
     uglify: {
       dist: {
         files: {
-          '<%= yeoman.dist %>/js/scripts.js': [
-            '<%= yeoman.dist %>/js/scripts.js'
+          'dist/js/scripts.js': [
+            'dist/js/scripts.js'
           ]
         }
-      }
-    },
-    rev: {
-      dist: {
-        files: {
-          src: [
-            '<%= yeoman.dist %>/js/{,*/}*.js',
-            '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-            '<%= yeoman.dist %>/styles/font/*'
-          ]
-        }
-      }
-    },
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '**/*',
-            'index.html'
-          ]
-        }]
       }
     }
   });
 
-  grunt.renameTask('regarde', 'watch');
+  grunt.registerTask('server', function (target) {
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'open', 'connect:dist:keepalive']);
+    }
 
-  grunt.registerTask('server', [
-    'clean:server',
-    // 'coffee:dist',
-    // 'compass:server',
-    'livereload-start',
-    'connect:livereload',
-    'open',
-    'watch'
-  ]);
+    grunt.task.run([
+      'clean:server',
+      'concurrent:server',
+      'autoprefixer',
+      'connect:livereload',
+      'open',
+      'watch'
+    ]);
+  });
 
+  //what gets executed when you run "grunt test"
   grunt.registerTask('test', [
-    'clean:server',
-    // 'coffee',
-    // 'compass',
-    'connect:test',
-    'karma:unit'
+    'clean:server',     //
+    'copy:styles',      //
+    'autoprefixer',     //
+    'connect:test',     //
+    'karma:unit'        //
   ]);
 
-  grunt.registerTask('test-dist', [
-    'clean:server',
-    // 'coffee',
-    // 'compass',
-    'connect:test',
-    'karma:dist'
-  ]);
-
-  //The task to run when building
+  //what gets executed when you run "grunt build"
   grunt.registerTask('build', [
-    'clean:dist',
-    // 'jshint',
-    'test',
-    // 'coffee',
-    // 'compass:dist',
-    'useminPrepare',
-    'imagemin',
-    // 'cssmin',
-    // 'htmlmin',
-    'concat',
-    'copy',
-    'cdnify',
-    'ngmin',
-    'uglify',
-    'rev',
-    'usemin'
+    'clean:dist',       //cleans out the dist folder
+    'test',             //runs unit tests on app folder
+    'useminPrepare',    //looks at index file to find css/js blocks for minification
+    'concurrent:dist',  //
+    'autoprefixer',     //
+    'concat',           //concatenates js/css files into one. Where is this defined?
+    'copy:dist',        //
+    // 'ngmin',         //Prepares angular app for minification by injecting providers
+    'cssmin',           //
+    'uglify',           //obfuscates and shirinks the js file
+    'rev',              //adds unique has to scripts.js and styles.css to avoid browser caching
+    'usemin',           //updates index with minified files and css with revisioned images
+    'clean:server'      //cleans .tmp
   ]);
 
-  //the default grunt task when running "grunt" from command line
   grunt.registerTask('default', ['build']);
 };

@@ -1,22 +1,32 @@
-basePath = '../';
+// Karma configuration
+// http://karma-runner.github.io/0.10/config/configuration-file.html
 
-files = [
-  ANGULAR_SCENARIO,
-  ANGULAR_SCENARIO_ADAPTER,
-  'test/e2e/**/*.js'
-];
+module.exports = function(config) {
+  config.set({
 
-autoWatch = true;
+    basePath: '../../',
 
-browsers = ['Chrome'];
+    frameworks: ['ng-scenario'],
 
-singleRun = true;
+    files: [
+      'test/e2e/**/*.js'
+    ],
 
-proxies = {
-  '/': 'http://localhost:8000/'
+    autoWatch: false,
+
+    // browsers = ['PhantomJS'];
+    // browsers = ['Chrome'];
+    // browsers = ['Firefox'];
+    // browsers = ['Safari'];
+    browsers: ['Chrome', 'Safari', 'Firefox'],
+
+    singleRun: true,
+
+    proxies: {
+      '/': 'http://localhost/~jake/ADE/'
+    },
+
+    urlRoot: '/__e2e/'
+
+  });
 };
-
-// junitReporter = {
-//   outputFile: 'test_out/e2e.xml',
-//   suite: 'e2e'
-// };
