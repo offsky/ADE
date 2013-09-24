@@ -187,8 +187,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 						$(document).off('mousedown.ADE');
 						break;
 					case 9: // tab
+						var exit = e.shiftKey ? -1 : 1;
 						mouseout();
-						saveEdit(0); // blur and save
+						saveEdit(exit); // blur and save
 						e.preventDefault();
 						$(document).off('mousedown.ADE');
 						break;
