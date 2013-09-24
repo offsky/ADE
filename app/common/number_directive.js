@@ -90,7 +90,9 @@ angular.module('ADE').directive('adeNumber', ['ADE','$compile', function(ADE,$co
 				ADE.setupKeys(input,saveEdit);
 
 				input.bind('keypress.ADE', function(e) {
-					if ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode==36 || e.keyCode==37 || e.keyCode==44 || e.keyCode==45 || e.keyCode==46) { //0-9 and .,-%$
+					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
+					
+					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==44 || keyCode==45 || keyCode==46) { //0-9 and .,-%$
 						;//allowed characters
 					} else {
 						e.preventDefault();

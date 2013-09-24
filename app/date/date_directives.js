@@ -13,12 +13,14 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//Handles return key pressed on in-line text box
 			element.bind('keypress', function(e) {
-				if (e.keyCode == 13) { //return key
+				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
+
+				if (keyCode == 13) { //return key
 					e.preventDefault();
 					e.stopPropagation();
 					element.datepicker('hide');
 					element.blur();
-				} else if (e.keyCode == 27) { //esc
+				} else if (keyCode == 27) { //esc
 					element.datepicker('hide');
 				}
 			});

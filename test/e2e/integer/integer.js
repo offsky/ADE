@@ -15,6 +15,18 @@ describe('integer', function() {
         expect(element('.ade-editable + input').count()).toEqual(1);
     });
 
+    //todo, why cant I get this to work. It works manually
+    xit('should respond to keypress', function() {
+        element('.ade-editable:eq(0)').click();
+
+        appElement('.ade-editable + input', function(elm) {
+            elm.trigger({ type : 'keypress', keyCode: 50 });
+        });
+
+        expect(element('.ade-editable').text()).toBe('2');
+    });
+
+
     it('should not allow invalid input', function() {
         element('.ade-editable:eq(0)').click();
         appElement('.ade-editable + input', function(elm) {
