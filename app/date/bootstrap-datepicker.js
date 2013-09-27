@@ -89,6 +89,7 @@
 		this.startViewMode = this.viewMode;
 		this.weekStart = options.weekStart || this.element.data('date-weekstart') || 0;
 		this.weekEnd = this.weekStart === 0 ? 6 : this.weekStart - 1;
+		this.onRender = options.onRender;
 		this.fillDow();
 		this.fillMonths();
 		this.update();
@@ -255,15 +256,19 @@
 			nextMonth.setDate(nextMonth.getDate() + 42); //42 is the number of cells displayed on the calendar
 			nextMonth = nextMonth.valueOf(); //sets to unix timestamp to the last visible day in the calendar
 			var html = [];
-			var clsName;
+			var clsName,
+				prevY,
+				prevM;
 			while (prevMonth.valueOf() < nextMonth) { //loop through first day to last day of visible days
 				if (prevMonth.getDay() === this.weekStart) {
 					html.push('<tr>');
 				}
-				clsName = '';
-				if (prevMonth.getMonth() < month) {
+				clsName = this.onRender(prevMonth);
+				prevY = prevMonth.getFullYear();
+				prevM = prevMonth.getMonth();
+				if ((prevM < month &&  prevY === year) ||  prevY < year) {
 					clsName += ' old';
-				} else if (prevMonth.getMonth() > month) {
+				} else if ((prevM > month && prevY === year) || prevY > year) {
 					clsName += ' new';
 				}
 				if (prevMonth.valueOf() === currentDate) {
@@ -405,6 +410,9 @@
 	};
 
 	$.fn.datepicker.defaults = {
+		onRender: function(date) {
+			return '';
+		}
 	};
 	$.fn.datepicker.Constructor = Datepicker;
 
@@ -438,7 +446,16 @@
 		getDaysInMonth: function(year, month) {
 			return [31, (DPGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 		},
-
+		
+		parseFormat: function(format){
+			var separator = format.match(/[.\/\-\s].*?/),
+				parts = format.split(/\W+/);
+			if (!separator || !parts || parts.length === 0){
+				throw new Error("Invalid date format.");
+			}
+			return {separator: separator, parts: parts};
+		},
+		
 		//attemps to parse the incoming date into day, month and year.
 		parseDate: function(dateStr) {
 			if (!dateStr) return null;
