@@ -54,13 +54,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				if (exited != 3) { //don't save value on esc
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
-					value = editor.innerHTML;
-					// check if contents are empty
-					if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
-						value = '';
+					if(editor!=undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+						value = editor.innerHTML;
+						// check if contents are empty
+						if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
+							value = '';
+						}
+						value = $.trim(value);
+						controller.$setViewValue(value);
+					} else {
+						//editor wasn't found for some reason. Can we recover, or do we need to?
 					}
-					value = $.trim(value);
-					controller.$setViewValue(value);
 				}
 
 				input.remove();
