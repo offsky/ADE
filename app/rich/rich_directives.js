@@ -221,6 +221,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Full example:
 				//   http://www.tinymce.com/tryit/full.php
 
+
+				//console.log("max length",options.maxLength);
+				
 				tinymce.init({
 					selector: "#tinyText" + id,
 					theme: "modern",
