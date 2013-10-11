@@ -44,4 +44,19 @@ describe('rich', function() {
 		element().richTextEsc();
 		expect(element('.ade-editable:eq(0)').text()).toBe('click to edit this very v...');
 	});
+
+	it('should enforce maximum length', function() {
+		element('.ade-editable:eq(1)').click();
+		element().richTextEnter('testing');
+		element('h1').simulateClick(0, 'mousedown');
+		expect(element('.ade-editable:eq(1)').text()).toContain('testing');
+	});
+
+	it('should revert when enforcing maximum length', function() {
+		element('.ade-editable:eq(1)').click();
+		element().richTextEnter('testing rich editor');
+		element().richTextEsc();
+		expect(element('.ade-editable:eq(1)').text()).toContain('edit me');
+	});
+
 });
