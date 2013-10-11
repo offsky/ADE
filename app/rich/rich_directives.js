@@ -55,7 +55,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				exit = exited;
 
 				var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
-				var currentLength = $(editor).find('p')[0].innerHTML.length;
+				var currentLength = $(editor).text().length;
 
 				// don't save value on esc (revert)
 				// and if the current length is greater than the previous max length
@@ -199,22 +199,20 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Enforce maximum length, if defined
 
 				// http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
-				// Esc - 27; Tab - 9; Backspace - 8 
-				var specialCodes = [27, 9, 8];
+				// Esc - 27; Tab - 9; Backspace - 8 ; Delete - 46; Arrow keys = 37-40
+				var specialCodes = [27, 9, 8, 46, 37, 38, 39, 40];
 
 				// Do not enforce on special codes
 				if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
 					var editorValue = $(editor).find('p')[0].innerHTML;
-					var length = editorValue.length;
+					var length = $(editor).text().length;
 
 					// Don't allow more characters
 					if (length > maxLength) {
-						$(editor).find('p')[0].innerHTML = maxValue;
+						$(editor).find('p')[0].innerHTML = editorValue;
 						e.stopPropagation();
 						e.preventDefault();
-					} else {
-						maxValue = editorValue + String.fromCharCode(e.keyCode);
 					}
 				}
 
@@ -257,6 +255,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Full example:
 				//   http://www.tinymce.com/tryit/full.php
 
+				// grandfather lengths that are greater than maxLength
 				maxLength = maxValue.length > options.maxLength ? maxValue.length : options.maxLength;
 				
 				tinymce.init({
