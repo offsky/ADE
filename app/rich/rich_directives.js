@@ -59,6 +59,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				// don't save value on esc (revert)
 				// and if the current length is greater than the previous max length
+				// 100 padding covers html tags
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength + 100))) {
 					// Special case: Length surpasses options.maxLength
 					// Reduce maxLength to current length until it reaches options.maxLength
@@ -206,7 +207,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
 					var editorValue = $(editor).find('p')[0].innerHTML;
 					var length = editorValue.length;
+					
 					// Don't allow more characters
+					// 100 padding covers html tags
 					if (length > maxLength + 100) {
 						$(editor).find('p')[0].innerHTML = maxValue;
 						e.stopPropagation();
