@@ -63,7 +63,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
 					// Special case: Length surpasses options.maxLength
 					// Reduce maxLength to current length until it reaches options.maxLength
-					if (maxLength > options.maxLength) {
+					if (maxLength >= options.maxLength) {
 						maxLength = currentLength;
 					}
 
@@ -209,7 +209,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					var length = $(editor).text().length;
 
 					// Don't allow more characters
-					if (length > maxLength) {
+					if (length >= maxLength) {
+						// debugger;
 						$(editor).find('p')[0].innerHTML = editorValue;
 						e.stopPropagation();
 						e.preventDefault();
