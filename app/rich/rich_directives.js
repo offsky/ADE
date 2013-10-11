@@ -37,11 +37,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null; //the delay when mousing out of the ppopup
+			var maxLength = null;
+			var maxValue = null; //part of maxLength implementation
 
 			//whenever the model changes, we get called so we can update our value
 			if (controller !== null && controller !== undefined) {
 				controller.$render = function() {
-					oldValue = value = controller.$modelValue;
+					oldValue = value = maxValue = controller.$modelValue;
 					if (value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
@@ -52,8 +54,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				oldValue = value;
 				exit = exited;
 
-				if (exited != 3) { //don't save value on esc
-					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+				var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+				var currentLength = $(editor).find('p')[0].innerHTML.length;
+
+				// don't save value on esc (revert)
+				// and if the current length is greater than the previous max length
+				if ((exited != 3) && (!maxLength || (currentLength <= maxLength + 100))) {
+					// Special case: Length surpasses options.maxLength
+					// Reduce maxLength to current length until it reaches options.maxLength
+					if (maxLength > options.maxLength) {
+						maxLength = currentLength;
+					}
+
 					if(editor!=undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
 						value = editor.innerHTML;
 						// check if contents are empty
@@ -183,6 +195,28 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			// handle special keyboard events
 			var handleKeyEvents = function(e) {
+				// Enforce maximum length, if defined
+
+				// http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
+				// Esc - 27; Tab - 9; Backspace - 8 
+				var specialCodes = [27, 9, 8];
+
+				// Do not enforce on special codes
+				if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
+					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+					var editorValue = $(editor).find('p')[0].innerHTML;
+					var length = editorValue.length;
+					// Don't allow more characters
+					if (length > maxLength + 100) {
+						$(editor).find('p')[0].innerHTML = maxValue;
+						e.stopPropagation();
+						e.preventDefault();
+					} else {
+						maxValue = editorValue + String.fromCharCode(e.keyCode);
+					}
+				}
+
+				// Listen for esc and tab events
 				switch(e.keyCode) {
 					case 27: // esc
 						mouseout();
@@ -221,8 +255,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Full example:
 				//   http://www.tinymce.com/tryit/full.php
 
-
-				//console.log("max length",options.maxLength);
+				maxLength = maxValue.length > options.maxLength ? maxValue.length : options.maxLength;
 				
 				tinymce.init({
 					selector: "#tinyText" + id,
