@@ -54,14 +54,17 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 
 		//console.log(input,options);
 
+		//if input is string, make it an array
+		if(angular.isString(input)) input = input.split(",");
+
 		//pick apart the data array
 		var timestamp = input;
 		var absolutetimestamp = input; //difference between these two is the setter's timezone offset
 		var timezone = '';
 		if (angular.isArray(input)) { //if input is an array, pull out the pieces
-			timestamp = input[0];
-			absolutetimestamp = input[1];
-			timezone = input[2];
+			timestamp = parseInt(input[0]);
+			absolutetimestamp = parseInt(input[1]);
+			timezone = parseInt(input[2]);
 			if(!absolutetimestamp) absolutetimestamp = timestamp;
 			if(!timestamp) timestamp = absolutetimestamp;
 		}

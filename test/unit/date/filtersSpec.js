@@ -49,6 +49,13 @@ describe('date', function() {
 		expect(dateFilter([1373936400,1373911200,420],['medium',true,true])).toContain('Jul 15, 2013 6:00:00 PM'); 
 	});
 
+	it('should print Jul 15 6pm in absolute time with string input instead of array', function() {
+		expect(dateFilter("1,1373911200,420",['medium',true,false])).toContain('Jul 15, 2013 6:00:00 PM'); 
+		expect(dateFilter("1,1373911200,420",['medium',true,true])).toContain('Jul 15, 2013 6:00:00 PM'); 
+		expect(dateFilter("1373936400,1373911200,420",['medium',true,false])).toContain('Jul 15, 2013 6:00:00 PM'); 
+		expect(dateFilter("1373936400,1373911200,420",['medium',true,true])).toContain('Jul 15, 2013 6:00:00 PM'); 
+	});
+
 	it('should print Jul 15 6pm in floating time', function() {
 		if(inProperTimezone) {
 			expect(dateFilter([1373936400,1,420],['medium',false,false])).toBe('Jul 15, 2013 6:00:00 PM'); 
