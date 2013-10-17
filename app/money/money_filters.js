@@ -18,6 +18,7 @@ angular.module('ADE').filter('money', ['$filter',function($filter) {
 		if (angular.isArray(input)) input = input[0];
 
 		if (angular.isString(input)) {
+			input= input.replace('(','-').replace(')',''); //parens turn into negative number
 			input = parseFloat(input.replace(/[$]/g, ''));
 		}
 
