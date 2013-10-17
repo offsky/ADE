@@ -257,7 +257,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				//   http://www.tinymce.com/tryit/full.php
 
 				// grandfather lengths that are greater than maxLength
-				maxLength = maxValue.length > options.maxLength ? maxValue.length : options.maxLength;
+				maxLength = (maxValue && maxValue.length > options.maxLength) ? maxValue.length : options.maxLength;
 				
 				tinymce.init({
 					selector: "#tinyText" + id,
