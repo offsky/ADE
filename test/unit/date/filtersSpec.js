@@ -108,6 +108,11 @@ describe('date', function() {
 		}
 	});
 
+	it('should pass through pre-formated results', function() {
+		expect(dateFilter('10-03-1999')).toBe('Oct 3, 1999');
+		expect(dateFilter('Jan 1, 2013')).toBe('Jan 1, 2013');
+	});
+
 	it('should print a empty string for non-dates', function() {
 		expect(dateFilter(undefined)).toBe('');
 		expect(dateFilter(null)).toBe('');

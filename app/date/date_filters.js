@@ -52,10 +52,11 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 	return function(input, options) {
 		if (angular.isUndefined(input)) return '';
 
-		//console.log(input,options);
-
 		//if input is string, make it an array
-		if(angular.isString(input)) input = input.split(",");
+		if(angular.isString(input)) {
+			var split = input.split(',');
+		 	if(split.length==3) input = split; //only use the split if it has 3 pieces, otherwise it may be a preformated data (Jan 1, 2013)
+		}
 
 		//pick apart the data array
 		var timestamp = input;
