@@ -508,7 +508,10 @@
             var target = $(e.target).closest("div.select2-container").get(0), attr;
             if (target) {
                 $(document).find("div.select2-container-active").each(function () {
-                    if (this !== target) $(this).data("select2").blur();
+                    if (this !== target) {
+                        $(this).data("select2").blur();
+                        $(this).data("select2").triggerChange(["bodyClick"]); //added to get clicks from one list to another bluring the previous
+                    }
                 });
             } else {
                 target = $(e.target).closest("div.select2-drop").get(0);
