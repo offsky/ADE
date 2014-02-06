@@ -1,0 +1,13 @@
+{
+  "name": "ADE",
+  "version": "0.1.0",
+  "dependencies": {
+    "jquery": "1.10.1",
+    "angular": "1.0.7",
+    "angular-sanitize": "1.0.7"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.0.7",
+    "angular-scenario": "1.0.7"
+  }
+}
