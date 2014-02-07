@@ -7,7 +7,8 @@
     "angular-sanitize": "1.0.7",
     "bootstrap": "~2.3.2",
     "font-awesome": "~4.0.3",
-    "qunit": "~1.10.0"
+    "qunit": "~1.10.0",
+    "select2": "~3.2.0"
   },
   "devDependencies": {
     "angular-mocks": "1.0.7",
