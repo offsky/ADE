@@ -44,7 +44,9 @@ describe('date', function() {
 	it('should allow entering value into input', function() {
 		element('.ade-editable:eq(0)').click();
 		input('adePickDate').enter("2009");
-		input('adePickDate').blur();
+		appElement('.ade-editable + input', function(elm) {
+			elm.blur();
+		});
 		expect(element('.ade-editable:eq(0)').text()).toBe('2009');
 		expect(element('.ade-editable + input').count()).toEqual(0);
 	});
@@ -95,8 +97,9 @@ describe('date', function() {
 
 		//click on already selected date (jan 1, 2013)
 		element('.datepicker:eq(3) .datepicker-days td.active').click();
-		input('adePickDate').blur();
-
+		appElement('.ade-editable + input', function(elm) {
+			elm.blur();
+		});
 
 		expect(element('.ade-editable:eq(2)').text()).toBe('Jan 1, 2013 12:00:00 AM');
 		expect(element('.ade-editable + input').count()).toEqual(0);
