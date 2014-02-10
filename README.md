@@ -2,7 +2,7 @@
 
 ADE is a bunch of filters and directives for displaying and editing various types of data in an <a href="http://angularjs.org/">AngularJS</a> App.  For example, if you have a unix timestamp that you want to display and make editable, ADE can display a formatted date string and make a popup calendar for editing. 
 
-Try our <a href="http://toodledo.github.com/ADE/index.html">Demo</a>. Take a look at the demo examples in our source files.
+Try our <a href="http://toodledo.github.com/ADE/index.html">Demo</a> and take a look at the demo examples in our source files.
 
 ADE currently supports the following datatypes:
 
@@ -87,7 +87,7 @@ JavaScript
 
 You can also choose individual ADE datatypes to include in your project. Take a look at the example source files to know which files to include.
 
-The decimal, integer, money and percent ADE datatypes require the number directive. This directive is available at "app/common/number_directive.js". The email, phone and url ADE datatypes require the url direcive. This directive is available at "app/common/number_directive.js".
+The following directives are required by their respective ADE datatypes. These directives are available in the "app/common" directory.
 
 * number: decimal, integer, money and percent
 * url: email, phone and url
