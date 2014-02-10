@@ -26,8 +26,11 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "**/*.html",
+    "app/forkme*.png",
     "node_modules",
     "app/bower_components",
+    "scripts",
     "test"
   ]
 }
