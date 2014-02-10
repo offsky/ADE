@@ -2,12 +2,7 @@
 
 ADE is a bunch of filters and directives for displaying and editing various types of data in an <a href="http://angularjs.org/">AngularJS</a> App.  For example, if you have a unix timestamp that you want to display and make editable, ADE can display a formatted date string and make a popup calendar for editing. 
 
-### Demo
-
 Try our <a href="http://toodledo.github.com/ADE/index.html">Demo</a>. Take a look at the demo examples in our source files.
-
-
-### Datatypes
 
 ADE currently supports the following datatypes:
 
@@ -34,8 +29,6 @@ ADE currently supports the following datatypes:
 
 ## Dependencies
 
-We are working to reduce external dependencies as much as possible.
-
 All ADE datatypes depend on the following packages:
 
 * angular 1.0.7
@@ -55,6 +48,8 @@ The following packages included in ADE were modified to support a variety of use
 * bootstrap-datepicker: date
 * bootstrap-timepicker: time
 * select2 (js): list
+
+We are working to reduce external dependencies as much as possible.
 
 
 ## Installation
