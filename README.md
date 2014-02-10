@@ -26,10 +26,6 @@ ADE currently supports the following datatypes:
 
 <a href="http://toodledo.github.com/ADE/index.html">Demo</a>
 
-<a href="http://toodledo.github.com/ADE/build/ade-1.2.zip">Download</a>
-
-ADE is released with an MIT License.
-
 
 ## Dependencies
 
@@ -106,3 +102,8 @@ You can build the project for your specific use case. For example, you may want 
 1. Install node and grunt on your system
 2. Install node modules by running "npm install"
 3. Run our build script "scripts/build.sh"
+
+
+## Licence
+
+ADE is freely distributable under the terms of the MIT license.
