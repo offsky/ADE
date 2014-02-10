@@ -59,8 +59,6 @@ The following packages included in ADE were modified to support a variety of use
 
 ## Installation
 
-### All datatypes
-
 1) Install ADE using bower:
 
 	bower install ADE
@@ -90,7 +88,7 @@ JavaScript
 
 	<div class="sample" ade-url='{"className":"input-medium"}' ng-model="dataurl" ng-bind-html="dataurl | url"></div>
 
-### Pick your datatypes
+### Individual datatypes
 
 You can also choose individual ADE datatypes to include in your project. Take a look at the example source files to know which files to include.
 
