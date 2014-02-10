@@ -28,6 +28,8 @@
     "**/.*",
     "**/*.html",
     "app/forkme*.png",
+    "Gruntfile.js",
+    "package.json",
     "node_modules",
     "app/bower_components",
     "scripts",
