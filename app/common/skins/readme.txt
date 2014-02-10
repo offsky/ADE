@@ -1,1 +1,0 @@
-This skins directory is used by TinyMCE and is only need for ADE's rich text directive
