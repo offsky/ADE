@@ -232,8 +232,8 @@ module.exports = function (grunt) {
 		uglify: {
 			dist: {
 				files: {
-					'dist/build/ade-1.2.min.js': [
-						'dist/build/ade-1.2.min.js'
+					'dist/build/ade-0.2.1.min.js': [
+						'dist/build/ade-0.2.1.min.js'
 					],
 					'dist/build/tinymce/tinymce-ade.min.js': [
 						'dist/build/tinymce/tinymce-ade.min.js'
