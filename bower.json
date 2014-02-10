@@ -1,6 +1,8 @@
 {
   "name": "ADE",
   "version": "0.1.0",
+  "keywords" : "angular, data editor, angular data editor",
+  "description" : "Display and edit various types of data using AngularJS without filling the DOM with unused elements",
   "dependencies": {
     "jquery": "1.10.1",
     "angular": "1.0.7",
