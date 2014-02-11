@@ -17,8 +17,6 @@ then
 	if [[ $? == 0 ]]
 	then
 		echo "Unit Tests Pass"
-
-		cp -r $BASE_DIR/../dist/rich/tinymce/* $BASE_DIR/../dist/build/tinymce/
 	else 
 		grunt clean
 		echo "Unit Tests Failed"

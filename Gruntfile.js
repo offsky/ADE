@@ -235,8 +235,8 @@ module.exports = function (grunt) {
 					'dist/build/ade-0.2.1.min.js': [
 						'dist/build/ade-0.2.1.min.js'
 					],
-					'dist/build/tinymce/tinymce-ade-0.2.1.min.js': [
-						'dist/build/tinymce/tinymce-ade-0.2.1.min.js'
+					'dist/rich/tinymce/tinymce-ade.min.js': [
+						'dist/rich/tinymce/tinymce-ade.min.js'
 					]
 				}
 			}
