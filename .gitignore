@@ -1,11 +1,9 @@
 .DS_Store
 .idea/*
 *sublime-*
-app/vendor/js/angular2.js
 coverage/*
 node_modules/*
 libpeerconnection.log
-app/rich/tinymce_dev/*
 app/bower_components/*
 
 dist/bower_components

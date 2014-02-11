@@ -133,8 +133,8 @@ module.exports = function (grunt) {
 		
 		//updates index with minified files and css with revisioned images
 		usemin: {
-			html: ['dist/{,*/}*.html'],
-			css: ['dist/styles/{,*/}*.css'],
+			html: ['dist/*.html'],
+			css: ['dist/common/*.css'],
 			options: {
 				dirs: ['dist']
 			}
@@ -144,9 +144,9 @@ module.exports = function (grunt) {
 			dist: {
 				files: [{
 					expand: true,
-					cwd: 'app/images',
+					cwd: 'app/common/',
 					src: '{,*/}*.{png,jpg,jpeg}',
-					dest: 'dist/images'
+					dest: 'dist/common/'
 				}]
 			}
 		},
@@ -163,7 +163,7 @@ module.exports = function (grunt) {
 				files: [{
 					expand: true,
 					cwd: 'app',
-					src: ['views/*.html'],
+					src: ['*.html'],
 					dest: 'dist'
 				}]
 			}
@@ -181,13 +181,13 @@ module.exports = function (grunt) {
 						'**/*',
 						'index.html'
 					]
-				}, {
-					expand: true,
-					cwd: '.tmp/images',
-					dest: 'dist/images',
-					src: [
-						'generated/*'
-					]
+				// }, {
+				// 	expand: true,
+				// 	cwd: '.tmp/images',
+				// 	dest: 'dist/images',
+				// 	src: [
+				// 		'generated/*'
+				// 	]
 				}]
 			},
 			styles: {
@@ -235,8 +235,8 @@ module.exports = function (grunt) {
 					'dist/build/ade-0.2.1.min.js': [
 						'dist/build/ade-0.2.1.min.js'
 					],
-					'dist/build/tinymce/tinymce-ade.min.js': [
-						'dist/build/tinymce/tinymce-ade.min.js'
+					'dist/build/tinymce/tinymce-ade-0.2.1.min.js': [
+						'dist/build/tinymce/tinymce-ade-0.2.1.min.js'
 					]
 				}
 			}
