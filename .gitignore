@@ -1,1 +1,6 @@
 .DS_Store
+
+app/bower_components
+coverage
+dist
+node_modules
