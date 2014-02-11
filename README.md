@@ -58,7 +58,9 @@ We are working to reduce external dependencies as much as possible.
 
 	bower install ADE
 
-Or download <a href="http://toodledo.github.com/ADE/build/ade-1.2.zip">zip file</a>.
+Or Download ZIP using Github's right-hand side navigation.
+
+Take a look at the "dist/build" directory.
 
 2) Add ADE's css and file to your HTML file:
 

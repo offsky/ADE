@@ -18,18 +18,7 @@ then
 	then
 		echo "Unit Tests Pass"
 
-		echo "Making zip file"
-
-		mkdir $BASE_DIR/../dist/ade-1.2
-		cp $BASE_DIR/../INSTALL $BASE_DIR/../dist/ade-1.2
-		cp $BASE_DIR/../README.md $BASE_DIR/../dist/ade-1.2
-		cp $BASE_DIR/../LICENSE $BASE_DIR/../dist/ade-1.2
 		cp -r $BASE_DIR/../dist/rich/tinymce/* $BASE_DIR/../dist/build/tinymce/
-		cp -r $BASE_DIR/../dist/build/* $BASE_DIR/../dist/ade-1.2
-
-		zip -j $BASE_DIR/../dist/build/ade.zip $BASE_DIR/../dist/ade-1.2/*
-		rm -rf $BASE_DIR/../dist/ade-1.2
-		echo "Success!"
 	else 
 		grunt clean
 		echo "Unit Tests Failed"
