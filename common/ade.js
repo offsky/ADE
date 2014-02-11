@@ -105,7 +105,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		if (ignoreReturn !== true) {
 			//Handles return key pressed on in-line text box
 			input.bind('keypress.ADE', function(e) {
-				if (e.keyCode == 13 && bound) { //return
+				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
+
+				if (keyCode == 13 && bound) { //return
 					e.preventDefault();
 					e.stopPropagation();
 					var exit = e.shiftKey ? -2 : 2;

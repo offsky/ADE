@@ -1,0 +1,1 @@
+This version of tinymce has been modified from the original to support the tab and esc keys. If you don't care about the tab and esc keys working to save/cancel the edit then you can use the stock TinyMCE library.

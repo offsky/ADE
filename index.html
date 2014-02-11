@@ -6,27 +6,27 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-		<title></title>
+		<title>AngularJS Datatype Editors (ADE)</title>
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
-		<link rel="stylesheet" href="vendor/css/bootstrap.css"/>
-		<link rel="stylesheet" href="vendor/css/font-awesome.css"/>
-		<link rel="stylesheet" href="vendor/css/datepicker.css"/>
-		<link rel="stylesheet" href="vendor/css/timepicker.css"/>
-		<link rel="stylesheet" href="vendor/css/select2.css"/>
-		
-		<link rel="stylesheet" href="build/ade-1.2.min.css">
+		<link rel="stylesheet" href="bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
+		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css"/>
+		<link rel="stylesheet" href="bower_components/select2/select2.css"/>
+		<link rel="stylesheet" href="common/demo.css"/>
 
-		<script src="vendor/js/jquery-1.9.1.min.js"></script>
-		<script src="vendor/js/jquery.json-2.3.min.js"></script>
-		<script src="vendor/js/angular.js"></script>
-		<script src="vendor/js/angular-sanitize.js"></script>
-		<script src="vendor/tinymce/tinymce.min.js"></script>
+		<link rel="stylesheet" href="build/ade-0.2.1.min.css">
+
+		<script src="bower_components/jquery/jquery.js"></script>
+		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
 		<script src="common/demoApp.js"></script>
 		<script src="common/demoCtrl.js"></script>
 		<script src="common/demoListCtrl.js"></script>
 		
-		<script src="build/ade-1.2.min.js"></script>
+		<script src="rich/tinymce/tinymce-ade.min.js"></script>
+
+		<script src="build/ade-0.2.1.min.js"></script>
 
 		<style>
 			h1 { margin:20px 0px;}
@@ -34,21 +34,21 @@
 		</style>
 	</head>
 	<body ng-app="app" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9;datasingle='apple';datamulti=['dog','cat']" >
-		<a href="https://github.com/Toodledo/ADE"><img style="position: absolute; top: 0; right: 0; border: 0;" src="vendor/img/forkme_right_red.png" alt="Fork me on GitHub"></a>
+		<a href="https://github.com/Toodledo/ADE"><img style="position: absolute; top: 0; right: 0; border: 0;" src="forkme_right_red.png" alt="Fork me on GitHub"></a>
 
 		<div class="container" ng-controller="ctrl">
 		<h1>AngularJS Datatype Editors (ADE)</h1>
-		<p>ADE is a bunch of modules for displaying and editing various types of data, using <a href="http://angularjs.org/">AngularJS</a>. The typical way that we have seen this done is to have hidden input boxes that toggle to visible when clicked.  The important difference with ADE is that the input box is created and destroyed only when needed, so the DOM is not filled with unused elements. This can be a benefit when you have lots of editable things on the page.</p>
+		<p>ADE is a bunch of directives and filters for displaying and editing various types of data, using <a href="http://angularjs.org/">AngularJS</a>. The typical way that we have seen this done is to have hidden input boxes that toggle to visible when clicked.  The important difference with ADE is that the input box is created and destroyed only when needed, so the DOM is not filled with unused elements. This can be a benefit when you have lots of editable things on the page.</p>
 
-		<p>ADE requiers jquery, bootstrap, and angular.  You can find us on <a href="https://github.com/Toodledo/ADE">GitHub</a>.</p>
+		<p>ADE requires jquery, bootstrap, and angular.  You can find us on <a href="https://github.com/Toodledo/ADE">GitHub</a>.</p>
 
-		<p>Install using <a http://bower.io>bower</a>:</p>
+		<p>Install using bower:</p>
 
-		<pre> bower install ADE </pre>
+		<pre>bower install ADE</pre>
 
 		<p>Or <a href="https://github.com/Toodledo/ADE/archive/master.zip">Download ZIP</a>.</p>
 
-		<br /><h2>Text</h2><br />
+		<h2>Text</h2><br />
 
 		<a href="text/">Text (Short)</a> - Edit text in-line. There is no max length, but it is indented for short strings.<br />
 			Example: <div class="sample" ade-text='{"className":"input-large"}' ng-model="datatext">{{datatext}}</div>

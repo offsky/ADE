@@ -9,11 +9,12 @@
 		<title></title>
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
-		<link rel="stylesheet" href="../vendor/css/bootstrap.css"/>
-		<link rel="stylesheet" href="../vendor/css/datepicker.css"/>
+		<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
 		<link rel="stylesheet" href="../common/demo.css"/>
+		<link rel="stylesheet" href="../common/ade.css"/>
+		<link rel="stylesheet" href="datepicker.css"/>
 	</head>
-	<body ng-app="app" ng-init="date2a=[1373936400, 1373911200, 420];">
+	<body ng-app="app" ng-init="date2a=[1357027200, 1356998400, 420];">
 		<div class="container" ng-controller="ctrl">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -72,9 +73,9 @@
 
 
 		<div ng-controller="ctrl">
-			<div class="ade-editable" ade-date='{"className":"input-small","format":"yyyy","id":"1234","absolute":true}' ng-model="date2b">{{date2b | validDate:['yyyy',false] }}</div>
-			<div class="ade-editable" ade-date='{"className":"input-medium","format":"MMM d, yyyy","id":"1234","absolute":true}' ng-model="date2b">{{date2b | validDate:['MMM d, yyyy',false]}}</div>
-			<div class="ade-editable" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy h:mm:ss a',false]}}</div>
+			<div class="ade-editable" ade-date='{"className":"input-small","format":"yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['yyyy',true,false] }}</div>
+			<div class="ade-editable" ade-date='{"className":"input-medium","format":"MMM d, yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy',true,false]}}</div>
+			<div class="ade-editable" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy h:mm:ss a',true,false]}}</div>
 		</div>
 		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
@@ -84,10 +85,9 @@
 
 		<!-- Scripts -->
 
-		<script src="../vendor/js/jquery-1.9.1.min.js"></script>
-		<script src="../vendor/js/jquery.json-2.3.min.js"></script>
-		<script src="../vendor/js/angular.js"></script>
-      <script src="../vendor/js/angular-sanitize.js"></script>
+		<script src="../bower_components/jquery/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 		
 		<script src="../common/ade.js"></script>
       <script src="../common/date.js"></script>

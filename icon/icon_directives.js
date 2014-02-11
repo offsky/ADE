@@ -181,7 +181,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 			//handles focus events
 			element.bind('focus', function(e) {
 				//if this is an organic focus, then do a click to make the popup appear.
-				//if this was a focus caused my myself then don't do the click
+				//if this was a focus caused by myself then don't do the click
 				if (!element.data('dontclick')) {
 					element.click();
 					return;
@@ -192,7 +192,9 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 
 				//listen for keys pressed while the element is focused but not clicked
 				element.bind('keypress.ADE', function(e) {
-					if (e.keyCode == 13) { //return
+					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
+
+					if (keyCode == 13) { //return
 						e.preventDefault();
 						e.stopPropagation(); //to prevent return key from going into text box
 						element.click();

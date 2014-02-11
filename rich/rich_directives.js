@@ -37,11 +37,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null; //the delay when mousing out of the ppopup
+			var maxLength = null;
+			var maxValue = null; //part of maxLength implementation
 
 			//whenever the model changes, we get called so we can update our value
 			if (controller !== null && controller !== undefined) {
 				controller.$render = function() {
-					oldValue = value = controller.$modelValue;
+					oldValue = value = maxValue = controller.$modelValue;
 					if (value === undefined || value === null) value = '';
 					return controller.$viewValue;
 				};
@@ -52,14 +54,30 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				oldValue = value;
 				exit = exited;
 
-				if (exited != 3) { //don't save value on esc
-					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
-					value = editor.innerHTML;
-					// check if contents are empty
-					if (value === '<p><br data-mce-bogus="1"></p>') {
-						value = '';
+				var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+				var currentLength = $(editor).text().length;
+
+				// don't save value on esc (revert)
+				// and if the current length is greater than the previous max length
+				// 100 padding covers html tags
+				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
+					// Special case: Length surpasses options.maxLength
+					// Reduce maxLength to current length until it reaches options.maxLength
+					if (maxLength >= options.maxLength) {
+						maxLength = currentLength;
 					}
-					controller.$setViewValue(value);
+
+					if(editor!=undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+						value = editor.innerHTML;
+						// check if contents are empty
+						if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
+							value = '';
+						}
+						value = $.trim(value);
+						controller.$setViewValue(value);
+					} else {
+						//editor wasn't found for some reason. Can we recover, or do we need to?
+					}
 				}
 
 				input.remove();
@@ -97,6 +115,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				if (!content) return; //dont show popup if there is nothing to show
 
 				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+
+				// Convert relative urls to absolute urls
+				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
+				$('.ade-richview').find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+					var href = this.getAttribute('href');
+					var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
+					this.setAttribute('href', hrefType + href);
+				});
 
 				editing = false;
 
@@ -170,7 +196,28 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 			// handle special keyboard events
 			var handleKeyEvents = function(e) {
-				console.log("key");
+				// Enforce maximum length, if defined
+
+				// http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
+				// Esc - 27; Tab - 9; Backspace - 8 ; Delete - 46; Arrow keys = 37-40
+				var specialCodes = [27, 9, 8, 46, 37, 38, 39, 40];
+
+				// Do not enforce on special codes
+				if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
+					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
+					var editorValue = $(editor).find('p')[0].innerHTML;
+					var length = $(editor).text().length;
+
+					// Don't allow more characters
+					if (length >= maxLength) {
+						// debugger;
+						$(editor).find('p')[0].innerHTML = editorValue;
+						e.stopPropagation();
+						e.preventDefault();
+					}
+				}
+
+				// Listen for esc and tab events
 				switch(e.keyCode) {
 					case 27: // esc
 						mouseout();
@@ -179,8 +226,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 						$(document).off('mousedown.ADE');
 						break;
 					case 9: // tab
+						var exit = e.shiftKey ? -1 : 1;
 						mouseout();
-						saveEdit(0); // blur and save
+						saveEdit(exit); // blur and save
 						e.preventDefault();
 						$(document).off('mousedown.ADE');
 						break;
@@ -208,18 +256,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Full example:
 				//   http://www.tinymce.com/tryit/full.php
 
+				// grandfather lengths that are greater than maxLength
+				maxLength = (maxValue && maxValue.length > options.maxLength) ? maxValue.length : options.maxLength;
+				
 				tinymce.init({
 					selector: "#tinyText" + id,
 					theme: "modern",
 					menubar: "false",
 					plugins: ["textcolor", "link"],
 					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
-					// CHANGE: Added to TinyMCE plugin
-					handleKeyEvents: handleKeyEvents
+					baseURL: "",
+					handleKeyEvents: handleKeyEvents //This interacts with a 1 line modification that we made to TinyMCE
 				});
-
-				// focus on the textarea
-				tinymce.execCommand('mceFocus',false,"tinyText" + id);
 
 				editing = true;
 
@@ -230,6 +278,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// listen to clicks on all elements in page
 				// this will determine when to blur
 				$(document).bind('mousedown.ADE', outerBlur);
+
+				//focus the text area. In a timer to allow tinymce to initialize.
+				timeout = window.setTimeout(function() {
+					tinymce.execCommand('mceFocus',false,"tinyText" + id);
+				},100);
 			};
 
 			//When the mouse enters, show the popup view of the note

@@ -17,33 +17,31 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 					element.timepicker('updateWidget');
 					element.timepicker('hideWidget');
 					element.blur();
-				} else if (e.keyCode==27) {
+				} else if (e.keyCode==27) { //esc
 					element.timepicker('hideWidget', false);
-				}  else {
-					if (validKey) {
-						var timeStr = controller.$viewValue,
-							pickerData = element.timepicker().data().timepicker,
-							arr = timeStr.split(' '),
-							hrsmin = arr[0].split(':'),
-							hours = parseInt(hrsmin[0], 10),
-							mins = parseInt(hrsmin[1], 10),
-							ampm = arr[1],
-							validHrs = (hours <= 23) ? hours : 23,
-							validMins = (mins <= 59) ? mins : 59;
+				} else if(e.keyCode==9) { //tab key detection
+					element.timepicker('updateWidget');
+					element.timepicker('hideWidget', true);
+				} 
+			});
 
-
+			element.bind('keyup', function(e) {
+				if (validKey && e.keyCode!=13 && e.keyCode!=27 && e.keyCode!=9) {
+					var timeStr = element.context.value;
+					var pickerData = element.timepicker().data().timepicker;
+					if(angular.isString(timeStr)) {
+						var arr = timeStr.split(' ');
+						var hrsmin = arr[0].split(':');
+						var hours = parseInt(hrsmin[0], 10);
+						var mins = parseInt(hrsmin[1], 10);
+						var ampm = arr[1];
+						var validHrs = (hours <= 23) ? hours : 23;
+						var validMins = (mins <= 59) ? mins : 59;
 						pickerData.hour = validHrs;
 						pickerData.minute = validMins;
 						pickerData.meridian = ampm;
-						element.timepicker('updateWidget');
 					}
-				}
-			});
-
-			element.bind('keydown', function(e) {
-				if(e.keyCode==9) { //tab key detection
 					element.timepicker('updateWidget');
-					element.timepicker('hideWidget', true);
 				}
 			});
 
@@ -194,7 +192,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 					timeLength = 5;
 				} else {
 					extraTPoptions = '"showMeridian":true';
-					timeLength = 5;
+					timeLength = 8;
 				}
 
 				var html = '<input ng-controller="adeTimeDummyCtrl" ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />';
