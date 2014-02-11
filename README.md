@@ -58,7 +58,7 @@ We are working to reduce external dependencies as much as possible.
 
 	bower install ADE
 
-Or Download ZIP using Github's right-hand side navigation.
+Or <a href="https://github.com/Toodledo/ADE/archive/master.zip">Download ZIP</a>.
 
 Take a look at the "dist/build" directory.
 
