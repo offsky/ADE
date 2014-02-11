@@ -1,6 +1,6 @@
 {
   "name": "ADE",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "keywords" : [
     "data editor", 
     "angular data editor"
@@ -26,13 +26,9 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "**/*.html",
-    "app/forkme*.png",
-    "app/common/demo*",
     "Gruntfile.js",
     "package.json",
     "node_modules",
-    "app/bower_components",
     "scripts",
     "test"
   ]
