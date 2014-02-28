@@ -54,18 +54,20 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	//=========================================================================================
 	//broadcasts the message that we are starting editing
-	function begin(options) {
-		if (options.id) {
-			$rootScope.$broadcast('ADE-start', options.id);
+	function begin(id) {
+		if(angular.isObject(id)) id = id.id;
+		if (id) {
+			$rootScope.$broadcast('ADE-start', id);
 		}
 	}
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
 	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc
-	function done(options, oldValue, value, exit) {
-		if (options.id) {
-			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
+	function done(id, oldValue, value, exit) {
+		if(angular.isObject(id)) id = id.id;
+		if (id) {
+			$rootScope.$broadcast('ADE-finish', {'id': id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
 		}
 	}
 

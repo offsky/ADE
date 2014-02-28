@@ -3,10 +3,18 @@
  A directive to toggle rating icon
 
  Usage:
- <a ade-rating='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
+ <a ade-rating='1234' ade-num="10" ade-arrows="1" ng-model="data" style="{{data}}"></a>
 
  Config:
- "id" will be used in messages broadcast to the app on state changes.
+
+ade-rating:
+  The value in the ade-rating directive is treated as an id and 
+  will be used in messages broadcast to the app on state changes.
+ade-num:
+  The number of stars or maximum value for this number
+ ade-arrows:
+  1 to support arrow keys for setting the value
+
 
  Messages:
  name: ADE-start
@@ -22,47 +30,75 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
 
+		scope: {
+			adeRating: "@",
+			adeNum: "@",
+			adeArrows: "@",
+			adeClass: "@",
+			adeWidth: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {};
+		link: function(scope, element, attrs) {
 			var value = '';
 			var oldValue = '';
-			var newValue = '';
+			var numStars = 5;
+			var starWidth = 23;
+			var starClass = "rating";
 
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					return controller.$viewValue;
-				};
+			if(scope.adeNum!=undefined) numStars = parseInt(scope.adeNum);
+			if(scope.adeWidth!=undefined) starWidth = parseInt(scope.adeWidth);
+			if(scope.adeClass!=undefined) starClass = scope.adeClass;
+
+			var containerW = starWidth * numStars + 10; //10 is for the width of "0 stars" clicable region
+
+			//generates the html for the stars
+			var makeHTML = function() {
+				var starStatusClass = "off";
+
+				var html = '<div class="ade-'+starClass+'" style="width:'+containerW+'px;">';
+				html += '<div class="ade-r ate-container">';
+
+				for (var i = 0; i <= numStars; i++) {
+					starStatusClass = (i <= scope.ngModel) ? "on" : "off";
+					if (i === 0) {
+						html += '<a class="ade-rate-one ade-zero" data-position="'+(i)+'">&nbsp;</a>';
+					} else {
+						html += '<a class="ade-rate-one ade-'+starStatusClass+'" data-position="'+(i)+'"></a>';
+					}
+				}
+
+				html += '</div></div>';
+				element.html(html);
 			}
 
 			//handles the click or keyboard events
 			var change = function(val) {
-				ADE.begin(options);
+				ADE.begin(scope.adeRating);
 
 				//cap val at max
-				// console.log(val,options);
-				if (val > options.num) val = options.num;
+				if (val > numStars) val = numStars;
 				if (val < 0) val = 0;
 
 				oldValue = value;
 				value = val;
-				newValue = value;
+				scope.ngModel = val;
 
-				ADE.done(options, oldValue, value, 0);
+				makeHTML();
 
-				controller.$setViewValue(value);
-				scope.$digest(); //This is necessary to get the model to match the value of the input
+				ADE.done(scope.adeRating, oldValue, value, 0);
 			};
 
 			//handles clicks on the read version of the data
-			element.bind('click', function(event) {
+			var clickHandler = function(e) {
 				var val = angular.element(event.target).data('position');
 				if (val !== undefined) change(val);
-			});
+			}
 
+			//on focus, starts watching keyboard
 			var focusHandler = function(e) {
-				element.bind('keydown.ADE', function(e) {
+				element.on('keydown.ADE', function(e) {
 					//console.log(e.keyCode);
 					if (e.keyCode >= 96 && e.keyCode <= 105) { //num pad
 						e.preventDefault();
@@ -72,11 +108,11 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 						e.preventDefault();
 						e.stopPropagation();
 						change(e.keyCode - 48);
-					} else if (e.keyCode == 37 && options.arrows) { //left
+					} else if (e.keyCode == 37 && scope.adeArrows) { //left
 						e.preventDefault();
 						e.stopPropagation();
 						change(value - 1);
-					} else if (e.keyCode == 39 && options.arrows) { //right
+					} else if (e.keyCode == 39 && scope.adeArrows) { //right
 						e.preventDefault();
 						e.stopPropagation();
 						if(!angular.isNumber(value)) value = 0;
@@ -85,21 +121,19 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 				});
 			}
 
-			//handles focus events
-			element.bind('focus', focusHandler);
-
-			//handles focus events
-			element.bind('blur', function(e) {
-				element.unbind('keydown.ADE');
+			//setup events
+			element.on('click', clickHandler);
+			element.on('focus',focusHandler);
+			element.on('blur', function(e) {
+				element.off('keydown.ADE'); //on blur, stop watching keyboard
 			});
 
-
-			// Watches for changes to the element
-			return attrs.$observe('adeRating', function(settings) { //settings is the contents of the ade-rating="" string
-				options = ADE.parseSettings(settings, {'num': 5, 'arrows': true});
-				return element; //TODO: not sure what to return here
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function (value) {
+				makeHTML();
 			});
-
 		}
 	};
 }]);

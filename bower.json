@@ -12,15 +12,15 @@
   ],
   "dependencies": {
     "jquery": "1.10.1",
-    "angular": "1.0.7",
-    "angular-sanitize": "1.0.7",
+    "angular": "1.2.13",
+    "angular-sanitize": "1.2.13",
     "bootstrap": "~2.3.2",
     "font-awesome": "~4.0.3",
     "select2": "~3.2.0"
   },
   "devDependencies": {
-    "angular-mocks": "1.0.7",
-    "angular-scenario": "1.0.7",
+    "angular-mocks": "1.2.13",
+    "angular-scenario": "1.2.13",
     "qunit": "~1.10.0"
   },
   "license": "MIT",
