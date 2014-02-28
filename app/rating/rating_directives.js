@@ -7,14 +7,16 @@
 
  Config:
 
-ade-rating:
-  The value in the ade-rating directive is treated as an id and 
-  will be used in messages broadcast to the app on state changes.
+ade-id:
+	If this id is set, it will be used in messages broadcast to the app on state changes.
 ade-num:
-  The number of stars or maximum value for this number
- ade-arrows:
-  1 to support arrow keys for setting the value
-
+ 	The number of stars or maximum value for this number
+ade-arrows:
+ 	1 to support arrow keys for setting the value
+ade-class:
+	A custom class to give to the div so that you can use your own images
+ade-width:
+	If you use a custom class with different sized images, set the width here
 
  Messages:
  name: ADE-start
@@ -31,7 +33,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 		restrict: 'A', //Attribute declaration eg: <div ade-rating=""></div>
 
 		scope: {
-			adeRating: "@",
+			adeId: "@",
 			adeNum: "@",
 			adeArrows: "@",
 			adeClass: "@",
@@ -41,7 +43,6 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
-			var value = '';
 			var oldValue = '';
 			var numStars = 5;
 			var starWidth = 23;
@@ -71,30 +72,29 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 				html += '</div></div>';
 				element.html(html);
-			}
+			};
 
 			//handles the click or keyboard events
 			var change = function(val) {
-				ADE.begin(scope.adeRating);
+				ADE.begin(scope.adeId);
 
 				//cap val at max
 				if (val > numStars) val = numStars;
 				if (val < 0) val = 0;
 
-				oldValue = value;
-				value = val;
+				oldValue = scope.ngModel;
 				scope.ngModel = val;
 
 				makeHTML();
 
-				ADE.done(scope.adeRating, oldValue, value, 0);
+				ADE.done(scope.adeId, oldValue, scope.ngModel, 0);
 			};
 
 			//handles clicks on the read version of the data
 			var clickHandler = function(e) {
 				var val = angular.element(event.target).data('position');
 				if (val !== undefined) change(val);
-			}
+			};
 
 			//on focus, starts watching keyboard
 			var focusHandler = function(e) {
@@ -111,15 +111,15 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 					} else if (e.keyCode == 37 && scope.adeArrows) { //left
 						e.preventDefault();
 						e.stopPropagation();
-						change(value - 1);
+						change(scope.ngModel - 1);
 					} else if (e.keyCode == 39 && scope.adeArrows) { //right
 						e.preventDefault();
 						e.stopPropagation();
-						if(!angular.isNumber(value)) value = 0;
-						change(value + 1);
+						if(!angular.isNumber(scope.ngModel)) scope.ngModel = 0;
+						change(scope.ngModel + 1);
 					}
 				});
-			}
+			};
 
 			//setup events
 			element.on('click', clickHandler);
@@ -131,7 +131,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;
-			}, function (value) {
+			}, function () {
 				makeHTML();
 			});
 		}

@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="../common/demo.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
-	<body ng-app="app" ng-init="value=0;value2=1">
+	<body ng-app="app" ng-init="value=1">
 		<div class="container" ng-controller="ctrl">
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -22,10 +22,10 @@
 				<p>A simple directive that makes a star rating clickable. Supports customizable icons, sizes and number of stars.</p>
 
 
-				<div ade-rating='1001' tabindex="1" ng-model="value"></div> 
+				<div ade-rating ade-id='1001' tabindex="1" ng-model="value"></div> 
 				<br />
 
-				<div ade-rating='1002' ade-num="10" ade-class="rating_s" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div>
+				<div ade-rating ade-id='1002' ade-num="10" ade-class="rating_s" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div>
 
 				<br />Value: {{ value }}
 
