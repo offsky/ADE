@@ -5,11 +5,15 @@
 	the link for those purposes.
 
 	Usage:
-	<div ade-url='{"class":"input-medium","id":"1234","type":"email"}' ng-model="data">{{data}}</div>
+	<div ade-url='url' ade-id='1234' ade-class="myClas" ng-model="data"></div>
 
 	Config:
-	"class" will be added to the input box so you can style it.
-	"id" will be used in messages broadcast to the app on state changes.
+
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-class:
+		A custom class to give to the input
+	
 
 	Messages:
 		name: ADE-start
@@ -25,43 +29,62 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-url=""></div>
 
+		scope: {
+			adeUrl: "@",
+			adeId: "@",
+			adeClass: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
+		link: function(scope, element, attrs) {
 			var editing = false;
 			var input = null;
-			var value = '';
 			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null;
 
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if (value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			var makeHTML = function() {
+				var html = "";
+				var input = scope.ngModel;
+				
+				if(input!==undefined) {
+					if(angular.isArray(input)) input = input[0];
+					if(!angular.isString(input)) input = input.toString();
+					
+					switch (scope.adeUrl) {
+						case 'email':
+							html = $filter('email')(input);
+							break;
+						case 'phone':
+							html = $filter('phone')(input);
+							break;
+						default:
+							html = $filter('url')(input);
+					} 
+				}
+
+				element.html(html);
+			};
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = value;
+				oldValue = scope.ngModel;
 				exit = exited;
 
 				if (exit !== 3) {
 					//don't save value on esc
 					if (input) {
-						value = input.val();
-						controller.$setViewValue(value);
+						scope.ngModel = input.val();
 					}
 				}
 
 				element.show();
-				scope.ADE_hidePopup();
+				ADE.hidePopup();
 				if (input) input.remove();
 				editing = false;
 
-				ADE.done(options, oldValue, value, exit);
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 			
 				scope.$digest();
 			};
@@ -72,13 +95,13 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				editing = true;
 				exit = 0;
 
-				ADE.begin(options);
+				ADE.begin(scope.adeId);
 
-				if(!angular.isString(value)) value = value.toString();
+				if(!angular.isString(scope.ngModel)) scope.ngModel = scope.ngModel ? scope.ngModel.toString() : '';
 
 				element.hide(); //hide the read only data
-				scope.ADE_hidePopup();
-				$compile('<input type="text" class="' + options.className + '" value="' + value.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
+				ADE.hidePopup();
+				$compile('<input type="text" class="' + scope.adeClass + '" value="' + scope.ngModel.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 
@@ -86,51 +109,52 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				ADE.setupKeys(input, saveEdit);
 			};
 
-			//handles clicks on the read version of the data
-			element.bind('click', function(e) {
+			var clickHandler = function(e) {
 				e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
 				e.stopPropagation();
 
 				if (editing) return;
 
 				//generate html for the popup
-				var linkString = value.toString();
+				var linkString = scope.ngModel ? scope.ngModel.toString() : '';
 				var isurl = false;
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;
 				var html = '';
-				switch (options.type) {
+				switch (scope.adeUrl) {
 					case 'email':
-						isurl = $filter('email')(value).match('mailto:');
+						isurl = $filter('email')(scope.ngModel).match('mailto:');
 						if (!linkString.match('mailto:')) linkString = 'mailto:' + linkString; //put an http if omitted so the link is clickable
 						html = '<div class="' + ADE.popupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE_hidePopup();">Send Email</a>' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE.hidePopup();">Send Email</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 						break;
+						
 					case 'phone':
-						isurl = $filter('phone')(value).match('tel:');
+						isurl = $filter('phone')(scope.ngModel).match('tel:');
 						if (!linkString.match('tel:')) linkString = 'tel:' + linkString; //put an http if omitted so the link is clickable
 						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE_hidePopup();">Call Number</a>' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE.hidePopup();">Call Number</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 						break;
+
 					default:
-						isurl = $filter('url')(value).match(/https?:/);
+						isurl = $filter('url')(scope.ngModel).match(/https?:/);
 						if (!linkString.match(/https?:/)) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
 						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE_hidePopup();">Follow Link</a>' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE.hidePopup();">Follow Link</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 				}
 
 				//if it matches as a URL, then make the popup
-				if (value !== '' && isurl) {
+				if (scope.ngModel !== '' && isurl) {
 					if (!element.next('.' + ADE.popupClass ).length) { //don't make a duplicate popup
 
 						$compile(html)(scope).insertAfter(element);
@@ -147,20 +171,23 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 						invisibleInput.bind('blur', function(e) {
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
-								scope.ADE_hidePopup(element);
+								ADE.hidePopup(element);
 							},300);
 						});
 					}
 				} else { //the editing field is not a clickable link, so directly edit it
 					editLink();
 				}
-			});
+			};
 
-			// Watches for changes to the element
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeUrl', function(settings) { //settings is the contents of the ade-url="" string
-				options = ADE.parseSettings(settings, {className: 'input-medium', type: 'http'});
-				return element; //TODO: not sure what to return here
+			//setup events
+			element.on('click', clickHandler);
+
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 		}
 	};

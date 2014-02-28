@@ -30,6 +30,13 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		}
 	};
 
+	function hidePopup(elm) {
+		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
+		if (elPopup.length && elPopup.hasClass('open')) {
+			elPopup.removeClass('open').remove();
+		}
+	};
+
 	//=========================================================================================
 	//incorporates the default settings into the passed in settings and returns the combination
 	function parseSettings(settings, defaults) {
@@ -128,6 +135,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//=========================================================================================
 	//exports public functions
 	return {
+		hidePopup: hidePopup,
 		parseSettings: parseSettings,
 		begin: begin,
 		done: done,

@@ -1,29 +1,29 @@
 /* ==================================================================
- AngularJS Datatype Editor - Rating
- A directive to toggle rating icon
+	AngularJS Datatype Editor - Rating
+	A directive to toggle rating icon
 
- Usage:
- <a ade-rating='1234' ade-num="10" ade-arrows="1" ng-model="data" style="{{data}}"></a>
+	Usage:
+	<div ade-rating='1234' ade-num="10" ade-arrows="1" ng-model="data"></div>
 
- Config:
+	Config:
 
-ade-id:
-	If this id is set, it will be used in messages broadcast to the app on state changes.
-ade-num:
- 	The number of stars or maximum value for this number
-ade-arrows:
- 	1 to support arrow keys for setting the value
-ade-class:
-	A custom class to give to the div so that you can use your own images
-ade-width:
-	If you use a custom class with different sized images, set the width here
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-num:
+	 	The number of stars or maximum value for this number
+	ade-arrows:
+	 	1 to support arrow keys for setting the value
+	ade-class:
+		A custom class to give to the div so that you can use your own images
+	ade-width:
+		If you use a custom class with different sized images, set the width here
 
- Messages:
- name: ADE-start
- data: id from config
+	 Messages:
+	 name: ADE-start
+	 data: id from config
 
- name: ADE-finish
- data: {id from config, old value, new value, exit value}
+	 name: ADE-finish
+	 data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
 
