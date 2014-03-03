@@ -7,12 +7,48 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
 
+		scope: {
+			adeCalpop: "@",
+			adeYearonly: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
-			var format = 'mm/dd/yyy';
+			var options = {format: 'mm/dd/yyy'};
+			if(scope.adeCalpop!==undefined) options.format = scope.adeCalpop;
+
+			if(scope.adeYearonly!==undefined && scope.adeYearonly=="1") {
+				options.viewMode = 2; //tells the datepicker to start on year picker
+				options.minViewMode = 2;//tells the datepicker to limit to year only
+			}
+
+			//creates a callback for when something is picked from the popup or typed
+			var updateModel = function(e) {
+				var dateStr = "";
+
+				if(e && e.date && e.external==undefined) { //change came from click on calendar
+					dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
+					scope.ngModel = dateStr;
+				} else if(e.external && e.date) { //change came from typing or external change
+					dateStr = e.date;
+				}
+
+				element.context.value = dateStr; //sets the display value
+			};
+
+			//initialization of the datapicker
+			element.datepicker(options).on('changeDate',function(e) {
+				scope.$apply(function() {
+					updateModel(e);
+				});
+			});
+			// element.datepicker().data().datepicker.date = scope.ngModel; //TODO: is this line necessary?
+			element.datepicker('setValue', scope.ngModel);
+			element.datepicker('update');
 
 			//Handles return key pressed on in-line text box
-			element.bind('keypress', function(e) {
+			element.on('keypress', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 
 				if (keyCode == 13) { //return key
@@ -25,48 +61,15 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				}
 			});
 
-			//creates a callback for when something is picked from the popup
-			var updateModel = function(ev) {
-
-				var dateStr = '';
-
-				if (ev.date) dateStr = $filter('date')(ev.date, format);
-				//these two lines cause orphaned datepickers
-				element.context.value = dateStr;
-				if (controller !== undefined && controller !== null) controller.$setViewValue(dateStr);
-
-				if (!scope.$$phase) scope.$digest();
-			};
-
-			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller !== undefined && controller !== null) {
-				controller.$render = function() {
-					if (controller.$viewValue) {
-						element.datepicker().data().datepicker.date = controller.$viewValue; //TODO: is this line necessary?
-						element.datepicker('setValue', controller.$viewValue);
-						element.datepicker('update');
-					} else if (controller.$viewValue === null) {
-						element.datepicker('setValue', null);
-						element.datepicker('update');
-					}
-
-					return controller.$viewValue;
-				};
-			}
-
-			// Initialization code run for each directive instance.  Enables the bootstrap datepicker object
-			return attrs.$observe('adeCalpop', function(value) {
-			  //value is the contents of the b-datepicker="" string
-				var options = {};
-				if (angular.isObject(value)) options = value;
-
-				if (typeof(value) === 'string' && value.length > 0) {
-					options = angular.fromJson(value); //parses the json string into an object
-				}
-				if (options.format) format = options.format;
-
-				return element.datepicker(options).on('changeDate', updateModel);
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				//updateModel is expecting a certain object from the popup calendar
+				//so we have to simulate it, but add external flag so we can handle it differently
+				updateModel({date:scope.ngModel,external:true});
 			});
+
 		}
 	};
 }]);
@@ -123,7 +126,6 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				editing = false;
 
 				ADE.done(options, oldValue, value, exit);
-				scope.$digest();
 			};
 
 			element.bind('mouseover', function() {

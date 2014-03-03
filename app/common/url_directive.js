@@ -211,7 +211,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				element.on('click', function(e) {
 					scope.$apply(function() {
 						clickHandler(e);
-					})
+					});
 				});
 			}
 
