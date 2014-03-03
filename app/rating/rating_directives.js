@@ -46,7 +46,6 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
-			var oldValue = '';
 			var numStars = 5;
 			var starWidth = 23;
 			var starClass = "rating";
@@ -88,7 +87,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 				if (val > numStars) val = numStars;
 				if (val < 0) val = 0;
 
-				oldValue = scope.ngModel;
+				var oldValue = scope.ngModel;
 				scope.ngModel = val;
 
 				makeHTML();
@@ -135,6 +134,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 					element.off('keydown.ADE'); //on blur, stop watching keyboard
 				});
 			}
+
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;

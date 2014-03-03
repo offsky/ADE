@@ -9,7 +9,7 @@ body {
 
 h1 { margin:20px 0px 20px 0px;}
 p { margin:10px 0px 20px 0px;}
-.ade-editable{margin:20px 0px 20px 0px; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
+.ade-editme{margin:20px 0px 20px 0px; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
 .container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:940px;}
 
 input[type="text"] {

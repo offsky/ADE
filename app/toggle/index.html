@@ -30,15 +30,15 @@
 				<p>A directive that toggles an icon between two states.  It also has optional hover states and can support different size icons easily.</p>
 
 
-				<div ade-toggle='{"id":"1001"}' tabindex="1" ng-model="starvalue" ng-bind-html="starvalue | toggle:'star'"></div>
+				<div ade-toggle ade-id="1001" ade-class="ade-star" tabindex="1" ng-model="starvalue"></div>
 
 				<br />
 
-				<div ade-toggle='{"id":"1002"}' tabindex="2" ng-model="chkvalue" ng-bind-html="chkvalue | toggle:'check'"></div>
+				<div ade-toggle ade-id="1002" ade-class="ade-check" tabindex="2" ng-model="chkvalue"></div>
 				
 				<br />
 				
-				<div ade-toggle='{"id":"1003"}' tabindex="3" ng-model="balloon" ng-bind-html="balloon | toggle:'balloon'"></div>
+				<div ade-toggle ade-id="1003" ade-class="ade-balloon" tabindex="3" ng-model="balloon"></div>
 
 				
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
@@ -59,7 +59,6 @@
 		<script src="../common/demoApp.js"></script>
 
 		<script src="toggle_directives.js"></script>
-		<script src="toggle_filters.js"></script>
 		 
 	</body>
 </html>
