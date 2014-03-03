@@ -3,7 +3,7 @@
 	A directive to toggle rating icon
 
 	Usage:
-	<div ade-rating='1234' ade-num="10" ade-arrows="1" ng-model="data"></div>
+	<div ade-rating ade-id='1234' ade-num="10" ade-arrows="1" ng-model="data"></div>
 
 	Config:
 

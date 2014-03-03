@@ -3,11 +3,16 @@
 	A directive to edit a duration field in place
 
 	Usage:
-	<div ade-duration='{"class":"input-medium","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-duration ade-id='1234' ade-class="myClass" ng-model="data"></div>
 
 	Config:
-	"class" will be added to the input box so you can style it.
-	"id" will be used in messages broadcast to the app on state changes.
+
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-class:
+		A custom class to give to the input
+	ade-readonly:
+		If you don't want the stars to be editable	
 
 	Messages:
 		name: ADE-start
@@ -21,68 +26,88 @@
 angular.module('ADE').directive('adeDuration', ['ADE', '$compile', '$filter', function(ADE, $compile,$filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-duration=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-duration></div>
+
+		scope: {
+			adeId: "@",
+			adeClass: "@",
+			adeReadonly: "@",
+			ngModel: "="
+		},
 
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
+		link: function(scope, element, attrs) {
 			var editing=false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
-			var value = "";
-			var oldValue = "";
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if(value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			var readonly = false;
+			var inputClass = "";
+
+			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+
+			var makeHTML = function() {
+				var html = "";
+				var value = scope.ngModel;
+				
+				if(value!==undefined) {
+					html = $filter('duration')(value); 
+				}
+
+				element.html(html);
+			};
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = value;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				if(exited!=3) { //don't save value on esc
-					value = input.val();
-					controller.$setViewValue(value);
+					scope.ngModel = input.val();
 				}
 
 				element.show();
 				input.remove();
 				editing=false;
 
-				ADE.done(options,oldValue,value,exit);
-
-				scope.$digest();
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				ADE.teardownBlur(input);
+				ADE.teardownKeys(input);
 			};
 			
-			//handles clicks on the read version of the data
-			element.bind('click', function() {
+			var clickHandler = function() {
 				if(editing) return;
 				editing=true;
 				exit = 0;
 				
-				value = $filter('duration')(value);
+				var value = $filter('duration')(scope.ngModel);
 
-				ADE.begin(options);
+				ADE.begin(scope.adeId);
 
 				element.hide();
-				$compile('<input type="text" class="'+options.className+'" value="'+value+'" />')(scope).insertAfter(element);
+				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
-				ADE.setupBlur(input,saveEdit);
-				ADE.setupKeys(input,saveEdit);
-			});
+				ADE.setupBlur(input,saveEdit,scope);
+				ADE.setupKeys(input,saveEdit,false,scope);
+			};
 
-			// Watches for changes to the element
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeDuration', function(settings) { //settings is the contents of the ade-duration="" string
-				options = ADE.parseSettings(settings, {className:"input-medium"});
-				return element; //TODO: not sure what to return here
+			//setup events
+			if(!readonly) {
+				element.on('click', function(e) {
+					scope.$apply(function() {
+						clickHandler(e);
+					})
+				});
+			}
+
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 
 		}
