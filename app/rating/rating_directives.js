@@ -128,8 +128,16 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 			//setup events
 			if(!readonly) {
-				element.on('click', clickHandler);
-				element.on('focus',focusHandler);
+				element.on('click', function(e) {
+					scope.$apply(function() {
+						clickHandler(e);
+					})
+				});
+				element.on('focus',function(e) {
+					scope.$apply(function() {
+						focusHandler(e);
+					})
+				});
 				element.on('blur', function(e) {
 					element.off('keydown.ADE'); //on blur, stop watching keyboard
 				});

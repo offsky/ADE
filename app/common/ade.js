@@ -81,13 +81,13 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//=========================================================================================
 	//registers a blur event on the input so we can know when we clicked outside
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
-	function setupBlur(input, callback) {
-		input.bind('blur.ADE', function() {
-			callback(0);
+	function setupBlur(input, callback, scope) {
+		input.on('blur.ADE', function() {
+			scope.$apply(function() { callback(0); });
 		});
 	}
 	function teardownBlur(input) {
-		input.unbind('blur.ADE');
+		if(input) input.off('blur.ADE');
 	}
 
 	//=========================================================================================
@@ -95,40 +95,40 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//sends an integer to the callback to indicate how we exited edit mode
 	// 1 = tab, -1 = shift+tab, 2=return, -2=shift+return, 3=esc
 	var bound = false; //There may be a better way to prevent the current event from finishing when I have unbound the event handler, but I couldnt find it
-	function setupKeys(input, callback, ignoreReturn) {
+	function setupKeys(input, callback, ignoreReturn, scope) {
+		console.log("setupKeys");
 
 		bound = true;
-		input.bind('keydown.ADE', function(e) {
+		input.on('keydown.ADE', function(e) {
+			console.log("key1");
+
 			if (e.keyCode == 9) { //tab
 				e.preventDefault();
 				e.stopPropagation();
 				var exit = e.shiftKey ? -1 : 1;
-				callback(exit);
+				scope.$apply(function() { callback(exit); });
 			} else if (e.keyCode == 27) { //esc
 				e.preventDefault();
 				e.stopPropagation();
-				callback(3);
+				scope.$apply(function() { callback(3); });
+			} else if (e.keyCode == 13 && ignoreReturn !== true) { //return // && bound
+				e.preventDefault();
+				e.stopPropagation();
+				var exit = e.shiftKey ? -2 : 2;
+				scope.$apply(function() { callback(exit); });
 			}
+
 		});
-
-		if (ignoreReturn !== true) {
-			//Handles return key pressed on in-line text box
-			input.bind('keypress.ADE', function(e) {
-				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
-
-				if (keyCode == 13 && bound) { //return
-					e.preventDefault();
-					e.stopPropagation();
-					var exit = e.shiftKey ? -2 : 2;
-					callback(exit);
-				}
-			});
-		}
 	}
+
 	function teardownKeys(input) {
-		input.unbind('keydown.ADE');
-		input.unbind('keypress.ADE');
-		bound = false; //tells the key event listener to stop processing the current event
+		console.log("teardownKeys");
+
+		if(input) {
+			input.off('keydown.ADE');
+			input.off('keypress.ADE');
+		}
+		//bound = false; //tells the key event listener to stop processing the current event
 							//this seems to be necessary since stopPropigation wasn't working.
 	}
 
