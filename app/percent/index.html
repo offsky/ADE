@@ -29,7 +29,7 @@
 		<h1>Percent editing directive</h1>
 		<p>A directive that makes a percent editable (uses the same directive as money, decimal and integer).</p>
 
-		<div class="ade-editable" ade-number='{"className":"input-small","id":"1234"}' ng-model="percent">{{ percent | percent}}</div>
+		<div class="ade-editme" ade-number='percent' ade-class="input-small" ade-id="1234" ng-model="percent"></div>
 		
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
