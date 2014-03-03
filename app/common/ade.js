@@ -96,12 +96,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	// 1 = tab, -1 = shift+tab, 2=return, -2=shift+return, 3=esc
 	var bound = false; //There may be a better way to prevent the current event from finishing when I have unbound the event handler, but I couldnt find it
 	function setupKeys(input, callback, ignoreReturn, scope) {
-		console.log("setupKeys");
-
 		bound = true;
-		input.on('keydown.ADE', function(e) {
-			console.log("key1");
 
+		input.on('keydown.ADE', function(e) {
 			if (e.keyCode == 9) { //tab
 				e.preventDefault();
 				e.stopPropagation();
@@ -122,8 +119,6 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	}
 
 	function teardownKeys(input) {
-		console.log("teardownKeys");
-
 		if(input) {
 			input.off('keydown.ADE');
 			input.off('keypress.ADE');

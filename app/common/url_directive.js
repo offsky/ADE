@@ -45,7 +45,6 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 			var editing = false;
 			var input = null;
 			var invisibleInput = null;
-			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null;
 			var readonly = false;
@@ -66,9 +65,12 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 						case 'email':
 							html = $filter('email')(value);
 							break;
+
 						case 'phone':
 							html = $filter('phone')(value);
 							break;
+
+						case 'url':
 						default:
 							html = $filter('url')(value);
 					} 
@@ -79,7 +81,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = scope.ngModel;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				if (exit !== 3) {
