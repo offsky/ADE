@@ -32,29 +32,29 @@
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:23px;padding-right:10px;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:23px;}
-.ade-rating .ade-rate-container:hover .ade-off{background-position:-23px -23px;}
+.ade-rating.ade-editable .ade-rate-container:hover .ade-off{background-position:-23px -23px;}
 .ade-rating .ade-rate-one{width:23px;height:23px;display:inline-block;cursor:pointer;background: url(adeImg/star.png) 0 0;}
 .ade-rating .ade-on{background-position:-23px 0;}
-.ade-rating .ade-on:hover{background-position:-23px -23px;}
-.ade-rating .ade-off:hover{background-position:0 -23px;}
-.ade-rating .ade-off:hover~.ade-off,
-.ade-rating .ade-on:hover~.ade-on,
-.ade-rating .ade-on:hover~.ade-off,
-.ade-rating .ade-zero:hover~.ade-off,
-.ade-rating .ade-zero:hover~.ade-on{background-position:0 0;}
+.ade-rating.ade-editable .ade-on:hover{background-position:-23px -23px;}
+.ade-rating.ade-editable .ade-off:hover{background-position:0 -23px;}
+.ade-rating.ade-editable .ade-off:hover~.ade-off,
+.ade-rating.ade-editable .ade-on:hover~.ade-on,
+.ade-rating.ade-editable .ade-on:hover~.ade-off,
+.ade-rating.ade-editable .ade-zero:hover~.ade-off,
+.ade-rating.ade-editable .ade-zero:hover~.ade-on{background-position:0 0;}
 
 .ade-rating_s{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;}
 .ade-rating_s .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
-.ade-rating_s .ade-rate-container:hover .ade-off{background-position:-16px -16px;}
+.ade-rating_s.ade-editable .ade-rate-container:hover .ade-off{background-position:-16px -16px;}
 .ade-rating_s .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;background: url(adeImg/star_s.png) 0 0;}
 .ade-rating_s .ade-on{background-position:-16px 0;}
-.ade-rating_s .ade-on:hover{background-position:-16px -16px;}
-.ade-rating_s .ade-off:hover{background-position:-16px -16px;}
-.ade-rating_s .ade-off:hover~.ade-off,
-.ade-rating_s .ade-on:hover~.ade-on,
-.ade-rating_s .ade-on:hover~.ade-off,
-.ade-rating_s .ade-zero:hover~.ade-off,
-.ade-rating_s .ade-zero:hover~.ade-on{background-position:0 0;}
+.ade-rating_s.ade-editable .ade-on:hover{background-position:-16px -16px;}
+.ade-rating_s.ade-editable .ade-off:hover{background-position:-16px -16px;}
+.ade-rating_s.ade-editable .ade-off:hover~.ade-off,
+.ade-rating_s.ade-editable .ade-on:hover~.ade-on,
+.ade-rating_s.ade-editable .ade-on:hover~.ade-off,
+.ade-rating_s.ade-editable .ade-zero:hover~.ade-off,
+.ade-rating_s.ade-editable .ade-zero:hover~.ade-on{background-position:0 0;}
 
 .ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
 .ade-rate-one.ade-zero{text-decoration:none;}
@@ -65,8 +65,8 @@
 
 .ade-off{background-position:0px 0px;}
 .ade-on{background-position:-16px 0px;}
-.ade-off:hover{background-position:0px -16px;}
-.ade-on:hover{background-position:-16px -16px;}
+.ade-toggle.ade-editable .ade-off:hover{background-position:0px -16px;}
+.ade-toggle.ade-editable .ade-on:hover{background-position:-16px -16px;}
 
 .datepicker { min-width:210px; }
 .ade-date-popup p{margin:5px 0 0 0;}

@@ -17,7 +17,9 @@
 		A custom class to give to the div so that you can use your own images
 	ade-width:
 		If you use a custom class with different sized images, set the width here
-
+	ade-readonly:
+		If you don't want the stars to be editable
+	
 	 Messages:
 	 name: ADE-start
 	 data: id from config
@@ -38,6 +40,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 			adeArrows: "@",
 			adeClass: "@",
 			adeWidth: "@",
+			adeReadonly: "@",
 			ngModel: "="
 		},
 
@@ -47,19 +50,22 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 			var numStars = 5;
 			var starWidth = 23;
 			var starClass = "rating";
+			var readonly = false;
 
-			if(scope.adeNum!=undefined) numStars = parseInt(scope.adeNum);
-			if(scope.adeWidth!=undefined) starWidth = parseInt(scope.adeWidth);
-			if(scope.adeClass!=undefined) starClass = scope.adeClass;
-
+			if(scope.adeNum!==undefined) numStars = parseInt(scope.adeNum);
+			if(scope.adeWidth!==undefined) starWidth = parseInt(scope.adeWidth);
+			if(scope.adeClass!==undefined) starClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+			
 			var containerW = starWidth * numStars + 10; //10 is for the width of "0 stars" clicable region
 
 			//generates the html for the stars
 			var makeHTML = function() {
 				var starStatusClass = "off";
+				var editable = (readonly ? "" : " ade-editable");
 
-				var html = '<div class="ade-'+starClass+'" style="width:'+containerW+'px;">';
-				html += '<div class="ade-r ate-container">';
+				var html = '<div class="ade-'+starClass+editable+'" style="width:'+containerW+'px;">';
+				html += '<div class="ade-rate-container">';
 
 				for (var i = 0; i <= numStars; i++) {
 					starStatusClass = (i <= scope.ngModel) ? "on" : "off";
@@ -122,12 +128,13 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 			};
 
 			//setup events
-			element.on('click', clickHandler);
-			element.on('focus',focusHandler);
-			element.on('blur', function(e) {
-				element.off('keydown.ADE'); //on blur, stop watching keyboard
-			});
-
+			if(!readonly) {
+				element.on('click', clickHandler);
+				element.on('focus',focusHandler);
+				element.on('blur', function(e) {
+					element.off('keydown.ADE'); //on blur, stop watching keyboard
+				});
+			}
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;
