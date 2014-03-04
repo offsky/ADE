@@ -1,5 +1,32 @@
 /* ==================================================================
+	AngularJS Datatype Editor - Date
+	Two directives to edit a date. One directive is responsible for creating a popup 
+	calendar on an input. The second direcrtive is responsible for creating that input
+	when clicking on a date.
+
+------------------------------------------------------------------*/
+
+
+/* ==================================================================
 	Directive to present a date picker popup on an input element
+
+	Usage:
+	<input ade-calpop='mm/dd/yyyy' ng-model="data"></div>
+
+	Config:
+
+	ade-calpop:
+		Specify the format that you want the date displayed in.  Defaults to mm/dd/yyy.
+		Can be 'yyyy' or 'MMM d, yyyy' or 'MMM d, yyyy h:mm:ss a' or something else.
+	ade-yearonly:
+		"1" to allow only the year to be selected (no month or day)
+
+	Messages:
+		name: ADE-start
+		data: id from config
+
+		name: ADE-finish
+		data: {id from config, old value, new value, exit value}
 ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
@@ -15,7 +42,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
-			var options = {format: 'mm/dd/yyy'};
+			var options = {format: 'mm/dd/yyyy'};
 			if(scope.adeCalpop!==undefined) options.format = scope.adeCalpop;
 
 			if(scope.adeYearonly!==undefined && scope.adeYearonly=="1") {
@@ -89,6 +116,35 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 /* ==================================================================
 	Directive to display an input box and a popup date picker on a div that is clicked on
+
+	Usage:
+	<div ade-date='mm/dd/yyyy' ade-id='1234' ade-class="myClass" ng-model="data"></div>
+
+	Config:
+
+	ade-date:
+		Specify the format that you want the date displayed in.  Defaults to mm/dd/yyy.
+		Can be 'yyyy' or 'MMM d, yyyy' or 'MMM d, yyyy h:mm:ss a' or something else.
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-class:
+		A custom class to give to the input
+	ade-readonly:
+		If you don't want the date to be editable
+	ade-absolute:
+		"1" if you want the date to be displayed in absolute time instead of relative time.
+		See the documentation for the date filter for more info about this.
+	ade-timezome:
+		"1" if you want the timezone to be displayed if different from current timezone
+
+	Messages:
+		name: ADE-start
+		data: id from config
+
+		name: ADE-finish
+		data: {id from config, old value, new value, exit value}
+
+
 ------------------------------------------------------------------*/
 angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
 	return {
@@ -112,7 +168,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 			var readonly = false;
 			var inputClass = "";
-			var format = 'mm/dd/yyy';
+			var format = 'mm/dd/yyyy';
 			var absolute = false;
 			var timezone = false;
 			var stringDate = ""; //The string displayed to the user after conversion from timestamp
@@ -124,7 +180,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			if(scope.adeTimezone!==undefined && scope.adeTimezone=="1") timezone = true;
 
 			var makeHTML = function() {				
-				stringDate = $filter('validDate')(scope.ngModel,format,absolute,timezone);			
+				stringDate = $filter('validDate')(scope.ngModel,[format,absolute,timezone]);
 				element.html(stringDate);
 			};
 
@@ -207,6 +263,11 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			element.on('mouseover', function() {
 				var value = element.text();
 				if (value === "" || value.length <= 4) return;
+				
+				//strip off timezone if present
+				var hastimezone = value.indexOf("(");
+				if(hastimezone>0) value = value.substring(0,hastimezone);
+
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight;

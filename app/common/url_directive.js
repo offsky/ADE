@@ -16,7 +16,7 @@
 	ade-class:
 		A custom class to give to the input
 	ade-readonly:
-		If you don't want the stars to be editable	
+		If you don't want the url to be editable	
 
 	Messages:
 		name: ADE-start

@@ -24,7 +24,7 @@
 
 	absolute 	 = a boolean if we should display the time as absolute(true) or relative(false)
 
-	showTimezone	 = a boolean if we should display the user's timezone.
+	showTimezone	 = a boolean if we should display the user's timezone if different from the set timezone
 
 	There are two scenarios for picking and displaying dates.
 
@@ -91,9 +91,7 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 				absolutetimestamp = timestamp;
 			}
 		}
-
-		//console.log(timestamp,absolutetimestamp,timezone,dateFormat,absolute,showTimezone);
-
+		
 		var output = '';
 	
 		if (absolute) { //we want to display fixed GMT time regardless of user's timezone
@@ -113,6 +111,8 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 		} else { //display in local time
 			output = $filter('date')(timestamp * 1000, dateFormat);
 		}
+
+		// console.log(timestamp,absolutetimestamp,timezone,dateFormat,absolute,showTimezone,output);
 
 		return output;
   	};
