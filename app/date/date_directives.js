@@ -25,24 +25,37 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
+
 				var dateStr = "";
 
 				if(e && e.date && e.external==undefined) { //change came from click on calendar
 					dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
 					scope.ngModel = dateStr;
 				} else if(e.external && e.date) { //change came from typing or external change
-					dateStr = e.date;
+					if(angular.isNumber(e.date)) {
+						dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
+						scope.ngModel = dateStr;
+					} else {
+						dateStr = e.date;
+					}
 				}
 
-				element.context.value = dateStr; //sets the display value
+
+	//			element.context.value = dateStr; //sets the display value
 			};
 
 			//initialization of the datapicker
 			element.datepicker(options).on('changeDate',function(e) {
-				scope.$apply(function() {
-					updateModel(e);
+				//sometimes this is called inside Angular scope, sometimes not.
+				//scope.$$phase is always null for some reason so can't check it
+				//instead I am putting it in a timer to take it out of angular scope
+				setTimeout(function() { 
+					scope.$apply(function() { //we then put it back into angular scope
+						updateModel(e);
+					});
 				});
 			});
+
 			// element.datepicker().data().datepicker.date = scope.ngModel; //TODO: is this line necessary?
 			element.datepicker('setValue', scope.ngModel);
 			element.datepicker('update');
@@ -77,32 +90,48 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 /* ==================================================================
 	Directive to display an input box and a popup date picker on a div that is clicked on
 ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $compile) {
+angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-date=""></div>
 
+		scope: {
+			adeDate: "@",
+			adeId: "@",
+			adeClass: "@",
+			adeReadonly: "@",
+			adeAbsolute: "@",
+			adeTimezone: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
+		link: function(scope, element, attrs) {
 			var editing = false;
 			var input = null;
-			var value = null;
-			var oldValue = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
+			var readonly = false;
+			var inputClass = "";
+			var format = 'mm/dd/yyy';
+			var absolute = false;
+			var timezone = false;
+			var stringDate = ""; //The string displayed to the user after conversion from timestamp
 
-			// called at the begining if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if (value === undefined || value === null) value = 0;
-					return controller.$viewValue;
-				};
-			}
+			if(scope.adeDate!==undefined) format = scope.adeDate;
+			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+			if(scope.adeAbsolute!==undefined && scope.adeAbsolute=="1") absolute = true;
+			if(scope.adeTimezone!==undefined && scope.adeTimezone=="1") timezone = true;
+
+			var makeHTML = function() {				
+				stringDate = $filter('validDate')(scope.ngModel,format,absolute,timezone);			
+				element.html(stringDate);
+			};
 
 			//callback once the edit is done
 			var saveEdit = function(exited) {
-				oldValue = value;
+
+				var oldValue = scope.ngModel;
 				exit = exited;
 				
 				if (exited != 3) { //don't save value on esc
@@ -113,7 +142,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 						var offset = new Date(value*1000).getTimezoneOffset();
 						value = [value, value-offset*60, offset];
 					}
-					if (controller !== undefined && controller !== null) controller.$setViewValue(value);
+					scope.ngModel = value;
 				}
 				element.show();
 
@@ -125,10 +154,57 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				var test = input.remove(); //remove the input
 				editing = false;
 
-				ADE.done(options, oldValue, value, exit);
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 			};
 
-			element.bind('mouseover', function() {
+			var clickHandler = function() {
+				ADE.hidePopup();
+				if (editing) return;
+				editing = true;
+				exit = 0;
+
+				var preset = scope.ngModel;
+				
+				//model should be an array [localtime, absolutetime, timezone]
+				//find the proper time and convert it to a string
+				if(angular.isArray(scope.ngModel) && scope.ngModel.length>0) {
+					preset = scope.ngModel[0];//start with local
+					if(scope.adeAbsolute && scope.ngModel[1]!==undefined) { //pick absolute if requested
+						preset = scope.ngModel[1]; //the GMT time we want to display, so need to offset this by user's offset
+						if(preset) preset += new Date(preset*1000).getTimezoneOffset()*60;
+					}
+				}
+
+				if(angular.isString(preset)) {
+					var number = parseInt(preset.replace(/[$]/g, ''));
+					if(preset===number+'') preset = number;
+					else preset = parseDateString(preset);
+				} else if(!angular.isNumber(preset)) {
+					preset = 0;
+				}
+				preset = preset ? preset : 0; //preset should now be a unix timestamp for the displayed time
+
+				ADE.begin(scope.adeId);
+
+				element.hide();
+				var extraDPoptions = '';
+				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
+				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
+				$compile(html)(scope).insertAfter(element);
+				input = element.next('input');
+
+				input.focus(); //I do not know why both of these are necessary, but they are
+				setTimeout(function() {
+					input.focus();
+				});
+
+				//Handles blur of in-line text box
+				ADE.setupBlur(input, saveEdit, scope);
+				ADE.setupKeys(input, saveEdit, false, scope);
+			};
+
+			//When mousing over the div it will display a popup with the day of the week
+			element.on('mouseover', function() {
 				var value = element.text();
 				if (value === "" || value.length <= 4) return;
 				var elOffset = element.offset();
@@ -146,63 +222,20 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', function(ADE, $co
 				$compile(html)(scope).insertAfter(element);
 			});
 
+			//Remove the day of the week popup
 			element.bind('mouseout', function() {
-			  scope.ADE_hidePopup();
+			  ADE.hidePopup();
 			});
 
-			//handles clicks on the read version of the data
-			element.bind('click', function() {
-				scope.ADE_hidePopup();
-				if (editing) return;
-				editing = true;
-				exit = 0;
+			if(!readonly) {
+				element.on('click', clickHandler); //this doesn't need to be wrapped in $apply because calPop does it
+			}
 
-				var preset = value;
-
-				if(angular.isArray(value) && value.length>0) {
-					preset = value[0];
-					if(options.absolute && value[1]!==undefined) {
-						preset = value[1]; //the GMT time we want to display, so need to offset this by user's offset
-						if(preset) preset += new Date(preset*1000).getTimezoneOffset()*60;
-					}
-				}
-				if(angular.isString(preset)) {
-					var number = parseInt(preset.replace(/[$]/g, ''));
-					if(preset===number+'') preset = number;
-					else preset = parseDateString(preset);
-				} else if(!angular.isNumber(preset)) preset = 0;
-
-				preset = preset ? preset : 0;
-
-				ADE.begin(options);
-
-				element.hide();
-				var extraDPoptions = '';
-				if (options.format == 'yyyy') extraDPoptions = ',"viewMode":2,"minViewMode":2';
-				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop=\'{"format":"' + options.format + '"' + extraDPoptions + '}\' ng-model="adePickDate" ng-init="adePickDate=' + preset + '" type="text" class="' + options.className + '" />';
-				$compile(html)(scope).insertAfter(element);
-				input = element.next('input');
-
-				input.focus(); //I do not know why both of these are necessary, but they are
-				setTimeout(function() {
-					input.focus();
-				});
-
-				//Handles blur of in-line text box
-				ADE.setupBlur(input, saveEdit);
-				ADE.setupKeys(input, saveEdit);
-
-				//because we have a nested directive, we need to digest the entire parent scope
-				if (scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
-				else scope.$apply();
-			});
-
-			// Initialization code run for each directive instance once
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeDate', function(settings) { //settings is the contents of the ade-text="" string
-
-				options = ADE.parseSettings(settings, {className: 'input-medium', format: 'MMM d, yyyy', absolute: true});
-				return element; //TODO: not sure what to return here
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 
 		}

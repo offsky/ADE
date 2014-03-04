@@ -21,14 +21,6 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
         'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
         'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
 
-	//=========================================================================================
-	// Removes a popup
-	$rootScope.ADE_hidePopup = function(elm) {
-		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
-		if (elPopup.length && elPopup.hasClass('open')) {
-			elPopup.removeClass('open').remove();
-		}
-	};
 
 	function hidePopup(elm) {
 		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);

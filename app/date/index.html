@@ -72,9 +72,9 @@
 
 
 		<div ng-controller="ctrl">
-			<div class="ade-editme" ade-date='{"className":"input-small","format":"yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['yyyy',true,false] }}</div>
-			<div class="ade-editme" ade-date='{"className":"input-medium","format":"MMM d, yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy',true,false]}}</div>
-			<div class="ade-editme" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy h:mm:ss a',true,false]}}</div>
+			<div class="ade-editme" ade-date='yyyy' ade-class="input-small" ade-id="1234" ade-absolute="1" ade-timezone="0" ng-model="date2a"></div>
+			<div class="ade-editme" ade-date='MMM d, yyyy' ade-class="input-medium" ade-id="1234" ade-absolute="1" ade-timezone="0" ng-model="date2a"></div>
+			<div class="ade-editme" ade-date='MMM d, yyyy h:mm:ss a' ade-class="input-large" ade-id="1234" ade-absolute="1" ade-timezone="0" ng-model="date2a"></div>
 		</div>
 		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
