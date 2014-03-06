@@ -21,12 +21,6 @@
 	ade-yearonly:
 		"1" to allow only the year to be selected (no month or day)
 
-	Messages:
-		name: ADE-start
-		data: id from config
-
-		name: ADE-finish
-		data: {id from config, old value, new value, exit value}
 ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
@@ -41,7 +35,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 		},
 
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
+		link: function(scope, element, attrs) {
 			var options = {format: 'mm/dd/yyyy'};
 			if(scope.adeCalpop!==undefined) options.format = scope.adeCalpop;
 
@@ -67,7 +61,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					}
 				}
 
-
 	//			element.context.value = dateStr; //sets the display value
 			};
 
@@ -82,7 +75,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					});
 				});
 			});
-
 			// element.datepicker().data().datepicker.date = scope.ngModel; //TODO: is this line necessary?
 			element.datepicker('setValue', scope.ngModel);
 			element.datepicker('update');
@@ -207,7 +199,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 
 				input.datepicker('remove'); //tell datepicker to remove self
 				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
-				var test = input.remove(); //remove the input
+				input.remove(); //remove the input
 				editing = false;
 
 				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);

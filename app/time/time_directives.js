@@ -1,5 +1,23 @@
 /* ==================================================================
+	AngularJS Datatype Editor - Time
+	Two directives to edit a time. One directive is responsible for creating a popup 
+	picker on an input. The second direcrtive is responsible for creating that input
+	when clicking on a time.
+
+------------------------------------------------------------------*/
+
+
+/* ==================================================================
  Directive to present a time picker on an input
+
+ Usage:
+	<input ade-timepop='12' ng-model="data"></div>
+
+	Config:
+
+	ade-timepop:
+		Specify "12" for am/pm time or "24" for 24 hour time.
+
  ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
@@ -7,12 +25,26 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div b-timepicker=""></div>
 
+		scope: {
+			adeTimepop: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
+		link: function(scope, element, attrs) {
 			var validKey = false;
 
-			//Handles return key pressed on in-line text box
-			element.bind('keydown', function(e) {
+			var format = '12';
+			if(scope.adeTimepop!==undefined) format = scope.adeTimepop;
+
+			//creates a callback for when the time is changed, we need to make
+			//sure that it is formatted correctly
+			var updateModel = function(e) {
+				scope.ngModel  = $filter('time')(scope.ngModel, format);
+			};
+
+			//Handles return, esc, tab key pressed on in-line text box
+			element.on('keydown', function(e) {
 				if(e.keyCode==13) { //return key
 					element.timepicker('updateWidget');
 					element.timepicker('hideWidget');
@@ -25,7 +57,8 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 				} 
 			});
 
-			element.bind('keyup', function(e) {
+			//on a valid keypress, recaculates the time
+			element.on('keyup', function(e) {
 				if (validKey && e.keyCode!=13 && e.keyCode!=27 && e.keyCode!=9) {
 					var timeStr = element.context.value;
 					var pickerData = element.timepicker().data().timepicker;
@@ -45,7 +78,8 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 				}
 			});
 
-			element.bind('keypress', function(e) {
+			//prepares the keyup event to handle valid keypresses
+			element.on('keypress', function(e) {
 				//valid keys: 1-0, p, a, m,backspace, space,return,esc,space
 				var keys = [49,50,51,52,53,54,55,56,57,109,112,97,48,58,8,186,13,27,32];
 				validKey = false;
@@ -64,138 +98,135 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 				return false;
 			});
 
-			//creates a callback for when something is picked from the popup
-			var updateModel = function(ev) {
-				var timeStr = '';
-				var format = format || "12";
-
-				if (!ev.shouldSave) {
-					element.context.value = $filter('time')(controller.$viewValue, format);
-					return;
-				}
-
-				if (ev.time) timeStr = $filter('time')(ev.time, format);
-
-				element.context.value = timeStr;
-
-				if (controller !== undefined && controller !== null) controller.$setViewValue(ev.time);
-				if (!scope.$$phase) scope.$digest();
-			};
-
-			// called at the beginning if there is pre-filled data that needs to be preset in the popup
-			if (controller !== undefined && controller !== null) {
-				controller.$render = function() {
-					if(controller.$viewValue) {
-						var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
-						var filteredValue = (timeFormat) ? $filter('time')(controller.$viewValue) : $filter('time')(controller.$viewValue, "24");
-						element.timepicker('setValues', filteredValue);
-						element.timepicker('update');
-					} else if(controller.$viewValue===null) {
-						element.timepicker('setValues',null);
-						element.timepicker('update');
-					}
-					return controller.$viewValue;
-				};
+			//initialization of the datapicker
+			element.timepicker({showMeridian:format=="24" ? false : true });
+			if(scope.ngModel) { //if we have a preset integer value, turn it into a string
+				var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
+				var filteredValue = (timeFormat) ? $filter('time')(scope.ngModel) : $filter('time')(scope.ngModel, "24");
+				element.timepicker('setValues', filteredValue);
+				element.timepicker('update');
 			}
 
-			// Initialization code run for each directive instance.  Enables the bootstrap timepicker object
-			return attrs.$observe('adeTimepop', function(value) { //value is the contents of the b-timepicker="" string
-				var options = {};
-				if(angular.isObject(value)) options = value;
-
-				if (typeof(value) === "string" && value.length > 0) {
-					options = angular.fromJson(value); //parses the json string into an object
-				}
-
-				if(options.format) format = options.format;
-
-				return element.timepicker(options).on('hide.timepicker', updateModel);
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				//updateModel is expecting a certain object from the popup calendar
+				//so we have to simulate it, but add external flag so we can handle it differently
+				updateModel({time:scope.ngModel});
 			});
+
 		}
 	};
 }]);
 
 /* ==================================================================
- Directive to display a calendar for picking a year
+ Directive to display a popup to pick a time
+
+ 	Usage:
+	<div ade-time='12' ade-id='1234' ade-class="myClass" ng-model="data"></div>
+
+	Config:
+
+	ade-time:
+		Specify "12" for am/pm time or "24" for 24 hour time.
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-class:
+		A custom class to give to the input
+	ade-readonly:
+		If you don't want the date to be editable
+
+	Messages:
+		name: ADE-start
+		data: id from config
+
+		name: ADE-finish
+		data: {id from config, old value, new value, exit value}
+
  ------------------------------------------------------------------*/
 angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-time=""></div>
 
+		scope: {
+			adeTime: "@",
+			adeId: "@",
+			adeClass: "@",
+			adeReadonly: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
+		link: function(scope, element, attrs) {
 			var editing=false;
 			var input = null;
-			var value = null;
-			var oldValue = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 
-			// called at the beginning if there is pre-filled data that needs to be preset in the popup
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if(value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			var readonly = false;
+			var inputClass = "";
+			var format = '12';
+			var stringTime = ""; //The string displayed to the user after conversion from timestamp
+
+			if(scope.adeTime!==undefined) format = scope.adeTime;
+			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+
+			var makeHTML = function() {				
+				stringTime = $filter('time')(scope.ngModel,format);
+				element.html(stringTime);
+			};
 
 			//callback once the edit is done
 			var saveEdit = function(exited) {
 				var editedValue = input.val();
-				var oldValue = value;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				if(exited!=3) { //don't save value on esc or no changes
-					var arr = editedValue.split(' '),
-						hrsmin = arr[0].split(':'),
-						hours = parseInt(hrsmin[0], 10),
-						mins = parseInt(hrsmin[1], 10),
-						ampm = arr[1] || '',
-						validHrs = (hours <= 23) ? hours : 23,
-						validMins = (mins <= 59) ? mins : 59,
-						cleanedValue = validHrs+":"+validMins+" "+ampm;
+					var arr = editedValue.split(' ');
+					var hrsmin = arr[0].split(':');
+					var hours = parseInt(hrsmin[0], 10);
+					var mins = parseInt(hrsmin[1], 10);
+					var ampm = arr[1] || '';
+					var validHrs = (hours <= 23) ? hours : 23;
+					var validMins = (mins <= 59) ? mins : 59;
+					if(validMins<10) validMins = "0"+validMins;
+					var cleanedValue = validHrs+":"+validMins+" "+ampm;
 
-                  value = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
+					value = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
 
-					controller.$setViewValue(value);
+					scope.ngModel = value;
 				}
 
 				element.show();
 
+				ADE.teardownBlur(input);
+				ADE.teardownKeys(input);
+
 				input.timepicker('removeWidget');
-				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
+				if(input.scope()) input.scope().$destroy(); //destroy the scope for the input to remove the watchers
 				input.remove(); //remove the input
 				editing=false;
 
-				ADE.done(options,oldValue,value,exit);
-
-				scope.$digest();
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 			};
 
-			//handles clicks on the read version of the data
-			element.bind('click', function(e) {
-				var extraTPoptions, timeLength;
-
+			var clickHandler = function(e) {
+				ADE.hidePopup();
 				if(editing) return;
 				editing=true;
 				exit = 0;
-				value = value || 0;
 
-				ADE.begin(options);
+				var preset = scope.ngModel || 0;
+				var timeLength = 8;
+				if (format === "24") timeLength = 5;
+
+				ADE.begin(scope.adeId);
 
 				element.hide();
-
-				if (options.format === "24") {
-					extraTPoptions = '"showMeridian":false';
-					timeLength = 5;
-				} else {
-					extraTPoptions = '"showMeridian":true';
-					timeLength = 8;
-				}
-
-				var html = '<input ng-controller="adeTimeDummyCtrl" ade-timepop=\'{'+extraTPoptions+'}\' ng-model="adePickTime1" ng-init="adePickTime1='+value+'" maxlength="'+timeLength+'" type="text" class="'+options.className+'" />';
+				var html = '<input ng-controller="adeTimeDummyCtrl" ade-timepop="'+format+'" ng-model="adePickTime" ng-init="adePickTime='+preset+'" maxlength="'+timeLength+'" type="text" class="'+inputClass+'" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
@@ -204,19 +235,20 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 					input.focus();
 				});
 
-				ADE.setupBlur(input,saveEdit);
-				ADE.setupKeys(input,saveEdit);
+				ADE.setupBlur(input,saveEdit, scope);
+				ADE.setupKeys(input,saveEdit, false, scope);
+			};
 
-				//because we have a nested directive, we need to digest the entire parent scope
-				if(scope.$parent && scope.$parent.$localApply) scope.$parent.$localApply();
-				else scope.$apply();
-			});
+			//handles clicks on the read version of the data
+			if(!readonly) {
+				element.on('click', clickHandler);
+			}
 
-			// Initialization code run for each directive instance once
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeTime', function(settings) { //settings is the contents of the ade-text="" string
-				options = ADE.parseSettings(settings, {className:"input-medium"});
-				return element; //TODO: not sure what to return here
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 		}
 	};
