@@ -284,7 +284,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			});
 
 			//Remove the day of the week popup
-			element.bind('mouseout', function() {
+			element.on('mouseout', function() {
 			  ADE.hidePopup();
 			});
 

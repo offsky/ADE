@@ -1,13 +1,26 @@
 /* ==================================================================
- AngularJS Datatype Editor - Icon
- A directive to choose an icon from a list of many bootstrap icons
- Specify the allowed icons in ade.js
+AngularJS Datatype Editor - Icon
+A directive to choose an icon from a list of many bootstrap icons
+Specify the allowed icons in ade.js
 
- Usage:
- <a ade-icon='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
+Usage:
+<a ade-icon ng-model="data"></a>
 
- Config:
- "id" will be used in messages broadcast to the app on state changes.
+Config:
+
+ade-id:
+	If this id is set, it will be used in messages broadcast to the app on state changes.
+ade-readonly:
+	If you don't want the icon to be editable	
+
+To use different icons, adjust the array in ade.js
+
+Messages:
+	name: ADE-start
+	data: id from config
+
+	name: ADE-finish
+	data: {id from config, old value, new value, exit value}
 
  Messages:
  name: ADE-start
@@ -18,54 +31,60 @@
 
  ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $compile) {
-
-
+angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
+	console.log("compile");
+	//TODO: Shouldnt this be in a compile block? It seems to work
 	var len = ADE.icons.length;
 	var iconsPopupTemplate = '';
 
 	if (len > 0) iconsPopupTemplate = '<a class="ade-clear">clear</a>';
 	for (var i = 0; i < len; i++) {
-		iconsPopupTemplate += '<span class="icon-' + ADE.icons[i] + '"></span>';
+		iconsPopupTemplate += '<span class="ade-icon icon-' + ADE.icons[i] + '"></span>';
 	}
 
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-icon=""></div>
 
+		scope: {
+			adeId: "@",
+			adeReadonly: "@",
+			ngModel: "="
+		},
+
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {};
-			var value = '';
-			var oldValue = '';
+		link: function(scope, element, attrs) {
+			console.log("link",scope);
+
 			var editing = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
+			var readonly = false;
 
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if (value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+
+			var makeHTML = function() {
+				var html = $filter('icon')(scope.ngModel);
+				element.html(html);
+			};
 
 			var saveEdit = function(exited, newValue) {
 				//we are saving, so cancel any delayed blur saves that we might get
 				window.clearTimeout(timeout);
 
-				oldValue = value;
-				value = newValue || oldValue;
+				var oldValue = scope.ngModel;
+				var value = newValue || oldValue;
 				exit = exited;
 
 				if (exit !== 3) { //don't save value on esc
-					controller.$setViewValue(value);
+					scope.ngModel = value;
 				}
 				editing = false;
-				scope.ADE_hidePopup();
+				ADE.hidePopup();
 
-				ADE.done(options, oldValue, value, exit);
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
@@ -76,8 +95,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 					element.focus();
 					//TODO: would prefer to advance the focus to the previous logical element on the page
 				}
-
-				scope.$digest();
 			};
 
 			//place the popup in the proper place on the screen
@@ -106,14 +123,15 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				}
 			};
 
-			//handles clicks on the read version of the data
-			element.bind('click', function(e) {
-				element.unbind('keypress.ADE');
+			var clickHandler = function(e) {
+				console.log("click");
+
+				element.off('keypress.ADE');
 
 				e.preventDefault();
 				e.stopPropagation();
 
-				ADE.begin(options);
+				ADE.begin(scope.adeId);
 
 				var iconPopup = angular.element('.' + ADE.popupClass);
 				var clickTarget = angular.element(e.target);
@@ -133,20 +151,25 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 					var clearNode = nextElement.find('.ade-clear');
 					var iconNode = nextElement.find('span');
 
-					clearNode.bind('click', function() {
-						saveEdit(0, 'ban-circle');
+					clearNode.on('click', function() {
+						scope.$apply(function() {
+							saveEdit(0, 'ban');
+						});
 					});
 
-					//handles click on an icon
+					//handles click on an icon inside a popup
 					angular.forEach(iconNode, function(el) {
 						var node = angular.element(el);
-						node.bind('click', function() {
-							window.clearTimeout(timeout);
-							var iconClass =  node.attr('class');
+						node.on('click', function() {
+							window.clearTimeout(timeout); 
+							var iconClass =  node.attr('class'); //gets what you clicked on by class name
 
-							if (iconClass.match('icon')) {
-								var iconType = iconClass.substr(5);
-								saveEdit(0, iconType);
+							if (iconClass.match('ade-icon')) { //makes sure we clicked
+								var classes = iconClass.split(" ");// grab the last class which is what we are about
+								var iconType = classes.pop().substring(5);
+								scope.$apply(function() {
+									saveEdit(0, iconType);
+								});
 							}
 						});
 
@@ -154,7 +177,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 
 					input.focus();
 
-					ADE.setupKeys(input, saveEdit);
+					ADE.setupKeys(input, saveEdit, false, scope);
 
 					// TODO: handle keyboard inputs to change icons
 					// input.bind('keydown.ADE', function(e) {
@@ -168,18 +191,19 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 					// });
 
 					//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-					input.bind('blur', function(e) {
+					input.on('blur', function(e) {
 						//We delay the closure of the popup to give the internal icons a chance to
 						//fire their click handlers and change the value.
 						timeout = window.setTimeout(function() {
-							saveEdit(0);
+							scope.$apply(function() {
+								saveEdit(0);
+							});
 						},500);
 					});
 				}
-			});
+			};
 
-			//handles focus events
-			element.bind('focus', function(e) {
+			var focusHandler = function(e) {
 				//if this is an organic focus, then do a click to make the popup appear.
 				//if this was a focus caused by myself then don't do the click
 				if (!element.data('dontclick')) {
@@ -191,7 +215,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 				},100);
 
 				//listen for keys pressed while the element is focused but not clicked
-				element.bind('keypress.ADE', function(e) {
+				element.on('keypress.ADE', function(e) {
 					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 
 					if (keyCode == 13) { //return
@@ -200,19 +224,33 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', function(ADE, $co
 						element.click();
 					}
 				});
-			});
+			};
 
+		
 			//handles blur events
-			element.bind('blur', function(e) {
-				element.unbind('keypress.ADE');
+			element.on('blur', function(e) {
+				element.off('keypress.ADE');
 			});
 
-			// Watches for changes to the element
-			return attrs.$observe('adeIcon', function(settings) { //settings is the contents of the ade-icon="" string
-				options = ADE.parseSettings(settings, {});
-				return element; //TODO: not sure what to return here
-			});
+			//setup events
+			if(!readonly) {
+				element.on('click', function(e) {
+					scope.$apply(function() {
+						clickHandler(e);
+					});
+				});
 
+				element.on('focus', function(e) {
+					focusHandler(e);
+				});
+			}
+
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
+			});
 		}
 	};
 }]);

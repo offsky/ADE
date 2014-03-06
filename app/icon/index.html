@@ -24,8 +24,8 @@
 				<p>A directive that allows you to pick an icon from a selection of <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> icons.</p>
 
 			
-				<div ade-icon='{"id":"1001"}' tabindex="1" ng-model="icon" ng-bind-html="icon | icon"></div>
-				<div ade-icon='{"id":"1002"}' tabindex="2" ng-model="icon2" ng-bind-html="icon2 | icon"></div>
+				<div ade-icon ade-id="1001" tabindex="1" ng-model="icon"></div>
+				<div ade-icon ade-id="1002" tabindex="2" ng-model="icon2"></div>
 				
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
