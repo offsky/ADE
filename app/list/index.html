@@ -21,8 +21,15 @@
 		<![endif]-->
 		<a href="../index.html">back</a>
 		<h1>Select 2 Wrapper</h1>
-		<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). We extracted some code from the <a href="http://angular-ui.github.com">Angular UI</a> project to do this and use the <a href="http://ivaynberg.github.com/select2/">Select2</a> library.</p><br />
+		<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). We extracted some code from the <a href="http://angular-ui.github.com">Angular UI</a> project to do this and use the <a href="http://ivaynberg.github.com/select2/">Select2</a> library.</p>
 
+		<p>Your controller will need to supply a query() and selection() function (see our examples).</p>
+		<ul>
+			<li><b>query()</b> is responsible for returning a list of matches based on what the user has typed.</li> 
+			<li><b>selection()</b> is responsible for returning the entire list of options. </li> 
+		</ul>
+
+		<br />
 
 		<b>Pick one:</b>
 		<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection:selection,listId:'list1'}" ng-model="datasingle" />
@@ -35,11 +42,11 @@
 		<p>The directive will handle editing the list value for a non-input element.</p>
 
 		<b>Pick one:</b> <br />
-		<div class="ade-editable" ade-list='{"id":123,"multiple":false,"query":"query","selection":"selection","listId":"list1"}' ng-model="datasingle2">{{datasingle2 | list:1}}</div>
+		<div class="ade-editme" ade-list='list1' ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ade-id="2345" ade-multiple="0" ng-model="datasingle2"></div>
 	 
 		<br />
 		<b>Pick Multiple:</b> <br />
-		<div class="ade-editable" ade-list='{"id":1234,"multiple":true,"query":"query","selection":"selection","listId":"list2"}' ng-model="datamulti2">{{datamulti2 | list:0}}</div>
+		<div class="ade-editme" ade-list='list2' ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ade-id="1345" ade-multiple="1" ng-model="datamulti2"></div>
 
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
   
@@ -56,7 +63,6 @@
 	<script src="../common/demoApp.js"></script>
 
 	<script src="list_directives.js"></script>
-	<script src="list_filters.js"></script>
 	<script src="select2.js"></script>
 
 	

@@ -11,10 +11,8 @@ function SelectCtrl(scope) {
 		list2: ['dog', 'cat', 'elephant', 'dolphin', 'chicken']
 	};
 
-	scope.query = function(options) {
+	scope.query = function(options, listId) {		
 		var results = [];
-
-		var listId = this.listId; //TODO: this doesn't feel like the right way to get information about what select I am editing. There should be a way to pass it in options
 
 		//get the list to filter on
 		var listOptions = [];
@@ -36,7 +34,7 @@ function SelectCtrl(scope) {
       //console.log(listOptions.length);
 		if (this.allowAddNewValues && options.term && !exactMatch) results.push({id: options.term, text: options.term});
 
-		options.callback({more: false, context: '', results: results});
+		if(options && options.callback) options.callback({more: false, context: '', results: results});
 	};
 
 	//==================================================================

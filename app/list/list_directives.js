@@ -1,12 +1,27 @@
 /* ==================================================================
- AngularJS Datatype Editor - List
- A directive to pick a new value from a list of values
+AngularJS Datatype Editor - List
+A directive to pick a new value from a list of values
 
- Usage:
- <div ade-list='{id":"1234"}' ng-model="data">{{data}}</div>
+Usage:
+<div ade-list ade-id="123" ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ade-multiple="0" ng-model="data"></div>
 
- Config:
- "id" will be used in messages broadcast to the app on state changes.
+Config:
+
+ade-list:
+	The id number for the type of list. If you have multiple lists per page, this will
+	distinguish between them
+ade-id:
+	If this id is set, it will be used in messages broadcast to the app on state changes.
+ade-readonly:
+	If you don't want the list to be editable	
+ade-multiple:
+	If you want multiple values to be selectable set to "1" otherwise one value will be allowed
+ade-query:
+	A function in your controller that will provide matches for search query.
+	The argument names need to match
+ade-selection:
+	A function in your contorller that proivides all the selections
+	The argument names need to match
 
  Messages:
  name: ADE-start
@@ -21,27 +36,61 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-list=""></div>
 
+		scope: {
+			adeList: "@",
+			adeId: "@",
+			adeMultiple: "@",
+			adeReadonly: "@",
+			adeQuery: "&",
+			adeSelection: "&",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
 		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
 			var editing = false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
-			var value = '';
-			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 
-			//whenever the model changes, we get called so we can update our value
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() {
-					oldValue = value = controller.$modelValue;
-					if (value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			var multiple = false;
+			var readonly = false;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+			if(scope.adeMultiple!==undefined && scope.adeMultiple=="1") multiple = true;
+
+			//these two methods are a way for the select2 directive to communicate back 
+			//to the parent scope
+			scope.query = function(arg) {
+				scope.adeQuery({options:arg, listId: scope.adeList});
+			};
+			scope.selection = function(arg1,arg2,arg3) {
+				scope.adeSelection({element:arg1,callback:arg2,listId:scope.adeList});
+			};
+
+			//makes the initial presentation by unwinding arrays with commas
+			var makeHTML = function() {
+				var html = "";
+
+				if (!scope.ngModel) return;
+			
+				if (angular.isString(scope.ngModel)) {
+					html = scope.ngModel;
+				} else if (angular.isArray(scope.ngModel)) {
+					if(!multiple) {
+						html = scope.ngModel[0];
+					} else {
+						var html = '';
+						$.each(scope.ngModel, function(i, v) {
+							if (html) html += ', ';
+							html += v;
+						});
+					}
+				}
+				element.html(html);
+			};
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = value;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				if (exited != 3) { //don't save value on esc
@@ -71,7 +120,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 						value = (value) ? value.text : '';
 					}
 
-					controller.$setViewValue(value);
+					scope.ngModel = value;
 				}
 
 				element.show();
@@ -80,9 +129,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 
 				editing = false;
 
-				ADE.done(options, oldValue, value, exit);
-
-				if (!scope.$$phase) scope.$digest();
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 			};
 
 			//when the edit is canceled by ESC
@@ -91,13 +138,12 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				input.remove();
 
 				element.show();
-				ADE.done(options, oldValue, value, 3);
+				ADE.done(scope.adeId, scope.ngModel, scope.ngModel, 3);
 				editing = false;
 			};
 
 			//when the list is changed we get this event
 			var change = function(e) {
-				//console.log('change', e.exit);
 				if (e[0] === 'singleRemove') {
 					saveEdit(e.exit);
 				} else if (e[0] === 'emptyTabReturn') { //Tab or return on multi with nothing typed
@@ -105,62 +151,72 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 				} else if (e[0] === 'bodyClick') {
 					saveEdit(0);
 				} else {
-					if (!options.multiple) saveEdit(e.exit);
+					if (!multiple) saveEdit(e.exit);
 				}
 			};
 
-			//handles clicks on the read version of the data
-			element.bind('click', function() {
+			var clickHandler = function() {
 				if (editing) return;
 				editing = true;
 				exit = 0;
 
-				ADE.begin(options);
+				ADE.begin(scope.adeId);
 				element.hide();
 
 				var multi = '';
 				var placeholder = '';
 
-				if (options.multiple) {
+				if (multiple) {
 					multi = 'multiple="multiple"';
 				} else {
 					placeholder = ',placeholder:\'List...\'';
 				}
 
 				var query = '';
-				if (options.query) query = ',query:' + options.query; //the user's query function for providing the list data
+				if (scope.query) query = ',query:query'; //the user's query function for providing the list data
 				var selection = '';
-				if (options.selection) selection = ',initSelection:' + options.selection; //the user's selection function for providing the initial selection
+				if (scope.selection) selection = ',initSelection:selection'; //the user's selection function for providing the initial selection
 
 				var listId = '';
-				if (options.listId) listId = ",listId:'" + options.listId + "'"; //data that is passed through to the query function
+				if (scope.adeList) listId = ",listId:'" + scope.adeList + "'"; //data that is passed through to the query function
 
-				var html = '<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId + selection + placeholder + '} ' + multi + ' />';
+				var html = '<input class="ade-list-input" type="hidden" ui-select2="{width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId + selection + placeholder + '}" ' + multi + ' />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
-				if (angular.isString(value)) value = value.split(',');
-				input.val(value);
+				if (angular.isString(scope.ngModel)) scope.ngModel = scope.ngModel.split(',');
+				input.val(scope.ngModel);
 
 				//must initialize select2 in timeout to give the DOM a chance to exist
 				setTimeout(function() {
 					scope.selection(input, function(data) { //get preseleted data
 						input.select2('data', data);
 						input.select2('open');
-					},options.listId);
+					},scope.adeList);
 				});
 
-				input.on('cancel', cancel); //registers for esc key events
-				input.on('change', change); //registers for any change event
-			});
+				input.on('cancel', function(e) {
+					scope.$apply(function() {
+						cancel(e);
+					});
+				}); //registers for esc key events
 
-			// Watches for changes to the element
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeList', function(settings) { //settings is the contents of the ade-list="" string
-				options = ADE.parseSettings(settings, {
-					multiple: false
-				});
-				return element;
+				input.on('change', function(e) {
+					scope.$apply(function() {
+						change(e);
+					});
+				}); //registers for any change event
+			};
+
+			if(!readonly) {
+				element.bind('click', clickHandler);
+			}
+
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 		}
 	};

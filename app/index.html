@@ -48,7 +48,6 @@
 		<script src="duration/duration_directives.js"></script>
 		<script src="duration/duration_filters.js"></script>
 		<script src="list/list_directives.js"></script>
-		<script src="list/list_filters.js"></script>
 		<script src="list/select2.js"></script>
 		<script src="rich/rich_filters.js"></script>
 		<script src="rich/rich_directives.js"></script>
@@ -151,11 +150,11 @@
 	
 		<div ng-controller="SelectCtrl">
 		<a href="list/">List (pick one)</a> - Presents a popup list to choose one value from.<br />
-			Example:  <div class="ade-list sample" ade-list='{"id":123,"multiple":false,"query":"query","listId":"list1"}' ng-model="datasingle">{{datasingle | list:1}}</div>
+			Example:  <div class="ade-list sample" ade-list='list1' ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ng-model="datasingle"></div>
 			<br /><br />
 
 		<a href="list/">List (pick multiple)</a> - Presents a popup list to choose multiple values from. <br />
-			Example: <div class="ade-list sample" ade-list='{"id":1234,"multiple":true,"query":"query","listId":"list2"}' ng-model="datamulti">{{datamulti | list:0}}</div>
+			Example: <div class="ade-list sample" ade-list="list2" ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ade-multiple="1" ng-model="datamulti"></div>
 			<br /><br />
 		</div>
 		
