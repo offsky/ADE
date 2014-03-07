@@ -32,7 +32,6 @@ Messages:
  ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
-	console.log("compile");
 	//TODO: Shouldnt this be in a compile block? It seems to work
 	var len = ADE.icons.length;
 	var iconsPopupTemplate = '';
@@ -55,8 +54,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
-			console.log("link",scope);
-
+			
 			var editing = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var input = null; //a reference to the invisible input DOM object
@@ -124,8 +122,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			};
 
 			var clickHandler = function(e) {
-				console.log("click");
-
+				
 				element.off('keypress.ADE');
 
 				e.preventDefault();

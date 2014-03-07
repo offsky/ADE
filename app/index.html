@@ -49,7 +49,6 @@
 		<script src="duration/duration_filters.js"></script>
 		<script src="list/list_directives.js"></script>
 		<script src="list/select2.js"></script>
-		<script src="rich/rich_filters.js"></script>
 		<script src="rich/rich_directives.js"></script>
 		<script src="money/money_filters.js"></script>
 		<script src="percent/percent_filters.js"></script>
@@ -90,7 +89,7 @@
 			<br /><br />
 
 		<a href="rich/">Text (Long)</a> - A popup text area for editing large amounts of richly formatted text.<br />
-			Example: <div class="sample" ade-rich='{"className":"input-xlarge"}' ng-model="datalongtext" ng-bind-html="datalongtext | rich:25"></div>
+			Example: <div class="sample" ade-rich ade-class="input-xlarge" ade-max="2000" ade-cut="25" ng-model="datalongtext"></div>
 			<br /><br />
 
 		<a href="url/">URL</a> - A filter to make links clickable, and a way to edit them in place.<br />
