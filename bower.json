@@ -11,7 +11,7 @@
     "Toodledo"
   ],
   "dependencies": {
-    "jquery": "1.10.1",
+    "jquery": "1.11.0",
     "angular": "1.2.13",
     "angular-sanitize": "1.2.13",
     "bootstrap": "~2.3.2",
