@@ -31,12 +31,12 @@ ADE currently supports the following datatypes:
 
 All ADE datatypes depend on the following packages:
 
-* angular 1.0.7
-* jquery 1.10.2
+* angular 1.2.13
+* jquery 1.11.0
 
 The following packages are needed by their respective ADE datatypes:
 
-* angular-sanitize 1.0.7: email and url
+* angular-sanitize 1.2.13: email and url
 * bootstrap: date, email, icon, list, phone, rich, time, url
 * font-awesome: icon directive
 * select2: list directive
@@ -67,7 +67,7 @@ Take a look at the "dist/build" directory.
 CSS
 
 	<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
-	<link rel="stylesheet" href="../bower_components/ADE/dist/build/ade-0.2.1.min.css"/>
+	<link rel="stylesheet" href="../bower_components/ADE/dist/build/ade.min.css"/>
 
 JavaScript
 
@@ -75,7 +75,7 @@ JavaScript
 	<script src="../bower_components/angular/angular.js"></script>
 	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 
-	<script src="../bower_components/ADE/dist/build/ade-0.2.1.min.js"></script>
+	<script src="../bower_components/ADE/dist/build/ade.min.js"></script>
 
 3) Inject ADE in your angular project:
 
