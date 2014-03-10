@@ -232,8 +232,8 @@ module.exports = function (grunt) {
 		uglify: {
 			dist: {
 				files: {
-					'dist/build/ade-0.2.1.min.js': [
-						'dist/build/ade-0.2.1.min.js'
+					'dist/build/ade.min.js': [
+						'dist/build/ade.min.js'
 					],
 					'dist/rich/tinymce/tinymce-ade.min.js': [
 						'dist/rich/tinymce/tinymce-ade.min.js'
@@ -280,7 +280,7 @@ module.exports = function (grunt) {
 		'copy:dist',        //
 		// 'ngmin',         //Prepares angular app for minification by injecting providers
 		'cssmin',           //
-		'uglify',           //obfuscates and shirinks the js file
+		//'uglify',           //obfuscates and shirinks the js file
 		'rev',              //adds unique has to scripts.js and styles.css to avoid browser caching
 		'usemin',           //updates index with minified files and css with revisioned images
 		'clean:server'      //cleans .tmp

@@ -4,11 +4,21 @@
 	TODO: In the future it will allow rich text formatting
 
 	Usage:
-	<div ade-rich='{"class":"input-large","id":"1234"}' ng-model="data">{{data}}</div>
+	<div ade-rich ade-class="input-large" ade-id="1234" ade-max="2000" ade-cut="25" ng-model="data"></div>
 
 	Config:
-	"class" will be added to the input box so you can style it.
-	"id" will be used in messages broadcast to the app on state changes.
+
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-class:
+		A custom class to give to the input
+	ade-readonly:
+		If you don't want the stars to be editable	
+	ade-max:
+		The optional maximum length to enforce
+	ade-cut:
+		The number of characters to show as a preview before cutting off and showing
+		the rest after a click or hover	
 
 	Messages:
 		name: ADE-start
@@ -24,34 +34,73 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-rich=""></div>
 
+		scope: {
+			adeId: "@",
+			adeClass: "@",
+			adeReadonly: "@",
+			adeMax: "@",
+			adeCut: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
+		link: function(scope, element, attrs) {
 			// each tinyMCE editor get its own id
 			// this is not needed but makes it clearer that were dealing with separate editors
 			var id = Math.floor(Math.random() * 100000);
-			var options = {};
 			var editing = false;
 			var txtArea = null;
 			var input = null;
-			var value = '';
-			var oldValue = '';
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null; //the delay when mousing out of the ppopup
-			var maxLength = null;
-			var maxValue = null; //part of maxLength implementation
+			var readonly = false;
+			var inputClass = "";
+			var cutLength = 100; 
+			var maxLength = null; //the maxLength is enforced on edit, not from external changes
+			var origMaxLength = null;
 
-			//whenever the model changes, we get called so we can update our value
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() {
-					oldValue = value = maxValue = controller.$modelValue;
-					if (value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
+			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+			if(scope.adeCut!==undefined) cutLength = parseInt(scope.adeCut);
+
+
+			//Whenever the model changes we need to regenerate the HTML for displaying it
+			var makeHTML = function() {
+				var html = "";
+				var value = scope.ngModel;
+				var len = cutLength || 100;
+				
+				if (value) {
+					if (angular.isArray(value)) value = value[0];
+
+					if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
+
+					//set the max length higher or it would be truncated right away on editing
+					if(maxLength && value.length>maxLength) maxLength = value.length;
+		
+					// strip html
+					var text = $(value).text();
+					if (text) value = text;
+
+					var lines = value.split(/\r?\n|\r/);
+					value = lines[0]; //get first line
+
+					if (len < value.length) {
+						html = value.substring(0, len) + '...';
+					} else if(lines.length>1) {
+						html = value + "...";
+					} else {
+						html = value;
+					}
+				}
+
+				element.html(html);
+			};
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = value;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
@@ -61,20 +110,20 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// and if the current length is greater than the previous max length
 				// 100 padding covers html tags
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
-					// Special case: Length surpasses options.maxLength
-					// Reduce maxLength to current length until it reaches options.maxLength
-					if (maxLength >= options.maxLength) {
+					// Special case: Length surpasses maxLength and maxLength is artificially high
+					// Reduce maxLength to current length until it reaches origMaxLength
+					if (maxLength > origMaxLength && maxLength>currentLength) {
 						maxLength = currentLength;
 					}
 
 					if(editor!=undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
-						value = editor.innerHTML;
+						var value = editor.innerHTML;
 						// check if contents are empty
 						if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
 							value = '';
 						}
 						value = $.trim(value);
-						controller.$setViewValue(value);
+						scope.ngModel = value;
 					} else {
 						//editor wasn't found for some reason. Can we recover, or do we need to?
 					}
@@ -83,7 +132,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				input.remove();
 				editing = false;
 
-				ADE.done(options, oldValue, value, exit);
+				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
@@ -98,19 +147,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// we're done, no need to listen to events
 				$(document).off('click.ADE');
 				$(document).off('keydown.ADE');
-
-				scope.$digest();
 			};
 
 			//shows a popup with the full text in read mode
 			//TODO: handle scrolling of very long text blobs
 			var viewRichText = function() {
-				scope.ADE_hidePopup();
+				ADE.hidePopup();
 
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight-2;
-				var content = value.replace ? value.replace(/\n/g, '<br />') : value; //what is inside the popup
+				var content = scope.ngModel.replace ? scope.ngModel.replace(/\n/g, '<br />') : scope.ngModel; //what is inside the popup
 
 				if (!content) return; //dont show popup if there is nothing to show
 
@@ -127,9 +174,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				editing = false;
 
 				input = element.next('.ade-rich');
-				input.bind('mouseenter.ADE', mousein);
-				input.bind('mouseleave.ADE', mouseout);
-				input.bind('click.ADE', mouseclick);
+				input.on('mouseenter.ADE', mousein);
+				input.on('mouseleave.ADE', mouseout);
+				if(!readonly) input.on('click.ADE', mouseclick);
 			};
 
 			//place the popup in the proper place on the screen
@@ -220,15 +267,19 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Listen for esc and tab events
 				switch(e.keyCode) {
 					case 27: // esc
-						mouseout();
-						saveEdit(3); // don't save results
+						scope.$apply(function() {
+							mouseout();
+							saveEdit(3); // don't save results
+						});
 						e.preventDefault();
 						$(document).off('mousedown.ADE');
 						break;
 					case 9: // tab
 						var exit = e.shiftKey ? -1 : 1;
-						mouseout();
-						saveEdit(exit); // blur and save
+						scope.$apply(function() {
+							mouseout();
+							saveEdit(exit); // blur and save
+						});
 						e.preventDefault();
 						$(document).off('mousedown.ADE');
 						break;
@@ -240,11 +291,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			//enters edit mode for the text
 			var editRichText = function() {
 				window.clearTimeout(timeout);
-				if(input) input.unbind('.ADE');
+				if(input) input.off('.ADE');
 
-				scope.ADE_hidePopup();
+				ADE.hidePopup();
 
-				var content = '<textarea id="tinyText' + id + '" class="' + options.className + '" style="height:30px">' + value + '</textarea>';
+				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + scope.ngModel + '</textarea>';
 				
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
@@ -256,8 +307,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Full example:
 				//   http://www.tinymce.com/tryit/full.php
 
-				// grandfather lengths that are greater than maxLength
-				maxLength = (maxValue && maxValue.length > options.maxLength) ? maxValue.length : options.maxLength;
 				
 				tinymce.init({
 					selector: "#tinyText" + id,
@@ -277,7 +326,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// save when user blurs out of text editor
 				// listen to clicks on all elements in page
 				// this will determine when to blur
-				$(document).bind('mousedown.ADE', outerBlur);
+				$(document).on('mousedown.ADE', function(e) {
+					scope.$apply(function() {
+						outerBlur(e);
+					})
+				});
 
 				//focus the text area. In a timer to allow tinymce to initialize.
 				timeout = window.setTimeout(function() {
@@ -303,7 +356,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				var linkPopup = element.next('.' + ADE.popupClass + '');
 				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
-						scope.ADE_hidePopup(element);
+						ADE.hidePopup(element);
 					},400);
 				}
 			};
@@ -315,30 +368,33 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				editing = true;
 				exit = 0;
 
-				ADE.begin(options);
+				ADE.begin(scope.adeId);
 
 				editRichText();
 				place();
 			};
 
-			//handles enter keydown on the read version of the data
-			var enter = function(e) {
-				if (e.keyCode === 13) { // enter
-					mouseclick();
-				}
-			};
+			element.on('mouseenter.ADE', mousein);
+			element.on('mouseleave.ADE', mouseout);
+			
+			if(!readonly) {
+				element.on('click.ADE', mouseclick);
 
-			element.bind('mouseenter.ADE', mousein);
-			element.bind('mouseleave.ADE', mouseout);
-			element.bind('click.ADE', mouseclick);
-			element.bind('keydown.ADE', enter);
+				//handles enter keydown on the read version of the data
+				element.on('keydown.ADE', function(e) {
+					if (e.keyCode === 13) { // enter
+						mouseclick();
+					}
+				});
+			}
 
-			// Watches for changes to the element
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeRich', function(settings) { //settings is the contents of the ade-rich="" string
-				options = ADE.parseSettings(settings, {className: 'input-xlarge'});
-				return element;
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
+
 		}
 	};
 }]);
