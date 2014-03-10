@@ -129,7 +129,7 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 				input.on('keypress.ADE', function(e) {
 					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 					
-					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==44 || keyCode==45 || keyCode==46) { //0-9 and .,-%$
+					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==44 || keyCode==45 || keyCode==46 || keyCode==9 || keyCode==27 || keyCode==13) { //0-9 and .,-%$
 						;//allowed characters
 					} else {
 						e.preventDefault();

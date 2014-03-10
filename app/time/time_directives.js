@@ -32,7 +32,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
-			var validKey = false;
+			var keydown = false;
 
 			var format = '12';
 			if(scope.adeTimepop!==undefined) format = scope.adeTimepop;
@@ -40,26 +40,12 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			//creates a callback for when the time is changed, we need to make
 			//sure that it is formatted correctly
 			var updateModel = function(e) {
-				scope.ngModel  = $filter('time')(scope.ngModel, format);
+				if(!keydown) { //don't want to reformat time if in middle of keypress
+					scope.ngModel  = $filter('time')(scope.ngModel, format);
+				}
 			};
 
-			//Handles return, esc, tab key pressed on in-line text box
-			element.on('keydown', function(e) {
-				if(e.keyCode==13) { //return key
-					element.timepicker('updateWidget');
-					element.timepicker('hideWidget');
-					element.blur();
-				} else if (e.keyCode==27) { //esc
-					element.timepicker('hideWidget', false);
-				} else if(e.keyCode==9) { //tab key detection
-					element.timepicker('updateWidget');
-					element.timepicker('hideWidget', true);
-				} 
-			});
-
-			//on a valid keypress, recaculates the time
-			element.on('keyup', function(e) {
-				if (validKey && e.keyCode!=13 && e.keyCode!=27 && e.keyCode!=9) {
+			var updateWidget = function() {
 					var timeStr = element.context.value;
 					var pickerData = element.timepicker().data().timepicker;
 					if(angular.isString(timeStr)) {
@@ -75,18 +61,37 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 						pickerData.meridian = ampm;
 					}
 					element.timepicker('updateWidget');
+
+					//var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
+					//var filteredValue = (timeFormat) ? $filter('time')(scope.ngModel) : $filter('time')(scope.ngModel, "24");
+					//element.timepicker('setValues', filteredValue);
+					//element.timepicker('update');
+			};
+
+			//on a valid keypress, recaculates the time
+			var updateFromKey = function(e) {
+				var validKey = isValidKey(e);
+				keydown = false;
+				if (validKey && e.keyCode!=13 && e.keyCode!=27 && e.keyCode!=9 && e.keyCode!=8) {
+
+					//need to set timeout because keyup hasn't yet entered the input
+					setTimeout(function() {
+						updateWidget();
+					},100);
 				}
-			});
+				return true;
+			};
 
 			//prepares the keyup event to handle valid keypresses
-			element.on('keypress', function(e) {
+			var isValidKey = function(e) {
 				//valid keys: 1-0, p, a, m,backspace, space,return,esc,space
 				var keys = [49,50,51,52,53,54,55,56,57,109,112,97,48,58,8,186,13,27,32];
-				validKey = false;
+				var validKey = false;
 
 				for (var i=0;i<keys.length;i++) {
-					if (!validKey ) {
+					if (!validKey) {
 						if (e.keyCode === keys[i]) {
+							// keydown=false;
 							validKey = true;
 							return (element.length < 8) ? validKey : false;
 						} else {
@@ -95,18 +100,29 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 					}
 				}
 
-				return false;
+				return validKey;
+			};
+
+			//Handles return, esc, tab key pressed on in-line text box
+			element.on('keydown.ADE', function(e) {
+				keydown = true;
+				if(e.keyCode==13) { //return key
+					element.timepicker('updateWidget');
+					element.timepicker('hideWidget');
+					element.blur();
+				} else if (e.keyCode==27) { //esc
+					element.timepicker('hideWidget', false);
+				} else if(e.keyCode==9) { //tab key detection
+					element.timepicker('updateWidget');
+					element.timepicker('hideWidget', true);
+				} 
 			});
+
+			element.on('keyup.ADE', updateFromKey); //needs to be on keyup because some keys (delete) are not send on press
 
 			//initialization of the datapicker
 			element.timepicker({showMeridian:format=="24" ? false : true });
-			if(scope.ngModel) { //if we have a preset integer value, turn it into a string
-				var timeFormat = element.timepicker().data().timepicker.options.showMeridian;
-				var filteredValue = (timeFormat) ? $filter('time')(scope.ngModel) : $filter('time')(scope.ngModel, "24");
-				element.timepicker('setValues', filteredValue);
-				element.timepicker('update');
-			}
-
+	
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;

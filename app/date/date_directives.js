@@ -46,7 +46,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
-
 				var dateStr = "";
 
 				if(e && e.date && e.external==undefined) { //change came from click on calendar
@@ -59,6 +58,8 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					} else {
 						dateStr = e.date;
 					}
+					element.datepicker('setValue', scope.ngModel);
+					element.datepicker('update');
 				}
 
 	//			element.context.value = dateStr; //sets the display value
@@ -75,10 +76,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					});
 				});
 			});
-			// element.datepicker().data().datepicker.date = scope.ngModel; //TODO: is this line necessary?
-			element.datepicker('setValue', scope.ngModel);
-			element.datepicker('update');
-
+			
 			//Handles return key pressed on in-line text box
 			element.on('keypress', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down

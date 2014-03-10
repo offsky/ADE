@@ -27,7 +27,7 @@ describe('icon', function() {
     it('should detect ENTER key', function() {
         element('div[ade-icon]:eq(0)').click();
         appElement('#invisicon', function(elm) {
-            elm.trigger({ type : 'keypress', keyCode: 13 });
+            elm.trigger({ type : 'keydown', keyCode: 13 });
         });
         expect(element('.ade-popup').count()).toEqual(0);
     });
