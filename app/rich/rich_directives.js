@@ -297,7 +297,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				ADE.hidePopup();
 
-				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + scope.ngModel + '</textarea>';
+				var modelValue = "";
+				if(scope.ngModel) modelValue = scope.ngModel;
+
+				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
@@ -308,8 +311,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				// Initialize tinymce
 				// Full example:
 				//   http://www.tinymce.com/tryit/full.php
-
-				
 				tinymce.init({
 					selector: "#tinyText" + id,
 					theme: "modern",

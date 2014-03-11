@@ -297,7 +297,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				ADE.hidePopup();
 
-				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + scope.ngModel + '</textarea>';
+				var modelValue = "";
+				if(scope.ngModel) modelValue = scope.ngModel;
+				
+				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
