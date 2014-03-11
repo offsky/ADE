@@ -9,6 +9,8 @@
 	5) Got rid of date formatting and allowed caller to take care of this
 	6) Method for destroying the calendar DOM object
 	7) Remove unnecessary changeDate events
+	8) Added wasClick boolean to event so we can tell how the date was changed
+	9) Supresses notifications when nothing actually changed
  * ========================================================= */
 
 
@@ -125,6 +127,7 @@
 			if (!this.isInput) {
 				$(document).off('mousedown', this.hide);
 			}
+			this.wasClick=false;
 			this.set();
 			this.element.trigger({
 				type: 'hide',
@@ -147,7 +150,8 @@
 
 			this.element.trigger({
 				type: 'changeDate',
-				date: this.date ? this.date.getTime() : null
+				date: this.date ? this.date.getTime() : null,
+				wasClick: this.wasClick
 				//date: returnObj
 			});
 			return;
@@ -155,6 +159,9 @@
 
 		//a public function to programatically update the selected date
 		setValue: function(newDate) {
+			this.wasClick = false;
+			var oldDate = this.date;
+
 			if (!newDate) {
 				this.date = null;
 			} else if (typeof newDate === 'string') {
@@ -162,7 +169,11 @@
 			} else {
 				this.date = new Date(newDate * 1000);
 			}
-			this.set();
+			
+			if(!oldDate || !this.date || oldDate.getTime()!=this.date.getTime()) {
+				// console.log("setValue",oldDate,this.date);
+				this.set(); //only set if it has changed
+			}
 
 			if (newDate && this.date) {
 				this.viewDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1, 0, 0, 0, 0);
@@ -244,6 +255,8 @@
 			if (this.date) {
 				currentDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate()).valueOf();
 			}
+
+			// console.log("fill",currentDate);
 
 			this.picker.find('.datepicker-days th:eq(1)').text(DPGlobal.dates.months[month] + ' ' + year); //updates the calendar month/year title
 
@@ -354,6 +367,7 @@
 							// 	viewMode: DPGlobal.modes[this.viewMode].clsName
 							// });
 						}
+						this.wasClick = true;
 						this.showMode(-1);
 						this.fill();
 						this.set();
@@ -368,10 +382,16 @@
 								month += 1;
 							}
 							var year = this.viewDate.getFullYear();
+							var oldDate = this.date;
 							this.date = new Date(year, month, day, 0, 0, 0, 0);
 							this.viewDate = new Date(year, month, Math.min(28, day), 0, 0, 0, 0);
+							this.wasClick = true;
 							this.fill();
-							this.set();
+							
+							if(!oldDate || oldDate.getTime()!=this.date.getTime()) {
+								// console.log("click",oldDate,this.date);
+								this.set(); //only set if it has changed
+							}
 					 		// ADE: Dont need this hear because it happens in set() one line up
 							//this.element.trigger({
 							//	type: 'changeDate',

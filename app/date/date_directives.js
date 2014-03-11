@@ -46,21 +46,22 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
+				// console.log("updateModel",e.date,e.external,e.wasClick);
 				var dateStr = "";
-				if(e && e.date && e.external==undefined) { //change came from click on calendar
+				if(e && e.date && e.external==undefined && e.wasClick) { //change came from click on calendar
 					dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
 					scope.ngModel = dateStr;
+					// console.log("wasClick",dateStr);
 				} else if(e.external && e.date) { //change came from typing or external change
 					if(angular.isNumber(e.date)) {
 						dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
 					} else {
 						dateStr = e.date;
 					}
-					scope.ngModel = dateStr;
-					element.datepicker('setValue', dateStr);
-					element.datepicker('update');
+					// console.log("wasExternal",dateStr);
+
+					element.datepicker('setValue', dateStr);					
 				}
-				element.context.value = dateStr; //sets the display value
 			};
 
 			//initialization of the datapicker
@@ -76,7 +77,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			});
 			if(scope.ngModel) {
 				element.datepicker('setValue', scope.ngModel);
-				element.datepicker('update');
 			}
 
 			//Handles return key pressed on in-line text box
