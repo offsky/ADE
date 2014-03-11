@@ -47,22 +47,20 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
 				var dateStr = "";
-
 				if(e && e.date && e.external==undefined) { //change came from click on calendar
 					dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
 					scope.ngModel = dateStr;
 				} else if(e.external && e.date) { //change came from typing or external change
 					if(angular.isNumber(e.date)) {
 						dateStr = $filter('date')(e.date, options.format); //turn timestamp into string
-						scope.ngModel = dateStr;
 					} else {
 						dateStr = e.date;
 					}
-					element.datepicker('setValue', scope.ngModel);
+					scope.ngModel = dateStr;
+					element.datepicker('setValue', dateStr);
 					element.datepicker('update');
 				}
-
-	//			element.context.value = dateStr; //sets the display value
+				element.context.value = dateStr; //sets the display value
 			};
 
 			//initialization of the datapicker
@@ -76,7 +74,11 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					});
 				});
 			});
-			
+			if(scope.ngModel) {
+				element.datepicker('setValue', scope.ngModel);
+				element.datepicker('update');
+			}
+
 			//Handles return key pressed on in-line text box
 			element.on('keypress', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
