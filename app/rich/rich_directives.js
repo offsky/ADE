@@ -157,7 +157,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				var elOffset = element.offset();
 				var posLeft = elOffset.left;
 				var posTop = elOffset.top + element[0].offsetHeight-2;
-				var content = scope.ngModel.replace ? scope.ngModel.replace(/\n/g, '<br />') : scope.ngModel; //what is inside the popup
+				var content = scope.ngModel; //what is inside the popup
+
+				if(scope.ngModel && angular.isString(scope.ngModel)) content = scope.ngModel.replace(/\n/g, '<br />');
 
 				if (!content) return; //dont show popup if there is nothing to show
 
