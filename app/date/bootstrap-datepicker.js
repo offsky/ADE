@@ -178,7 +178,7 @@
 			if (newDate && this.date) {
 				this.viewDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1, 0, 0, 0, 0);
 			} else {
-				this.viewDate = null;
+				this.viewDate = new Date();
 			}
 			this.fill();
 		},

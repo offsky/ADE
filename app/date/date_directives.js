@@ -61,6 +61,8 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					// console.log("wasExternal",dateStr);
 
 					element.datepicker('setValue', dateStr);					
+				} else if(e.external) {
+					element.datepicker('setValue', null);
 				}
 			};
 
