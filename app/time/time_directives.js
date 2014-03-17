@@ -123,6 +123,13 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			//initialization of the datapicker
 			element.timepicker({showMeridian:format=="24" ? false : true });
 	
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('keydown.ADE');
+					element.off('keyup.ADE');
+				}
+			});
+
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;
@@ -257,8 +264,14 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 
 			//handles clicks on the read version of the data
 			if(!readonly) {
-				element.on('click', clickHandler);
+				element.on('click.ADE', clickHandler);
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('click.ADE');
+				}
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {

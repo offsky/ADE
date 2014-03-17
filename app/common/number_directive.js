@@ -99,7 +99,10 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 				ADE.teardownBlur(input);
 
 				element.show();
-				if(input) input.remove();
+				if(input) {
+					input.off('keypress.ADE');
+					input.remove();
+				}
 				editing=false;
 
 				ADE.done(scope.adeId,oldValue,scope.ngModel,exit);
@@ -140,12 +143,19 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 
 			//setup events
 			if(!readonly) {
-				element.on('click', function(e) {
+				element.on('click.ADE', function(e) {
 					scope.$apply(function() {
 						clickHandler(e);
 					})
 				});
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('click.ADE');
+					if(input) input.off('keypress.ADE');
+				}
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {

@@ -99,7 +99,10 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 				ADE.teardownBlur(input);
 				ADE.teardownKeys(input);
-				if(invisibleInput) ADE.teardownKeys(invisibleInput);
+				if(invisibleInput) {
+					invisibleInput.off('blur.ADE');
+					ADE.teardownKeys(invisibleInput);
+				}
 			};
 
 			//called to enter edit mode on a url. happens immediatly for non-urls or after a popup confirmation for urls
@@ -182,7 +185,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 						$compile(html)(scope).insertAfter(element);
 
 						var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
-						editLinkNode.on('click', editLink);
+						editLinkNode.on('click.ADE', editLink);
 
 						//There is an invisible input box that handles blur and keyboard events on the popup
 						invisibleInput = element.next('.ade-links').find('.invisinput');
@@ -190,11 +193,13 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 						ADE.setupKeys(invisibleInput, saveEdit, false, scope);
 
-						invisibleInput.on('blur', function(e) {
+						invisibleInput.on('blur.ADE', function(e) {
 							ADE.teardownKeys(invisibleInput);
+							invisibleInput.off('blur.ADE');
 							invisibleInput = null;
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
+								if(editLinkNode) editLinkNode.off('click.ADE');
 								ADE.hidePopup(element);
 							},300);
 						});
@@ -208,12 +213,21 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 			//setup events
 			if(!readonly) {
-				element.on('click', function(e) {
+				element.on('click.ADE', function(e) {
 					scope.$apply(function() {
 						clickHandler(e);
 					});
 				});
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('click.ADE');
+					var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
+					if(editLinkNode) editLinkNode.off('click.ADE');
+					if(invisibleInput) invisibleInput.off('blur.ADE');
+				}
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {

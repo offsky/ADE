@@ -129,6 +129,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					}
 				}
 
+				input.off('mouseenter.ADE');
+				input.off('mouseleave.ADE');
+				input.off('click.ADE');
+
 				input.remove();
 				editing = false;
 
@@ -145,8 +149,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				}
 
 				// we're done, no need to listen to events
-				$(document).off('click.ADE');
-				$(document).off('keydown.ADE');
+				$(document).off('mousedown.ADE');
 			};
 
 			//shows a popup with the full text in read mode
@@ -390,6 +393,16 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					}
 				});
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('click.ADE');
+					element.off('keydown.ADE');
+					element.off('mouseenter.ADE');
+					element.off('mouseleave.ADE');
+				}
+				$(document).off('mousedown.ADE');
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {

@@ -67,7 +67,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			};
 
 			//initialization of the datapicker
-			element.datepicker(options).on('changeDate',function(e) {
+			element.datepicker(options).on('changeDate.ADE',function(e) {
 				//sometimes this is called inside Angular scope, sometimes not.
 				//scope.$$phase is always null for some reason so can't check it
 				//instead I am putting it in a timer to take it out of angular scope
@@ -82,7 +82,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			}
 
 			//Handles return key pressed on in-line text box
-			element.on('keypress', function(e) {
+			element.on('keypress.ADE', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 
 				if (keyCode == 13) { //return key
@@ -92,6 +92,17 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					element.blur();
 				} else if (keyCode == 27) { //esc
 					element.datepicker('hide');
+				}
+			});
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('keypress.ADE');
+					element.off('changeDate.ADE');
+					if(element.datepicker) {
+						element.datepicker('hide');
+						element.datepicker('remove');
+					}
 				}
 			});
 
@@ -254,7 +265,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			};
 
 			//When mousing over the div it will display a popup with the day of the week
-			element.on('mouseover', function() {
+			element.on('mouseover.ADE', function() {
 				var value = element.text();
 				if (value === "" || value.length <= 4) return;
 				
@@ -278,13 +289,21 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			});
 
 			//Remove the day of the week popup
-			element.on('mouseout', function() {
+			element.on('mouseout.ADE', function() {
 			  ADE.hidePopup();
 			});
 
 			if(!readonly) {
-				element.on('click', clickHandler); //this doesn't need to be wrapped in $apply because calPop does it
+				element.on('click.ADE', clickHandler); //this doesn't need to be wrapped in $apply because calPop does it
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('mouseover.ADE');
+					element.off('mouseout.ADE');
+					element.off('click.ADE');
+				}
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {

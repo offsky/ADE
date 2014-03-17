@@ -14,6 +14,8 @@ function SelectCtrl(scope) {
 	scope.query = function(options, listId) {		
 		var results = [];
 
+		if(listId==undefined) listId = this.listId; //this is the only way I can find to get this if the directive is directly on the input element (not on a div)
+
 		//get the list to filter on
 		var listOptions = [];
 		if(listId && scope.listOptions && scope.listOptions[listId]) {
@@ -34,6 +36,9 @@ function SelectCtrl(scope) {
       //console.log(listOptions.length);
 		if (this.allowAddNewValues && options.term && !exactMatch) results.push({id: options.term, text: options.term});
 
+		console.log("query",options,listId,results);
+
+
 		if(options && options.callback) options.callback({more: false, context: '', results: results});
 	};
 
@@ -43,6 +48,8 @@ function SelectCtrl(scope) {
 		var data = [], results;
 		results = element.val().split(',');
 		if(listId === undefined) listId = element.attr('data-listId');
+
+		console.log("selection");
 
 		var listOptions = [];
 		if(listId && scope.listOptions && scope.listOptions[listId]) {

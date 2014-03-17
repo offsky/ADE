@@ -67,6 +67,7 @@ angular.module('ADE').filter('duration', function() {
 				output = double2Mins(input);
 				output = mins2Pretty(output);
 				break;
+			//TODO: need to handle case where there is a space between number and 'min'
 			default:
 				output = '';
 		}

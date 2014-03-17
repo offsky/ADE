@@ -128,21 +128,30 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 			//setup events
 			if(!readonly) {
-				element.on('click', function(e) {
+				element.on('click.ADE', function(e) {
 					scope.$apply(function() {
 						clickHandler(e);
 					})
 				});
-				element.on('focus',function(e) {
+				element.on('focus.ADE',function(e) {
 					scope.$apply(function() {
 						focusHandler(e);
 					})
 				});
-				element.on('blur', function(e) {
+				element.on('blur.ADE', function(e) {
 					element.off('keydown.ADE'); //on blur, stop watching keyboard
 				});
 			}
 
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('keydown.ADE');
+					element.off('click.ADE');
+					element.off('focus.ADE');
+					element.off('blur.ADE');
+				}
+			});
+			
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;

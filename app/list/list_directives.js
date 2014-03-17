@@ -125,6 +125,8 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 
 				element.show();
 				input.select2('destroy');
+				input.off('cancel.ADE');
+				input.off('change.ADE');
 				input.remove();
 
 				editing = false;
@@ -135,6 +137,8 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 			//when the edit is canceled by ESC
 			var cancel = function() {
 				input.select2('destroy');
+				input.off('cancel.ADE');
+				input.off('change.ADE');
 				input.remove();
 
 				element.show();
@@ -195,13 +199,13 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 					},scope.adeList);
 				});
 
-				input.on('cancel', function(e) {
+				input.on('cancel.ADE', function(e) {
 					scope.$apply(function() {
 						cancel(e);
 					});
 				}); //registers for esc key events
 
-				input.on('change', function(e) {
+				input.on('change.ADE', function(e) {
 					scope.$apply(function() {
 						change(e);
 					});
@@ -209,8 +213,16 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 			};
 
 			if(!readonly) {
-				element.bind('click', clickHandler);
+				element.on('click.ADE', clickHandler);
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) element.off('click.ADE');
+				if(input) {
+					input.off('cancel.ADE');
+					input.off('change.ADE');
+				}
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
@@ -269,7 +281,7 @@ angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 
 					if (!isSelect) {
 						// Set the view and model value and update the angular template manually for the ajax/multiple select2.
-						elm.bind('change', function() {
+						elm.on('change.ADE', function() {
 							controller.$setViewValue(elm.select2('data'));
 							scope.$digest();
 						});
@@ -285,6 +297,10 @@ angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
 						}
 					}
 				}
+
+				scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+					if(elm) elm.off('change.ADE');
+				});
 
 				attrs.$observe('disabled', function(value) {
 					elm.select2(value && 'disable' || 'enable');

@@ -83,6 +83,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				ADE.hidePopup();
 
 				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				if(input) ADE.teardownKeys(input);
+				stopListening();
 
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
@@ -121,6 +123,16 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				}
 			};
 
+			//turns off all event listeners on the icons
+			var stopListening = function() {	
+				var nextElement = element.next('.ade-popup');
+				var clearNode = nextElement.find('.ade-clear');
+				var iconNode = nextElement.find('span');
+
+				if(clearNode) clearNode.off();
+				if(iconNode) iconNode.off();
+			};
+
 			var clickHandler = function(e) {
 				
 				element.off('keypress.ADE');
@@ -148,7 +160,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					var clearNode = nextElement.find('.ade-clear');
 					var iconNode = nextElement.find('span');
 
-					clearNode.on('click', function() {
+					clearNode.on('click.ADE', function() {
 						scope.$apply(function() {
 							saveEdit(0, 'ban');
 						});
@@ -157,7 +169,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					//handles click on an icon inside a popup
 					angular.forEach(iconNode, function(el) {
 						var node = angular.element(el);
-						node.on('click', function() {
+						node.on('click.ADE', function() {
 							window.clearTimeout(timeout); 
 							var iconClass =  node.attr('class'); //gets what you clicked on by class name
 
@@ -188,7 +200,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					// });
 
 					//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-					input.on('blur', function(e) {
+					input.on('blur.ADE', function(e) {
 						//We delay the closure of the popup to give the internal icons a chance to
 						//fire their click handlers and change the value.
 						timeout = window.setTimeout(function() {
@@ -225,22 +237,30 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 		
 			//handles blur events
-			element.on('blur', function(e) {
+			element.on('blur.ADE', function(e) {
 				element.off('keypress.ADE');
 			});
 
 			//setup events
 			if(!readonly) {
-				element.on('click', function(e) {
+				element.on('click.ADE', function(e) {
 					scope.$apply(function() {
 						clickHandler(e);
 					});
 				});
 
-				element.on('focus', function(e) {
+				element.on('focus.ADE', function(e) {
 					focusHandler(e);
 				});
 			}
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off();
+				}
+				if(input) input.off();
+				stopListening();
+			});
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
