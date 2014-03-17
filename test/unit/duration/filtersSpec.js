@@ -42,10 +42,13 @@ describe('duration', function() {
 		expect(durationFilter("1min")).toBe('1min');
 	});
 
-	xit('should allow spaces', function() {
+	it('should allow spaces', function() {
 		expect(durationFilter("11 hrs")).toBe('11hrs');
 		expect(durationFilter("1 hr 5 mins")).toBe('1hr 5mins');
 		expect(durationFilter("1 min")).toBe('1min');
+		expect(durationFilter("1 m")).toBe('1min');
+		expect(durationFilter("1 h")).toBe('1hr');
+		expect(durationFilter("1 hr")).toBe('1hr');
 	});
 
 	xit('should ignore unrecognized parts', function() {
