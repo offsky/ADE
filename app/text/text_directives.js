@@ -90,6 +90,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				if(maxlength!==undefined && maxlength!=0 && !isNaN(maxlength)) maxtag = "maxlength='"+maxlength+"'";
 
 				var value = scope.ngModel;
+				if(value==undefined || value==null) value="";
 				if(!angular.isString(value)) value = value.toString();
 				
 				element.hide();
