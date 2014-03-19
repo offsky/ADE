@@ -273,9 +273,14 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				var hastimezone = value.indexOf("(");
 				if(hastimezone>0) value = value.substring(0,hastimezone);
 
+				var scrollV = $('body').scrollTop();
+				var scrollH = $('body').scrollLeft();
 				var elOffset = element.offset();
-				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight;
+				var posLeft = elOffset.left - scrollH;
+				var posTop = elOffset.top + element[0].offsetHeight - scrollV;
+
+				console.log(elOffset,posTop);
+				
 				var today = Date.today();
 				var inputDate = Date.parse(value);
 				var dayOfWeek = inputDate.toString("dddd");

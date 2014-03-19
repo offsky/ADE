@@ -70,5 +70,7 @@
 .ade-toggle.ade-editable .ade-off:hover{background-position:0px -16px;}
 .ade-toggle.ade-editable .ade-on:hover{background-position:-16px -16px;}
 
+/* Date Directive */
 .datepicker { min-width:210px; }
+.ade-date-popup { position: fixed;}
 .ade-date-popup p{margin:5px 0 0 0;}
