@@ -273,8 +273,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				var hastimezone = value.indexOf("(");
 				if(hastimezone>0) value = value.substring(0,hastimezone);
 
-				var scrollV = $('body').scrollTop();
-				var scrollH = $('body').scrollLeft();
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var elOffset = element.offset();
 				var posLeft = elOffset.left - scrollH;
 				var posTop = elOffset.top + element[0].offsetHeight - scrollV;

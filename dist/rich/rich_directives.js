@@ -156,8 +156,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var viewRichText = function() {
 				ADE.hidePopup();
 
-				var scrollV = $('body').scrollTop();
-				var scrollH = $('body').scrollLeft();
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var elOffset = element.offset();
 				var posLeft = elOffset.left - scrollH;
 				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;
@@ -198,8 +198,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var place = function() {
 				var richText = $('#richText');
 
-				var scrollV = $('body').scrollTop();
-				var scrollH = $('body').scrollLeft();
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var elOffset = richText.offset();
 
 				//flip up top if off bottom of page
@@ -318,8 +318,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
-				var scrollV = $('body').scrollTop();
-				var scrollH = $('body').scrollLeft();
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var elOffset = element.offset();
 				var posLeft = elOffset.left - scrollH;
 				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;

@@ -141,8 +141,8 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				var linkString = scope.ngModel ? scope.ngModel.toString() : '';
 				var isurl = false;
 
-				var scrollV = $('body').scrollTop();
-				var scrollH = $('body').scrollLeft();
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var elOffset = element.offset();
 				var posLeft = elOffset.left - scrollH;
 				var posTop = elOffset.top + element[0].offsetHeight-scrollV;

@@ -104,8 +104,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var place = function() {
 				var iconBox = $('#adeIconBox');
 
-				var scrollV = $('body').scrollTop();
-				var scrollH = $('body').scrollLeft();
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var elOffset = element.offset();
 				var posLeft = elOffset.left - 7 - scrollH;  // 7px = custom offset
 				var posTop = elOffset.top + element[0].offsetHeight-scrollV;
