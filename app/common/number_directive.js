@@ -38,7 +38,7 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 			adeId: "@",
 			adeClass: "@",
 			adeReadonly: "@",
-			adePrecision: "@",
+			adePrecision: "=",
 			ngModel: "="
 		},
 

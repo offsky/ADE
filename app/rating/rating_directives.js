@@ -97,7 +97,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 			//handles clicks on the read version of the data
 			var clickHandler = function(e) {
-				var val = angular.element(event.target).data('position');
+				var val = angular.element(e.target).data('position');
 				if (val !== undefined) change(val);
 			};
 
