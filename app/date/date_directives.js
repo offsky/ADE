@@ -278,8 +278,6 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				var elOffset = element.offset();
 				var posLeft = elOffset.left - scrollH;
 				var posTop = elOffset.top + element[0].offsetHeight - scrollV;
-
-				console.log(elOffset,posTop);
 				
 				var today = Date.today();
 				var inputDate = Date.parse(value);

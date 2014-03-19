@@ -140,9 +140,13 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				//generate html for the popup
 				var linkString = scope.ngModel ? scope.ngModel.toString() : '';
 				var isurl = false;
+
+				var scrollV = $('body').scrollTop();
+				var scrollH = $('body').scrollLeft();
 				var elOffset = element.offset();
-				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight;
+				var posLeft = elOffset.left - scrollH;
+				var posTop = elOffset.top + element[0].offsetHeight-scrollV;
+
 				var html = '';
 				switch (scope.adeUrl) {
 					case 'email':

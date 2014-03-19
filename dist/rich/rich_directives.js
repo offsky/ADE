@@ -424,7 +424,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if(input) input.off();
 				$(document).off('mousedown.ADE');
 				$(document).off('scroll.ADE');
-				$(document).off('ADE_hidepops.ADE');
 			});
 
 			//need to watch the model for changes
