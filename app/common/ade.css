@@ -11,6 +11,7 @@
 .ade-popup span{padding:3px;margin:0;cursor:pointer;}
 
 /* Icon Directive */
+.ade-icons { position:fixed;}
 .ade-icon{cursor:pointer; width:14px; height:16px; color: #000; display:inline-block; text-align: center;}
 .ade-icon.icon-ban-circle{color:#999;}
 .ade-popup a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
@@ -24,6 +25,7 @@
 .ade-links .icon.icon-remove{margin:3px 0 0 0;}
 
 /* Rich text Directive */
+.ade-rich { position:fixed;}
 .ade-rich.dropdown-menu.open{padding:5px 10px;min-width:510px;width:auto;max-width:480px;}
 .ade-rich .ade-richview { max-height:200px; overflow:auto;}
 .ade-rich textarea{margin-top:15px;width:279px;line-height:16px;min-height:50px; max-height:400px;}

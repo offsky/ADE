@@ -29,7 +29,7 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $compile) {
+angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', function(ADE, $compile, $sanitize) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-rich=""></div>
@@ -80,7 +80,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					if(maxLength && value.length>maxLength) maxLength = value.length;
 		
 					// strip html
-					var text = $(value).text();
+					var text = $sanitize(value).replace(/<[^>]+>/gm, '');
 					if (text) value = text;
 
 					var lines = value.split(/\r?\n|\r/);
@@ -129,9 +129,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					}
 				}
 
-				input.off('mouseenter.ADE');
-				input.off('mouseleave.ADE');
-				input.off('click.ADE');
+				input.off();
 
 				input.remove();
 				editing = false;
@@ -150,6 +148,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				// we're done, no need to listen to events
 				$(document).off('mousedown.ADE');
+				$(document).off('scroll.ADE');
 			};
 
 			//shows a popup with the full text in read mode
@@ -157,9 +156,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			var viewRichText = function() {
 				ADE.hidePopup();
 
+				var scrollV = $('body').scrollTop();
+				var scrollH = $('body').scrollLeft();
 				var elOffset = element.offset();
-				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight-2;
+				var posLeft = elOffset.left - scrollH;
+				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;
 				var content = scope.ngModel; //what is inside the popup
 
 				if(scope.ngModel && angular.isString(scope.ngModel)) content = scope.ngModel.replace(/\n/g, '<br />');
@@ -182,22 +183,34 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				input.on('mouseenter.ADE', mousein);
 				input.on('mouseleave.ADE', mouseout);
 				if(!readonly) input.on('click.ADE', mouseclick);
+
+				//because the popup is fixed positioned, if we scroll it would
+				//get disconnected. So, we just hide it. In the future it might
+				//be better to dynamially update it's position
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						ADE.hidePopup();
+					}); 
+				});
 			};
 
-			//place the popup in the proper place on the screen
+			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
 				var richText = $('#richText');
-				var offset = richText.offset();
+
+				var scrollV = $('body').scrollTop();
+				var scrollH = $('body').scrollLeft();
+				var elOffset = richText.offset();
 
 				//flip up top if off bottom of page
 				var windowH = $(window).height();
 				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
 				var textHeight = richText[0].offsetTop + richText[0].offsetHeight;
 
-				if (textHeight - scroll > windowH) {
+				if (textHeight > windowH) {
 					richText.css({
-						top: offset.top - richText[0].offsetHeight - element.height() - 13,
-						left: offset.left
+						top: elOffset.top - richText[0].offsetHeight - element.height() - 13 - scroll,
+						left: elOffset.left
 					}).addClass("flip");
 				}
 			};
@@ -305,9 +318,12 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 
 				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
+				var scrollV = $('body').scrollTop();
+				var scrollH = $('body').scrollLeft();
 				var elOffset = element.offset();
-				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight;
+				var posLeft = elOffset.left - scrollH;
+				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;
+
 				var html = '<div id="richText" class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
 				$compile(html)(scope).insertAfter(element);
 
@@ -336,6 +352,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 					scope.$apply(function() {
 						outerBlur(e);
 					})
+				});
+
+				//because the popup is fixed positioned, if we scroll it would
+				//get disconnected. So, we just hide it. In the future it might
+				//be better to dynamially update it's position
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						saveEdit(3);
+					}); 
 				});
 
 				//focus the text area. In a timer to allow tinymce to initialize.
@@ -377,7 +402,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 				ADE.begin(scope.adeId);
 
 				editRichText();
-				place();
+				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
 			};
 
 			element.on('mouseenter.ADE', mousein);
@@ -395,13 +420,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', function(ADE, $co
 			}
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
-				if(element) {
-					element.off('click.ADE');
-					element.off('keydown.ADE');
-					element.off('mouseenter.ADE');
-					element.off('mouseleave.ADE');
-				}
+				if(element) element.off();
+				if(input) input.off();
 				$(document).off('mousedown.ADE');
+				$(document).off('scroll.ADE');
+				$(document).off('ADE_hidepops.ADE');
 			});
 
 			//need to watch the model for changes

@@ -35,6 +35,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 	//TODO: Shouldnt this be in a compile block? It seems to work
 	var len = ADE.icons.length;
 	var iconsPopupTemplate = '';
+	var s = 0;
 
 	if (len > 0) iconsPopupTemplate = '<a class="ade-clear">clear</a>';
 	for (var i = 0; i < len; i++) {
@@ -85,7 +86,9 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
 				if(input) ADE.teardownKeys(input);
 				stopListening();
-
+				$(document).off('scroll.ADE');
+				$(document).off('ADE_hidepops.ADE');
+	
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
 					element.focus();
@@ -101,15 +104,20 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var place = function() {
 				var iconBox = $('#adeIconBox');
 
+				var scrollV = $('body').scrollTop();
+				var scrollH = $('body').scrollLeft();
 				var elOffset = element.offset();
-				var posLeft = elOffset.left - 7;  // 7px = custom offset
-				var posTop = elOffset.top + element[0].offsetHeight;
+				var posLeft = elOffset.left - 7 - scrollH;  // 7px = custom offset
+				var posTop = elOffset.top + element[0].offsetHeight-scrollV;
 
 				iconBox.css({
 					left: posLeft,
 					top: posTop
 				});
 				
+				// console.log("icon V",elOffset,element[0].offsetHeight,element[0].offsetTop);
+				// console.log("icon H",elOffset,element[0].offsetWidth,element[0].offsetLeft);
+
 				//flip up top if off bottom of page
 				var windowH = $(window).height();
 				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
@@ -134,7 +142,12 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			};
 
 			var clickHandler = function(e) {
-				
+				//Hide any that are already up
+				var iconBox = $('#adeIconBox');
+				if(iconBox.length) {
+					$(document).trigger('ADE_hidepops.ADE');
+				}
+
 				element.off('keypress.ADE');
 
 				e.preventDefault();
@@ -209,6 +222,20 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 							});
 						},500);
 					});
+
+					//because the popup is fixed positioned, if we scroll it would
+					//get disconnected. So, we just hide it. In the future it might
+					//be better to dynamially update it's position
+					$(document).on('scroll.ADE',function() {
+						scope.$apply(function() {
+							saveEdit(3);
+						}); 
+					});
+					$(document).on('ADE_hidepops.ADE',function() {
+						scope.$apply(function() {
+							saveEdit(3);
+						}); 
+					});
 				}
 			};
 
@@ -216,7 +243,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				//if this is an organic focus, then do a click to make the popup appear.
 				//if this was a focus caused by myself then don't do the click
 				if (!element.data('dontclick')) {
-					element.click();
+					clickHandler(e);
 					return;
 				}
 				window.setTimeout(function() { //IE needs this delay because it fires 2 focus events in quick succession.
@@ -241,12 +268,12 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				element.off('keypress.ADE');
 			});
 
-			//setup events
+			//setup editing events
 			if(!readonly) {
-				element.on('click.ADE', function(e) {
-					scope.$apply(function() {
-						clickHandler(e);
-					});
+				element.on('click.ADE', function(e) { 
+					//scope.$apply(function() { 
+						clickHandler(e); //not necessary?
+					//});
 				});
 
 				element.on('focus.ADE', function(e) {
@@ -255,11 +282,11 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			}
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
-				if(element) {
-					element.off();
-				}
+				if(element) element.off();
 				if(input) input.off();
 				stopListening();
+				$(document).off('scroll.ADE');
+				$(document).off('ADE_hidepops.ADE');
 			});
 
 			//need to watch the model for changes

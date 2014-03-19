@@ -29,28 +29,6 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	};
 
 	//=========================================================================================
-	//incorporates the default settings into the passed in settings and returns the combination
-	function parseSettings(settings, defaults) {
-		var options = {};
-
-		//parse the passed in settings
-		if (angular.isObject(settings)) {
-			options = settings;
-		} else if (angular.isString(settings) && settings.length > 0) {
-			options = angular.fromJson(settings); //parses the json string into an object
-		}
-
-		//incorporate the defaults if not already set
-		$.each(defaults, function(i, v) {
-			if (!angular.isDefined(options[i])) {
-				options[i] = v;
-			}
-		});
-
-		return options;
-	}
-
-	//=========================================================================================
 	//broadcasts the message that we are starting editing
 	function begin(id) {
 		if(angular.isObject(id)) id = id.id;
@@ -121,7 +99,6 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//exports public functions
 	return {
 		hidePopup: hidePopup,
-		parseSettings: parseSettings,
 		begin: begin,
 		done: done,
 		setupBlur: setupBlur,
