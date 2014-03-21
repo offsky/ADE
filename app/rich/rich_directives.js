@@ -80,8 +80,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					if(maxLength && value.length>maxLength) maxLength = value.length;
 		
 					// strip html
-					var text = $sanitize(value).replace(/<[^>]+>/gm, '');
-					if (text) value = text;
+					value = $sanitize(value).replace(/<[^>]+>/gm, '');
 
 					var lines = value.split(/\r?\n|\r/);
 					value = lines[0]; //get first line

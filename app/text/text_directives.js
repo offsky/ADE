@@ -25,7 +25,7 @@
 
 ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compile) {
+angular.module('ADE').directive('adeText', ['ADE','$compile','$sanitize',function(ADE,$compile,$sanitize) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
@@ -56,8 +56,13 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				var value = scope.ngModel;
 				
 				//TODO: truncate to maxlength for display of pre-existing data
-				if(value!==undefined) html = value;
+				if(value!==undefined) {
+					if (angular.isArray(value)) value = value[0];
+					if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
+					value = $sanitize(value).replace(/<[^>]+>/gm, '');
 
+					html = value;
+				}
 				element.html(html);
 			};
 
