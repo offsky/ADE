@@ -43,7 +43,11 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	function done(id, oldValue, value, exit) {
 		if(angular.isObject(id)) id = id.id;
 		if (id) {
-			$rootScope.$broadcast('ADE-finish', {'id': id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
+			setTimeout(function() { //This is to give the model a chance to update before the notificaiton goes out
+				$rootScope.$apply(function() { 
+					$rootScope.$broadcast('ADE-finish', {'id': id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
+				});
+			});
 		}
 	}
 

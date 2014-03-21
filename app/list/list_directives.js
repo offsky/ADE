@@ -70,19 +70,19 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 			var makeHTML = function() {
 				var html = "";
 
-				if (!scope.ngModel) return;
-			
-				if (angular.isString(scope.ngModel)) {
-					html = scope.ngModel;
-				} else if (angular.isArray(scope.ngModel)) {
-					if(!multiple) {
-						html = scope.ngModel[0];
-					} else {
-						var html = '';
-						$.each(scope.ngModel, function(i, v) {
-							if (html) html += ', ';
-							html += v;
-						});
+				if (scope.ngModel!==undefined) {
+					if (angular.isString(scope.ngModel)) {
+						html = scope.ngModel;
+					} else if (angular.isArray(scope.ngModel)) {
+						if(!multiple) {
+							html = scope.ngModel[0];
+						} else {
+							var html = '';
+							$.each(scope.ngModel, function(i, v) {
+								if (html) html += ', ';
+								html += v;
+							});
+						}
 					}
 				}
 				element.html(html);

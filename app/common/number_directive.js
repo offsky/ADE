@@ -44,7 +44,7 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
-			var editing=false; //are we in edit mode or not
+			var editing = false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var readonly = false;
@@ -95,12 +95,9 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 					scope.ngModel = value;
 				}
 
-				ADE.teardownKeys(input);
-				ADE.teardownBlur(input);
-
 				element.show();
 				if(input) {
-					input.off('keypress.ADE');
+					input.off();
 					input.remove();
 				}
 				editing=false;

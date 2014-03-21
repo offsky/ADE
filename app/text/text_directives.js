@@ -56,7 +56,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile',function(ADE,$compi
 				var value = scope.ngModel;
 				
 				//TODO: truncate to maxlength for display of pre-existing data
-				html = value;
+				if(value!==undefined) html = value;
 
 				element.html(html);
 			};

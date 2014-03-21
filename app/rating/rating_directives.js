@@ -66,8 +66,10 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 				var html = '<div class="ade-'+starClass+editable+'" style="width:'+containerW+'px;">';
 				html += '<div class="ade-rate-container">';
 
+				var curVal = parseInt(scope.ngModel);
+				
 				for (var i = 0; i <= numStars; i++) {
-					starStatusClass = (i <= scope.ngModel) ? "on" : "off";
+					starStatusClass = (i <= curVal) ? "on" : "off";
 					if (i === 0) {
 						html += '<a class="ade-rate-one ade-zero" data-position="'+(i)+'">&nbsp;</a>';
 					} else {
@@ -124,6 +126,10 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 						change(scope.ngModel + 1);
 					}
 				});
+
+				element.on('blur.ADE', function(e) {
+					element.off('keydown.ADE'); //on blur, stop watching keyboard
+				});
 			};
 
 			//setup events
@@ -138,17 +144,11 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 						focusHandler(e);
 					})
 				});
-				element.on('blur.ADE', function(e) {
-					element.off('keydown.ADE'); //on blur, stop watching keyboard
-				});
 			}
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
-					element.off('keydown.ADE');
-					element.off('click.ADE');
-					element.off('focus.ADE');
-					element.off('blur.ADE');
+					element.off();
 				}
 			});
 			

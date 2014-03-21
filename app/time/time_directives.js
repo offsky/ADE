@@ -196,8 +196,9 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
-			var makeHTML = function() {				
-				stringTime = $filter('time')(scope.ngModel,format);
+			var makeHTML = function() {
+				if(scope.ngModel==undefined) stringTime = "";
+				else stringTime = $filter('time')(scope.ngModel,format);
 				element.html(stringTime);
 			};
 

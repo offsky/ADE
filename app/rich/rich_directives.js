@@ -71,7 +71,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var value = scope.ngModel;
 				var len = cutLength || 100;
 				
-				if (value) {
+				if (value!==undefined) {
 					if (angular.isArray(value)) value = value[0];
 
 					if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
