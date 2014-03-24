@@ -31,7 +31,7 @@ ade-selection:
  data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $compile) {
+angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', function(ADE, $compile, $sanitize) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-list=""></div>
@@ -47,7 +47,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 		},
 
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
+		link: function(scope, element, attrs) {
 			var editing = false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
@@ -85,6 +85,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $co
 						}
 					}
 				}
+				html = $sanitize(html).replace(/<[^>]+>/gm, '');
 				element.html(html);
 			};
 
