@@ -14,7 +14,8 @@
 	ade-arrows:
 	 	1 to support arrow keys for setting the value
 	ade-class:
-		A custom class to give to the div so that you can use your own images
+		A custom class to give to the div so that you can use your own images.
+		For icons in the off state, the class will be have "-empty" appended to it.
 	ade-width:
 		If you use a custom class with different sized images, set the width here
 	ade-readonly:
@@ -48,7 +49,7 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 		link: function(scope, element, attrs) {
 			var numStars = 5;
 			var starWidth = 23;
-			var starClass = "rating";
+			var starClass = "icon-star";
 			var readonly = false;
 
 			if(scope.adeNum!==undefined) numStars = parseInt(scope.adeNum);
@@ -60,20 +61,20 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 
 			//generates the html for the stars
 			var makeHTML = function() {
-				var starStatusClass = "off";
+				var starStatusClass = "-empty";
 				var editable = (readonly ? "" : " ade-editable");
 
-				var html = '<div class="ade-'+starClass+editable+'" style="width:'+containerW+'px;">';
+				var html = '<div class="ade-rating'+editable+'" style="width:'+containerW+'px;">';
 				html += '<div class="ade-rate-container">';
 
 				var curVal = parseInt(scope.ngModel);
 				
 				for (var i = 0; i <= numStars; i++) {
-					starStatusClass = (i <= curVal) ? "on" : "off";
+					starStatusClass = (i <= curVal) ? "" : "-empty";
 					if (i === 0) {
 						html += '<a class="ade-rate-one ade-zero" data-position="'+(i)+'">&nbsp;</a>';
 					} else {
-						html += '<a class="ade-rate-one ade-'+starStatusClass+'" data-position="'+(i)+'"></a>';
+						html += '<a class="ade-rate-one '+starClass+starStatusClass+' ade-rate'+starStatusClass+'" data-position="'+(i)+'"></a>';
 					}
 				}
 

@@ -38,7 +38,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
-			var starClass = "ade-star";
+			var starClass = "icon-star";
 			var readonly = false;
 
 			if(scope.adeClass!==undefined) starClass = scope.adeClass;
@@ -52,10 +52,10 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 					input = input.toLowerCase();
 					if(input=='false' || input=='no' || input=='0' || input=='o') input = false;
 				}
+				var editable = (readonly ? "" : " ade-editable");
+				var state = (input ? '' : '-empty');
 
-				var state = (input ? 'ade-on' : 'ade-off');
-
-				element.html('<span class="ade-toggle '+starClass+' '+state+'">');
+				element.html('<span class="ade-toggle '+editable+' '+starClass+state+'">');
 			}
 
 			var clickHandler = function(e) {
