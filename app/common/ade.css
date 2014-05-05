@@ -35,7 +35,7 @@
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
-.ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;}
+.ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;text-decoration:none;}
 .ade-rating .ade-rate { color: #000;}
 .ade-rating .ade-rate-empty { color: #666;}
 .ade-rating.ade-editable .ade-rate-container:hover .ade-rate-empty{color: #000;}
