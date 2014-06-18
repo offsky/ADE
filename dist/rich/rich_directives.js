@@ -154,7 +154,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//shows a popup with the full text in read mode
 			//TODO: handle scrolling of very long text blobs
 			var viewRichText = function() {
-				ADE.hidePopup();
+				ADE.hidePopup(element);
 
 				var scrollV = $(window).scrollTop();
 				var scrollH = $(window).scrollLeft();
@@ -167,7 +167,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				if (!content) return; //dont show popup if there is nothing to show
 
-				$compile('<div class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+				$compile('<div class="ade-popup ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
 
 				// Convert relative urls to absolute urls
 				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
@@ -189,7 +189,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				//be better to dynamially update it's position
 				$(document).on('scroll.ADE',function() {
 					scope.$apply(function() {
-						ADE.hidePopup();
+						//TODO: Save instead of hide, or position as you scroll
+						ADE.hidePopup(element);
 					}); 
 				});
 			};
@@ -311,7 +312,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				window.clearTimeout(timeout);
 				if(input) input.off('.ADE');
 
-				ADE.hidePopup();
+				ADE.hidePopup(element);
 
 				var modelValue = "";
 				if(scope.ngModel) modelValue = scope.ngModel;
@@ -324,7 +325,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var posLeft = elOffset.left - scrollH;
 				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;
 
-				var html = '<div id="richText" class="' + ADE.popupClass + ' ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
+				var html = '<div id="richText" class="ade-popup ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
 				$compile(html)(scope).insertAfter(element);
 
 				// Initialize tinymce
@@ -384,7 +385,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//if the mouse leaves, hide the popup note view if in read mode
 			var mouseout = function() {
-				var linkPopup = element.next('.' + ADE.popupClass + '');
+				var linkPopup = element.next('.ade-popup');
 				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
 						ADE.hidePopup(element);
