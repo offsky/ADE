@@ -3,6 +3,8 @@ Build Instructions
 
 1) Run scripts/build.sh which uses grunt to compile the javascript.
 2) Look in dist/build for the resulting files.
+3) Update bower.json version number
+4) Tag release in git with version number for bower to work
 
 Update Demo Site
 ================

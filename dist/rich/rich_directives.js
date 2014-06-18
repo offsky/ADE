@@ -74,6 +74,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if (value!==undefined) {
 					if (angular.isArray(value)) value = value[0];
 
+					if(value==null || value==undefined) value = "";
 					if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
 
 					//set the max length higher or it would be truncated right away on editing
