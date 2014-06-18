@@ -219,7 +219,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			};
 
 			var clickHandler = function() {
-				ADE.hidePopup();
+				ADE.hidePopup(element);
 				if (editing) return;
 				editing = true;
 				exit = 0;
@@ -293,7 +293,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 
 			//Remove the day of the week popup
 			element.on('mouseout.ADE', function() {
-			  ADE.hidePopup();
+			  ADE.hidePopup(element);
 			});
 
 			if(!readonly) {

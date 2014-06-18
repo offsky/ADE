@@ -92,7 +92,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				}
 
 				element.show();
-				ADE.hidePopup();
+				ADE.hidePopup(element);
 				if (input) input.remove();
 				editing = false;
 
@@ -116,7 +116,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				if(!angular.isString(scope.ngModel)) scope.ngModel = scope.ngModel ? scope.ngModel.toString() : '';
 
 				element.hide(); //hide the read only data
-				ADE.hidePopup();
+				ADE.hidePopup(element);
 				$compile('<input type="text" class="' + inputClass + '" value="' + scope.ngModel.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
