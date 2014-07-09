@@ -130,7 +130,10 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 			//if editable and not link, enter edit mode
 			//if not editable and link, follow link
 			var clickHandler = function(e) {
-				
+
+				// if user is holding shift, control, or command, let the link work
+   			if (e.ctrlKey || e.shiftKey || e.metaKey) return;
+
 				if (editing) {
 					e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
 					e.stopPropagation();
