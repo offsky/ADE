@@ -268,7 +268,6 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			element.on('mouseover.ADE', function() {
 				var value = element.text();
 				if (value === "" || value.length <= 4) return;
-				
 				//strip off timezone if present
 				var hastimezone = value.indexOf("(");
 				if(hastimezone>0) value = value.substring(0,hastimezone);
@@ -281,6 +280,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				
 				var today = Date.today();
 				var inputDate = Date.parse(value);
+				if(inputDate==undefined || inputDate==null) return; //couldn't parse date
 				var dayOfWeek = inputDate.toString("dddd");
 				var future = (today.isAfter(inputDate)) ? false : true;
 				var diff = Math.abs(new TimeSpan(inputDate - today).days);

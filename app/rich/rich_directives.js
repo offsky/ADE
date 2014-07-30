@@ -198,6 +198,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
 				var richText = $('#richText');
+				if(richText.length==0) return; //failed to find the rich text object. Abort
 
 				var scrollV = $(window).scrollTop();
 				var scrollH = $(window).scrollLeft();
@@ -271,13 +272,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// Do not enforce on special codes
 				if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
 					var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
-					var editorValue = $(editor).find('p')[0].innerHTML;
+					var editorValue = editor.innerHTML;
 					var length = $(editor).text().length;
 
 					// Don't allow more characters
 					if (length >= maxLength) {
+						//console.log("block",length,maxLength,editorValue);
 						// debugger;
-						$(editor).find('p')[0].innerHTML = editorValue;
+						//editor.innerHTML = editorValue;
 						e.stopPropagation();
 						e.preventDefault();
 					}
