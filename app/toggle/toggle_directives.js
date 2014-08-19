@@ -68,6 +68,11 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 				scope.ngModel = (scope.ngModel) ? false : true;
 
 				ADE.done(scope.adeId, oldValue, scope.ngModel, 0);
+
+				if($(element).is(':hover')) {
+					//It would be nice to remove the hover effect until you leave and rehover
+					//would need to register mouseout and touchmove events. yuck
+				}
 			};
 
 			var focusHandler = function(e) {

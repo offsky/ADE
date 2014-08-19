@@ -58,9 +58,25 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		input.on('blur.ADE', function() {
 			scope.$apply(function() { callback(0); });
 		});
+
+		setupTouchBlur(input);
 	}
+
+	//=========================================================================================
+	// enables blur to work on touch devices by listing for any touch and bluring
+	function setupTouchBlur(input) {
+		if('ontouchstart' in window) {
+			$(document).on('touchend.ADE', function(e) {
+				if(!$(e.target).hasClass(miniBtnClasses)) {
+					input.blur(); //it has to be in a timeout to allow other events to fire first
+				}
+			});
+		}
+	}
+
 	function teardownBlur(input) {
 		if(input) input.off('blur.ADE');
+		$(document).off('touchend.ADE');
 	}
 
 	//=========================================================================================
@@ -106,6 +122,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		begin: begin,
 		done: done,
 		setupBlur: setupBlur,
+		setupTouchBlur: setupTouchBlur,
 		teardownBlur: teardownBlur,
 		setupKeys: setupKeys,
 		teardownKeys: teardownKeys,

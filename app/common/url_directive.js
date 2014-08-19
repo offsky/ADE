@@ -68,6 +68,12 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 						case 'phone':
 							html = $filter('phone')(value);
+
+							//this is because iOS (and others?) will detect a tel: link and take over
+							//blocking our clicks from working
+							if(('ontouchstart' in window) && html.indexOf('<a href="tel:')==0) {
+								html = '<a href="call:'+html.substr(13);
+							}
 							break;
 
 						case 'url':
@@ -107,6 +113,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 			//called to enter edit mode on a url. happens immediatly for non-urls or after a popup confirmation for urls
 			var editLink = function() {
+				console.log("edit link");
 				if (timeout) window.clearTimeout(timeout); //cancels the delayed blur of the popup
 				editing = true;
 				exit = 0;
@@ -201,8 +208,10 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 						ADE.setupKeys(invisibleInput, saveEdit, false, scope);
 
 						invisibleInput.on('blur.ADE', function(e) {
+							console.log("blur");
 							ADE.teardownKeys(invisibleInput);
 							invisibleInput.off('blur.ADE');
+							ADE.teardownBlur();
 							invisibleInput = null;
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
@@ -210,6 +219,8 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 								ADE.hidePopup(element);
 							},300);
 						});
+
+						ADE.setupTouchBlur(invisibleInput);
 					}
 				} else if(!readonly) { //the editing field is not a clickable link, so directly edit it
 					e.preventDefault(); 
@@ -233,6 +244,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
 					if(editLinkNode) editLinkNode.off('click.ADE');
 					if(invisibleInput) invisibleInput.off('blur.ADE');
+					ADE.teardownBlur();
 				}
 			});
 
