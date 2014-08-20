@@ -52,7 +52,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			ngModel: "="
 		},
 
-
 		//The link step (after compile)
 		link: function(scope, element, attrs) {
 			
@@ -61,6 +60,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var readonly = false;
+			var stopObserving = null;
+            var oldId = null;
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
@@ -81,14 +82,11 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					scope.ngModel = value;
 				}
 				editing = false;
-				ADE.hidePopup();
+
+				destroy();
 
 				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
-				if(input) ADE.teardownKeys(input);
-				stopListening();
-				$(document).off('scroll.ADE');
-				$(document).off('ADE_hidepops.ADE');
-	
+
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
 					element.focus();
@@ -103,32 +101,51 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			//place the popup in the proper place on the screen
 			var place = function() {
 				var iconBox = $('#adeIconBox');
-
+				if(iconBox.length==0) return; //doesn't exist. oops
+				
 				var scrollV = $(window).scrollTop();
 				var scrollH = $(window).scrollLeft();
-				var elOffset = element.offset();
-				var posLeft = elOffset.left - 7 - scrollH;  // 7px = custom offset
-				var posTop = elOffset.top + element[0].offsetHeight-scrollV;
+				var elOffset = element.position(); //offset relative to positioned parent
+				var posLeft = Math.round(elOffset.left) - 7;  // 7px = custom offset
+				var posTop = Math.round(elOffset.top) + element[0].offsetHeight;
 
+				//console.log("place",scrollV,elOffset.top,element[0].offsetHeight,posTop);
 				iconBox.css({
 					left: posLeft,
 					top: posTop
 				});
-				
+			
+			
 				// console.log("icon V",elOffset,element[0].offsetHeight,element[0].offsetTop);
 				// console.log("icon H",elOffset,element[0].offsetWidth,element[0].offsetLeft);
 
 				//flip up top if off bottom of page
 				var windowH = $(window).height();
+				var windowW = $(window).width();
 				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
-				var pickerHeight = iconBox[0].offsetTop + iconBox[0].offsetHeight;
+				var scrollH = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft;
+				var boxOffset = iconBox.offset(); //offset releative to document
+				var pickerBottom =  boxOffset.top + iconBox[0].offsetHeight;
+				var pickerRight = boxOffset.left + iconBox[0].offsetWidth;
 
-				if (pickerHeight - scroll > windowH) {
+
+				if (pickerBottom-scroll > windowH) {
 					iconBox.css({
 						top: posTop - iconBox[0].offsetHeight - element.height() - 5,
-						left: posLeft
 					}).addClass("flip");
+				} else {
+					iconBox.removeClass("flip");
 				}
+
+				//flip it left if off the right side
+				if (pickerRight-scrollH > windowW) {
+					iconBox.css({
+						left: posLeft - 170
+					}).addClass("rarrow");
+				} else {
+					iconBox.removeClass("rarrow");
+				}
+
 			};
 
 			//turns off all event listeners on the icons
@@ -197,7 +214,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 					});
 
-					input.focus();
+					if(ADE.keyboardEdit) input.focus();
 
 					ADE.setupKeys(input, saveEdit, false, scope);
 
@@ -223,18 +240,33 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 						},500);
 					});
 
-					//because the popup is fixed positioned, if we scroll it would
-					//get disconnected. So, we just hide it. In the future it might
-					//be better to dynamially update it's position
+					//when we scroll, should try to reposition because it may
+					//go off the bottom/top and we may want to flip it
+					//TODO; If it goes off the screen, should we dismiss it?
 					$(document).on('scroll.ADE',function() {
 						scope.$apply(function() {
-							saveEdit(3);
+							place();
 						}); 
 					});
+
+					//when the window resizes, we may need to reposition the popup
+					$(window).on('resize.ADE',function() {
+						scope.$apply(function() {
+							place();
+						}); 
+					});
+
 					$(document).on('ADE_hidepops.ADE',function() {
 						scope.$apply(function() {
 							saveEdit(3);
 						}); 
+					});
+
+					//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+					//TODO: when angular 1.3 returns a deregister function, set stopObserving=
+                    oldId = scope.adeId;
+					attrs.$observe('adeId', function(value) {
+						if(oldId!==value) saveEdit(3);
 					});
 				}
 			};
@@ -262,7 +294,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				});
 			};
 
-		
 			//handles blur events
 			element.on('blur.ADE', function(e) {
 				element.off('keypress.ADE');
@@ -281,12 +312,22 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				});
 			}
 
-			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
-				if(element) element.off();
+			var destroy = function() { //need to clean up the event watchers when the scope is destroyed
+				if(stopObserving) {
+					stopObserving();
+					stopObserving = null;
+				}
+				ADE.hidePopup();
 				if(input) input.off();
 				stopListening();
 				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
 				$(document).off('ADE_hidepops.ADE');
+			};
+
+			scope.$on('$destroy', function() {
+				if(element) element.off('.ADE');
+				destroy();
 			});
 
 			//need to watch the model for changes

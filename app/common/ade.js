@@ -16,11 +16,16 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	var miniBtnClasses = 'btn btn-mini btn-primary';
 	var popupClass = 'ade-popup';
 	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
-        'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
-        'exclamation-sign', 'trophy', 'pushpin', 'warning-sign', 'leaf', 'tint', 'coffee', 'magnet', 'envelope',
-        'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
-        'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
+		  'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
+		  'exclamation-sign', 'trophy', 'pushpin', 'warning-sign', 'leaf', 'tint', 'coffee', 'magnet', 'envelope',
+		  'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
+		  'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
 
+	//A flag that controls if certain ADE directives can accept keyboard input.
+	//Causes display problems on iOS where there is no keyboard
+	//Override in your contoller of you want
+	var keyboardEdit = true; 
+	
 	function hidePopup(elm) {
 		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
@@ -116,7 +121,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	}
 
 	//=========================================================================================
-	//exports public functions
+	//exports public functions to ADE directives
 	return {
 		hidePopup: hidePopup,
 		begin: begin,
@@ -126,8 +131,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		teardownBlur: teardownBlur,
 		setupKeys: setupKeys,
 		teardownKeys: teardownKeys,
-     	icons: icons,
-     	popupClass: popupClass,
-     	miniBtnClasses: miniBtnClasses
+		icons: icons,
+		popupClass: popupClass,
+		miniBtnClasses: miniBtnClasses,
+		keyboardEdit: keyboardEdit
 	};
 }]);

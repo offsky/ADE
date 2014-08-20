@@ -1,4 +1,5 @@
-function ctrl($rootScope) {
+function ctrl($rootScope, ADE) {
+	ADE.keyboardEdit = true;
 
 	if(!$rootScope.initialized) {
 		$rootScope.initialized = true;
