@@ -61,7 +61,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var readonly = false;
 			var stopObserving = null;
-            var oldId = null;
+				var oldId = null;
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
@@ -264,7 +264,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 					//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 					//TODO: when angular 1.3 returns a deregister function, set stopObserving=
-                    oldId = scope.adeId;
+					oldId = scope.adeId;
 					attrs.$observe('adeId', function(value) {
 						if(oldId!==value) saveEdit(3);
 					});
