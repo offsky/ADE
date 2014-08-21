@@ -64,7 +64,13 @@ angular.module('ADE').directive('adeRating', ['ADE', '$compile', '$filter', func
 				var starStatusClass = "-empty";
 				var editable = (readonly ? "" : " ade-editable");
 
-				var html = '<div class="ade-rating'+editable+'" style="width:'+containerW+'px;">';
+				var hoverable = " ade-hover";
+				var userAgent = window.navigator.userAgent;
+				if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+   				hoverable = ""; //iOS web views do a weird thing with hover effects on touch
+				}
+
+				var html = '<div class="ade-rating'+editable+hoverable+'" style="width:'+containerW+'px;">';
 				html += '<div class="ade-rate-container">';
 
 				var curVal = parseInt(scope.ngModel);

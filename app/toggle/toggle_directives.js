@@ -55,7 +55,13 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 				var editable = (readonly ? "" : " ade-editable");
 				var state = (input ? '' : '-empty');
 
-				element.html('<span class="ade-toggle '+editable+' '+starClass+state+'">');
+				var hoverable = " ade-hover";
+				var userAgent = window.navigator.userAgent;
+				if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+   				hoverable = ""; //iOS web views do a weird thing with hover effects on touch
+				}
+
+				element.html('<span class="ade-toggle '+editable+hoverable+' '+starClass+state+'">');
 			}
 
 			var clickHandler = function(e) {

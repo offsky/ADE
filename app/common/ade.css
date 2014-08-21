@@ -38,23 +38,22 @@
 .ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;text-decoration:none;}
 .ade-rating .ade-rate { color: #000;}
 .ade-rating .ade-rate-empty { color: #666;}
-.ade-rating.ade-editable .ade-rate-container:hover .ade-rate-empty{color: #000;}
-.ade-rating.ade-editable .ade-rate:hover { color: #000;}
-.ade-rating.ade-editable .ade-rate-empty:hover { color: #000;}
-.ade-rating.ade-editable .ade-rate:hover~.ade-rate,
-.ade-rating.ade-editable .ade-zero:hover~.ade-rate { color: #999;}
-.ade-rating.ade-editable .ade-rate-empty:hover~.ade-rate-empty,
-.ade-rating.ade-editable .ade-rate:hover~.ade-rate-empty,
-.ade-rating.ade-editable .ade-zero:hover~.ade-rate-empty { color: #666;}
+.ade-rating.ade-editable.ade-hover .ade-rate-container:hover .ade-rate-empty{color: #000;}
+.ade-rating.ade-editable.ade-hover .ade-rate:hover { color: #000;}
+.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover { color: #000;}
+.ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate,
+.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate { color: #999;}
+.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover~.ade-rate-empty,
+.ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate-empty,
+.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate-empty { color: #666;}
 
 .ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
 .ade-rate-one.ade-zero{text-decoration:none;}
 
 /* Toggle Directive */
 .ade-toggle{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;}
-.ade-toggle.ade-editable:hover{color: #666;}
+.ade-toggle.ade-editable.ade-hover:hover{color: #666;}
 
 /* Date Directive */
 .datepicker { min-width:210px; }
-.ade-date-popup { position: fixed;}
 .ade-date-popup p{margin:5px 0 0 0;}
