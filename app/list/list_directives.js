@@ -51,6 +51,8 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 			var editing = false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+			var stopObserving = null;
+			var adeId = scope.adeId;
 
 			var multiple = false;
 			var readonly = false;
@@ -132,7 +134,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 
 				editing = false;
 
-				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
 			};
 
 			//when the edit is canceled by ESC
@@ -143,7 +145,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 				input.remove();
 
 				element.show();
-				ADE.done(scope.adeId, scope.ngModel, scope.ngModel, 3);
+				ADE.done(adeId, scope.ngModel, scope.ngModel, 3);
 				editing = false;
 			};
 
@@ -165,7 +167,8 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 				editing = true;
 				exit = 0;
 
-				ADE.begin(scope.adeId);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 				element.hide();
 
 				var multi = '';
@@ -217,11 +220,28 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 				element.on('click.ADE', clickHandler);
 			}
 
+			//A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) element.off('click.ADE');
 				if(input) {
 					input.off('cancel.ADE');
 					input.off('change.ADE');
+				}
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
 				}
 			});
 
