@@ -61,6 +61,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var readonly = false;
 			var stopObserving = null;
+			var adeId = scope.adeId;
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
@@ -84,7 +85,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 				destroy();
 
-				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
 
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
@@ -99,38 +100,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 			//place the popup in the proper place on the screen
 			var place = function() {
-				var iconBox = $('#adeIconBox');
-				if(iconBox.length==0) return; //doesn't exist. oops
-				
-				var windowH = $(window).height();
-				var windowW = $(window).width();
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elPosition = element.position(); //offset relative to document
-				var elOffset = element.offset(); //offset relative to positioned parent
-				var posLeft = Math.round(elPosition.left) - 7;  // 7px = custom offset
-				var posTop = Math.round(elPosition.top) + element.height()+2;
-				var popupH = iconBox[0].offsetHeight;
-				var popupW = iconBox[0].offsetWidth;
-				var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
-				var pickerRight = elOffset.left-7 + popupW;
-
-				iconBox.removeClass("flip");
-				iconBox.removeClass("rarrow");
-
-				//flip it up top if it would be off the bottom of page			
-				if (pickerBottom-scrollV > windowH) {
-					posTop = Math.round(elPosition.top) - popupH - 5;
-					iconBox.addClass("flip");
-				}
-
-				//Move to the left if it would be off the right of page
-				if (pickerRight-scrollH > windowW) {
-					posLeft = posLeft - 170;
-					iconBox.addClass("rarrow");
-				}
-
-				iconBox.css({ left: posLeft, top: posTop });
+				ADE.place('.'+ADE.popupClass,element);
 			};
 
 			//turns off all event listeners on the icons
@@ -143,17 +113,9 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				if(iconNode) iconNode.off();
 			};
 
-			//A callback to observe for changes to the id and cancel edit
-			var oldId = null;
-			var observeID = function(value) {
-				//this gets called even when the value hasn't changed, 
-				//so we need to check for changes ourselves
-				if(oldId!==value) saveEdit(3);
-			};
-
 			var clickHandler = function(e) {
 				//Hide any that are already up
-				var iconBox = $('#adeIconBox');
+				var iconBox = $('.'+ADE.popupClass);
 				if(iconBox.length) {
 					$(document).trigger('ADE_hidepops.ADE');
 				}
@@ -163,7 +125,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				e.preventDefault();
 				e.stopPropagation();
 
-				ADE.begin(scope.adeId);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 
 				var iconPopup = angular.element('.' + ADE.popupClass);
 				var clickTarget = angular.element(e.target);
@@ -174,7 +137,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 				if ((isMySpan || isMyDiv)  && (!iconPopup || !iconPopup.length)) {   //don't popup a second one
 					editing = true;
-					$compile('<div id="adeIconBox" class="' + ADE.popupClass + ' ade-icons dropdown-menu open"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
+					$compile('<div class="' + ADE.popupClass + ' ade-icons dropdown-menu open"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
 					place();
 
 					input = angular.element('#invisicon');
@@ -250,14 +213,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					});
 
 					$(document).on('ADE_hidepops.ADE',function() {
-						scope.$apply(function() {
-							saveEdit(3);
-						}); 
+						saveEdit(3);
 					});
-
-					//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
-					oldId = scope.adeId;
-					stopObserving = attrs.$observe('adeId', observeID);
 				}
 			};
 
@@ -302,11 +259,18 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				});
 			}
 
+			 //A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
 			var destroy = function() { 
-				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
-					stopObserving();
-					stopObserving = null;
-				}
 				ADE.hidePopup();
 				if(input) input.off();
 				stopListening();
@@ -317,8 +281,14 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 			//need to clean up the event watchers when the scope is destroyed
 			scope.$on('$destroy', function() {
-				if(element) element.off('.ADE');
 				destroy();
+				if(element) element.off('.ADE');
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
+				}
 			});
 
 			//need to watch the model for changes

@@ -44,7 +44,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
-	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc
+	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc, 0=other
 	function done(id, oldValue, value, exit) {
 		if(angular.isObject(id)) id = id.id;
 		if (id) {
@@ -120,6 +120,48 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 							//this seems to be necessary since stopPropigation wasn't working.
 	}
 
+
+	//place the popup in the proper place on the screen
+	function place(id,element, extraV, extraH) {
+		var popup = $(id);
+		if(popup.length==0) return; //doesn't exist. oops
+		
+		if(!extraV) extraV = 2;
+		if(!extraH) extraH = 7;
+
+		var windowH = $(window).height();
+		var windowW = $(window).width();
+		var scrollV = $(window).scrollTop();
+		var scrollH = $(window).scrollLeft();
+		var elPosition = element.position(); //offset relative to document
+		var elOffset = element.offset(); //offset relative to positioned parent
+		var posLeft = Math.round(elPosition.left) - extraH;  // extraH = custom offset
+		var posTop = Math.round(elPosition.top) + element.height() + extraV;
+		var popupH = popup.height();
+		var popupW = popup.width();
+		var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
+		var pickerRight = elOffset.left-7 + popupW;
+
+		popup.removeClass("flip");
+		popup.removeClass("rarrow");
+
+		//flip it up top if it would be off the bottom of page			
+		if (pickerBottom-scrollV > windowH) {
+			posTop = Math.round(elPosition.top) - popupH - 13;
+			popup.addClass("flip");
+		}
+
+		//Move to the left if it would be off the right of page
+		if (pickerRight-scrollH > windowW) {
+			posLeft = posLeft - popupW + 30;
+			popup.addClass("rarrow");
+		}
+
+		// console.log("place",posLeft,posTop);
+		popup.css({ left: posLeft, top: posTop });
+	};
+
+
 	//=========================================================================================
 	//exports public functions to ADE directives
 	return {
@@ -134,6 +176,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		icons: icons,
 		popupClass: popupClass,
 		miniBtnClasses: miniBtnClasses,
-		keyboardEdit: keyboardEdit
+		keyboardEdit: keyboardEdit,
+		place: place
 	};
 }]);

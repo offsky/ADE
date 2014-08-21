@@ -49,6 +49,8 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 			var timeout = null;
 			var readonly = false;
 			var inputClass = "";
+			var stopObserving = null;
+			var adeId = scope.adeId;
 
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
@@ -98,11 +100,10 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				}
 
 				element.show();
-				ADE.hidePopup(element);
-				if (input) input.remove();
+				destroy();
 				editing = false;
 
-				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
 				ADE.teardownBlur(input);
 				ADE.teardownKeys(input);
 				if(invisibleInput) {
@@ -113,12 +114,12 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 			//called to enter edit mode on a url. happens immediatly for non-urls or after a popup confirmation for urls
 			var editLink = function() {
-				console.log("edit link");
 				if (timeout) window.clearTimeout(timeout); //cancels the delayed blur of the popup
 				editing = true;
 				exit = 0;
 
-				ADE.begin(scope.adeId);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 
 				if(!angular.isString(scope.ngModel)) scope.ngModel = scope.ngModel ? scope.ngModel.toString() : '';
 
@@ -128,8 +129,16 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				input = element.next('input');
 				input.focus();
 
+				//put cursor at end
+				input[0].selectionStart = input[0].selectionEnd = input.val().length; 
+
 				ADE.setupBlur(input, saveEdit, scope);
 				ADE.setupKeys(input, saveEdit, false, scope);
+			};
+
+			//place the popup in the proper place on the screen
+			var place = function() {
+				ADE.place('.'+ADE.popupClass,element,15,-5);
 			};
 
 			//when a link is clicked
@@ -147,22 +156,21 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					return; //already editing
 				}
 
+				var popup = $('.'+ADE.popupClass);
+				if(popup.length) {
+					$(document).trigger('ADE_hidepops.ADE');
+				}
+
 				//generate html for the popup
 				var linkString = scope.ngModel ? scope.ngModel.toString() : '';
 				var isurl = false;
-
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elOffset = element.offset();
-				var posLeft = elOffset.left - scrollH;
-				var posTop = elOffset.top + element[0].offsetHeight-scrollV;
 
 				var html = '';
 				switch (scope.adeUrl) {
 					case 'email':
 						isurl = $filter('email')(scope.ngModel).match('mailto:');
 						if (!linkString.match('mailto:')) linkString = 'mailto:' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + ADE.popupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+						html = '<div class="' + ADE.popupClass + ' ade-links dropdown-menu open">' +
 								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE.hidePopup();">Send Email</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
@@ -172,7 +180,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					case 'phone':
 						isurl = $filter('phone')(scope.ngModel).match('tel:');
 						if (!linkString.match('tel:')) linkString = 'tel:' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open">' +
 								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE.hidePopup();">Call Number</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
@@ -183,7 +191,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					default:
 						isurl = $filter('url')(scope.ngModel).match(/https?:/);
 						if (!linkString.match(/https?:/)) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
+						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open">' +
 								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE.hidePopup();">Follow Link</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
@@ -197,18 +205,18 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					if (!element.next('.' + ADE.popupClass ).length) { //don't make a duplicate popup
 
 						$compile(html)(scope).insertAfter(element);
+						place();
 
 						var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
 						editLinkNode.on('click.ADE', editLink);
 
 						//There is an invisible input box that handles blur and keyboard events on the popup
 						invisibleInput = element.next('.ade-links').find('.invisinput');
-						invisibleInput.focus(); //focus the invisible input
+						if(ADE.keyboardEdit) invisibleInput.focus(); //focus the invisible input
 
 						ADE.setupKeys(invisibleInput, saveEdit, false, scope);
 
 						invisibleInput.on('blur.ADE', function(e) {
-							console.log("blur");
 							ADE.teardownKeys(invisibleInput);
 							invisibleInput.off('blur.ADE');
 							ADE.teardownBlur();
@@ -227,6 +235,26 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 					e.stopPropagation();
 					editLink();
 				}
+
+				//when we scroll, should try to reposition because it may
+				//go off the bottom/top and we may want to flip it
+				//TODO; If it goes off the screen, should we dismiss it?
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				//when the window resizes, we may need to reposition the popup
+				$(window).on('resize.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				$(document).on('ADE_hidepops.ADE',function() {
+					saveEdit(3);
+				});
 			};
 
 			//setup events
@@ -238,13 +266,45 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				});
 			}
 
-			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+			//A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+				 else if(adeId!==value) ADE.hidePopup(element);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
+			var destroy = function() {
+				ADE.hidePopup(element);
+				ADE.teardownBlur();
+				if(input) {
+					input.off();
+					input.remove();
+				}
 				if(element) {
-					element.off('click.ADE');
 					var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
 					if(editLinkNode) editLinkNode.off('click.ADE');
 					if(invisibleInput) invisibleInput.off('blur.ADE');
-					ADE.teardownBlur();
+				}
+				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
+				$(document).off('ADE_hidepops.ADE');
+			};
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				destroy();
+
+				if(element) element.off('.ADE');
+
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
 				}
 			});
 
