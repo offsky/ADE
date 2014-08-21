@@ -177,6 +177,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			var absolute = false;
 			var timezone = false;
 			var stringDate = ""; //The string displayed to the user after conversion from timestamp
+			var stopObserving = null;
+			var adeId = scope.adeId;
 
 			if(scope.adeDate!==undefined) format = scope.adeDate;
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
@@ -215,7 +217,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				input.remove(); //remove the input
 				editing = false;
 
-				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
 			};
 
 			var clickHandler = function() {
@@ -245,7 +247,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				}
 				preset = preset ? preset : 0; //preset should now be a unix timestamp for the displayed time
 
-				ADE.begin(scope.adeId);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 
 				element.hide();
 				var extraDPoptions = '';
@@ -264,32 +267,34 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				ADE.setupKeys(input, saveEdit, false, scope);
 			};
 
-			//When mousing over the div it will display a popup with the day of the week
-			element.on('mouseover.ADE', function() {
-				var value = element.text();
-				if (value === "" || value.length <= 4) return;
-				//strip off timezone if present
-				var hastimezone = value.indexOf("(");
-				if(hastimezone>0) value = value.substring(0,hastimezone);
+			//place the popup in the proper place on the screen
+			var place = function() {
+				ADE.place('.'+ADE.popupClass,element,15,-5);
+			};
 
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elOffset = element.offset();
-				var posLeft = elOffset.left - scrollH;
-				var posTop = elOffset.top + element[0].offsetHeight - scrollV;
-				
-				var today = Date.today();
-				var inputDate = Date.parse(value);
-				if(inputDate==undefined || inputDate==null) return; //couldn't parse date
-				var dayOfWeek = inputDate.toString("dddd");
-				var future = (today.isAfter(inputDate)) ? false : true;
-				var diff = Math.abs(new TimeSpan(inputDate - today).days);
-				var dayOrDays = (diff === 1) ? " day" : " days";
-				var content = (future) ? "In " + diff + dayOrDays + ". " : diff + dayOrDays + " ago. ";
-				if (diff === 0) content = "Today is ";
-				var html = '<div class="' + ADE.popupClass + ' ade-date-popup dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><p>' + content + dayOfWeek + '.</p></div>';
-				$compile(html)(scope).insertAfter(element);
-			});
+			//When mousing over the div it will display a popup with the day of the week
+			if(!('ontouchstart' in window)) {
+				element.on('mouseover.ADE', function() {
+					var value = element.text();
+					if (value === "" || value.length <= 4) return;
+					//strip off timezone if present
+					var hastimezone = value.indexOf("(");
+					if(hastimezone>0) value = value.substring(0,hastimezone);
+
+					var today = Date.today();
+					var inputDate = Date.parse(value);
+					if(inputDate==undefined || inputDate==null) return; //couldn't parse date
+					var dayOfWeek = inputDate.toString("dddd");
+					var future = (today.isAfter(inputDate)) ? false : true;
+					var diff = Math.abs(new TimeSpan(inputDate - today).days);
+					var dayOrDays = (diff === 1) ? " day" : " days";
+					var content = (future) ? "In " + diff + dayOrDays + ". " : diff + dayOrDays + " ago. ";
+					if (diff === 0) content = "Today is ";
+					var html = '<div class="' + ADE.popupClass + ' ade-date-popup dropdown-menu open"><p>' + content + dayOfWeek + '.</p></div>';
+					$compile(html)(scope).insertAfter(element);
+					place();
+				});
+			}
 
 			//Remove the day of the week popup
 			element.on('mouseout.ADE', function() {
@@ -300,11 +305,28 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				element.on('click.ADE', clickHandler); //this doesn't need to be wrapped in $apply because calPop does it
 			}
 
+			//A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
 					element.off('mouseover.ADE');
 					element.off('mouseout.ADE');
 					element.off('click.ADE');
+				}
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
 				}
 			});
 
