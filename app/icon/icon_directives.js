@@ -61,7 +61,6 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var readonly = false;
 			var stopObserving = null;
-				var oldId = null;
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
@@ -70,7 +69,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				element.html(html);
 			};
 
-			var saveEdit = function(exited, newValue) {
+			var saveEdit = function(exited, newValue) {				
 				//we are saving, so cancel any delayed blur saves that we might get
 				window.clearTimeout(timeout);
 
@@ -103,49 +102,35 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				var iconBox = $('#adeIconBox');
 				if(iconBox.length==0) return; //doesn't exist. oops
 				
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elOffset = element.position(); //offset relative to positioned parent
-				var posLeft = Math.round(elOffset.left) - 7;  // 7px = custom offset
-				var posTop = Math.round(elOffset.top) + element[0].offsetHeight;
-
-				//console.log("place",scrollV,elOffset.top,element[0].offsetHeight,posTop);
-				iconBox.css({
-					left: posLeft,
-					top: posTop
-				});
-			
-			
-				// console.log("icon V",elOffset,element[0].offsetHeight,element[0].offsetTop);
-				// console.log("icon H",elOffset,element[0].offsetWidth,element[0].offsetLeft);
-
-				//flip up top if off bottom of page
 				var windowH = $(window).height();
 				var windowW = $(window).width();
-				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
-				var scrollH = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft;
-				var boxOffset = iconBox.offset(); //offset releative to document
-				var pickerBottom =  boxOffset.top + iconBox[0].offsetHeight;
-				var pickerRight = boxOffset.left + iconBox[0].offsetWidth;
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
+				var elPosition = element.position(); //offset relative to document
+				var elOffset = element.offset(); //offset relative to positioned parent
+				var posLeft = Math.round(elPosition.left) - 7;  // 7px = custom offset
+				var posTop = Math.round(elPosition.top) + element.height()+2;
+				var popupH = iconBox[0].offsetHeight;
+				var popupW = iconBox[0].offsetWidth;
+				var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
+				var pickerRight = elOffset.left-7 + popupW;
 
+				iconBox.removeClass("flip");
+				iconBox.removeClass("rarrow");
 
-				if (pickerBottom-scroll > windowH) {
-					iconBox.css({
-						top: posTop - iconBox[0].offsetHeight - element.height() - 5,
-					}).addClass("flip");
-				} else {
-					iconBox.removeClass("flip");
+				//flip it up top if it would be off the bottom of page			
+				if (pickerBottom-scrollV > windowH) {
+					posTop = Math.round(elPosition.top) - popupH - 5;
+					iconBox.addClass("flip");
 				}
 
-				//flip it left if off the right side
+				//Move to the left if it would be off the right of page
 				if (pickerRight-scrollH > windowW) {
-					iconBox.css({
-						left: posLeft - 170
-					}).addClass("rarrow");
-				} else {
-					iconBox.removeClass("rarrow");
+					posLeft = posLeft - 170;
+					iconBox.addClass("rarrow");
 				}
 
+				iconBox.css({ left: posLeft, top: posTop });
 			};
 
 			//turns off all event listeners on the icons
@@ -156,6 +141,14 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 				if(clearNode) clearNode.off();
 				if(iconNode) iconNode.off();
+			};
+
+			//A callback to observe for changes to the id and cancel edit
+			var oldId = null;
+			var observeID = function(value) {
+				//this gets called even when the value hasn't changed, 
+				//so we need to check for changes ourselves
+				if(oldId!==value) saveEdit(3);
 			};
 
 			var clickHandler = function(e) {
@@ -263,11 +256,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					});
 
 					//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
-					//TODO: when angular 1.3 returns a deregister function, set stopObserving=
 					oldId = scope.adeId;
-					attrs.$observe('adeId', function(value) {
-						if(oldId!==value) saveEdit(3);
-					});
+					stopObserving = attrs.$observe('adeId', observeID);
 				}
 			};
 
@@ -312,8 +302,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				});
 			}
 
-			var destroy = function() { //need to clean up the event watchers when the scope is destroyed
-				if(stopObserving) {
+			var destroy = function() { 
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();
 					stopObserving = null;
 				}
@@ -325,6 +315,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				$(document).off('ADE_hidepops.ADE');
 			};
 
+			//need to clean up the event watchers when the scope is destroyed
 			scope.$on('$destroy', function() {
 				if(element) element.off('.ADE');
 				destroy();
