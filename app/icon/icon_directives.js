@@ -215,6 +215,8 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					$(document).on('ADE_hidepops.ADE',function() {
 						saveEdit(3);
 					});
+
+					ADE.setupTouchBlur(input);
 				}
 			};
 
@@ -272,6 +274,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 
 			var destroy = function() { 
 				ADE.hidePopup();
+				ADE.teardownBlur(input);
 				if(input) input.off();
 				stopListening();
 				$(document).off('scroll.ADE');
