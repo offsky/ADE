@@ -44,6 +44,13 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				options.minViewMode = 2;//tells the datepicker to limit to year only
 			}
 
+			//iOS has a good native picker for input type=date, so use it
+			var userAgent = window.navigator.userAgent;
+			var nativePicker = false;
+			if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+				nativePicker = true;
+			}
+
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
 				// console.log("updateModel",e.date,e.external,e.wasClick);
@@ -65,7 +72,8 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					element.datepicker('setValue', null);
 				}
 			};
-
+			
+	
 			//initialization of the datapicker
 			element.datepicker(options).on('changeDate.ADE',function(e) {
 				//sometimes this is called inside Angular scope, sometimes not.
@@ -80,7 +88,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 			if(scope.ngModel) {
 				element.datepicker('setValue', scope.ngModel);
 			}
-
+		
 			//Handles return key pressed on in-line text box
 			element.on('keypress.ADE', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
@@ -94,7 +102,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					element.datepicker('hide');
 				}
 			});
-
+			
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
 					element.off('keypress.ADE');
@@ -254,6 +262,12 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				var extraDPoptions = '';
 				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
 				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
+				
+				var userAgent = window.navigator.userAgent;
+				if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+
+				}
+
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
@@ -263,7 +277,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				});
 
 				//Handles blur of in-line text box
-				ADE.setupBlur(input, saveEdit, scope);
+				ADE.setupBlur(input, saveEdit, scope, true);
 				ADE.setupKeys(input, saveEdit, false, scope);
 			};
 

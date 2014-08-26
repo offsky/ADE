@@ -105,18 +105,31 @@
 			this.picker.show();
 			this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
 			this.place();
-			$(window).on('resize', $.proxy(this.place, this));
+			$(window).off('resize.boot');
+			$(window).on('resize.boot', $.proxy(this.place, this));
 			if (e) {
 				e.stopPropagation();
 				e.preventDefault();
 			}
 			if (!this.isInput) {
-				$(document).on('mousedown', $.proxy(this.hide, this));
+				$(document).off('mousedown.boot');
+				$(document).on('mousedown.boot', $.proxy(this.hide, this));
 			}
+			$(document).off('touchend.boot');
+			$(document).on('touchend.boot', $.proxy(this.touch, this));
+
 			this.element.trigger({
 				type: 'show',
 				date: this.date
 			});
+		},
+
+		//Added to support touch devices like iOS
+		touch: function() {		
+			var that = this;			
+			this.touchTimeout = setTimeout(function() {
+				that.element.blur();
+			},500);
 		},
 
 		hide: function() {
@@ -125,8 +138,10 @@
 			this.viewMode = this.startViewMode;
 			this.showMode();
 			if (!this.isInput) {
-				$(document).off('mousedown', this.hide);
+				$(document).off('mousedown.boot');
 			}
+			$(document).off('touchend.boot');
+
 			this.wasClick=false;
 			this.set();
 			this.element.trigger({
@@ -141,6 +156,12 @@
 
 		//value is set by clicking, on hide, or external setting
 		set: function() {
+
+			if(this.touchTimeout) { //cancel the touch timeout because we don't want to blur for this touch
+				clearTimeout(this.touchTimeout);
+				this.touchTimeout = false;
+			}
+
 			// var returnObj = [];
 			// if (this.date) {
 			//  	returnObj = [this.date.getTime(), this.date.getTime()-this.date.getTimezoneOffset()*60000, this.date.getTimezoneOffset()];

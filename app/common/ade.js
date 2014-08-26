@@ -59,12 +59,12 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//=========================================================================================
 	//registers a blur event on the input so we can know when we clicked outside
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
-	function setupBlur(input, callback, scope) {
+	function setupBlur(input, callback, scope, skipTouch) {
 		input.on('blur.ADE', function() {
 			scope.$apply(function() { callback(0); });
 		});
 
-		setupTouchBlur(input);
+		if(!skipTouch) setupTouchBlur(input);
 	}
 
 	//=========================================================================================
