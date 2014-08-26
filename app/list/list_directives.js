@@ -93,6 +93,7 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
+				console.log("saveEdit",input.data().select2.data());
 				var oldValue = scope.ngModel;
 				exit = exited;
 
@@ -126,27 +127,16 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 					scope.ngModel = value;
 				}
 
-				element.show();
-				input.select2('destroy');
-				input.off('cancel.ADE');
-				input.off('change.ADE');
-				input.remove();
-
-				editing = false;
+				destroy();
 
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
 			};
 
 			//when the edit is canceled by ESC
 			var cancel = function() {
-				input.select2('destroy');
-				input.off('cancel.ADE');
-				input.off('change.ADE');
-				input.remove();
+				destroy();
 
-				element.show();
 				ADE.done(adeId, scope.ngModel, scope.ngModel, 3);
-				editing = false;
 			};
 
 			//when the list is changed we get this event
@@ -214,6 +204,8 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 						change(e);
 					});
 				}); //registers for any change event
+
+				
 			};
 
 			if(!readonly) {
@@ -231,12 +223,23 @@ angular.module('ADE').directive('adeList', ['ADE', '$compile', '$sanitize', func
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
 
-			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
-				if(element) element.off('click.ADE');
+			var destroy = function() {
+				element.show();
 				if(input) {
+					input.select2('destroy');
 					input.off('cancel.ADE');
 					input.off('change.ADE');
+					input.remove();
 				}
+
+				editing = false;
+			};
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) element.off('click.ADE');
+				
+				destroy();
+
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();
 					stopObserving = null;

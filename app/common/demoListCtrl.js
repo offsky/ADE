@@ -48,7 +48,7 @@ function SelectCtrl(scope) {
 		var data = [], results;
 		results = element.val().split(',');
 		if(listId === undefined) listId = element.attr('data-listId');
-		console.log("results",results);
+		// console.log("results",results);
 
 		var listOptions = [];
 		if(listId && scope.listOptions && scope.listOptions[listId]) {
