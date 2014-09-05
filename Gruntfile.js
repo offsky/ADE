@@ -230,6 +230,9 @@ module.exports = function (grunt) {
 		},*/
 
 		uglify: {
+			options: {
+       		banner: '/*! Copyright <%= grunt.template.today("yyyy") %> Toodledo. Licensed under the MIT License */\n'
+     		},
 			dist: {
 				files: {
 					'dist/build/ade.min.js': [
@@ -277,7 +280,7 @@ module.exports = function (grunt) {
 		'copy:dist',        //
 		// 'ngmin',         //Prepares angular app for minification by injecting providers
 		'cssmin',           //
-		'uglify',           //obfuscates and shirinks the js file
+		// 'uglify',           //obfuscates and shirinks the js file
 		'rev',              //adds unique has to scripts.js and styles.css to avoid browser caching
 		'usemin',           //updates index with minified files and css with revisioned images
 		'clean:server'      //cleans .tmp
