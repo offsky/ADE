@@ -10,7 +10,7 @@
 
 'use strict'; //http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 
-angular.module('ADE', ['ngTagsInput']).factory('ADE', ['$rootScope', function($rootScope) {
+angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	// Common
 	var miniBtnClasses = 'btn btn-mini btn-primary';

@@ -1,26 +1,34 @@
 /* ==================================================================
- AngularJS Datatype Editor - Toggle
- A directive to toggle a star, checkbox or other icon
+AngularJS Datatype Editor - Tag
+A directive to pick multiple values from a list or add a new value
 
- Usage:
- <a ade-toggle ade-id="1234" ade-class="ade-star" ng-model="data"></a>
+This directive uses a modified version of ngTagsInput
+http://mbenford.github.io/ngTagsInput
+
+You will need to include ngTagsInput as a dependency to your app
+
+Usage:
+<div ade-tag="list1" ade-id="123" ade-query="query(val,listId)" ng-model="data"></div>
 
 Config:
 
+ade-tag:
+	The id number for the type of list. If you have multiple lists per page, this will
+	distinguish between them
 ade-id:
 	If this id is set, it will be used in messages broadcast to the app on state changes.
-ade-class:
-	A custom class to give to the div so that you can use your own images
 ade-readonly:
-	If you don't want the stars to be editable
-
+	If you don't want the list to be editable	
+ade-query:
+	A function in your controller that will provide matches for search query.
+	The argument names need to match
 
  Messages:
  name: ADE-start
  data: id from config
 
  name: ADE-finish
- data: {id from config, old value, new value}
+ data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
 

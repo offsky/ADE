@@ -16,6 +16,9 @@ ade-readonly:
 	If you don't want the list to be editable	
 ade-multiple:
 	If you want multiple values to be selectable set to "1" otherwise one value will be allowed
+	Note: a value of "1" has been deprecated in favor of our newer ade-tag directive.
+	The multiple picker here doesn't support touch devices
+
 ade-query:
 	A function in your controller that will provide matches for search query.
 	The argument names need to match
