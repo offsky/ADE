@@ -1,11 +1,11 @@
 {
   "name": "ADE",
   "version": "1.2.8",
-  "keywords" : [
-    "data editor", 
+  "keywords": [
+    "data editor",
     "angular data editor"
   ],
-  "description" : "Display and edit various types of data using AngularJS without filling the DOM with unused elements",
+  "description": "Display and edit various types of data using AngularJS without filling the DOM with unused elements",
   "homepage": "https://github.com/Toodledo/ADE",
   "authors": [
     "Toodledo"
@@ -15,7 +15,8 @@
     "angular": "1.2.13",
     "angular-sanitize": "1.2.13",
     "bootstrap": "~2.3.2",
-    "font-awesome": "3.2.1"
+    "font-awesome": "3.2.1",
+    "quill": "~0.17.3"
   },
   "devDependencies": {
     "angular-mocks": "1.2.13",
