@@ -123,6 +123,10 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				// we're done, no need to listen to events
 				$(document).off('mousedown.ADE');
 				$(document).off('scroll.ADE');
+
+				// Get rid of Quill Text Editor
+				var e=element.next();
+				$(e).remove();
 			};
 
 			//shows a popup with the full text in read mode
@@ -183,17 +187,12 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				//   1: inside ade popup
 				//   0: outside ade popup
 
-				// FIXME: Get rid of first()
-				var outerClick = $('.quill-wrapper').first().has(e.target).length === 0;
+				var outerClick = $('#qw-' + id).has(e.target).length === 0;
 
 				if (outerClick) {
 					mouseout();
 					saveEdit(0);
 					$(document).off('mousedown.ADE');
-
-					// Get rid of Quill Text Editor
-					var e=element.next();
-					$(e).remove();
 				}
 			};
 
@@ -255,7 +254,7 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				var modelValue = "";
 				if(scope.ngModel) modelValue = scope.ngModel;
 				
-				var html = '<div class="quill-wrapper">';
+				var html = '<div id="qw-' + id + '" class="quill-wrapper">';
 				html += '<div id="toolbar"><button class="ql-bold">Bold</button><button class="ql-italic">Italic</button></div>';
 				html += '<div id="editor">' + modelValue  + '</div>';
 				html += '</div>';
