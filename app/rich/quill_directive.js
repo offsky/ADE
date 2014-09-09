@@ -258,10 +258,12 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				var modelValue = "";
 				if(scope.ngModel) modelValue = scope.ngModel;
 				
-				var html = '<div id="qw-' + id + '" class="quill-wrapper">';
-				html += '<div id="toolbar"><button class="ql-bold">Bold</button><button class="ql-italic">Italic</button></div>';
-				html += '<div id="editor">' + modelValue  + '</div>';
-				html += '</div>';
+				var content = '<div id="qw-' + id + '" class="quill-wrapper">';
+				content += '<div id="toolbar"><button class="ql-bold">Bold</button><button class="ql-italic">Italic</button></div>';
+				content += '<div id="editor">' + modelValue  + '</div>';
+				content += '</div>';
+
+				var html = '<div class="ade-popup ade-rich dropdown-menu open">' + content + '</div>';
 
 				$compile(html)(scope).insertAfter(element);
 				place();
