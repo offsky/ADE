@@ -93,8 +93,11 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 					}
 
 					if (quill) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+						// Clean Quill content styling (id='line-1', class='line')
+						$(quill.root).children().removeAttr('id');
+						$(quill.root).children().removeAttr('class');
+
 						var value = quill.getHTML();
-						// FIXME: Get rid of class="line" and id's line-XX
 
 						value = $.trim(value);
 						scope.ngModel = value;
