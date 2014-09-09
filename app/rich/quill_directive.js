@@ -196,53 +196,54 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				}
 			};
 
-			// // handle special keyboard events
-			// var handleKeyEvents = function(e) {
-			// 	// Enforce maximum length, if defined
+			// handle special keyboard events
+			var handleKeyEvents = function(e) {
+				// Enforce maximum length, if defined
 
-			// 	// http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
-			// 	// Esc - 27; Tab - 9; Backspace - 8 ; Delete - 46; Arrow keys = 37-40
-			// 	var specialCodes = [27, 9, 8, 46, 37, 38, 39, 40];
+				// http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
+				// Esc - 27; Tab - 9; Backspace - 8 ; Delete - 46; Arrow keys = 37-40
+				var specialCodes = [27, 9, 8, 46, 37, 38, 39, 40];
 
-			// 	// Do not enforce on special codes
-			// 	if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
-			// 		var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
-			// 		var editorValue = editor.innerHTML;
-			// 		var length = $(editor).text().length;
+				// Do not enforce on special codes
+				if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
+					var length = quill.getLength();
 
-			// 		// Don't allow more characters
-			// 		if (length >= maxLength) {
-			// 			//console.log("block",length,maxLength,editorValue);
-			// 			// debugger;
-			// 			//editor.innerHTML = editorValue;
-			// 			e.stopPropagation();
-			// 			e.preventDefault();
-			// 		}
-			// 	}
+					// Don't allow more characters
+					if (length >= maxLength) {
+						//console.log("block",length,maxLength,editorValue);
+						// debugger;
+						//editor.innerHTML = editorValue;
+						e.stopPropagation();
+						e.preventDefault();
+					}
+				}
 
-			// 	// Listen for esc and tab events
-			// 	switch(e.keyCode) {
-			// 		case 27: // esc
-			// 			scope.$apply(function() {
-			// 				mouseout();
-			// 				saveEdit(3); // don't save results
-			// 			});
-			// 			e.preventDefault();
-			// 			$(document).off('mousedown.ADE');
-			// 			break;
-			// 		case 9: // tab
-			// 			var exit = e.shiftKey ? -1 : 1;
-			// 			scope.$apply(function() {
-			// 				mouseout();
-			// 				saveEdit(exit); // blur and save
-			// 			});
-			// 			e.preventDefault();
-			// 			$(document).off('mousedown.ADE');
-			// 			break;
-			// 		default:
-			// 			break;
-			// 	}
-			// };
+				// Listen for esc and tab events
+				switch(e.keyCode) {
+					case 27: // esc
+						scope.$apply(function() {
+							mouseout();
+							saveEdit(3); // don't save results
+						});
+						e.preventDefault();
+						$(document).off('mousedown.ADE');
+						break;
+					case 9: // tab
+						// restore value
+						quill.setHTML(scope.ngModel);
+
+						var exit = e.shiftKey ? -1 : 1;
+						scope.$apply(function() {
+							mouseout();
+							saveEdit(exit); // blur and save
+						});
+						e.preventDefault();
+						$(document).off('mousedown.ADE');
+						break;
+					default:
+						break;
+				}
+			};
 
 			//enters edit mode for the text
 			var editRichText = function() {
@@ -280,6 +281,11 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 						outerBlur(e);
 					})
 				});
+
+				$(quill.root).on('keydown.ADE', function(e) {
+					handleKeyEvents(e);
+				});
+
 
 				// //because the popup is fixed positioned, if we scroll it would
 				// //get disconnected. So, we just hide it. In the future it might
