@@ -204,7 +204,7 @@ angular.module('ADE').directive('adeTag',
 				element.show();
 
 				if(input) {
-					input.off('keypress.ADE');
+					input.off();
 				}
 				$('.ade-tag-input').remove();
 

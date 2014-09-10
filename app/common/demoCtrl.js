@@ -21,7 +21,7 @@ function ctrl($rootScope, ADE) {
 			var newvalue = data.newVal;
 			//convert arrays to strings so I can compare them for changes.
 			if (angular.isArray(data.oldVal)) oldvalue = data.oldVal.toString();
-			if (angular.isArray(data.newVal)) newValue = data.newVal.toString();
+			if (angular.isArray(data.newVal)) newvalue = data.newVal.toString();
 
 			$rootScope.lastMessage = 'Finished edit without changes. '+ exit;
 			if (oldvalue != newvalue) {
