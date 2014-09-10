@@ -289,7 +289,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
             events
                 .on('tag-added', scope.onTagAdded)
                 .on('tag-removed', scope.onTagRemoved)
-                .on('esc-pressed', scope.onEscKey) //ADE: added option to get callbacks on esc/return keys
+                .on('esc-pressed', scope.onEscKey) //ADE: added option to get callbacks on esc/tab/return keys
                 .on('ret-pressed', function(e) {
                     scope.onRetKey({e:e});
                 })
@@ -317,7 +317,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
 
                         setElementValidity();
                     }
-                    scope.onBlurred();
+                    scope.onBlurred({how:scope.tabPressed ? scope.tabPressed : 0});
                 })
                 .on('option-change', function(e) {
                     if (validationOptions.indexOf(e.name) !== -1) {
@@ -368,7 +368,9 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     else if (key === KEYS.enter && scope.newTag.text=="") { //ADE: if ret key is pressed with nothing typed, tell caller
                         scope.events.trigger('ret-pressed',e);                        
                     }
-
+                    else if (key === KEYS.tab) { //ADE: if tab key is pressed (or shift tab)
+                        scope.tabPressed = e.shiftKey ? -1 : 1;
+                    }
                     if (isModifier || hotkeys.indexOf(key) === -1) {
                         return;
                     }

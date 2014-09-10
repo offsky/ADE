@@ -69,10 +69,14 @@ angular.module('ADE').directive('adeTag',
 			};
 			scope.ret = function(e) {
 				var exit = e.shiftKey ? -2 : 2;
-				saveEdit(exit)
+				saveEdit(exit);
 			};
-			scope.blurred = function() {
-				saveEdit(0)
+			scope.tab = function(e) {
+				var exit = e.shiftKey ? -1 : 1;
+				saveEdit(exit);
+			};
+			scope.blurred = function(how) {
+				saveEdit(how);
 			};
 
 
@@ -146,7 +150,7 @@ angular.module('ADE').directive('adeTag',
 				scope.tags = angular.copy(scope.ngModel);
 				if (angular.isString(scope.tags)) scope.tags = scope.tags.split(',');
 
-				var html = '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred()"><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
+				var html = '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)"><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
 				$compile(html)(scope).insertAfter(element);
 
 				setTimeout(function() {
