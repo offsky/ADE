@@ -328,6 +328,7 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
+				input = element.next('.ade-rich');
 				editRichText();
 				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
 			};
