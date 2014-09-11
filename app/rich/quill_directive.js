@@ -304,7 +304,16 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				window.clearTimeout(timeout);
 				
 				//if any other popup is open in edit mode, don't do this view
-				if (angular.element('.ade-rich').hasClass('open') && angular.element('.ade-rich').find('textarea').length) return;
+				if (angular.element('.ade-rich').hasClass('open') && angular.element('.ade-rich').find('.quill-wrapper').length) return;
+
+				// if another popup is open, hide immediately
+				var another = angular.element('.ade-rich.open');
+				if (another.length) {
+					// console.log('mousein', element.attr('ade-id'), $(another).prev().attr('ade-id'));
+					if (element.attr('ade-id') != $(another).prev().attr('ade-id')) {
+						another.hide();
+					}
+				}
 
 				var linkPopup = element.next('.ade-rich');
 				if (!linkPopup.length) {
