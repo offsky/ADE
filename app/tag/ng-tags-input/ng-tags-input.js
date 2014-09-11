@@ -414,7 +414,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                             lostFocusToBrowserWindow = activeElement === input[0],
                             lostFocusToChildElement = element[0].contains(activeElement);
 
-                        if (lostFocusToBrowserWindow || !lostFocusToChildElement) {
+                        if (!lostFocusToChildElement) { //ADE: modified this to support touch devices clicking internal elements not bluring
                             scope.hasFocus = false;
                             events.trigger('input-blur');
                         }
