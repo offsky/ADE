@@ -3,63 +3,51 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-	<meta charset="utf-8"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-	<title></title>
-	<meta name="description" content=""/>
-	<meta name="viewport" content="width=device-width"/>
-	<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
-	<link rel="stylesheet" href="select2.css"/>
-	<link rel="stylesheet" href="../common/ade.css"/>
-	<link rel="stylesheet" href="../common/demo.css"/>
-</head>
-<body ng-app="app" ng-init="datasingle='cherry';datasingle2='pineapple';">
-	<div class="container" ng-controller="SelectCtrl" >
-		<!--[if lt IE 7]>
-		<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-		<![endif]-->
-		<a href="../index.html">back</a>
-		<h1>Select 2 Wrapper</h1>
-		<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). We extracted some code from the <a href="http://angular-ui.github.com">Angular UI</a> project to do this and use the <a href="http://ivaynberg.github.com/select2/">Select2</a> library.</p>
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title></title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../common/ng-tags-input/ng-tags-input.css"/>
+		<link rel="stylesheet" href="../common/ng-tags-input/ng-tags-input.bootstrap.css"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+		<link rel="stylesheet" href="../common/ade.css"/>
+	</head>
+	<body ng-app="tagapp" ng-init="data='apple';">
+		<div class="container" ng-controller="TagCtrl">
+				<!--[if lt IE 7]>
+					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+				<![endif]-->
+				<a href="../index.html">back</a>
+				<h1>List Directive</h1>
+				<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). Uses a modified version of <a href="http://mbenford.github.io/ngTagsInput">ngTagInput</a>.</p>
 
-		<p>Your controller will need to supply a query() and selection() function (see our examples).</p>
-		<ul>
-			<li><b>query()</b> is responsible for returning a list of matches based on what the user has typed.</li> 
-			<li><b>selection()</b> is responsible for returning the entire list of options. </li> 
-		</ul>
+				<tags-input ng-model="tags" min-length="1" max-tags="1" max-tags-force="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true" placeholder="...">
+					<auto-complete source="query($query,'list1')" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>
+				</tags-input>
+				<br /><br />
 
-		<br />
+				<div class="ade-editme" ade-list='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="2" ng-model="data"></div>
+				<br />
+				<div class="ade-editme" ade-list='list2' ade-query="query(val,listId)" ade-id="1002" tabindex="3" ng-model="data2"></div>
+			
+					
+				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-		<b>Pick one:</b>
-		<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection:selection,listId:'list1'}" ng-model="datasingle" />
+				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+		</div>
 
-		<h1>List Directive</h1>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoTagCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
 
-		<p>The directive will handle editing the list value for a non-input element.</p>
-
-		<b>Pick one:</b> <br />
-		<div class="ade-editme" ade-list='list1' ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ade-id="2345" ade-multiple="0" ng-model="datasingle2"></div>
-	 
-
-		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-  
-		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
-	</div>
-
-	<script src="../bower_components/jquery/dist/jquery.js"></script>
-	<script src="../bower_components/angular/angular.js"></script>
-	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
-
-	<script src="../common/ade.js"></script>
-	<script src="../common/demoCtrl.js"></script>
-	<script src="../common/demoListCtrl.js"></script>
-	<script src="../common/demoApp.js"></script>
-
-	<script src="list_directives.js"></script>
-	<script src="select2.js"></script>
-
-	
-
-</body>
+		<script src="../common/ng-tags-input/ng-tags-input.js"></script>
+		<script src="list_directives.js"></script>
+		 
+	</body>
 </html>

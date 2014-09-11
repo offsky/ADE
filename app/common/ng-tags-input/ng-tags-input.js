@@ -235,6 +235,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 enableEditingLastTag: [Boolean, false],
                 minTags: [Number, 0],
                 maxTags: [Number, MAX_SAFE_INTEGER],
+                maxTagsForce: [Number, MAX_SAFE_INTEGER],
                 displayProperty: [String, 'text'],
                 allowLeftoverText: [Boolean, false],
                 addFromAutocompleteOnly: [Boolean, false]
@@ -294,6 +295,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     scope.onRetKey({e:e});
                 })
                 .on('tag-added', function() {
+                    if(options.maxTagsForce==1) scope.tags = scope.tags.slice(-1); //ADE: added to support single tag enforcement
                     scope.newTag.text = '';
                 })
                 .on('tag-added tag-removed', function() {

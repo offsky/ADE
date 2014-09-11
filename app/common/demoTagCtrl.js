@@ -19,7 +19,7 @@ function TagCtrl($rootScope,scope,$q) {
 		var results = [];
 		var exactMatch = false; //tracks if we found an exact match or just a partial match
 		$.each(listOptions, function(i, v) {
-			if(v !== undefined) {
+			if(v !== undefined && v !== null && val !== undefined && val !== null) {
 				if (!angular.isString(v)) v = v.toString();
 				if (v.toLowerCase().indexOf(val.toLowerCase()) >= 0) results.push(v + '');
 				if (v.toLowerCase() == val.toLowerCase()) exactMatch = true;
@@ -34,8 +34,11 @@ function TagCtrl($rootScope,scope,$q) {
 	//handles finishing of the selection.  For this demo, we are adding new values to
 	//the array for future selection
 	scope.$on('ADE-finish', function(e, data) {
-		values = data.newVal;
+		var values = data.newVal;
 
+		if(values==null || values==undefined) return;
+
+		if(angular.isString(values)) values = [values];
 		var list = "list1";
 		if(data.id=="1002") list = "list2";
 

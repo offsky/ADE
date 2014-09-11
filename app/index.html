@@ -17,9 +17,8 @@
 		<link rel="stylesheet" href="common/ade.css"/>
 		<link rel="stylesheet" href="date/datepicker.css"/>
 		<link rel="stylesheet" href="time/timepicker.css"/>
-		<link rel="stylesheet" href="list/select2.css"/>
-		<link rel="stylesheet" href="tag/ng-tags-input/ng-tags-input.css"/>
-		<link rel="stylesheet" href="tag/ng-tags-input/ng-tags-input.bootstrap.css"/>
+		<link rel="stylesheet" href="common/ng-tags-input/ng-tags-input.css"/>
+		<link rel="stylesheet" href="common/ng-tags-input/ng-tags-input.bootstrap.css"/>
 
 		<!-- endbuild -->
 
@@ -29,7 +28,6 @@
 		
 		<script src="common/demoApp.js"></script>
 		<script src="common/demoCtrl.js"></script>
-		<script src="common/demoListCtrl.js"></script>
 		<script src="common/demoTagCtrl.js"></script>
 		
 		<script src="rich/tinymce/tinymce-ade.min.js"></script>
@@ -50,13 +48,12 @@
 		<script src="duration/duration_directives.js"></script>
 		<script src="duration/duration_filters.js"></script>
 		<script src="list/list_directives.js"></script>
-		<script src="list/select2.js"></script>
 		<script src="rich/rich_directives.js"></script>
 		<script src="money/money_filters.js"></script>
 		<script src="percent/percent_filters.js"></script>
 		<script src="phone/phone_filters.js"></script>
 		<script src="rating/rating_directives.js"></script>
-		<script src="tag/ng-tags-input/ng-tags-input.js"></script>
+		<script src="common/ng-tags-input/ng-tags-input.js"></script>
 		<script src="tag/tag_directives.js"></script>
 		<script src="text/text_directives.js"></script>
 		<script src="time/time_directives.js"></script>
@@ -151,13 +148,11 @@
 		
 		<br /><h2>Other</h2><br />
 	
-		<div ng-controller="SelectCtrl">
-		<a href="list/">List</a> - Presents a popup list to choose one value from.<br />
-			Example:  <div class="ade-list sample" ade-list='list1' ade-query="query(options,listId)" ade-selection="selection(element,callback,listId)" ng-model="datasingle"></div>
-			<br /><br />
-		</div>
-
 		<div ng-controller="TagCtrl">
+		<a href="list/">List</a> - Presents a popup list to choose one value from.<br />
+			Example:  <div class="sample" ade-list='list1' ade-query="query(val,listId)" ng-model="datasingle"></div>
+			<br /><br />
+
 		<a href="tag/">Tags</a> - Presents a popup list to choose multiple values from. <br />
 			Example: <div class="sample" ade-tag="list2" ade-query="query(val,listId)" ng-model="datamulti"></div>
 			<br /><br />

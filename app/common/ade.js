@@ -75,7 +75,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				var target = $(e.target);
 
 				//ignore taps on ADE elements
-				if(!target.hasClass(miniBtnClasses) && !target.hasClass(popupClass) && target.parents('.'+popupClass).length==0 && target.parents('.ade-tag-input').length==0) {
+				if(!target.hasClass(miniBtnClasses) && !target.hasClass(popupClass) && target.parents('.'+popupClass).length==0 && target.parents('.ade-tag-input').length==0 && target.parents('.ade-list-input').length==0) {
 					if(input) input.blur(); //it has to be in a timeout to allow other events to fire first
 				}
 			});

@@ -1,5 +1,5 @@
 function ctrl($rootScope, ADE) {
-	ADE.keyboardEdit = true;
+	ADE.keyboardEdit = false; //false for touch devices/ true for mouse
 
 	if(!$rootScope.initialized) {
 		$rootScope.initialized = true;
