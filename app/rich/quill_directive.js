@@ -174,6 +174,60 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				// });
 			};
 
+			//enters edit mode for the text
+			var editRichText = function() {
+				window.clearTimeout(timeout);
+				if(input) input.off('.ADE');
+
+				ADE.hidePopup(element);
+
+				var modelValue = "";
+				if(scope.ngModel) modelValue = scope.ngModel;
+				
+				var content = '<div id="qw-' + id + '" class="quill-wrapper">';
+				content += '<div id="toolbar"><button class="ql-bold">Bold</button><button class="ql-italic">Italic</button></div>';
+				content += '<div id="editor">' + modelValue  + '</div>';
+				content += '</div>';
+
+				var html = '<div class="ade-popup ade-rich dropdown-menu open">' + content + '</div>';
+
+				$compile(html)(scope).insertAfter(element);
+				place();
+
+				// Initialize QuillJS
+				quill = new Quill('#editor');
+				quill.addModule('toolbar', { container: '#toolbar' });
+
+				editing = true;
+
+				// Handle blur case
+				// save when user blurs out of text editor
+				// listen to clicks on all elements in page
+				// this will determine when to blur
+				$(document).on('mousedown.ADE', function(e) {
+					scope.$apply(function() {
+						outerBlur(e);
+					})
+				});
+
+				$(quill.root).on('keydown.ADE', function(e) {
+					handleKeyEvents(e);
+				});
+
+
+				//because the popup is fixed positioned, if we scroll it would
+				//get disconnected. So, we just hide it. In the future it might
+				//be better to dynamially update it's position
+				// $(document).on('scroll.ADE',function() {
+				// 	scope.$apply(function() {
+				// 		saveEdit(3);
+				// 	}); 
+				// });
+
+				//focus the text area
+				quill.focus();
+			};
+
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
 				ADE.place('.ade-rich',element,15,-5);
@@ -241,60 +295,6 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 					default:
 						break;
 				}
-			};
-
-			//enters edit mode for the text
-			var editRichText = function() {
-				window.clearTimeout(timeout);
-				if(input) input.off('.ADE');
-
-				ADE.hidePopup(element);
-
-				var modelValue = "";
-				if(scope.ngModel) modelValue = scope.ngModel;
-				
-				var content = '<div id="qw-' + id + '" class="quill-wrapper">';
-				content += '<div id="toolbar"><button class="ql-bold">Bold</button><button class="ql-italic">Italic</button></div>';
-				content += '<div id="editor">' + modelValue  + '</div>';
-				content += '</div>';
-
-				var html = '<div class="ade-popup ade-rich dropdown-menu open">' + content + '</div>';
-
-				$compile(html)(scope).insertAfter(element);
-				place();
-
-				// Initialize QuillJS
-				quill = new Quill('#editor');
-				quill.addModule('toolbar', { container: '#toolbar' });
-
-				editing = true;
-
-				// Handle blur case
-				// save when user blurs out of text editor
-				// listen to clicks on all elements in page
-				// this will determine when to blur
-				$(document).on('mousedown.ADE', function(e) {
-					scope.$apply(function() {
-						outerBlur(e);
-					})
-				});
-
-				$(quill.root).on('keydown.ADE', function(e) {
-					handleKeyEvents(e);
-				});
-
-
-				//because the popup is fixed positioned, if we scroll it would
-				//get disconnected. So, we just hide it. In the future it might
-				//be better to dynamially update it's position
-				// $(document).on('scroll.ADE',function() {
-				// 	scope.$apply(function() {
-				// 		saveEdit(3);
-				// 	}); 
-				// });
-
-				//focus the text area
-				quill.focus();
 			};
 
 	// Popup
