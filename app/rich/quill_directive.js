@@ -177,13 +177,6 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				ADE.place('.ade-rich',element,15,-5);
 			};
 
-			//sets the height of the textarea based on the actual height of the contents.
-			//min and max are set in css
-			var textareaHeight = function(elem) {
-				elem.style.height = '1px';
-				elem.style.height = (elem.scrollHeight) + 'px';
-			};
-
 			// detect clicks outside tinymce textarea
 			var outerBlur = function(e) {
 				// check where click occurred
@@ -292,14 +285,14 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				});
 
 
-				// //because the popup is fixed positioned, if we scroll it would
-				// //get disconnected. So, we just hide it. In the future it might
-				// //be better to dynamially update it's position
-				// // $(document).on('scroll.ADE',function() {
-				// // 	scope.$apply(function() {
-				// // 		saveEdit(3);
-				// // 	}); 
-				// // });
+				//because the popup is fixed positioned, if we scroll it would
+				//get disconnected. So, we just hide it. In the future it might
+				//be better to dynamially update it's position
+				// $(document).on('scroll.ADE',function() {
+				// 	scope.$apply(function() {
+				// 		saveEdit(3);
+				// 	}); 
+				// });
 
 				//focus the text area
 				quill.focus();
