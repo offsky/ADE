@@ -64,7 +64,6 @@ angular.module('ADE').directive('adeTag',
 			};
 			scope.esc = function() { //called by ng-tags-input when esc key is pressed 
 				destroy();
-
 				ADE.done(adeId, scope.ngModel, scope.ngModel, 3);
 			};
 			scope.ret = function(e) {
@@ -153,6 +152,12 @@ angular.module('ADE').directive('adeTag',
 				var html = '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)"><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
 				$compile(html)(scope).insertAfter(element);
 
+				$('.ade-tag-input').on("keydown",function(e) {
+					e.preventDefault();
+					e.stopPropagation();
+					input.blur();
+				});
+
 				setTimeout(function() {
 					input = $('.ade-tag-input .tag-list + input');
 					input.focus();
@@ -203,9 +208,8 @@ angular.module('ADE').directive('adeTag',
 			var destroy = function() {
 				element.show();
 
-				if(input) {
-					input.off();
-				}
+				if(input) input.off();
+				$('.ade-tag-input').off();
 				$('.ade-tag-input').remove();
 
 				editing = false;
