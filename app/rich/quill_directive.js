@@ -132,6 +132,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				$(e).remove();
 			};
 
+	// Rich Text Editor
+
 			//shows a popup with the full text in read mode
 			//TODO: handle scrolling of very long text blobs
 			var viewRichText = function() {
@@ -295,6 +297,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				quill.focus();
 			};
 
+	// Popup
+
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
 				window.clearTimeout(timeout);
@@ -308,6 +312,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				}
 			};
 
+			element.on('mouseenter.ADE', mousein);
+
 			//if the mouse leaves, hide the popup note view if in read mode
 			var mouseout = function() {
 				var linkPopup = element.next('.ade-popup');
@@ -317,6 +323,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 					},400);
 				}
 			};
+
+			element.on('mouseleave.ADE', mouseout);
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
@@ -332,9 +340,6 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				editRichText();
 				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
 			};
-
-			element.on('mouseenter.ADE', mousein);
-			element.on('mouseleave.ADE', mouseout);
 			
 			if(!readonly) {
 				element.on('click.ADE', mouseclick);
@@ -347,6 +352,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				});
 			}
 
+	// Observe
+
 			//A callback to observe for changes to the id and save edit
 			//The model will still be connected, so it is safe, but don't want to cause problems
 			var observeID = function(value) {
@@ -358,6 +365,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
+
+	// Destroy
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) element.off();
@@ -372,6 +381,8 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 					delete attrs.$$observers['adeId'];
 				}
 			});
+
+	// Watch
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
