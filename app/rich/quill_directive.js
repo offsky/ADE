@@ -128,7 +128,7 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				$(document).off('scroll.ADE');
 
 				// Get rid of Quill Text Editor
-				var e=element.next();
+				var e = element.next();
 				$(e).remove();
 			};
 
@@ -265,10 +265,7 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				quill = new Quill('#editor');
 				quill.addModule('toolbar', { container: '#toolbar' });
 
-				// editing = true;
 				editing = true;
-
-				// input = element.next('.ade-rich');
 
 				// Handle blur case
 				// save when user blurs out of text editor
