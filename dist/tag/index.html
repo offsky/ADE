@@ -9,8 +9,8 @@
 		<title></title>
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
-		<link rel="stylesheet" href="ng-tags-input/ng-tags-input.css"/>
-		<link rel="stylesheet" href="ng-tags-input/ng-tags-input.bootstrap.css"/>
+		<link rel="stylesheet" href="../common/ng-tags-input/ng-tags-input.css"/>
+		<link rel="stylesheet" href="../common/ng-tags-input/ng-tags-input.bootstrap.css"/>
 		<link rel="stylesheet" href="../common/demo.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
@@ -21,18 +21,16 @@
 				<![endif]-->
 				<a href="../index.html">back</a>
 				<h1>Tag Directive</h1>
-				<p>A directive that allows you to pick values from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable).</p>
+				<p>A directive that allows you to pick values from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). Uses a modified version of <a href="http://mbenford.github.io/ngTagsInput">ngTagInput</a>.</p>
 
-				<input tabindex="1">
-
-				<tags-input ng-model="tags" min-length="1" replace-spaces-with-dashes="false" tabindex="2" enable-editing-last-tag="true">
+				<tags-input ng-model="tags" min-length="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true">
 					<auto-complete source="query($query,'list1')" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>
 				</tags-input>
 				<br /><br />
 
-				<div class="ade-editme" ade-tag='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="3" ng-model="data"></div>
+				<div class="ade-editme" ade-tag='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="2" ng-model="data"></div>
 				<br />
-				<div class="ade-editme" ade-tag='list2' ade-query="query(val,listId)" ade-id="1002" tabindex="4" ng-model="data2"></div>
+				<div class="ade-editme" ade-tag='list2' ade-query="query(val,listId)" ade-id="1002" tabindex="3" ng-model="data2"></div>
 			
 					
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
@@ -48,7 +46,7 @@
 		<script src="../common/demoTagCtrl.js"></script>
 		<script src="../common/demoApp.js"></script>
 
-		<script src="ng-tags-input/ng-tags-input.js"></script>
+		<script src="../common/ng-tags-input/ng-tags-input.js"></script>
 		<script src="tag_directives.js"></script>
 		 
 	</body>

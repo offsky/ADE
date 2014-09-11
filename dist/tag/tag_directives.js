@@ -163,8 +163,8 @@ angular.module('ADE').directive('adeTag',
 				setTimeout(function() {
 					input = $('.ade-tag-input .tag-list + input');
 					input.focus();
+					ADE.setupTouchBlur(input);
 				},100); //tag input needs little time to initialize before it can accept a focus
-
 
 			};
 
@@ -213,6 +213,8 @@ angular.module('ADE').directive('adeTag',
 				if(input) input.off();
 				$('.ade-tag-input').off();
 				$('.ade-tag-input').remove();
+
+				ADE.teardownBlur();
 
 				editing = false;
 			};

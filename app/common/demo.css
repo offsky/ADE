@@ -12,7 +12,7 @@ p { margin:10px 0px 20px 0px;}
 .ade-editme{ display: inline-block; margin:20px 0px 20px 0px; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
 .container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:700px;}
 
-.ade-tag-input { display: inline-block; width:80%;}
+.ade-tag-input, .ade-list-input { display: inline-block; width:80%;}
 input[type="text"] {
 	display: inline-block;
 	height: 19px;
