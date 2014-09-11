@@ -152,10 +152,12 @@ angular.module('ADE').directive('adeTag',
 				var html = '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)"><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
 				$compile(html)(scope).insertAfter(element);
 
-				$('.ade-tag-input').on("keydown",function(e) {
-					e.preventDefault();
-					e.stopPropagation();
-					input.blur();
+				$('.ade-tag-input').on("keydown",function(e) { //prevent tab key from doing default behavior
+					if (e.keyCode == 9) { //tab
+						e.preventDefault();
+						e.stopPropagation();
+						input.blur();
+					}
 				});
 
 				setTimeout(function() {
