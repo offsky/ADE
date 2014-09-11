@@ -58,6 +58,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var cutLength = 100; 
 			var maxLength = null; //the maxLength is enforced on edit, not from external changes
 			var origMaxLength = null;
+			var stopObserving = null;
+			var adeId = scope.adeId;
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
@@ -113,7 +115,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					// Special case: Length surpasses maxLength and maxLength is artificially high
 					// Reduce maxLength to current length until it reaches origMaxLength
 					if (maxLength > origMaxLength && maxLength>currentLength) {
-						maxLength = currentLength;
+							maxLength = currentLength;
 					}
 
 					if(editor!=undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
@@ -134,7 +136,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				input.remove();
 				editing = false;
 
-				ADE.done(scope.adeId, oldValue, scope.ngModel, exit);
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
 
 				if (exit == 1) {
 					element.data('dontclick', true); //tells the focus handler not to click
@@ -156,18 +158,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var viewRichText = function() {
 				ADE.hidePopup(element);
 
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elOffset = element.offset();
-				var posLeft = elOffset.left - scrollH;
-				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;
 				var content = scope.ngModel; //what is inside the popup
 
 				if(scope.ngModel && angular.isString(scope.ngModel)) content = scope.ngModel.replace(/\n/g, '<br />');
 
 				if (!content) return; //dont show popup if there is nothing to show
 
-				$compile('<div class="ade-popup ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+				$compile('<div class="ade-popup ade-rich dropdown-menu open"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+				place();
 
 				// Convert relative urls to absolute urls
 				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
@@ -187,34 +185,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				//because the popup is fixed positioned, if we scroll it would
 				//get disconnected. So, we just hide it. In the future it might
 				//be better to dynamially update it's position
-				$(document).on('scroll.ADE',function() {
-					scope.$apply(function() {
-						//TODO: Save instead of hide, or position as you scroll
-						ADE.hidePopup(element);
-					}); 
-				});
+				// $(document).on('scroll.ADE',function() {
+				// 	scope.$apply(function() {
+				// 		//TODO: Save instead of hide, or position as you scroll
+				// 		ADE.hidePopup(element);
+				// 	}); 
+				// });
 			};
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
-				var richText = $('#richText');
-				if(richText.length==0) return; //failed to find the rich text object. Abort
-
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elOffset = richText.offset();
-
-				//flip up top if off bottom of page
-				var windowH = $(window).height();
-				var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
-				var textHeight = richText[0].offsetTop + richText[0].offsetHeight;
-
-				if (textHeight > windowH) {
-					richText.css({
-						top: elOffset.top - richText[0].offsetHeight - element.height() - 13 - scroll,
-						left: elOffset.left
-					}).addClass("flip");
-				}
+				ADE.place('.ade-rich',element,15,-5);
 			};
 
 			//sets the height of the textarea based on the actual height of the contents.
@@ -321,14 +302,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
-				var scrollV = $(window).scrollTop();
-				var scrollH = $(window).scrollLeft();
-				var elOffset = element.offset();
-				var posLeft = elOffset.left - scrollH;
-				var posTop = elOffset.top + element[0].offsetHeight - 2 - scrollV;
-
-				var html = '<div id="richText" class="ade-popup ade-rich dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' + content + '</div>';
+	
+				var html = '<div class="ade-popup ade-rich dropdown-menu open">' + content + '</div>';
 				$compile(html)(scope).insertAfter(element);
+				place();
 
 				// Initialize tinymce
 				// Full example:
@@ -360,11 +337,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				//because the popup is fixed positioned, if we scroll it would
 				//get disconnected. So, we just hide it. In the future it might
 				//be better to dynamially update it's position
-				$(document).on('scroll.ADE',function() {
-					scope.$apply(function() {
-						saveEdit(3);
-					}); 
-				});
+				// $(document).on('scroll.ADE',function() {
+				// 	scope.$apply(function() {
+				// 		saveEdit(3);
+				// 	}); 
+				// });
 
 				//focus the text area. In a timer to allow tinymce to initialize.
 				timeout = window.setTimeout(function() {
@@ -402,7 +379,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				editing = true;
 				exit = 0;
 
-				ADE.begin(scope.adeId);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 
 				editRichText();
 				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
@@ -422,11 +400,30 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				});
 			}
 
+			//A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+				 else if(adeId!==value) ADE.hidePopup(element);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) element.off();
 				if(input) input.off();
 				$(document).off('mousedown.ADE');
 				$(document).off('scroll.ADE');
+
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
+				}
 			});
 
 			//need to watch the model for changes
