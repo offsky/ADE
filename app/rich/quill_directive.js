@@ -199,9 +199,7 @@ angular.module('ADE').directive('adeQuill', ['ADE', '$compile', '$sanitize', fun
 				// content += size;
 				content += ' <div id="toolbar">';
 				content += '  <span class="ql-format-group">';
-				// content += '<button class="ql-bold">Bold</button>';
 				content += '   <span title="Bold" class="ql-format-button ql-bold"></span>';
-				// content += '<button class="ql-italic">Italic</button>';
 				content += '   <span title="Italic" class="ql-format-button ql-italic"></span>';
 				content += '  </span>';
 				// content += format;
