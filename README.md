@@ -39,7 +39,6 @@ The following packages are needed by their respective ADE datatypes:
 * angular-sanitize 1.2.13: email and url
 * bootstrap: date, email, icon, list, phone, rich, time, url
 * font-awesome: icon directive
-* select2: list directive
 * tinymce 4.0.4 (for rich directive only) Use our modified version if you want keyboard commands to work.
 
 The following packages included in ADE were modified to support a variety of use cases. You can use the unmodified packages available in bower, but we have not tested the results yet.
@@ -47,7 +46,7 @@ The following packages included in ADE were modified to support a variety of use
 * datejs: date and time
 * bootstrap-datepicker: date
 * bootstrap-timepicker: time
-* select2 (js): list
+* ngTagsInput: list and tag
 
 We are working to reduce external dependencies as much as possible.
 
