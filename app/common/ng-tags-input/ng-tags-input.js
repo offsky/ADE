@@ -57,7 +57,9 @@ function makeObjectArray(array, key) {
 }
 
 function findInObjectArray(array, obj, key) {
-    if(array==undefined) return null;
+    if(array===undefined) {
+        return null;
+    }
     var item = null;
     for (var i = 0; i < array.length; i++) {
         // I'm aware of the internationalization issues regarding toLowerCase()
@@ -101,7 +103,7 @@ var tagsInput = angular.module('ngTagsInput', []);
  *
  * @param {string} ngModel Assignable angular expression to data-bind to.
  * @param {string=} [displayProperty=text] Property to be rendered as the tag label.
- * @param {string=} [input=text] Type of the input element. Only 'text', 'email' and 'url' are supported values.
+ * @param {string=} [type=text] Type of the input element. Only 'text', 'email' and 'url' are supported values.
  * @param {number=} tabindex Tab order of the control.
  * @param {string=} [placeholder=Add a tag] Placeholder text for the control.
  * @param {number=} [minLength=3] Minimum length for a new tag.
@@ -210,7 +212,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
             tags: '=ngModel',
             onTagAdded: '&',
             onTagRemoved: '&',
-            onEscKey: '&', //ADE: Added option to get callbacks on esc and return keys
+            onEscKey: '&',
             onRetKey: '&',
             onBlurred: '&'
         },
@@ -292,16 +294,19 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
             events
                 .on('tag-added', scope.onTagAdded)
                 .on('tag-removed', scope.onTagRemoved)
-                .on('esc-pressed', scope.onEscKey) //ADE: added option to get callbacks on esc/tab/return keys
-                .on('ret-pressed', function(e) {
-                    scope.onRetKey({e:e});
-                })
+                .on('esc-pressed', scope.onEscKey)
                 .on('tag-added', function() {
-                    if(options.maxTagsForce==1) scope.tags = scope.tags.slice(-1); //ADE: added to support single tag enforcement
+                    //supports FIFO tag list with enforcing number of tags
+                    if(options.maxTagsForce && scope.tags.length>options.maxTagsForce) {
+                        scope.tags = scope.tags.slice(1,options.maxTagsForce+1);
+                    }
                     scope.newTag.text = '';
                 })
                 .on('tag-added tag-removed', function() {
                     ngModelCtrl.$setViewValue(scope.tags);
+                })
+                .on('ret-pressed', function(e) {
+                    scope.onRetKey({e:e});
                 })
                 .on('invalid-tag', function() {
                     scope.newTag.invalid = true;
@@ -313,7 +318,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 .on('input-focus', function() {
                     ngModelCtrl.$setValidity('leftoverText', true);
 
-                    //ADE: added to support bluring on outside tap when on touch device
+                    //blur on outside tap when on touch device
                     $(document).on('touchend.ngTagsInput', function(e) {
                         if(!element[0].contains(e.target)) {
                             if(input) {
@@ -330,8 +335,8 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
 
                         setElementValidity();
                     }
-                    scope.onBlurred({how:scope.tabPressed ? scope.tabPressed : 0});
                     $(document).off('touchend.ngTagsInput');
+                    scope.onBlurred({how:scope.tabPressed ? scope.tabPressed : 0});
                 })
                 .on('option-change', function(e) {
                     if (validationOptions.indexOf(e.name) !== -1) {
@@ -376,15 +381,16 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                         addKeys = {},
                         shouldAdd, shouldRemove;
 
-                    if (key === KEYS.escape) { //ADE: is esc key is pressed without autocomplete open, tell caller
+                    if (key === KEYS.escape) { //if esc key is pressed without autocomplete open, tell caller
                         scope.events.trigger('esc-pressed');
                     }
-                    else if (key === KEYS.enter && scope.newTag.text=="") { //ADE: if ret key is pressed with nothing typed, tell caller
-                        scope.events.trigger('ret-pressed',e);                        
+                    else if (key === KEYS.enter && scope.newTag.text==='') { // if ret key is pressed with nothing typed, tell caller
+                        scope.events.trigger('ret-pressed',e);
                     }
-                    else if (key === KEYS.tab) { //ADE: if tab key is pressed (or shift tab)
+                    else if (key === KEYS.tab) { //if tab key is pressed (or shift tab) save the info for feeding to onBlur callback
                         scope.tabPressed = e.shiftKey ? -1 : 1;
                     }
+
                     if (isModifier || hotkeys.indexOf(key) === -1) {
                         return;
                     }
@@ -420,7 +426,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     scope.hasFocus = true;
                     events.trigger('input-focus');
 
-                     $timeout(function() {
+                    $timeout(function() { //inside a timeout to prevent $digest loop conflict
                         scope.$apply();
                     });
                 })
@@ -430,7 +436,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                             lostFocusToBrowserWindow = activeElement === input[0],
                             lostFocusToChildElement = element[0].contains(activeElement);
 
-                        if (!lostFocusToChildElement) { //ADE: modified this to support touch devices clicking internal elements not bluring
+                        if (lostFocusToBrowserWindow === lostFocusToChildElement) {
                             scope.hasFocus = false;
                             events.trigger('input-blur');
                         }
@@ -619,8 +625,19 @@ tagsInput.directive('autoComplete', ["$document","$timeout","$sce","tagsInputCon
             };
 
             tagsInput
-                .on('tag-added tag-removed invalid-tag input-blur', function() {
+                .on('invalid-tag input-blur', function() {
                     suggestionList.reset();
+                })
+                .on('tag-added tag-removed', function() {
+                    suggestionList.reset();
+                    
+                    //must give input chance to reset before we attempt to present the autocomplete again
+                    $timeout(function() {
+                        var value = tagsInput.getCurrentTagText();
+                        if (options.loadOnFocus && shouldLoadSuggestions(value)) {
+                            suggestionList.load(value, tagsInput.getTags());
+                        }
+                    });
                 })
                 .on('input-change', function(value) {
                     if (shouldLoadSuggestions(value)) {
@@ -879,7 +896,9 @@ tagsInput.provider('tagsInputConfig', function() {
                     }
                     else {
                         updateValue(attrs[key] && $interpolate(attrs[key])(scope.$parent));
-                        if(key=="tabindex") attrs[key] = -1; //ADE: added to fix tab and shift-tab behavior when entering/leaving input
+                        if(key==='tabindex') {
+                            attrs[key] = -1; // fixes tab key entering input correctly
+                        }
                     }
                 });
             },
