@@ -70,7 +70,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//=========================================================================================
 	// enables blur to work on touch devices by listing for any touch and bluring
 	function setupTouchBlur(input) {
-		if('ontouchstart' in window) {
+		if('ontouchend' in window) {
 			$(document).on('touchend.ADE', function(e) {
 				var target = $(e.target);
 

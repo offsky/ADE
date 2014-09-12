@@ -104,22 +104,22 @@ angular.module('ADE').directive('adeTag',
 				exit = exited;
 
 				if (exited != 3) { //don't save value on esc
-					value = scope.tags;
+					var value = scope.tags;
 					if (angular.isArray(value)) {
 						if (value.length > 0) {
 							//to have value stored as array
 							var vals = [];
 							angular.forEach(value, function(val, key) {
-								vals.push(val.text);
+								if(val.text) vals.push(val.text);
 							});
 							value = vals;
 						} else {
-							value = '';
+							value = null;
 						}
 					} else if (angular.isObject(value) && value.text) {
 						value = value.text;
 					} else {
-						value = (value) ? value.text : '';
+						value = (value) ? value.text : null;
 					}
 
 					scope.ngModel = value;
@@ -140,7 +140,6 @@ angular.module('ADE').directive('adeTag',
 				ADE.begin(adeId);
 				element.hide();
 
-
 				var listId = '';
 				if (scope.adeList) listId = scope.adeList; //data that is passed through to the query function
 
@@ -149,7 +148,7 @@ angular.module('ADE').directive('adeTag',
 				scope.tags = angular.copy(scope.ngModel);
 				if (angular.isString(scope.tags)) scope.tags = scope.tags.split(',');
 
-				var html = '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)"><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
+				var html = '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" focus-on-load="true"><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
 				$compile(html)(scope).insertAfter(element);
 
 				$('.ade-tag-input').on("keydown",function(e) { //prevent tab key from doing default behavior
@@ -162,8 +161,6 @@ angular.module('ADE').directive('adeTag',
 
 				setTimeout(function() {
 					input = $('.ade-tag-input .tag-list + input');
-					input.focus();
-					ADE.setupTouchBlur(input);
 				},100); //tag input needs little time to initialize before it can accept a focus
 
 			};

@@ -106,14 +106,15 @@ angular.module('ADE').directive('adeList',
 				exit = exited;
 
 				if (exited != 3) { //don't save value on esc
-					value = scope.tags;
+					var value = scope.tags;
 					if (angular.isArray(value)) {
-						if(value[0]) value = value[0].text
+						if(value[0] && value[0].text) value = value[0].text
 						else value = null;
 					} else if (angular.isObject(value) && value.text) {
-						value = value.text;
+						if(value.text) value = value.text;
+						else value = null;
 					} else {
-						value = (value) ? value.text : '';
+						value = (value) ? value.text : null;
 					}
 
 					scope.ngModel = value;

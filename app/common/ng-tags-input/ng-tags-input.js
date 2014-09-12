@@ -57,6 +57,7 @@ function makeObjectArray(array, key) {
 }
 
 function findInObjectArray(array, obj, key) {
+    if(array==undefined) return null;
     var item = null;
     for (var i = 0; i < array.length; i++) {
         // I'm aware of the internationalization issues regarding toLowerCase()
@@ -238,7 +239,8 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 maxTagsForce: [Number, MAX_SAFE_INTEGER],
                 displayProperty: [String, 'text'],
                 allowLeftoverText: [Boolean, false],
-                addFromAutocompleteOnly: [Boolean, false]
+                addFromAutocompleteOnly: [Boolean, false],
+                focusOnLoad: [Boolean, false]
             });
 
             $scope.tagList = new TagList($scope.options, $scope.events);
@@ -310,6 +312,15 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 })
                 .on('input-focus', function() {
                     ngModelCtrl.$setValidity('leftoverText', true);
+
+                    //ADE: added to support bluring on outside tap when on touch device
+                    $(document).on('touchend.ngTagsInput', function(e) {
+                        if(!element[0].contains(e.target)) {
+                            if(input) {
+                                input.blur(); //it has to be in a timeout to allow other events to fire first
+                            }
+                        }
+                    });
                 })
                 .on('input-blur', function() {
                     if (!options.addFromAutocompleteOnly) {
@@ -320,6 +331,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                         setElementValidity();
                     }
                     scope.onBlurred({how:scope.tabPressed ? scope.tabPressed : 0});
+                    $(document).off('touchend.ngTagsInput');
                 })
                 .on('option-change', function(e) {
                     if (validationOptions.indexOf(e.name) !== -1) {
@@ -408,7 +420,9 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     scope.hasFocus = true;
                     events.trigger('input-focus');
 
-                    scope.$apply();
+                     $timeout(function() {
+                        scope.$apply();
+                    });
                 })
                 .on('blur', function() {
                     $timeout(function() {
@@ -426,6 +440,10 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
             element.find('div').on('click', function() {
                 input[0].focus();
             });
+
+            if(options.focusOnLoad) { //ADE: added to focus on load
+                input[0].focus();
+            }
         }
     };
 }]);
