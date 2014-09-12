@@ -102,7 +102,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile','$sanitize',functio
 				if(!angular.isString(value)) value = value.toString();
 				
 				element.hide();
-				$compile('<input type="text" class="'+inputClass+'" value="'+value.replace(/"/g,'&quot;')+'" '+maxtag+' />')(scope).insertAfter(element);
+				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value.replace(/"/g,'&quot;')+'" '+maxtag+' />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				

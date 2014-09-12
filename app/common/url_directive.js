@@ -125,7 +125,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 				element.hide(); //hide the read only data
 				ADE.hidePopup(element);
-				$compile('<input type="text" class="' + inputClass + '" value="' + scope.ngModel.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
+				$compile('<input type="text" class="ade-input ' + inputClass + '" value="' + scope.ngModel.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 

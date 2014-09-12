@@ -73,9 +73,16 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		if('ontouchend' in window) {
 			$(document).on('touchend.ADE', function(e) {
 				var target = $(e.target);
+			
+				var didTouchInPopup = target.parents('.'+popupClass).length>0 || target.hasClass(popupClass);
+				var didTouchInTag = target.parents('.ade-tag-input').length>0;	
+				var didTouchInList = target.parents('.ade-list-input').length>0;
+				var didTouchIcon = target.hasClass(miniBtnClasses);
+				var didTouchInput = target.hasClass('ade-input');
+
 
 				//ignore taps on ADE elements
-				if(!target.hasClass(miniBtnClasses) && !target.hasClass(popupClass) && target.parents('.'+popupClass).length==0 && target.parents('.ade-tag-input').length==0 && target.parents('.ade-list-input').length==0) {
+				if(!didTouchIcon && !didTouchInPopup && !didTouchInTag && !didTouchInList && !didTouchInput) {
 					if(input) input.blur(); //it has to be in a timeout to allow other events to fire first
 				}
 			});

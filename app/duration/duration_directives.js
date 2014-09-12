@@ -88,7 +88,7 @@ angular.module('ADE').directive('adeDuration', ['ADE', '$compile', '$filter', fu
 				ADE.begin(adeId);
 
 				element.hide();
-				$compile('<input type="text" class="'+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
+				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
