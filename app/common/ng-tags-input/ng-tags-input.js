@@ -283,7 +283,8 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 options = scope.options,
                 input = element.find('input'),
                 validationOptions = ['minTags', 'maxTags', 'allowLeftoverText'],
-                setElementValidity;
+                setElementValidity,
+                waitForBlur;
 
             setElementValidity = function() {
                 ngModelCtrl.$setValidity('maxTags', scope.tags.length <= options.maxTags);
@@ -431,7 +432,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     });
                 })
                 .on('blur', function() {
-                    $timeout(function() {
+                    waitForBlur = $timeout(function() {
                         var activeElement = $document.prop('activeElement'),
                             lostFocusToBrowserWindow = activeElement === input[0],
                             lostFocusToChildElement = element[0].contains(activeElement);
@@ -444,6 +445,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 });
 
             element.find('div').on('click', function() {
+                $timeout.cancel(waitForBlur);
                 input[0].focus();
             });
 
