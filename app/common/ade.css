@@ -30,6 +30,7 @@
 .ade-rich .ade-richview { max-height:200px; overflow:auto;}
 .ade-rich textarea{margin-top:15px;width:279px;line-height:16px;min-height:50px; max-height:400px;}
 .ade-rich .mce-colorbutton span {padding:0px;}
+.touch .ade-rich .mce-tinymce .mce-edit-area { padding-top: 30px ;}
 
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;}
