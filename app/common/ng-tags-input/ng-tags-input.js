@@ -284,12 +284,21 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 input = element.find('input'),
                 validationOptions = ['minTags', 'maxTags', 'allowLeftoverText'],
                 setElementValidity,
+                blurOnTouch,
                 waitForBlur;
 
             setElementValidity = function() {
                 ngModelCtrl.$setValidity('maxTags', scope.tags.length <= options.maxTags);
                 ngModelCtrl.$setValidity('minTags', scope.tags.length >= options.minTags);
                 ngModelCtrl.$setValidity('leftoverText', options.allowLeftoverText ? true : !scope.newTag.text);
+            };
+
+            blurOnTouch = function(e) {
+                if(!element[0].contains(e.target)) {
+                    if(input[0]) {
+                        input[0].blur();
+                    }
+                }
             };
 
             events
@@ -320,13 +329,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     ngModelCtrl.$setValidity('leftoverText', true);
 
                     //blur on outside tap when on touch device
-                    $(document).on('touchend.ngTagsInput', function(e) {
-                        if(!element[0].contains(e.target)) {
-                            if(input) {
-                                input.blur(); //it has to be in a timeout to allow other events to fire first
-                            }
-                        }
-                    });
+                    $document.on('touchend', blurOnTouch);
                 })
                 .on('input-blur', function() {
                     if (!options.addFromAutocompleteOnly) {
@@ -336,7 +339,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
 
                         setElementValidity();
                     }
-                    $(document).off('touchend.ngTagsInput');
+                    $document.off('touchend', blurOnTouch);
                     scope.onBlurred({how:scope.tabPressed ? scope.tabPressed : 0});
                 })
                 .on('option-change', function(e) {
