@@ -29,6 +29,11 @@
 
 ------------------------------------------------------------------*/
 
+var supportsTouch = 'ontouchstart' in document.documentElement;
+if (supportsTouch) {
+	$('body').addClass('touch');
+}
+
 angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', function(ADE, $compile, $sanitize) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
@@ -150,6 +155,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				// we're done, no need to listen to events
 				$(document).off('mousedown.ADE');
+				$(document).off('touchstart.ADE');
 				$(document).off('scroll.ADE');
 			};
 
@@ -238,6 +244,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 						mouseout();
 						saveEdit(0);
 						$(document).off('mousedown.ADE');
+						$(document).off('touchstart.ADE');
 					}
 				}
 			};
@@ -328,7 +335,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// save when user blurs out of text editor
 				// listen to clicks on all elements in page
 				// this will determine when to blur
-				$(document).on('mousedown.ADE', function(e) {
+				$(document).on('mousedown.ADE touchstart.ADE', function(e) {
 					scope.$apply(function() {
 						outerBlur(e);
 					})
@@ -344,9 +351,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// });
 
 				//focus the text area. In a timer to allow tinymce to initialize.
+				var ttl = supportsTouch ? 1000 : 100;
 				timeout = window.setTimeout(function() {
 					tinymce.execCommand('mceFocus',false,"tinyText" + id);
-				},100);
+				}, ttl);
 			};
 
 			//When the mouse enters, show the popup view of the note
@@ -359,6 +367,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var linkPopup = element.next('.ade-rich');
 				if (!linkPopup.length) {
 					viewRichText();
+				}
+
+				if (supportsTouch) {
+					$(document).on('touchstart.ADE', function(e) {
+						scope.$apply(function() {
+							outerBlur(e);
+						})
+					});
 				}
 			};
 
@@ -416,6 +432,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if(element) element.off();
 				if(input) input.off();
 				$(document).off('mousedown.ADE');
+				$(document).off('touchstart.ADE');
 				$(document).off('scroll.ADE');
 
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
