@@ -29,11 +29,6 @@
 
 ------------------------------------------------------------------*/
 
-var supportsTouch = 'ontouchstart' in document.documentElement;
-if (supportsTouch) {
-	$('body').addClass('touch');
-}
-
 angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', function(ADE, $compile, $sanitize) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
@@ -65,12 +60,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var origMaxLength = null;
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var supportsTouch = ('ontouchstart' in window);
+			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeCut!==undefined) cutLength = parseInt(scope.adeCut);
-
 
 			//Whenever the model changes we need to regenerate the HTML for displaying it
 			var makeHTML = function() {
@@ -184,10 +180,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				editing = false;
 
 				input = element.next('.ade-rich');
-				input.on('mouseenter.ADE', mousein);
+				input.on('mouseenter.ADE', mousein); //these two are to debounce the mouse leaving/entering
 				input.on('mouseleave.ADE', mouseout);
 				if(!readonly) input.on('click.ADE', mouseclick);
 
+				$(document).on('touchstart.ADE', function(e) {
+					// console.log("view touch start");
+					mouseout();
+				});
+				
 				//because the popup is fixed positioned, if we scroll it would
 				//get disconnected. So, we just hide it. In the future it might
 				//be better to dynamially update it's position
@@ -307,10 +308,12 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var modelValue = "";
 				if(scope.ngModel) modelValue = scope.ngModel;
 
+				var touchClass="";
+				if(supportsTouch) touchClass = " ade-hasTouch"; //because touch devices (iOS) put copy/paste controls that would cover the rich text toolbar
+
 				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
-	
-				var html = '<div class="ade-popup ade-rich dropdown-menu open">' + content + '</div>';
+				var html = '<div class="ade-popup ade-rich dropdown-menu open '+ touchClass + '">' + content + '</div>';
 				$compile(html)(scope).insertAfter(element);
 				place();
 
@@ -334,11 +337,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// Handle blur case
 				// save when user blurs out of text editor
 				// listen to clicks on all elements in page
-				// this will determine when to blur
 				$(document).on('mousedown.ADE touchstart.ADE', function(e) {
+					// console.log("edit touch start");
 					scope.$apply(function() {
 						outerBlur(e);
-					})
+					});
 				});
 
 				//because the popup is fixed positioned, if we scroll it would
@@ -351,14 +354,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// });
 
 				//focus the text area. In a timer to allow tinymce to initialize.
-				var ttl = supportsTouch ? 1000 : 100;
 				timeout = window.setTimeout(function() {
 					tinymce.execCommand('mceFocus',false,"tinyText" + id);
-				}, ttl);
+				}, supportsTouch ? 1000 : 100);
 			};
 
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
+				// console.log("mousein");
+
 				window.clearTimeout(timeout);
 				
 				//if any other popup is open in edit mode, don't do this view
@@ -368,21 +372,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if (!linkPopup.length) {
 					viewRichText();
 				}
-
-				if (supportsTouch) {
-					$(document).on('touchstart.ADE', function(e) {
-						scope.$apply(function() {
-							outerBlur(e);
-						})
-					});
-				}
 			};
 
 			//if the mouse leaves, hide the popup note view if in read mode
 			var mouseout = function() {
+				// console.log("mouseout");
+				
 				var linkPopup = element.next('.ade-popup');
 				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
+						if(input) input.off('.ADE');
+						$(document).off('touchstart.ADE');
 						ADE.hidePopup(element);
 					},400);
 				}
@@ -390,6 +390,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
+				// console.log("mouseclick");
+
 				window.clearTimeout(timeout);
 				if (editing) return;
 				editing = true;
