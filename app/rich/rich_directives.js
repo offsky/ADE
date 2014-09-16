@@ -60,7 +60,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var origMaxLength = null;
 			var stopObserving = null;
 			var adeId = scope.adeId;
-			var supportsTouch = ('ontouchstart' in window);
+			var supportsTouch = ('ontouchend' in window);
 			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
@@ -150,15 +150,16 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				}
 
 				// we're done, no need to listen to events
-				$(document).off('mousedown.ADE');
-				$(document).off('touchstart.ADE');
+				$(document).off('click.ADE');
+				$(document).off('touchend.ADE');
 				$(document).off('scroll.ADE');
+				setupElementEvents();
 			};
 
 			//shows a popup with the full text in read mode
 			//TODO: handle scrolling of very long text blobs
 			var viewRichText = function() {
-				ADE.hidePopup(element);
+				ADE.hidePopup();
 
 				var content = scope.ngModel; //what is inside the popup
 
@@ -184,9 +185,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				input.on('mouseleave.ADE', mouseout);
 				if(!readonly) input.on('click.ADE', mouseclick);
 
-				$(document).on('touchstart.ADE', function(e) {
-					// console.log("view touch start");
-					mouseout();
+				$(document).on('touchend.ADE', function(e) {
+					var outerClick = $('.ade-popup').has(e.target).length === 0;
+					if(outerClick) mouseout();
 				});
 				
 				//because the popup is fixed positioned, if we scroll it would
@@ -202,7 +203,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
-				ADE.place('.ade-rich',element,15,-5);
+				ADE.place('.ade-rich',element,25,-5);
 			};
 
 			//sets the height of the textarea based on the actual height of the contents.
@@ -244,8 +245,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					if (!startsMce) {
 						mouseout();
 						saveEdit(0);
-						$(document).off('mousedown.ADE');
-						$(document).off('touchstart.ADE');
+						$(document).off('click.ADE');
+						$(document).off('touchend.ADE');
 					}
 				}
 			};
@@ -266,9 +267,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 					// Don't allow more characters
 					if (length >= maxLength) {
-						//console.log("block",length,maxLength,editorValue);
-						// debugger;
-						//editor.innerHTML = editorValue;
 						e.stopPropagation();
 						e.preventDefault();
 					}
@@ -282,7 +280,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							saveEdit(3); // don't save results
 						});
 						e.preventDefault();
-						$(document).off('mousedown.ADE');
+						$(document).off('click.ADE');
 						break;
 					case 9: // tab
 						var exit = e.shiftKey ? -1 : 1;
@@ -291,7 +289,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							saveEdit(exit); // blur and save
 						});
 						e.preventDefault();
-						$(document).off('mousedown.ADE');
+						$(document).off('click.ADE');
 						break;
 					default:
 						break;
@@ -302,6 +300,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var editRichText = function() {
 				window.clearTimeout(timeout);
 				if(input) input.off('.ADE');
+				$(document).off('touchend.ADE');
+				element.off('.ADE');
 
 				ADE.hidePopup(element);
 
@@ -319,7 +319,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				// Initialize tinymce
 				// Full example:
-				//   http://www.tinymce.com/tryit/full.php
+				// http://www.tinymce.com/tryit/full.php
 				tinymce.init({
 					selector: "#tinyText" + id,
 					theme: "modern",
@@ -334,24 +334,22 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				input = element.next('.ade-rich');
 
-				// Handle blur case
 				// save when user blurs out of text editor
-				// listen to clicks on all elements in page
-				$(document).on('mousedown.ADE touchstart.ADE', function(e) {
-					// console.log("edit touch start");
-					scope.$apply(function() {
-						outerBlur(e);
-					});
+				// listen to clicks on all elements on page
+				// in a timer to prevent clicks on read popup from bleeding through
+				setTimeout(function() {
+					/* Note: Adding any touch event listener (touchend, touchstart) cause iOS to 
+						delay the placement of the cursor on tap and instead requires
+						a tap+hold to place cursor. We need the touch event to save on an
+						external tap (document.click isn't called on ios). 
+						Can't find a way around this.
+					*/
+					$(document).on('click.ADE touchend.ADE', function(e) {
+						scope.$apply(function() {
+							outerBlur(e);
+						});
+					});					
 				});
-
-				//because the popup is fixed positioned, if we scroll it would
-				//get disconnected. So, we just hide it. In the future it might
-				//be better to dynamially update it's position
-				// $(document).on('scroll.ADE',function() {
-				// 	scope.$apply(function() {
-				// 		saveEdit(3);
-				// 	}); 
-				// });
 
 				//focus the text area. In a timer to allow tinymce to initialize.
 				timeout = window.setTimeout(function() {
@@ -361,8 +359,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
-				// console.log("mousein");
-
 				window.clearTimeout(timeout);
 				
 				//if any other popup is open in edit mode, don't do this view
@@ -375,14 +371,12 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			//if the mouse leaves, hide the popup note view if in read mode
-			var mouseout = function() {
-				// console.log("mouseout");
-				
+			var mouseout = function() {				
 				var linkPopup = element.next('.ade-popup');
 				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
 						if(input) input.off('.ADE');
-						$(document).off('touchstart.ADE');
+						$(document).off('touchend.ADE');
 						ADE.hidePopup(element);
 					},400);
 				}
@@ -390,8 +384,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				// console.log("mouseclick");
-
 				window.clearTimeout(timeout);
 				if (editing) return;
 				editing = true;
@@ -404,19 +396,24 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
 			};
 
-			element.on('mouseenter.ADE', mousein);
-			element.on('mouseleave.ADE', mouseout);
-			
-			if(!readonly) {
-				element.on('click.ADE', mouseclick);
+			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
+			var setupElementEvents = function() {
+				element.on('mouseenter.ADE', mousein);
+				element.on('mouseleave.ADE', mouseout);
+				
+				if(!readonly) {
+					element.on('click.ADE', mouseclick);
 
-				//handles enter keydown on the read version of the data
-				element.on('keydown.ADE', function(e) {
-					if (e.keyCode === 13) { // enter
-						mouseclick();
-					}
-				});
-			}
+					//handles enter keydown on the read version of the data
+					element.on('keydown.ADE', function(e) {
+						if (e.keyCode === 13) { // enter
+							mouseclick();
+						}
+					});
+				}
+			};
+
+			setupElementEvents();
 
 			//A callback to observe for changes to the id and save edit
 			//The model will still be connected, so it is safe, but don't want to cause problems
@@ -433,8 +430,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) element.off();
 				if(input) input.off();
-				$(document).off('mousedown.ADE');
-				$(document).off('touchstart.ADE');
+				$(document).off('click.ADE');
+				$(document).off('touchend.ADE');
 				$(document).off('scroll.ADE');
 
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
