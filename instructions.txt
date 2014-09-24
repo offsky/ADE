@@ -1,0 +1,9 @@
+Note to self:
+
+To update gh_pages demo:
+
+1) Build the current project.
+2) Save off the "dist" folder
+3) Switch to gh_pages branch
+4) Replace everything with contents of dist folder
+5) Don't replace bower.json and this file
