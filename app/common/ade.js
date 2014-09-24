@@ -23,7 +23,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 	//A flag that controls if certain ADE directives can accept keyboard input.
 	//Causes display problems on iOS where there is no keyboard
-	//Override in your contoller of you want
+	//Override in your contoller if you want
 	var keyboardEdit = true; 
 	
 	function hidePopup(elm) {
