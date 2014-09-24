@@ -289,6 +289,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			//When mousing over the div it will display a popup with the day of the week
 			if(!('ontouchstart' in window)) {
 				element.on('mouseover.ADE', function() {
+					ADE.hidePopup();
 					var value = element.text();
 					if (value === "" || value.length <= 4) return;
 					//strip off timezone if present
