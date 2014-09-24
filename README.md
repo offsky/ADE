@@ -55,7 +55,9 @@ We are working to reduce external dependencies as much as possible.
 
 1) Install ADE using bower:
 
-	bower install ADE
+```bash
+$ bower install ADE
+```
 
 Or <a href="https://github.com/Toodledo/ADE/archive/master.zip">Download ZIP</a>.
 
@@ -65,24 +67,32 @@ Take a look at the "dist/build" directory.
 
 CSS
 
-	<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
-	<link rel="stylesheet" href="../bower_components/ADE/dist/build/ade.min.css"/>
+```html
+<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
+<link rel="stylesheet" href="../bower_components/ADE/dist/build/ade.min.css"/>
+```
 
 JavaScript
 
-	<script src="../bower_components/jquery/jquery.js"></script>
-	<script src="../bower_components/angular/angular.js"></script>
-	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+```html
+<script src="../bower_components/jquery/jquery.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 
-	<script src="../bower_components/ADE/dist/build/ade.min.js"></script>
+<script src="../bower_components/ADE/dist/build/ade.min.js"></script>
+```
 
 3) Inject ADE in your angular project:
 
-	var app = angular.module('app', ['ADE', 'ngSanitize']);
+```javascript
+var app = angular.module('app', ['ADE', 'ngSanitize']);
+```
 
 4) Use the directives and filters in your HTML:
 
-	<div class="sample" ade-url='{"className":"input-medium"}' ng-model="dataurl" ng-bind-html="dataurl | url"></div>
+```html
+<div class="sample" ade-url='{"className":"input-medium"}' ng-model="dataurl" ng-bind-html="dataurl | url"></div>
+```
 
 ### Individual datatypes
 
@@ -103,6 +113,6 @@ You can build the project for your specific use case. For example, you may want 
 3. Run our build script "scripts/build.sh"
 
 
-## Licence
+## License
 
 ADE is freely distributable under the terms of the MIT license.
