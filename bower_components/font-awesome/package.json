@@ -1,13 +1,13 @@
 {
   "name": "font-awesome",
   "description": "The iconic font designed for Bootstrap",
-  "version": "4.0.3",
+  "version": "3.2.1",
   "keywords": ["font", "awesome", "fontawesome", "icon", "font", "bootstrap"],
   "homepage": "http://fontawesome.io/",
   "author": {
     "name": "Dave Gandy",
     "email": "dave@fontawesome.io",
-    "web": "http://twitter.com/davegandy"
+    "web": "http://twitter.com/byscuits"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     }
   ],
   "dependencies": {
-    "less": "1.4.2"
+    "jekyll": "1.0.2",
+    "lessc": "1.3.3"
   }
 }

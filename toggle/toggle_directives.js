@@ -3,10 +3,17 @@
  A directive to toggle a star, checkbox or other icon
 
  Usage:
- <a ade-toggle='{"id":"1234"}' ng-model="data" style="{{data}}"></a>
+ <a ade-toggle ade-id="1234" ade-class="ade-star" ng-model="data"></a>
 
- Config:
- "id" will be used in messages broadcast to the app on state changes.
+Config:
+
+ade-id:
+	If this id is set, it will be used in messages broadcast to the app on state changes.
+ade-class:
+	A custom class to give to the div so that you can use your own images
+ade-readonly:
+	If you don't want the stars to be editable
+
 
  Messages:
  name: ADE-start
@@ -22,60 +29,99 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-toggle=""></div>
 
-		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
-			var value = "";
-			var oldValue = "";
-			var newValue = "";
-			var id = "";
+		scope: {
+			adeId: "@",
+			adeClass: "@",
+			adeReadonly: "@",
+			ngModel: "="
+		},
 
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if(value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
+		//The link step (after compile)
+		link: function(scope, element, attrs) {
+			var starClass = "icon-star";
+			var readonly = false;
+
+			if(scope.adeClass!==undefined) starClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+
+			//generates HTML for the star
+			var makeHTML = function() {
+				var input = scope.ngModel;
+				if(angular.isArray(input)) input = input[0];
+				if(angular.isString(input)) {
+					input = input.toLowerCase();
+					if(input=='false' || input=='no' || input=='0' || input=='o') input = false;
+				}
+				var editable = (readonly ? "" : " ade-editable");
+				var state = (input ? '' : '-empty');
+
+				var hoverable = " ade-hover";
+				var userAgent = window.navigator.userAgent;
+				if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+   				hoverable = ""; //iOS web views do a weird thing with hover effects on touch
+				}
+
+				element.html('<span class="ade-toggle '+editable+hoverable+' '+starClass+state+'">');
 			}
 
-			//handles clicks on the read version of the data
-			element.bind('click', function(e) {
+			var clickHandler = function(e) {
 				e.preventDefault();
 				e.stopPropagation();
 
-				ADE.begin(options);
+				ADE.begin(scope.adeId);
 
-				oldValue = value;
-				value = (value) ? false : true;
-				newValue = value;
+				var oldValue = scope.ngModel;
+				scope.ngModel = (scope.ngModel) ? false : true;
 
-				controller.$setViewValue(value);
+				ADE.done(scope.adeId, oldValue, scope.ngModel, 0);
 
-				ADE.done(options,oldValue,value,0);
+				if($(element).is(':hover')) {
+					//It would be nice to remove the hover effect until you leave and rehover
+					//would need to register mouseout and touchmove events. yuck
+				}
+			};
 
-				scope.$digest(); //This is necessary to get the model to match the value of the input
-			});
-
-			//handles focus events
-			element.bind('focus', function(e) {
-				element.bind('keypress.ADE', function(e) {
+			var focusHandler = function(e) {
+				element.on('keypress.ADE', function(e) {
 					if (e.keyCode == 13) { //return
 						e.preventDefault();
 						e.stopPropagation();
 						element.click();
 					}
 				});
-			});
+			};
+			
+			//setup events
+			if(!readonly) {
+				element.on('click.ADE', function(e) {
+					scope.$apply(function() {
+						clickHandler(e);
+					})
+				});
+				element.on('focus.ADE',  function(e) {
+					scope.$apply(function() {
+						focusHandler(e);
+					})
+				});
+				element.on('blur.ADE', function(e) {
+					element.off('keypress.ADE');
+				});
+			}
 
-			//handles blur events
-			element.bind('blur', function(e) {
-				element.unbind('keypress.ADE');
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				if(element) {
+					element.off('click.ADE');
+					element.off('focus.ADE');
+					element.off('blur.ADE');
+					element.off('keypress.ADE');
+				}
 			});
-
-			// Watches for changes to the element
-			return attrs.$observe('adeToggle', function(settings) { //settings is the contents of the ade-toggle="" string
-				options = ADE.parseSettings(settings, {});
-				return element; //TODO: not sure what to return here
+			
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 
 		}

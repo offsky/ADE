@@ -20,8 +20,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Envelope Outlined
-    id:         envelope-o
+  - name:       Envelope Alt
+    id:         envelope-alt
     unicode:    f003
     created:    1.0
     categories:
@@ -41,8 +41,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Star Outlined
-    id:         star-o
+  - name:       Star Empty
+    id:         star-empty
     unicode:    f006
     created:    1.0
     categories:
@@ -83,39 +83,41 @@ icons:
     categories:
       - Text Editor Icons
 
-  - name:       Check
-    id:         check
+  - name:       OK
+    id:         ok
     unicode:    f00c
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Times
-    id:         times
+  - name:       Remove
+    id:         remove
     unicode:    f00d
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Search Plus
-    id:         search-plus
+  - name:       Zoom In
+    id:         zoom-in
     unicode:    f00e
     created:    1.0
     categories:
       - Web Application Icons
 
 
-  - name:       Search Minus
-    id:         search-minus
+  - name:       Zoom Out
+    id:         zoom-out
     unicode:    f010
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Power Off
-    id:         power-off
+  - name:       Off
+    id:         'off'
     unicode:    f011
     created:    1.0
+    aliases:
+      - power-off
     categories:
       - Web Application Icons
 
@@ -135,8 +137,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Trash Outlined
-    id:         trash-o
+  - name:       trash
+    id:         trash
     unicode:    f014
     created:    1.0
     categories:
@@ -149,15 +151,15 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       File Outlined
-    id:         file-o
+  - name:       file-alt
+    id:         file-alt
     unicode:    f016
     created:    1.0
     categories:
       - Text Editor Icons
 
-  - name:       Clock Outlined
-    id:         clock-o
+  - name:       time
+    id:         time
     unicode:    f017
     created:    1.0
     categories:
@@ -170,26 +172,26 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Download
-    id:         download
+  - name:       download-alt
+    id:         download-alt
     unicode:    f019
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Arrow Circle Outlined Down
-    id:         arrow-circle-o-down
+  - name:       download
+    id:         download
     unicode:    f01a
     created:    1.0
     categories:
-      - Directional Icons
+      - Web Application Icons
 
-  - name:       Arrow Circle Outlined Up
-    id:         arrow-circle-o-up
+  - name:       upload
+    id:         upload
     unicode:    f01b
     created:    1.0
     categories:
-      - Directional Icons
+      - Web Application Icons
 
   - name:       inbox
     id:         inbox
@@ -198,14 +200,14 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Play Circle Outlined
-    id:         play-circle-o
+  - name:       play-circle
+    id:         play-circle
     unicode:    f01d
     created:    1.0
     categories:
       - Video Player Icons
 
-  - name:       Repeat
+  - name:       repeat
     id:         repeat
     unicode:    f01e
     created:    1.0
@@ -398,31 +400,29 @@ icons:
     categories:
       - Text Editor Icons
 
-  - name:       Outdent
-    id:         outdent
+  - name:       indent-left
+    id:         indent-left
     unicode:    f03b
     created:    1.0
-    aliases:
-      - dedent
     categories:
       - Text Editor Icons
 
-  - name:       Indent
-    id:         indent
+  - name:       indent-right
+    id:         indent-right
     unicode:    f03c
     created:    1.0
     categories:
       - Text Editor Icons
 
-  - name:       Video Camera
-    id:         video-camera
+  - name:       facetime-video
+    id:         facetime-video
     unicode:    f03d
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Picture Outlined
-    id:         picture-o
+  - name:       picture
+    id:         picture
     unicode:    f03e
     created:    1.0
     categories:
@@ -457,37 +457,33 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Pencil Square Outlined
-    id:         pencil-square-o
+  - name:       edit
+    id:         edit
     unicode:    f044
     created:    1.0
-    aliases:
-      - edit
     categories:
       - Web Application Icons
 
-  - name:       Share Square Outlined
-    id:         share-square-o
+  - name:       share
+    id:         share
     unicode:    f045
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Check Square Outlined
-    id:         check-square-o
+  - name:       check
+    id:         check
     unicode:    f046
     created:    1.0
     categories:
       - Web Application Icons
-      - Form Control Icons
 
-  - name:       Arrows
-    id:         arrows
+  - name:       move
+    id:         move
     unicode:    f047
     created:    1.0
     categories:
       - Web Application Icons
-      - Directional Icons
 
   - name:       step-backward
     id:         step-backward
@@ -574,71 +570,71 @@ icons:
     categories:
       - Directional Icons
 
-  - name:       Plus Circle
-    id:         plus-circle
+  - name:       plus-sign
+    id:         plus-sign
     unicode:    f055
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Minus Circle
-    id:         minus-circle
+  - name:       minus-sign
+    id:         minus-sign
     unicode:    f056
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Times Circle
-    id:         times-circle
+  - name:       remove-sign
+    id:         remove-sign
     unicode:    f057
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Check Circle
-    id:         check-circle
+  - name:       ok-sign
+    id:         ok-sign
     unicode:    f058
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Question Circle
-    id:         question-circle
+  - name:       question-sign
+    id:         question-sign
     unicode:    f059
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Info Circle
-    id:         info-circle
+  - name:       info-sign
+    id:         info-sign
     unicode:    f05a
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Crosshairs
-    id:         crosshairs
+  - name:       screenshot
+    id:         screenshot
     unicode:    f05b
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Times Circle Outlined
-    id:         times-circle-o
+  - name:       remove-circle
+    id:         remove-circle
     unicode:    f05c
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Check Circle Outlined
-    id:         check-circle-o
+  - name:       ok-circle
+    id:         ok-circle
     unicode:    f05d
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       ban
-    id:         ban
+  - name:       ban-circle
+    id:         ban-circle
     unicode:    f05e
     created:    1.0
     categories:
@@ -673,8 +669,8 @@ icons:
     categories:
       - Directional Icons
 
-  - name:       Share
-    id:         share
+  - name:       share-alt
+    id:         share-alt
     unicode:    f064
     created:    1.0
     aliases:
@@ -682,15 +678,15 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Expand
-    id:         expand
+  - name:       resize-full
+    id:         resize-full
     unicode:    f065
     created:    1.0
     categories:
       - Video Player Icons
 
-  - name:       Compress
-    id:         compress
+  - name:       resize-small
+    id:         resize-small
     unicode:    f066
     created:    1.0
     categories:
@@ -717,8 +713,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Exclamation Circle
-    id:         exclamation-circle
+  - name:       exclamation-sign
+    id:         exclamation-sign
     unicode:    f06a
     created:    1.0
     categories:
@@ -745,27 +741,25 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Eye
-    id:         eye
+  - name:       eye-open
+    id:         eye-open
     unicode:    f06e
     created:    1.0
     categories:
       - Web Application Icons
 
 
-  - name:       Eye Slash
-    id:         eye-slash
+  - name:       eye-close
+    id:         eye-close
     unicode:    f070
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Exclamation Triangle
-    id:         exclamation-triangle
+  - name:       warning-sign
+    id:         warning-sign
     unicode:    f071
     created:    1.0
-    aliases:
-      - warning
     categories:
       - Web Application Icons
 
@@ -832,53 +826,51 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Folder
-    id:         folder
+  - name:       folder-close
+    id:         folder-close
     unicode:    f07b
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Folder Open
+  - name:       folder-open
     id:         folder-open
     unicode:    f07c
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Arrows Vertical
-    id:         arrows-v
+  - name:       resize-vertical
+    id:         resize-vertical
     unicode:    f07d
     created:    1.0
     categories:
       - Web Application Icons
-      - Directional Icons
 
-  - name:       Arrows Horizontal
-    id:         arrows-h
+  - name:       resize-horizontal
+    id:         resize-horizontal
     unicode:    f07e
     created:    1.0
     categories:
       - Web Application Icons
-      - Directional Icons
 
 
-  - name:       Bar Chart Outlined
-    id:         bar-chart-o
+  - name:       bar-chart
+    id:         bar-chart
     unicode:    f080
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Twitter Square
-    id:         twitter-square
+  - name:       twitter-sign
+    id:         twitter-sign
     unicode:    f081
     created:    1.0
     categories:
       - Brand Icons
 
-  - name:       Facebook Square
-    id:         facebook-square
+  - name:       facebook-sign
+    id:         facebook-sign
     unicode:    f082
     created:    1.0
     categories:
@@ -914,15 +906,15 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Thumbs Up Outlined
-    id:         thumbs-o-up
+  - name:       thumbs-up-alt
+    id:         thumbs-up-alt
     unicode:    f087
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Thumbs Down Outlined
-    id:         thumbs-o-down
+  - name:       thumbs-down-alt
+    id:         thumbs-down-alt
     unicode:    f088
     created:    1.0
     categories:
@@ -935,35 +927,35 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Heart Outlined
-    id:         heart-o
+  - name:       heart-empty
+    id:         heart-empty
     unicode:    f08a
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Sign Out
-    id:         sign-out
+  - name:       signout
+    id:         signout
     unicode:    f08b
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       LinkedIn Square
-    id:         linkedin-square
+  - name:       linkedin-sign
+    id:         linkedin-sign
     unicode:    f08c
     created:    1.0
     categories:
       - Brand Icons
 
-  - name:       Thumb Tack
-    id:         thumb-tack
+  - name:       pushpin
+    id:         pushpin
     unicode:    f08d
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       External Link
+  - name:       external-link
     id:         external-link
     unicode:    f08e
     created:    1.0
@@ -971,8 +963,8 @@ icons:
       - Web Application Icons
 
 
-  - name:       Sign In
-    id:         sign-in
+  - name:       signin
+    id:         signin
     unicode:    f090
     created:    1.0
     categories:
@@ -985,72 +977,72 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       GitHub Square
-    id:         github-square
+  - name:       github-sign
+    id:         github-sign
     unicode:    f092
     created:    1.0
     categories:
       - Brand Icons
 
-  - name:       Upload
-    id:         upload
+  - name:       upload-alt
+    id:         upload-alt
     unicode:    f093
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Lemon Outlined
-    id:         lemon-o
+  - name:       lemon
+    id:         lemon
     unicode:    f094
     created:    1.0
     categories:
       - Web Application Icons
 
-  - name:       Phone
+  - name:       phone
     id:         phone
     unicode:    f095
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Square Outlined
-    id:         square-o
+  - name:       check-empty
+    id:         check-empty
     unicode:    f096
     created:    2.0
+    aliases:
+      - unchecked
     categories:
       - Web Application Icons
-      - Form Control Icons
 
-
-  - name:       Bookmark Outlined
-    id:         bookmark-o
+  - name:       bookmark-empty
+    id:         bookmark-empty
     unicode:    f097
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Phone Square
-    id:         phone-square
+  - name:       phone-sign
+    id:         phone-sign
     unicode:    f098
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Twitter
+  - name:       twitter
     id:         twitter
     unicode:    f099
     created:    2.0
     categories:
       - Brand Icons
 
-  - name:       Facebook
+  - name:       facebook
     id:         facebook
     unicode:    f09a
     created:    2.0
     categories:
       - Brand Icons
 
-  - name:       GitHub
+  - name:       github
     id:         github
     unicode:    f09b
     created:    2.0
@@ -1079,8 +1071,8 @@ icons:
       - Web Application Icons
 
 
-  - name:       HDD
-    id:         hdd-o
+  - name:       hdd
+    id:         hdd
     unicode:    f0a0
     created:    2.0
     categories:
@@ -1095,7 +1087,7 @@ icons:
 
   - name:       bell
     id:         bell
-    unicode:    f0f3
+    unicode:    f0a2
     created:    2.0
     categories:
       - Web Application Icons
@@ -1107,77 +1099,77 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Hand Outlined Right
-    id:         hand-o-right
+  - name:       hand-right
+    id:         hand-right
     unicode:    f0a4
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Hand Outlined Left
-    id:         hand-o-left
+  - name:       hand-left
+    id:         hand-left
     unicode:    f0a5
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Hand Outlined Up
-    id:         hand-o-up
+  - name:       hand-up
+    id:         hand-up
     unicode:    f0a6
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Hand Outlined Down
-    id:         hand-o-down
+  - name:       hand-down
+    id:         hand-down
     unicode:    f0a7
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Arrow Circle Left
-    id:         arrow-circle-left
+  - name:       circle-arrow-left
+    id:         circle-arrow-left
     unicode:    f0a8
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Arrow Circle Right
-    id:         arrow-circle-right
+  - name:       circle-arrow-right
+    id:         circle-arrow-right
     unicode:    f0a9
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Arrow Circle Up
-    id:         arrow-circle-up
+  - name:       circle-arrow-up
+    id:         circle-arrow-up
     unicode:    f0aa
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Arrow Circle Down
-    id:         arrow-circle-down
+  - name:       circle-arrow-down
+    id:         circle-arrow-down
     unicode:    f0ab
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Globe
+  - name:       globe
     id:         globe
     unicode:    f0ac
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Wrench
+  - name:       wrench
     id:         wrench
     unicode:    f0ad
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Tasks
+  - name:       tasks
     id:         tasks
     unicode:    f0ae
     created:    2.0
@@ -1185,105 +1177,95 @@ icons:
       - Web Application Icons
 
 
-  - name:       Filter
+  - name:       filter
     id:         filter
     unicode:    f0b0
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Briefcase
+  - name:       briefcase
     id:         briefcase
     unicode:    f0b1
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Arrows Alt
-    id:         arrows-alt
+  - name:       fullscreen
+    id:         fullscreen
     unicode:    f0b2
     created:    2.0
     categories:
       - Video Player Icons
-      - Directional Icons
 
 
-  - name:       Users
-    id:         users
+  - name:       group
+    id:         group
     unicode:    f0c0
     created:    2.0
-    aliases:
-      - group
     categories:
       - Web Application Icons
 
-  - name:       Link
+  - name:       link
     id:         link
     unicode:    f0c1
     created:    2.0
-    aliases:
-      - chain
     categories:
       - Text Editor Icons
 
-  - name:       Cloud
+  - name:       cloud
     id:         cloud
     unicode:    f0c2
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Flask
-    id:         flask
+  - name:       beaker
+    id:         beaker
     unicode:    f0c3
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Scissors
-    id:         scissors
+  - name:       cut
+    id:         cut
     unicode:    f0c4
     created:    2.0
-    aliases:
-      - cut
     categories:
       - Text Editor Icons
 
-  - name:       Files Outlined
-    id:         files-o
+  - name:       copy
+    id:         copy
     unicode:    f0c5
     created:    2.0
-    aliases:
-      - copy
     categories:
       - Text Editor Icons
 
-  - name:       Paperclip
-    id:         paperclip
+  - name:       paper-clip
+    id:         paper-clip
     unicode:    f0c6
     created:    2.0
+    aliases:
+      - paperclip
     categories:
       - Text Editor Icons
 
-  - name:       Floppy Outlined
-    id:         floppy-o
+  - name:       save
+    id:         save
     unicode:    f0c7
     created:    2.0
-    aliases:
-      - save
     categories:
       - Text Editor Icons
 
-  - name:       Square
-    id:         square
+  - name:       sign-blank
+    id:         sign-blank
     unicode:    f0c8
     created:    2.0
     categories:
       - Web Application Icons
-      - Form Control Icons
 
-  - name:       Bars
-    id:         bars
+  - name:       reorder
+    id:         reorder
     unicode:    f0c9
     created:    2.0
     categories:
@@ -1303,14 +1285,14 @@ icons:
     categories:
       - Text Editor Icons
 
-  - name:       Strikethrough
+  - name:       strikethrough
     id:         strikethrough
     unicode:    f0cc
     created:    2.0
     categories:
       - Text Editor Icons
 
-  - name:       Underline
+  - name:       underline
     id:         underline
     unicode:    f0cd
     created:    2.0
@@ -1339,101 +1321,94 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Pinterest
+  - name:       pinterest
     id:         pinterest
     unicode:    f0d2
     created:    2.0
     categories:
       - Brand Icons
 
-  - name:       Pinterest Square
-    id:         pinterest-square
+  - name:       pinterest-sign
+    id:         pinterest-sign
     unicode:    f0d3
     created:    2.0
     categories:
       - Brand Icons
 
-  - name:       Google Plus Square
-    id:         google-plus-square
+  - name:       google-plus-sign
+    id:         google-plus-sign
     unicode:    f0d4
     created:    2.0
     categories:
       - Brand Icons
 
-  - name:       Google Plus
+  - name:       google-plus
     id:         google-plus
     unicode:    f0d5
     created:    2.0
     categories:
       - Brand Icons
 
-  - name:       Money
+  - name:       money
     id:         money
     unicode:    f0d6
     created:    2.0
     categories:
       - Web Application Icons
-      - Currency Icons
 
-  - name:       Caret Down
+  - name:       caret-down
     id:         caret-down
     unicode:    f0d7
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Caret Up
+  - name:       caret-up
     id:         caret-up
     unicode:    f0d8
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Caret Left
+  - name:       caret-left
     id:         caret-left
     unicode:    f0d9
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Caret Right
+  - name:       caret-right
     id:         caret-right
     unicode:    f0da
     created:    2.0
     categories:
       - Directional Icons
 
-  - name:       Columns
+  - name:       columns
     id:         columns
     unicode:    f0db
     created:    2.0
     categories:
       - Text Editor Icons
 
-  - name:       Sort
+  - name:       sort
     id:         sort
     unicode:    f0dc
     created:    2.0
-    aliases:
-      - unsorted
     categories:
       - Web Application Icons
 
-  - name:       Sort Ascending
-    id:         sort-asc
+  - name:       sort-down
+    id:         sort-down
     unicode:    f0dd
     created:    2.0
-    aliases:
-      - sort-down
     categories:
       - Web Application Icons
 
-  - name:       Sort Descending
-    id:         sort-desc
+  - name:       sort-up
+    id:         sort-up
     unicode:    f0de
     created:    2.0
-    aliases:
-      - sort-up
     categories:
       - Web Application Icons
 
@@ -1445,7 +1420,7 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       LinkedIn
+  - name:       linkedin
     id:         linkedin
     unicode:    f0e1
     created:    2.0
@@ -1453,7 +1428,7 @@ icons:
       - Brand Icons
 
 
-  - name:       Undo
+  - name:       undo
     id:         undo
     unicode:    f0e2
     created:    2.0
@@ -1462,92 +1437,84 @@ icons:
     categories:
       - Text Editor Icons
 
-  - name:       Gavel
-    id:         gavel
+  - name:       legal
+    id:         legal
     unicode:    f0e3
     created:    2.0
-    aliases:
-      - legal
     categories:
       - Web Application Icons
 
-  - name:       Tachometer
-    id:         tachometer
+  - name:       dashboard
+    id:         dashboard
     unicode:    f0e4
     created:    2.0
-    aliases:
-      - dashboard
     categories:
       - Web Application Icons
 
-  - name:       comment-o
-    id:         comment-o
+  - name:       comment-alt
+    id:         comment-alt
     unicode:    f0e5
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       comments-o
-    id:         comments-o
+  - name:       comments-alt
+    id:         comments-alt
     unicode:    f0e6
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Lightning Bolt
+  - name:       bolt
     id:         bolt
     unicode:    f0e7
     created:    2.0
-    aliases:
-      - flash
     categories:
       - Web Application Icons
 
-  - name:       Sitemap
+  - name:       sitemap
     id:         sitemap
     unicode:    f0e8
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Umbrella
+  - name:       umbrella
     id:         umbrella
     unicode:    f0e9
     created:    2.0
     categories:
       - Web Application Icons
 
-  - name:       Clipboard
-    id:         clipboard
+  - name:       paste
+    id:         paste
     unicode:    f0ea
     created:    2.0
-    aliases:
-      - paste
     categories:
       - Text Editor Icons
 
-  - name:       Lightbulb Outlined
-    id:         lightbulb-o
+  - name:       lightbulb
+    id:         lightbulb
     unicode:    f0eb
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Exchange
+  - name:       exchange
     id:         exchange
     unicode:    f0ec
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Cloud Download
+  - name:       cloud-download
     id:         cloud-download
     unicode:    f0ed
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Cloud Upload
+  - name:       cloud-upload
     id:         cloud-upload
     unicode:    f0ee
     created:    3.0
@@ -1562,57 +1529,57 @@ icons:
     categories:
       - Medical Icons
 
-  - name:       Stethoscope
+  - name:       stethoscope
     id:         stethoscope
     unicode:    f0f1
     created:    3.0
     categories:
       - Medical Icons
 
-  - name:       Suitcase
+  - name:       suitcase
     id:         suitcase
     unicode:    f0f2
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Bell Outlined
-    id:         bell-o
-    unicode:    f0a2
+  - name:       bell-alt
+    id:         bell-alt
+    unicode:    f0f3
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Coffee
+  - name:       coffee
     id:         coffee
     unicode:    f0f4
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Cutlery
-    id:         cutlery
+  - name:       food
+    id:         food
     unicode:    f0f5
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       File Text Outlined
-    id:         file-text-o
+  - name:       file-text-alt
+    id:         file-text-alt
     unicode:    f0f6
     created:    3.0
     categories:
       - Text Editor Icons
 
-  - name:       Building Outlined
-    id:         building-o
+  - name:       building
+    id:         building
     unicode:    f0f7
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       hospital Outlined
-    id:         hospital-o
+  - name:       hospital
+    id:         hospital
     unicode:    f0f8
     created:    3.0
     categories:
@@ -1646,46 +1613,45 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       H Square
-    id:         h-square
+  - name:       h-sign
+    id:         h-sign
     unicode:    f0fd
     created:    3.0
     categories:
       - Medical Icons
 
-  - name:       Plus Square
-    id:         plus-square
+  - name:       plus-sign-alt
+    id:         plus-sign-alt
     unicode:    f0fe
     created:    3.0
     categories:
       - Medical Icons
       - Web Application Icons
-      - Form Control Icons
 
 
-  - name:       Angle Double Left
-    id:         angle-double-left
+  - name:       double-angle-left
+    id:         double-angle-left
     unicode:    f100
     created:    3.0
     categories:
       - Directional Icons
 
-  - name:       Angle Double Right
-    id:         angle-double-right
+  - name:       double-angle-right
+    id:         double-angle-right
     unicode:    f101
     created:    3.0
     categories:
       - Directional Icons
 
-  - name:       Angle Double Up
-    id:         angle-double-up
+  - name:       double-angle-up
+    id:         double-angle-up
     unicode:    f102
     created:    3.0
     categories:
       - Directional Icons
 
-  - name:       Angle Double Down
-    id:         angle-double-down
+  - name:       double-angle-down
+    id:         double-angle-down
     unicode:    f103
     created:    3.0
     categories:
@@ -1719,14 +1685,14 @@ icons:
     categories:
       - Directional Icons
 
-  - name:       Desktop
+  - name:       desktop
     id:         desktop
     unicode:    f108
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Laptop
+  - name:       laptop
     id:         laptop
     unicode:    f109
     created:    3.0
@@ -1740,22 +1706,19 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Mobile Phone
-    id:         mobile
+  - name:       mobile-phone
+    id:         mobile-phone
     unicode:    f10b
     created:    3.0
-    aliases:
-      - mobile-phone
     categories:
       - Web Application Icons
 
-  - name:       Circle Outlined
-    id:         circle-o
+  - name:       circle-blank
+    id:         circle-blank
     unicode:    f10c
     created:    3.0
     categories:
       - Web Application Icons
-      - Form Control Icons
 
   - name:       quote-left
     id:         quote-left
@@ -1772,22 +1735,21 @@ icons:
       - Web Application Icons
 
 
-  - name:       Spinner
+  - name:       spinner
     id:         spinner
     unicode:    f110
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Circle
+  - name:       circle
     id:         circle
     unicode:    f111
     created:    3.0
     categories:
       - Web Application Icons
-      - Form Control Icons
 
-  - name:       Reply
+  - name:       reply
     id:         reply
     unicode:    f112
     created:    3.0
@@ -1796,64 +1758,78 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       GitHub Alt
+  - name:       github-alt
     id:         github-alt
     unicode:    f113
     created:    3.0
     categories:
       - Brand Icons
 
-  - name:       Folder Outlined
-    id:         folder-o
+  - name:       folder-close-alt
+    id:         folder-close-alt
     unicode:    f114
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Folder Open Outlined
-    id:         folder-open-o
+  - name:       folder-open-alt
+    id:         folder-open-alt
     unicode:    f115
     created:    3.0
     categories:
       - Web Application Icons
 
-  - name:       Smile Outlined
-    id:         smile-o
+  - name:       expand-alt
+    id:         expand-alt
+    unicode:    f116
+    created:    3.1
+    categories:
+      - Web Application Icons
+
+  - name:       collapse-alt
+    id:         collapse-alt
+    unicode:    f117
+    created:    3.1
+    categories:
+      - Web Application Icons
+
+  - name:       smile
+    id:         smile
     unicode:    f118
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Frown Outlined
-    id:         frown-o
+  - name:       frown
+    id:         frown
     unicode:    f119
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Meh Outlined
-    id:         meh-o
+  - name:       meh
+    id:         meh
     unicode:    f11a
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Gamepad
+  - name:       gamepad
     id:         gamepad
     unicode:    f11b
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Keyboard Outlined
-    id:         keyboard-o
+  - name:       keyboard
+    id:         keyboard
     unicode:    f11c
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Flag Outlined
-    id:         flag-o
+  - name:       flag-alt
+    id:         flag-alt
     unicode:    f11d
     created:    3.1
     categories:
@@ -1867,14 +1843,14 @@ icons:
       - Web Application Icons
 
 
-  - name:       Terminal
+  - name:       terminal
     id:         terminal
     unicode:    f120
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Code
+  - name:       code
     id:         code
     unicode:    f121
     created:    3.1
@@ -1895,12 +1871,11 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Star Half Outlined
-    id:         star-half-o
+  - name:       star-half-empty
+    id:         star-half-empty
     unicode:    f123
     created:    3.1
     aliases:
-      - star-half-empty
       - star-half-full
     categories:
       - Web Application Icons
@@ -1926,23 +1901,21 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Chain Broken
-    id:         chain-broken
+  - name:       unlink
+    id:         unlink
     unicode:    f127
     created:    3.1
-    aliases:
-      - unlink
     categories:
       - Text Editor Icons
 
-  - name:       Question
+  - name:       question
     id:         question
     unicode:    f128
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Info
+  - name:       info
     id:         info
     unicode:    f129
     created:    3.1
@@ -1978,7 +1951,7 @@ icons:
       - Text Editor Icons
       - Web Application Icons
 
-  - name:       Puzzle Piece
+  - name:       puzzle-piece
     id:         puzzle-piece
     unicode:    f12e
     created:    3.1
@@ -1993,8 +1966,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Microphone Slash
-    id:         microphone-slash
+  - name:       microphone-off
+    id:         microphone-off
     unicode:    f131
     created:    3.1
     categories:
@@ -2007,8 +1980,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       calendar-o
-    id:         calendar-o
+  - name:       calendar-empty
+    id:         calendar-empty
     unicode:    f133
     created:    3.1
     categories:
@@ -2035,29 +2008,29 @@ icons:
     categories:
       - Brand Icons
 
-  - name:       Chevron Circle Left
-    id:         chevron-circle-left
+  - name:       Chevron Sign Left
+    id:         chevron-sign-left
     unicode:    f137
     created:    3.1
     categories:
       - Directional Icons
 
-  - name:       Chevron Circle Right
-    id:         chevron-circle-right
+  - name:       Chevron Sign Right
+    id:         chevron-sign-right
     unicode:    f138
     created:    3.1
     categories:
       - Directional Icons
 
-  - name:       Chevron Circle Up
-    id:         chevron-circle-up
+  - name:       Chevron Sign Up
+    id:         chevron-sign-up
     unicode:    f139
     created:    3.1
     categories:
       - Directional Icons
 
-  - name:       Chevron Circle Down
-    id:         chevron-circle-down
+  - name:       Chevron Sign Down
+    id:         chevron-sign-down
     unicode:    f13a
     created:    3.1
     categories:
@@ -2099,29 +2072,29 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Ellipsis Horizontal
-    id:         ellipsis-h
+  - name:       Horizontal Ellipsis
+    id:         ellipsis-horizontal
     unicode:    f141
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Ellipsis Vertical
-    id:         ellipsis-v
+  - name:       Vertical Ellipsis
+    id:         ellipsis-vertical
     unicode:    f142
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       RSS Square
-    id:         rss-square
+  - name:       RSS Sign
+    id:         rss-sign
     unicode:    f143
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Play Circle
-    id:         play-circle
+  - name:       Play Sign
+    id:         play-sign
     unicode:    f144
     created:    3.1
     categories:
@@ -2134,22 +2107,19 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Minus Square
-    id:         minus-square
+  - name:       Minus Sign Alt
+    id:         minus-sign-alt
     unicode:    f146
     created:    3.1
     categories:
       - Web Application Icons
-      - Form Control Icons
 
-  - name:       Minus Square Outlined
-    id:         minus-square-o
+  - name:       Check Minus
+    id:         check-minus
     unicode:    f147
     created:    3.1
     categories:
       - Web Application Icons
-      - Form Control Icons
-
 
   - name:       Level Up
     id:         level-up
@@ -2165,30 +2135,29 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       Check Square
-    id:         check-square
+  - name:       Check Sign
+    id:         check-sign
     unicode:    f14a
     created:    3.1
     categories:
       - Web Application Icons
-      - Form Control Icons
 
-  - name:       Pencil Square
-    id:         pencil-square
+  - name:       Edit Sign
+    id:         edit-sign
     unicode:    f14b
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       External Link Square
-    id:         external-link-square
+  - name:       Exteral Link Sign
+    id:         external-link-sign
     unicode:    f14c
     created:    3.1
     categories:
       - Web Application Icons
 
-  - name:       Share Square
-    id:         share-square
+  - name:       Share Sign
+    id:         share-sign
     unicode:    f14d
     created:    3.1
     categories:
@@ -2202,35 +2171,26 @@ icons:
       - Web Application Icons
 
 
-  - name:       Caret Square Outlined Down
-    id:         caret-square-o-down
+  - name:       Collapse
+    id:         collapse
     unicode:    f150
     created:    3.2
-    aliases:
-      - toggle-down
     categories:
       - Web Application Icons
-      - Directional Icons
 
-  - name:       Caret Square Outlined Up
-    id:         caret-square-o-up
+  - name:       Collapse Top
+    id:         collapse-top
     unicode:    f151
     created:    3.2
-    aliases:
-      - toggle-up
     categories:
       - Web Application Icons
-      - Directional Icons
 
-  - name:       Caret Square Outlined Right
-    id:         caret-square-o-right
+  - name:       Expand
+    id:         expand
     unicode:    f152
     created:    3.2
-    aliases:
-      - toggle-right
     categories:
       - Web Application Icons
-      - Directional Icons
 
   - name:       Euro (EUR)
     id:         eur
@@ -2271,19 +2231,16 @@ icons:
     unicode:    f157
     created:    3.2
     aliases:
-      - cny
-      - rmb
       - yen
     categories:
       - Currency Icons
 
-  - name:       Russian Ruble (RUB)
-    id:         rub
+  - name:       Renminbi (CNY)
+    id:         cny
     unicode:    f158
-    created:    4.0
+    created:    3.2
     aliases:
-      - ruble
-      - rouble
+      - renminbi
     categories:
       - Currency Icons
 
@@ -2320,44 +2277,44 @@ icons:
     categories:
       - Text Editor Icons
 
-  - name:       Sort Alpha Ascending
-    id:         sort-alpha-asc
+  - name:       Sort By Alphabet
+    id:         sort-by-alphabet
     unicode:    f15d
     created:    3.2
     categories:
       - Web Application Icons
 
-  - name:       Sort Alpha Descending
-    id:         sort-alpha-desc
+  - name:       Sort By Alphabet Alt
+    id:         sort-by-alphabet-alt
     unicode:    f15e
     created:    3.2
     categories:
       - Web Application Icons
 
 
-  - name:       Sort Amount Ascending
-    id:         sort-amount-asc
+  - name:       Sort By Attributes
+    id:         sort-by-attributes
     unicode:    f160
     created:    3.2
     categories:
       - Web Application Icons
 
-  - name:       Sort Amount Descending
-    id:         sort-amount-desc
+  - name:       Sort By Attributes Alt
+    id:         sort-by-attributes-alt
     unicode:    f161
     created:    3.2
     categories:
       - Web Application Icons
 
-  - name:       Sort Numeric Ascending
-    id:         sort-numeric-asc
+  - name:       Sort By Order
+    id:         sort-by-order
     unicode:    f162
     created:    3.2
     categories:
       - Web Application Icons
 
-  - name:       Sort Numeric Descending
-    id:         sort-numeric-desc
+  - name:       Sort By Order Alt
+    id:         sort-by-order-alt
     unicode:    f163
     created:    3.2
     categories:
@@ -2378,8 +2335,8 @@ icons:
     categories:
       - Web Application Icons
 
-  - name:       YouTube Square
-    id:         youtube-square
+  - name:       YouTube Sign
+    id:         youtube-sign
     unicode:    f166
     created:    3.2
     categories:
@@ -2399,8 +2356,8 @@ icons:
     categories:
       - Brand Icons
 
-  - name:       Xing Square
-    id:         xing-square
+  - name:       Xing Sign
+    id:         xing-sign
     unicode:    f169
     created:    3.2
     categories:
@@ -2421,8 +2378,8 @@ icons:
     categories:
       - Brand Icons
 
-  - name:       Stack Overflow
-    id:         stack-overflow
+  - name:       Stack Exchange
+    id:         stackexchange
     unicode:    f16c
     created:    3.2
     categories:
@@ -2456,8 +2413,8 @@ icons:
     categories:
       - Brand Icons
 
-  - name:       Bitbucket Square
-    id:         bitbucket-square
+  - name:       Bitbucket Sign
+    id:         bitbucket-sign
     unicode:    f172
     created:    3.2
     categories:
@@ -2470,8 +2427,8 @@ icons:
     categories:
       - Brand Icons
 
-  - name:       Tumblr Square
-    id:         tumblr-square
+  - name:       Tumblr Sign
+    id:         tumblr-sign
     unicode:    f174
     created:    3.2
     categories:
@@ -2583,15 +2540,15 @@ icons:
     categories:
       - Brand Icons
 
-  - name:       Sun Outlined
-    id:         sun-o
+  - name:       Sun
+    id:         sun
     unicode:    f185
     created:    3.2
     categories:
       - Web Application Icons
 
-  - name:       Moon Outlined
-    id:         moon-o
+  - name:       Moon
+    id:         moon
     unicode:    f186
     created:    3.2
     categories:
@@ -2631,83 +2588,3 @@ icons:
     created:    3.2
     categories:
       - Brand Icons
-
-
-  - name:       Pagelines
-    id:         pagelines
-    unicode:    f18c
-    created:    4.0
-    categories:
-      - Brand Icons
-
-  - name:       Stack Exchange
-    id:         stack-exchange
-    unicode:    f18d
-    created:    4.0
-    categories:
-      - Brand Icons
-
-  - name:       Arrow Circle Outlined Right
-    id:         arrow-circle-o-right
-    unicode:    f18e
-    created:    4.0
-    categories:
-      - Directional Icons
-
-
-  - name:       Arrow Circle Outlined Left
-    id:         arrow-circle-o-left
-    unicode:    f190
-    created:    4.0
-    categories:
-      - Directional Icons
-
-  - name:       Caret Square Outlined Left
-    id:         caret-square-o-left
-    unicode:    f191
-    created:    4.0
-    aliases:
-      - toggle-left
-    categories:
-      - Web Application Icons
-      - Directional Icons
-
-  - name:       Dot Circle O
-    id:         dot-circle-o
-    unicode:    f192
-    created:    4.0
-    categories:
-      - Web Application Icons
-      - Form Control Icons
-
-  - name:       Wheelchair
-    id:         wheelchair
-    unicode:    f193
-    created:    4.0
-    categories:
-      - Web Application Icons
-      - Medical Icons
-
-  - name:       Vimeo Square
-    id:         vimeo-square
-    unicode:    f194
-    created:    4.0
-    categories:
-      - Brand Icons
-
-  - name:       Turkish Lira (TRY)
-    id:         try
-    unicode:    f195
-    created:    4.0
-    aliases:
-      - turkish-lira
-    categories:
-      - Currency Icons
-
-  - name:       Plus Square Outlined
-    id:         plus-square-o
-    unicode:    f196
-    created:    4.0
-    categories:
-      - Web Application Icons
-      - Form Control Icons

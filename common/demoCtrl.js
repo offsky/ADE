@@ -1,4 +1,5 @@
-function ctrl($rootScope) {
+function ctrl($rootScope, ADE) {
+	ADE.keyboardEdit = false; //false for touch devices/ true for mouse
 
 	if(!$rootScope.initialized) {
 		$rootScope.initialized = true;
@@ -20,13 +21,12 @@ function ctrl($rootScope) {
 			var newvalue = data.newVal;
 			//convert arrays to strings so I can compare them for changes.
 			if (angular.isArray(data.oldVal)) oldvalue = data.oldVal.toString();
-			if (angular.isArray(data.newVal)) newValue = data.newVal.toString();
+			if (angular.isArray(data.newVal)) newvalue = data.newVal.toString();
 
 			$rootScope.lastMessage = 'Finished edit without changes. '+ exit;
 			if (oldvalue != newvalue) {
 				$rootScope.lastMessage = 'Finished edit with changes. Was: '+ data.oldVal + '. Now: '+ data.newVal + '. '+ exit;
 			}
-			$rootScope.$digest();
 		});
 	}
 }

@@ -14,7 +14,7 @@
 		<link rel="stylesheet" href="../common/ade.css"/>
 		<link rel="stylesheet" href="datepicker.css"/>
 	</head>
-	<body ng-app="app" ng-init="date2a=[1357027200, 1356998400, 420];">
+	<body ng-app="app" ng-init="date2a=[1357027200, 1357027200, 420];">
 		<div class="container" ng-controller="ctrl">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -50,8 +50,8 @@
 		<p>Examples (set your computer's clock to different timezones to see the changes):</p>
 		<ul>
 		<li>[1373936400,1373911200,420] | validDate:['medium',true,false] : {{ [1373936400,1373911200,420] | validDate:['medium',true,false] }} </li>
-		<li>[1373936400,1373911200,420] | validDate:['mediumDate',true,true] : {{ [1373936400,1373911200,420] | validDate:['medium',true,true] }} </li>
-		<li>[1373936400,1373911200,420] | validDate:['mediumDate',false,true] : {{ [1373936400,1373911200,420] | validDate:['medium',false,true] }} </li>
+		<li>[1373936400,1373911200,420] | validDate:['mediumDate',true,true] : {{ [1373936400,1373911200,420] | validDate:['mediumDate',true,true] }} </li>
+		<li>[1373936400,1373911200,420] | validDate:['mediumDate',false,true] : {{ [1373936400,1373911200,420] | validDate:['mediumDate',false,true] }} </li>
 		<li>[0,0] | validDate:['medium'] : {{ [0,0] | validDate:['medium'] }} </li>
 		</ul>
 		
@@ -62,20 +62,19 @@
 		<table>
 		<tr><th>Year</th><th>Date</th><th>Date+Time</th></tr>
 		<tr>
-			<td><input ade-calpop='{"format":"yyyy","viewMode":2,"minViewMode":2}' ng-model="date1a" type="text" class="input-small" /></td>
-			<td><input ade-calpop='{"format":"MMM d, yyyy"}' ng-model="date1b" type="text" class="input-small" /></td>
-			<td><input ade-calpop='{"format":"MMM d, yyyy h:mm:ss a"}' ng-model="date1c" type="text" class="input-large" /></td>
+			<td><input ade-calpop="yyyy" ade-yearonly="1" ng-model="date1a" type="text" class="input-small" /></td>
+			<td><input ade-calpop="MMM d, yyyy" ng-model="date1b" type="text" class="input-small" /></td>
+			<td><input ade-calpop="MMM d, yyyy h:mm:ss a" ng-model="date1c" type="text" class="input-large" /></td>
 		</tr>
 		</table>
-		
 		
 		<p>There is also a directive for making a non-input element editable:</p>
 
 
 		<div ng-controller="ctrl">
-			<div class="ade-editable" ade-date='{"className":"input-small","format":"yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['yyyy',true,false] }}</div>
-			<div class="ade-editable" ade-date='{"className":"input-medium","format":"MMM d, yyyy","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy',true,false]}}</div>
-			<div class="ade-editable" ade-date='{"className":"input-large","format":"MMM d, yyyy h:mm:ss a","id":"1234","absolute":true}' ng-model="date2a">{{date2a | validDate:['MMM d, yyyy h:mm:ss a',true,false]}}</div>
+			<div class="ade-editme" ade-date='yyyy' ade-class="input-small" ade-id="1234" ade-absolute="0" ade-timezone="0" ng-model="date2a"></div>
+			<div class="ade-editme" ade-date='MMM d, yyyy' ade-class="input-medium" ade-id="1234" ade-absolute="0" ade-timezone="0" ng-model="date2a"></div>
+			<div class="ade-editme" ade-date='MMM d, yyyy h:mm:ss a' ade-class="input-large" ade-id="1234" ade-absolute="0" ade-timezone="0" ng-model="date2a"></div>
 		</div>
 		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
@@ -85,7 +84,7 @@
 
 		<!-- Scripts -->
 
-		<script src="../bower_components/jquery/jquery.js"></script>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
 		<script src="../bower_components/angular/angular.js"></script>
 		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 		

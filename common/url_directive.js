@@ -5,11 +5,18 @@
 	the link for those purposes.
 
 	Usage:
-	<div ade-url='{"class":"input-medium","id":"1234","type":"email"}' ng-model="data">{{data}}</div>
+	<div ade-url='url' ade-id='1234' ade-class="myClass" ng-model="data"></div>
 
 	Config:
-	"class" will be added to the input box so you can style it.
-	"id" will be used in messages broadcast to the app on state changes.
+
+	ade-url:
+		Defaults to "url" but you can set "phone" or "email" to make it a certain type of url
+	ade-id:
+		If this id is set, it will be used in messages broadcast to the app on state changes.
+	ade-class:
+		A custom class to give to the input
+	ade-readonly:
+		If you don't want the url to be editable	
 
 	Messages:
 		name: ADE-start
@@ -25,45 +32,84 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-url=""></div>
 
+		scope: {
+			adeUrl: "@",
+			adeId: "@",
+			adeClass: "@",
+			adeReadonly: "@",
+			ngModel: "="
+		},
+
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
+		link: function(scope, element, attrs) {
 			var editing = false;
 			var input = null;
-			var value = '';
-			var oldValue = '';
+			var invisibleInput = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null;
+			var readonly = false;
+			var inputClass = "";
+			var stopObserving = null;
+			var adeId = scope.adeId;
 
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() { //whenever the view needs to be updated
-					oldValue = value = controller.$modelValue;
-					if (value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
-			}
+			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+
+			var makeHTML = function() {
+				var html = "";
+				var value = scope.ngModel;
+				
+				if(value!==undefined) {
+					if(angular.isArray(value)) value = value[0];
+					if(!angular.isString(value)) value = value.toString();
+					
+					switch (scope.adeUrl) {
+						case 'email':
+							html = $filter('email')(value);
+							break;
+
+						case 'phone':
+							html = $filter('phone')(value);
+
+							//this is because iOS (and others?) will detect a tel: link and take over
+							//blocking our clicks from working
+							if(('ontouchstart' in window) && html.indexOf('<a href="tel:')==0) {
+								html = '<a href="call:'+html.substr(13);
+							}
+							break;
+
+						case 'url':
+						default:
+							html = $filter('url')(value);
+					} 
+				}
+
+				element.html(html);
+			};
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = value;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				if (exit !== 3) {
 					//don't save value on esc
 					if (input) {
-						value = input.val();
-						controller.$setViewValue(value);
+						scope.ngModel = input.val();
 					}
 				}
 
 				element.show();
-				scope.ADE_hidePopup();
-				if (input) input.remove();
+				destroy();
 				editing = false;
 
-				ADE.done(options, oldValue, value, exit);
-			
-				scope.$digest();
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
+				ADE.teardownBlur(input);
+				ADE.teardownKeys(input);
+				if(invisibleInput) {
+					invisibleInput.off('blur.ADE');
+					ADE.teardownKeys(invisibleInput);
+				}
 			};
 
 			//called to enter edit mode on a url. happens immediatly for non-urls or after a popup confirmation for urls
@@ -72,95 +118,201 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 				editing = true;
 				exit = 0;
 
-				ADE.begin(options);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 
-				if(!angular.isString(value)) value = value.toString();
+				if(!angular.isString(scope.ngModel)) scope.ngModel = scope.ngModel ? scope.ngModel.toString() : '';
 
 				element.hide(); //hide the read only data
-				scope.ADE_hidePopup();
-				$compile('<input type="text" class="' + options.className + '" value="' + value.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
+				ADE.hidePopup(element);
+				$compile('<input type="text" class="ade-input ' + inputClass + '" value="' + scope.ngModel.replace(/"/g,'&quot;') + '" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 
-				ADE.setupBlur(input, saveEdit);
-				ADE.setupKeys(input, saveEdit);
+				//put cursor at end
+				input[0].selectionStart = input[0].selectionEnd = input.val().length; 
+
+				ADE.setupBlur(input, saveEdit, scope);
+				ADE.setupKeys(input, saveEdit, false, scope);
 			};
 
-			//handles clicks on the read version of the data
-			element.bind('click', function(e) {
-				e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
-				e.stopPropagation();
+			//place the popup in the proper place on the screen
+			var place = function() {
+				ADE.place('.'+ADE.popupClass,element,15,-5);
+			};
 
-				if (editing) return;
+			//when a link is clicked
+			//if editable and link, present popup with what action you want to take (follow, edit)
+			//if editable and not link, enter edit mode
+			//if not editable and link, follow link
+			var clickHandler = function(e) {
+
+				// if user is holding shift, control, or command, let the link work
+   			if (e.ctrlKey || e.shiftKey || e.metaKey) return;
+
+				if (editing) {
+					e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
+					e.stopPropagation();
+					return; //already editing
+				}
+
+				var popup = $('.'+ADE.popupClass);
+				if(popup.length) {
+					$(document).trigger('ADE_hidepops.ADE');
+				}
 
 				//generate html for the popup
-				var linkString = value.toString();
+				var linkString = scope.ngModel ? scope.ngModel.toString() : '';
 				var isurl = false;
-				var elOffset = element.offset();
-				var posLeft = elOffset.left;
-				var posTop = elOffset.top + element[0].offsetHeight;
+
 				var html = '';
-				switch (options.type) {
+				switch (scope.adeUrl) {
 					case 'email':
-						isurl = $filter('email')(value).match('mailto:');
+						isurl = $filter('email')(scope.ngModel).match('mailto:');
 						if (!linkString.match('mailto:')) linkString = 'mailto:' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + ADE.popupClass + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE_hidePopup();">Send Email</a>' +
+						html = '<div class="' + ADE.popupClass + ' ade-links dropdown-menu open">' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE.hidePopup();">Send Email</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 						break;
+						
 					case 'phone':
-						isurl = $filter('phone')(value).match('tel:');
+						isurl = $filter('phone')(scope.ngModel).match('tel:');
 						if (!linkString.match('tel:')) linkString = 'tel:' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE_hidePopup();">Call Number</a>' +
+						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open">' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" ng-click="ADE.hidePopup();">Call Number</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 						break;
+
+					case 'url':
 					default:
-						isurl = $filter('url')(value).match(/https?:/);
+						isurl = $filter('url')(scope.ngModel).match(/https?:/);
 						if (!linkString.match(/https?:/)) linkString = 'http://' + linkString; //put an http if omitted so the link is clickable
-						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open" style="left:' + posLeft + 'px;top:' + posTop + 'px">' +
-								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE_hidePopup();">Follow Link</a>' +
+						html = '<div class="' + ADE.popupClass  + ' ade-links dropdown-menu open">' +
+								'<a class="' + ADE.miniBtnClasses + '" href="' + linkString + '" target="_blank" ng-click="ADE.hidePopup();">Follow Link</a>' +
 								' or <a class="' + ADE.miniBtnClasses + ' ade-edit-link">Edit</a>' +
 								'<div class="ade-hidden"><input class="invisinput" type="text" /></div>' +
 								'</div>';
 				}
 
 				//if it matches as a URL, then make the popup
-				if (value !== '' && isurl) {
+				if (scope.ngModel !== '' && isurl && !readonly) {
+					e.preventDefault(); 
+					e.stopPropagation();
 					if (!element.next('.' + ADE.popupClass ).length) { //don't make a duplicate popup
 
 						$compile(html)(scope).insertAfter(element);
+						place();
 
 						var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
-						editLinkNode.bind('click', editLink);
+						editLinkNode.on('click.ADE', editLink);
 
 						//There is an invisible input box that handles blur and keyboard events on the popup
-						var invisibleInput = element.next('.ade-links').find('.invisinput');
-						invisibleInput.focus(); //focus the invisible input
+						invisibleInput = element.next('.ade-links').find('.invisinput');
+						if(ADE.keyboardEdit) invisibleInput.focus(); //focus the invisible input
 
-						ADE.setupKeys(invisibleInput, saveEdit);
+						ADE.setupKeys(invisibleInput, saveEdit, false, scope);
 
-						invisibleInput.bind('blur', function(e) {
+						invisibleInput.on('blur.ADE', function(e) {
+							ADE.teardownKeys(invisibleInput);
+							invisibleInput.off('blur.ADE');
+							ADE.teardownBlur();
+							invisibleInput = null;
 							//We delay the closure of the popup to give the internal buttons a chance to fire
 							timeout = window.setTimeout(function() {
-								scope.ADE_hidePopup(element);
+								if(editLinkNode) editLinkNode.off('click.ADE');
+								ADE.hidePopup(element);
 							},300);
 						});
+
+						ADE.setupTouchBlur(invisibleInput);
 					}
-				} else { //the editing field is not a clickable link, so directly edit it
+				} else if(!readonly) { //the editing field is not a clickable link, so directly edit it
+					e.preventDefault(); 
+					e.stopPropagation();
 					editLink();
+				}
+
+				//when we scroll, should try to reposition because it may
+				//go off the bottom/top and we may want to flip it
+				//TODO; If it goes off the screen, should we dismiss it?
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				//when the window resizes, we may need to reposition the popup
+				$(window).on('resize.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				$(document).on('ADE_hidepops.ADE',function() {
+					saveEdit(3);
+				});
+			};
+
+			//setup events
+			if(!readonly) {
+				element.on('click.ADE', function(e) {
+					scope.$apply(function() {
+						clickHandler(e);
+					});
+				});
+			}
+
+			//A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+				 else if(adeId!==value) ADE.hidePopup(element);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
+			var destroy = function() {
+				ADE.hidePopup(element);
+				ADE.teardownBlur();
+				if(input) {
+					input.off();
+					input.remove();
+				}
+				if(element) {
+					var editLinkNode = element.next('.ade-links').find('.ade-edit-link');
+					if(editLinkNode) editLinkNode.off('click.ADE');
+					if(invisibleInput) invisibleInput.off('blur.ADE');
+				}
+				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
+				$(document).off('ADE_hidepops.ADE');
+			};
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				destroy();
+
+				if(element) element.off('.ADE');
+
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
 				}
 			});
 
-			// Watches for changes to the element
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeUrl', function(settings) { //settings is the contents of the ade-url="" string
-				options = ADE.parseSettings(settings, {className: 'input-medium', type: 'http'});
-				return element; //TODO: not sure what to return here
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
 			});
 		}
 	};

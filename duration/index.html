@@ -28,7 +28,7 @@
 		<h1>Duration editing directive</h1>
 		<p>A directive to edit a time duration string. You can enter time in hours, minutes or a combination.</p>
 	
-		<div class="ade-editable" ade-duration='{"className":"input-medium", "id":"1234"}' ng-model="durationstring">{{ durationstring | duration }}</div>
+		<div class="ade-editme" ade-duration ade-class="input-medium" ade-id="1234" ng-model="durationstring"></div>
 		
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
@@ -36,7 +36,7 @@
 
 		</div>
 				
-		<script src="../bower_components/jquery/jquery.js"></script>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
 		<script src="../bower_components/angular/angular.js"></script>
 		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 		

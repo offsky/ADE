@@ -57,6 +57,8 @@ angular.module('ADE').filter('duration', function() {
 		if (!isNaN(input)) return mins2Pretty(input);
 		if(!angular.isString(input)) return '';
 		
+		input = input.replace(" h","h").replace(" m","m");
+
 		var values = input.split(' ');
 		switch(values.length) {
 			case 1: //only one number specified (1hr or 60min)

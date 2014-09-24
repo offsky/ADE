@@ -28,13 +28,13 @@
 		<h1>Money editing directive</h1>
 		<p>A simple directive that makes a currency editable (uses the same directive as percent, decimal and integer).</p>
 		
-		<div class="ade-editable" ade-number='{"className":"input-small","id":"1234"}' ng-model="currency">{{ currency | money }}</div>
+		<div class="ade-editme" ade-number='money' ade-id="1234" ade-class="input-small" ng-model="currency"></div>
 		
 		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 		<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
 		</div>
 
-		<script src="../bower_components/jquery/jquery.js"></script>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
 		<script src="../bower_components/angular/angular.js"></script>
 		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 		

@@ -16,14 +16,17 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	var miniBtnClasses = 'btn btn-mini btn-primary';
 	var popupClass = 'ade-popup';
 	var icons = ['heart', 'film', 'music', 'camera', 'shopping-cart', 'flag', 'picture', 'gift',
-        'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
-        'exclamation-sign', 'trophy', 'pushpin', 'warning-sign', 'leaf', 'tint', 'coffee', 'magnet', 'envelope',
-        'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
-        'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
+		  'calendar', 'time', 'thumbs-up', 'thumbs-down', 'hand-right', 'hand-left', 'info-sign', 'question-sign',
+		  'exclamation-sign', 'trophy', 'pushpin', 'warning-sign', 'leaf', 'tint', 'coffee', 'magnet', 'envelope',
+		  'inbox', 'bookmark', 'file', 'bell', 'asterisk', 'globe', 'plane', 'road', 'lock', 'book', 'wrench', 'home',
+		  'briefcase', 'map-marker', 'eye-open', 'medkit', 'lightbulb', 'food', 'laptop', 'circle', 'money', 'bullhorn', 'legal', 'facebook','twitter'];
 
-	//=========================================================================================
-	// Removes a popup
-	$rootScope.ADE_hidePopup = function(elm) {
+	//A flag that controls if certain ADE directives can accept keyboard input.
+	//Causes display problems on iOS where there is no keyboard
+	//Override in your contoller of you want
+	var keyboardEdit = true; 
+	
+	function hidePopup(elm) {
 		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
 			elPopup.removeClass('open').remove();
@@ -31,54 +34,64 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	};
 
 	//=========================================================================================
-	//incorporates the default settings into the passed in settings and returns the combination
-	function parseSettings(settings, defaults) {
-		var options = {};
-
-		//parse the passed in settings
-		if (angular.isObject(settings)) {
-			options = settings;
-		} else if (angular.isString(settings) && settings.length > 0) {
-			options = angular.fromJson(settings); //parses the json string into an object
-		}
-
-		//incorporate the defaults if not already set
-		$.each(defaults, function(i, v) {
-			if (!angular.isDefined(options[i])) {
-				options[i] = v;
-			}
-		});
-
-		return options;
-	}
-
-	//=========================================================================================
 	//broadcasts the message that we are starting editing
-	function begin(options) {
-		if (options.id) {
-			$rootScope.$broadcast('ADE-start', options.id);
+	function begin(id) {
+		if(angular.isObject(id)) id = id.id;
+		if (id) {
+			$rootScope.$broadcast('ADE-start', id);
 		}
 	}
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
-	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc
-	function done(options, oldValue, value, exit) {
-		if (options.id) {
-			$rootScope.$broadcast('ADE-finish', {'id': options.id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
+	//exit: 1=tab, -1=shift+tab, 2=return, -2=shift+return, 3=esc, 0=other
+	function done(id, oldValue, value, exit) {
+		if(angular.isObject(id)) id = id.id;
+		if (id) {
+			setTimeout(function() { //This is to give the model a chance to update before the notificaiton goes out
+				$rootScope.$apply(function() { 
+					$rootScope.$broadcast('ADE-finish', {'id': id, 'oldVal': oldValue, 'newVal': value, 'exit': exit });
+				});
+			});
 		}
 	}
 
 	//=========================================================================================
 	//registers a blur event on the input so we can know when we clicked outside
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
-	function setupBlur(input, callback) {
-		input.bind('blur.ADE', function() {
-			callback(0);
+	function setupBlur(input, callback, scope, skipTouch) {
+		input.on('blur.ADE', function() {
+			scope.$apply(function() { callback(0); });
 		});
+
+		if(!skipTouch) setupTouchBlur(input);
 	}
+
+	//=========================================================================================
+	// enables blur to work on touch devices by listing for any touch and bluring
+	function setupTouchBlur(input) {
+		if('ontouchend' in window) {
+			$(document).on('touchend.ADE', function(e) {
+				var target = $(e.target);
+			
+				var didTouchInPopup = target.parents('.'+popupClass).length>0 || target.hasClass(popupClass);
+				var didTouchInTag = target.parents('.ade-tag-input').length>0;	
+				var didTouchInList = target.parents('.ade-list-input').length>0;
+				var didTouchIcon = target.hasClass(miniBtnClasses);
+				var didTouchInput = target.hasClass('ade-input');
+
+
+				//ignore taps on ADE elements
+				if(!didTouchIcon && !didTouchInPopup && !didTouchInTag && !didTouchInList && !didTouchInput) {
+					if(input) input.blur(); //it has to be in a timeout to allow other events to fire first
+				}
+			});
+		}
+	}
+
 	function teardownBlur(input) {
-		input.unbind('blur.ADE');
+		if(input) input.off('blur.ADE');
+		$(document).off('touchend.ADE');
 	}
 
 	//=========================================================================================
@@ -86,55 +99,94 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//sends an integer to the callback to indicate how we exited edit mode
 	// 1 = tab, -1 = shift+tab, 2=return, -2=shift+return, 3=esc
 	var bound = false; //There may be a better way to prevent the current event from finishing when I have unbound the event handler, but I couldnt find it
-	function setupKeys(input, callback, ignoreReturn) {
-
+	function setupKeys(input, callback, ignoreReturn, scope) {
 		bound = true;
-		input.bind('keydown.ADE', function(e) {
+		input.on('keydown.ADE', function(e) {
 			if (e.keyCode == 9) { //tab
 				e.preventDefault();
 				e.stopPropagation();
 				var exit = e.shiftKey ? -1 : 1;
-				callback(exit);
+				scope.$apply(function() { callback(exit); });
 			} else if (e.keyCode == 27) { //esc
 				e.preventDefault();
 				e.stopPropagation();
-				callback(3);
+				scope.$apply(function() { callback(3); });
+			} else if (e.keyCode == 13 && ignoreReturn !== true) { //return // && bound
+				e.preventDefault();
+				e.stopPropagation();
+				var exit = e.shiftKey ? -2 : 2;
+				scope.$apply(function() { callback(exit); });
 			}
+
 		});
-
-		if (ignoreReturn !== true) {
-			//Handles return key pressed on in-line text box
-			input.bind('keypress.ADE', function(e) {
-				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
-
-				if (keyCode == 13 && bound) { //return
-					e.preventDefault();
-					e.stopPropagation();
-					var exit = e.shiftKey ? -2 : 2;
-					callback(exit);
-				}
-			});
-		}
 	}
+
 	function teardownKeys(input) {
-		input.unbind('keydown.ADE');
-		input.unbind('keypress.ADE');
-		bound = false; //tells the key event listener to stop processing the current event
+		if(input) {
+			input.off('keydown.ADE');
+			input.off('keypress.ADE');
+		}
+		//bound = false; //tells the key event listener to stop processing the current event
 							//this seems to be necessary since stopPropigation wasn't working.
 	}
 
+
+	//place the popup in the proper place on the screen
+	function place(id,element, extraV, extraH) {
+		var popup = $(id);
+		if(popup.length==0) return; //doesn't exist. oops
+		
+		if(!extraV) extraV = 2;
+		if(!extraH) extraH = 7;
+
+		var windowH = $(window).height();
+		var windowW = $(window).width();
+		var scrollV = $(window).scrollTop();
+		var scrollH = $(window).scrollLeft();
+		var elPosition = element.position(); //offset relative to document
+		var elOffset = element.offset(); //offset relative to positioned parent
+		var posLeft = Math.round(elPosition.left) - extraH;  // extraH = custom offset
+		var posTop = Math.round(elPosition.top) + element.height() + extraV;
+		var popupH = popup.height();
+		var popupW = popup.width();
+		var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
+		var pickerRight = elOffset.left-7 + popupW;
+
+		popup.removeClass("flip");
+		popup.removeClass("rarrow");
+
+		//flip it up top if it would be off the bottom of page			
+		if (pickerBottom-scrollV > windowH) {
+			posTop = Math.round(elPosition.top) - popupH - 13;
+			popup.addClass("flip");
+		}
+
+		//Move to the left if it would be off the right of page
+		if (pickerRight-scrollH > windowW) {
+			posLeft = posLeft - popupW + 30;
+			popup.addClass("rarrow");
+		}
+
+		// console.log("place",posLeft,posTop);
+		popup.css({ left: posLeft, top: posTop });
+	};
+
+
 	//=========================================================================================
-	//exports public functions
+	//exports public functions to ADE directives
 	return {
-		parseSettings: parseSettings,
+		hidePopup: hidePopup,
 		begin: begin,
 		done: done,
 		setupBlur: setupBlur,
+		setupTouchBlur: setupTouchBlur,
 		teardownBlur: teardownBlur,
 		setupKeys: setupKeys,
 		teardownKeys: teardownKeys,
-     	icons: icons,
-     	popupClass: popupClass,
-     	miniBtnClasses: miniBtnClasses
+		icons: icons,
+		popupClass: popupClass,
+		miniBtnClasses: miniBtnClasses,
+		keyboardEdit: keyboardEdit,
+		place: place
 	};
 }]);

@@ -1,12 +1,27 @@
 /* ==================================================================
- AngularJS Datatype Editor - List
- A directive to pick a new value from a list of values
+AngularJS Datatype Editor - List
+A directive to pick a single value from a list or add a new value
 
- Usage:
- <div ade-list='{id":"1234"}' ng-model="data">{{data}}</div>
+This directive uses a modified version of ngTagsInput
+http://mbenford.github.io/ngTagsInput
 
- Config:
- "id" will be used in messages broadcast to the app on state changes.
+You will need to include ngTagsInput as a dependency to your app
+
+Usage:
+<div ade-list="list1" ade-id="123" ade-query="query(val,listId)" ng-model="data"></div>
+
+Config:
+
+ade-list:
+	The id number for the type of list. If you have multiple lists per page, this will
+	distinguish between them
+ade-id:
+	If this id is set, it will be used in messages broadcast to the app on state changes.
+ade-readonly:
+	If you don't want the list to be editable	
+ade-query:
+	A function in your controller that will provide matches for search query.
+	The argument names need to match
 
  Messages:
  name: ADE-start
@@ -16,238 +31,214 @@
  data: {id from config, old value, new value, exit value}
 
  ------------------------------------------------------------------*/
-angular.module('ADE').directive('adeList', ['ADE', '$compile', function(ADE, $compile) {
+
+angular.module('ADE').directive('adeList', 
+ ['ADE', '$compile', '$filter', '$sanitize', 
+ function(ADE, $compile, $filter, $sanitize) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div ade-list=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-toggle=""></div>
+
+		scope: {
+			adeList: "@",
+			adeId: "@",
+			adeClass: "@",
+			adeQuery: "&",
+			adeReadonly: "@",
+			ngModel: "="
+		},
 
 		//The link step (after compile)
-		link: function(scope, element, attrs, controller) {
-			var options = {}; //The passed in options to the directive.
+		link: function(scope, element, attrs) {
 			var editing = false; //are we in edit mode or not
 			var input = null; //a reference to the input DOM object
-			var value = '';
-			var oldValue = '';
+			var readonly = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
+			var stopObserving = null;
+			var adeId = scope.adeId;
 
-			//whenever the model changes, we get called so we can update our value
-			if (controller !== null && controller !== undefined) {
-				controller.$render = function() {
-					oldValue = value = controller.$modelValue;
-					if (value === undefined || value === null) value = '';
-					return controller.$viewValue;
-				};
+			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+
+			scope.query = function(val) { //called by ng-tags-input on each keystroke to get the autocomplete
+				return scope.adeQuery({val:val, listId: scope.adeList});
+			};
+			scope.esc = function() { //called by ng-tags-input when esc key is pressed 
+				destroy();
+				ADE.done(adeId, scope.ngModel, scope.ngModel, 3);
+			};
+			scope.ret = function(e) {
+				var exit = e.shiftKey ? -2 : 2;
+				saveEdit(exit);
+			};
+			scope.tab = function(e) {
+				var exit = e.shiftKey ? -1 : 1;
+				saveEdit(exit);
+			};
+			scope.blurred = function(how) {
+				saveEdit(how);
+			};
+			scope.addTag = function() {
+				scope.tags = scope.tags.slice(-1);
+			}
+
+			//generates HTML for the star
+			var makeHTML = function() {
+				var html = "";
+
+				if (scope.ngModel!==undefined) {
+					if (angular.isString(scope.ngModel)) {
+						html = scope.ngModel;
+					} else if (angular.isArray(scope.ngModel)) {
+						var html = '';
+						$.each(scope.ngModel, function(i, v) {
+							if (html) html += ', ';
+							html += v;
+						});
+					}
+				}
+				html = $sanitize(html).replace(/<[^>]+>/gm, '');
+				element.html(html);
 			}
 
 			//called once the edit is done, so we can save the new data and remove edit mode
 			var saveEdit = function(exited) {
-				oldValue = value;
+				var oldValue = scope.ngModel;
 				exit = exited;
 
 				if (exited != 3) { //don't save value on esc
-					value = input.data().select2.data();
+					var value = scope.tags;
 					if (angular.isArray(value)) {
-						if (value.length > 0) {
-							//to have value stored as array
-							var vals = [];
-							angular.forEach(value, function(val, key) {
-								vals.push(val.text);
-							});
-							value = vals;
-
-							// to have value stored as string
-							// var v = '';
-							// angular.forEach(value, function(val, key) {
-							// 	val = (key < value.length - 1) ? val.text + ',' : val.text;
-							// 	v += val;
-							// });
-							// value = v;
-						} else {
-							value = '';
-						}
+						if(value[0] && value[0].text) value = value[0].text
+						else value = null;
 					} else if (angular.isObject(value) && value.text) {
-						value = value.text;
+						if(value.text) value = value.text;
+						else value = null;
 					} else {
-						value = (value) ? value.text : '';
+						value = (value) ? value.text : null;
 					}
 
-					controller.$setViewValue(value);
+					scope.ngModel = value;
 				}
 
-				element.show();
-				input.select2('destroy');
-				input.remove();
+				destroy();
 
-				editing = false;
-
-				ADE.done(options, oldValue, value, exit);
-
-				if (!scope.$$phase) scope.$digest();
+				ADE.done(adeId, oldValue, scope.ngModel, exit);
 			};
 
-			//when the edit is canceled by ESC
-			var cancel = function() {
-				input.select2('destroy');
-				input.remove();
 
-				element.show();
-				ADE.done(options, oldValue, value, 3);
-				editing = false;
-			};
-
-			//when the list is changed we get this event
-			var change = function(e) {
-				//console.log('change', e.exit);
-				if (e[0] === 'singleRemove') {
-					saveEdit(e.exit);
-				} else if (e[0] === 'emptyTabReturn') { //Tab or return on multi with nothing typed
-					saveEdit(e.exit);
-				} else if (e[0] === 'bodyClick') {
-					saveEdit(0);
-				} else {
-					if (!options.multiple) saveEdit(e.exit);
-				}
-			};
-
-			//handles clicks on the read version of the data
-			element.bind('click', function() {
+			var clickHandler = function(e) {
 				if (editing) return;
 				editing = true;
 				exit = 0;
 
-				ADE.begin(options);
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 				element.hide();
 
-				var multi = '';
-				var placeholder = '';
-
-				if (options.multiple) {
-					multi = 'multiple="multiple"';
-				} else {
-					placeholder = ',placeholder:\'List...\'';
-				}
-
-				var query = '';
-				if (options.query) query = ',query:' + options.query; //the user's query function for providing the list data
-				var selection = '';
-				if (options.selection) selection = ',initSelection:' + options.selection; //the user's selection function for providing the initial selection
 
 				var listId = '';
-				if (options.listId) listId = ",listId:'" + options.listId + "'"; //data that is passed through to the query function
+				if (scope.adeList) listId = scope.adeList; //data that is passed through to the query function
 
-				var html = '<input class="ade-list-input" type="hidden" ui-select2={width:\'resolve\',allowClear:true,openOnEnter:false,searchClear:true,closeOnRemove:false,closeOnSelect:false,allowAddNewValues:true' + query + listId + selection + placeholder + '} ' + multi + ' />';
+				var autocomplete = "query($query)";
+
+				scope.tags = angular.copy(scope.ngModel);
+				if (angular.isString(scope.tags)) scope.tags = scope.tags.split(',');
+
+				var html = '<tags-input class="ade-list-input" ng-model="tags" min-length="1" on-tag-added="addTag()" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" placeholder="..."><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
 				$compile(html)(scope).insertAfter(element);
-				input = element.next('input');
 
-				if (angular.isString(value)) value = value.split(',');
-				input.val(value);
-
-				//must initialize select2 in timeout to give the DOM a chance to exist
-				setTimeout(function() {
-					scope.selection(input, function(data) { //get preseleted data
-						input.select2('data', data);
-						input.select2('open');
-					},options.listId);
-				});
-
-				input.on('cancel', cancel); //registers for esc key events
-				input.on('change', change); //registers for any change event
-			});
-
-			// Watches for changes to the element
-			// TODO: understand why I have to return the observer and why the observer returns element
-			return attrs.$observe('adeList', function(settings) { //settings is the contents of the ade-list="" string
-				options = ADE.parseSettings(settings, {
-					multiple: false
-				});
-				return element;
-			});
-		}
-	};
-}]);
-
-// Taken from Angular-UI and modified for our uses
-// https://github.com/angular-ui/angular-ui
-angular.module('ADE').directive('uiSelect2', ['$http', function($http) {
-	var options = {};
-
-	return {
-		require: '?ngModel',
-		compile: function(tElm, tAttrs) {
-			var watch;
-			var repeatOption;
-			var repeatAttr;
-			var isSelect = tElm.is('select');
-			var isMultiple = (tAttrs.multiple !== undefined);
-
-			return function(scope, elm, attrs, controller) {
-				// instance-specific options
-				var opts = angular.extend({}, options, scope.$eval(attrs.uiSelect2));
-
-				if (isMultiple) opts.multiple = true;
-
-				if (controller) {
-					// Watch the model for programmatic changes
-					controller.$render = function() {
-						if (isMultiple && !controller.$modelValue) {
-							elm.select2('data', []);
-						} else if (angular.isObject(controller.$modelValue)) {
-							elm.select2('data', controller.$modelValue);
-						} else {
-							elm.select2('val', controller.$modelValue);
-						}
-					};
-
-					// Watch the options dataset for changes
-					if (watch) {
-						scope.$watch(watch, function(newVal, oldVal, scope) {
-							if (!newVal) return;
-							// Delayed so that the options have time to be rendered
-							setTimeout(function() {
-								elm.select2('val', controller.$viewValue);
-								// Refresh angular to remove the superfluous option
-								elm.trigger('change');
-							});
-						});
+				$('.ade-list-input').on("keydown",function(e) { //prevent tab key from doing default behavior
+					if (e.keyCode == 9) { //tab
+						e.preventDefault();
+						e.stopPropagation();
+						input.blur();
 					}
-
-					if (!isSelect) {
-						// Set the view and model value and update the angular template manually for the ajax/multiple select2.
-						elm.bind('change', function() {
-							controller.$setViewValue(elm.select2('data'));
-							scope.$digest();
-						});
-
-						if (opts.initSelection) {
-							var initSelection = opts.initSelection;
-							opts.initSelection = function(element, callback) {
-								initSelection(element, function(value) {
-									controller.$setViewValue(value);
-									callback(value);
-								},opts.listId);
-							};
-						}
-					}
-				}
-
-				attrs.$observe('disabled', function(value) {
-					elm.select2(value && 'disable' || 'enable');
 				});
 
-				if (attrs.ngMultiple) {
-					scope.$watch(attrs.ngMultiple, function(newVal) {
-						elm.select2(opts);
-					});
-				}
-
-				// Set initial value since Angular doesn't
-				elm.val(scope.$eval(attrs.ngModel));
-
-				// Initialize the plugin late so that the injected DOM does not disrupt the template compiler
 				setTimeout(function() {
-					elm.select2(opts);
+					input = $('.ade-list-input .tag-list + input');
+					input.focus();
+					ADE.setupTouchBlur(input);
+				},100); //tag input needs little time to initialize before it can accept a focus
+
+			};
+
+			var focusHandler = function(e) {
+				element.on('keypress.ADE', function(e) {
+					if (e.keyCode == 13) { //return
+						e.preventDefault();
+						e.stopPropagation();
+						element.click();
+					}
 				});
 			};
+			
+			//setup events
+			if(!readonly) {
+				element.on('click.ADE', function(e) {
+					scope.$apply(function() {
+						clickHandler(e);
+					})
+				});
+				element.on('focus.ADE',  function(e) {
+					scope.$apply(function() {
+						focusHandler(e);
+					})
+				});
+				element.on('blur.ADE', function(e) {
+					element.off('keypress.ADE');
+				});
+			}
+
+
+			//A callback to observe for changes to the id and save edit
+			//The model will still be connected, so it is safe, but don't want to cause problems
+			var observeID = function(value) {
+				 //this gets called even when the value hasn't changed, 
+				 //so we need to check for changes ourselves
+				 if(editing && adeId!==value) saveEdit(3);
+			};
+
+			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
+			stopObserving = attrs.$observe('adeId', observeID);
+
+			var destroy = function() {
+				element.show();
+
+				if(input) input.off();
+				$('.ade-list-input').off();
+				$('.ade-list-input').remove();
+
+				ADE.teardownBlur();
+
+				editing = false;
+			};
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				destroy();
+
+				if(element) {
+					element.off('click.ADE');
+					element.off('focus.ADE');
+					element.off('blur.ADE');
+					element.off('keypress.ADE');
+				}
+
+				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
+					stopObserving();
+					stopObserving = null;
+				} else {
+					delete attrs.$$observers['adeId'];
+				}
+			});
+			
+			//need to watch the model for changes
+			scope.$watch(function(scope) {
+				return scope.ngModel;
+			}, function () {
+				makeHTML();
+			});
+
 		}
 	};
 }]);

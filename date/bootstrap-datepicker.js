@@ -9,6 +9,8 @@
 	5) Got rid of date formatting and allowed caller to take care of this
 	6) Method for destroying the calendar DOM object
 	7) Remove unnecessary changeDate events
+	8) Added wasClick boolean to event so we can tell how the date was changed
+	9) Supresses notifications when nothing actually changed
  * ========================================================= */
 
 
@@ -103,18 +105,31 @@
 			this.picker.show();
 			this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
 			this.place();
-			$(window).on('resize', $.proxy(this.place, this));
+			$(window).off('resize.boot');
+			$(window).on('resize.boot', $.proxy(this.place, this));
 			if (e) {
 				e.stopPropagation();
 				e.preventDefault();
 			}
 			if (!this.isInput) {
-				$(document).on('mousedown', $.proxy(this.hide, this));
+				$(document).off('mousedown.boot');
+				$(document).on('mousedown.boot', $.proxy(this.hide, this));
 			}
+			$(document).off('touchend.boot');
+			$(document).on('touchend.boot', $.proxy(this.touch, this));
+
 			this.element.trigger({
 				type: 'show',
 				date: this.date
 			});
+		},
+
+		//Added to support touch devices like iOS
+		touch: function() {		
+			var that = this;			
+			this.touchTimeout = setTimeout(function() {
+				that.element.blur();
+			},500);
 		},
 
 		hide: function() {
@@ -123,8 +138,11 @@
 			this.viewMode = this.startViewMode;
 			this.showMode();
 			if (!this.isInput) {
-				$(document).off('mousedown', this.hide);
+				$(document).off('mousedown.boot');
 			}
+			$(document).off('touchend.boot');
+
+			this.wasClick=false;
 			this.set();
 			this.element.trigger({
 				type: 'hide',
@@ -138,6 +156,12 @@
 
 		//value is set by clicking, on hide, or external setting
 		set: function() {
+
+			if(this.touchTimeout) { //cancel the touch timeout because we don't want to blur for this touch
+				clearTimeout(this.touchTimeout);
+				this.touchTimeout = false;
+			}
+
 			// var returnObj = [];
 			// if (this.date) {
 			//  	returnObj = [this.date.getTime(), this.date.getTime()-this.date.getTimezoneOffset()*60000, this.date.getTimezoneOffset()];
@@ -147,7 +171,8 @@
 
 			this.element.trigger({
 				type: 'changeDate',
-				date: this.date ? this.date.getTime() : null
+				date: this.date ? this.date.getTime() : null,
+				wasClick: this.wasClick
 				//date: returnObj
 			});
 			return;
@@ -155,6 +180,9 @@
 
 		//a public function to programatically update the selected date
 		setValue: function(newDate) {
+			this.wasClick = false;
+			var oldDate = this.date;
+
 			if (!newDate) {
 				this.date = null;
 			} else if (typeof newDate === 'string') {
@@ -162,12 +190,16 @@
 			} else {
 				this.date = new Date(newDate * 1000);
 			}
-			this.set();
+			
+			if(!oldDate || !this.date || oldDate.getTime()!=this.date.getTime()) {
+				// console.log("setValue",oldDate,this.date);
+				this.set(); //only set if it has changed
+			}
 
 			if (newDate && this.date) {
 				this.viewDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1, 0, 0, 0, 0);
 			} else {
-				this.viewDate = null;
+				this.viewDate = new Date();
 			}
 			this.fill();
 		},
@@ -244,6 +276,8 @@
 			if (this.date) {
 				currentDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate()).valueOf();
 			}
+
+			// console.log("fill",currentDate);
 
 			this.picker.find('.datepicker-days th:eq(1)').text(DPGlobal.dates.months[month] + ' ' + year); //updates the calendar month/year title
 
@@ -354,6 +388,7 @@
 							// 	viewMode: DPGlobal.modes[this.viewMode].clsName
 							// });
 						}
+						this.wasClick = true;
 						this.showMode(-1);
 						this.fill();
 						this.set();
@@ -368,10 +403,16 @@
 								month += 1;
 							}
 							var year = this.viewDate.getFullYear();
+							var oldDate = this.date;
 							this.date = new Date(year, month, day, 0, 0, 0, 0);
 							this.viewDate = new Date(year, month, Math.min(28, day), 0, 0, 0, 0);
+							this.wasClick = true;
 							this.fill();
-							this.set();
+							
+							if(!oldDate || oldDate.getTime()!=this.date.getTime()) {
+								// console.log("click",oldDate,this.date);
+								this.set(); //only set if it has changed
+							}
 					 		// ADE: Dont need this hear because it happens in set() one line up
 							//this.element.trigger({
 							//	type: 'changeDate',

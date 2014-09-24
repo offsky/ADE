@@ -3,63 +3,51 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-	<meta charset="utf-8"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-	<title></title>
-	<meta name="description" content=""/>
-	<meta name="viewport" content="width=device-width"/>
-	<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
-	<link rel="stylesheet" href="../bower_components/select2/select2.css"/>
-	<link rel="stylesheet" href="../common/ade.css"/>
-	<link rel="stylesheet" href="../common/demo.css"/>
-</head>
-<body ng-app="app" ng-init="datamulti=['watermelon','apple'];datasingle='cherry';datasingle2='pineapple';datamulti2=['dog','cat']">
-	<div class="container" ng-controller="SelectCtrl" >
-		<!--[if lt IE 7]>
-		<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-		<![endif]-->
-		<a href="../index.html">back</a>
-		<h1>Select 2 Wrapper</h1>
-		<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). We extracted some code from the <a href="http://angular-ui.github.com">Angular UI</a> project to do this and use the <a href="http://ivaynberg.github.com/select2/">Select2</a> library.</p><br />
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title></title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../common/ng-tags-input/ng-tags-input.css"/>
+		<link rel="stylesheet" href="../common/ng-tags-input/ng-tags-input.bootstrap.css"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+		<link rel="stylesheet" href="../common/ade.css"/>
+	</head>
+	<body ng-app="tagapp" ng-init="data='apple';">
+		<div class="container" ng-controller="TagCtrl">
+				<!--[if lt IE 7]>
+					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+				<![endif]-->
+				<a href="../index.html">back</a>
+				<h1>List Directive</h1>
+				<p>A directive that allows you to pick a value from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). Uses a modified version of <a href="http://mbenford.github.io/ngTagsInput">ngTagsInput</a>.</p>
 
+				<tags-input ng-model="tags" min-length="1" max-tags-force="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true" placeholder="...">
+					<auto-complete source="query($query,'list1')" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>
+				</tags-input>
+				<br /><br />
 
-		<b>Pick one:</b>
-		<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection:selection,listId:'list1'}" ng-model="datasingle" />
-		<br /><br />
-		<b>Pick Multiple:</b>
-		<input type="hidden" ui-select2="{width:'resolve',allowClear:true,openOnEnter:false,allowAddNewValues:true,query:query,placeholder:'List...',initSelection:selection,listId:'list1'}" multiple="multiple" ng-model="datamulti" />
+				<div class="ade-editme" ade-list='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="2" ng-model="data"></div>
+				<br />
+				<div class="ade-editme" ade-list='list2' ade-query="query(val,listId)" ade-id="1002" tabindex="3" ng-model="data2"></div>
+			
+					
+				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-		<h1>List Directive</h1>
+				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+		</div>
 
-		<p>The directive will handle editing the list value for a non-input element.</p>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoTagCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
 
-		<b>Pick one:</b> <br />
-		<div class="ade-editable" ade-list='{"id":123,"multiple":false,"query":"query","selection":"selection","listId":"list1"}' ng-model="datasingle2">{{datasingle2 | list:1}}</div>
-	 
-		<br />
-		<b>Pick Multiple:</b> <br />
-		<div class="ade-editable" ade-list='{"id":1234,"multiple":true,"query":"query","selection":"selection","listId":"list2"}' ng-model="datamulti2">{{datamulti2 | list:0}}</div>
-
-		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-  
-		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
-	</div>
-
-	<script src="../bower_components/jquery/jquery.js"></script>
-	<script src="../bower_components/angular/angular.js"></script>
-	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
-
-	<script src="../common/ade.js"></script>
-	<script src="../common/demoCtrl.js"></script>
-	<script src="../common/demoListCtrl.js"></script>
-	<script src="../common/demoApp.js"></script>
-
-	<script src="list_directives.js"></script>
-	<script src="list_filters.js"></script>
-	<script src="select2.js"></script>
-
-	
-
-</body>
+		<script src="../common/ng-tags-input/ng-tags-input.js"></script>
+		<script src="list_directives.js"></script>
+		 
+	</body>
 </html>

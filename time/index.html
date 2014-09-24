@@ -25,18 +25,19 @@
 		<ul>
 		<li>Time 86399: {{ 86399 | time }} </li>
 		<li>Time abc: {{ 'abc' | time }} </li>
+		<li>Time 3:00 pm: {{ '3:00 pm' | time }} </li>
 		</ul>
 		
 		<h1>AngularJS Directives</h1>
 
-		<div>Time: <input ade-timepop='{"id":"1001"}' ng-model="time1" maxlength="8" type="text" class="input-small" /></div>
+		<div>Time: <input ade-timepop="24" ng-model="time1" maxlength="8" type="text" class="input-small" /></div>
 		<br /><br />
 
 		<p>There is also a directive for making a non-input element editable:</p>
 
 		<div ng-controller="ctrl">
-			<div class="ade-editable" ade-time='{"id":"1234"}' ng-model="time2">{{ time2 | time }}</div>
-			<div class="ade-editable" ade-time='{"id":"1234","format":"24"}' ng-model="time2">{{ time2 | time:'24' }}</div><br /><br />
+			<div class="ade-editme" ade-time="12" ade-id="1234" ng-model="time2"></div>
+			<div class="ade-editme" ade-time="24" ade-id="1234" ng-model="time2"></div><br /><br />
 		</div>
 
 		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
@@ -45,7 +46,7 @@
 
 		</div>
 	
-		<script src="../bower_components/jquery/jquery.js"></script>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
 		<script src="../bower_components/angular/angular.js"></script>
 		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 		
