@@ -103,6 +103,18 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				}
 			});
 			
+			//when we scroll, should try to reposition because it may
+			//go off the bottom/top and we may want to flip it
+			//TODO; If it goes off the screen, should we dismiss it?
+			$(document).on('scroll.ADE',function() {
+				 element.datepicker('place');
+			});
+
+			//when the window resizes, we may need to reposition the popup
+			$(window).on('resize.ADE',function() {
+				 element.datepicker('place');
+			});
+
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
 					element.off('keypress.ADE');
@@ -112,6 +124,8 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 						element.datepicker('remove');
 					}
 				}
+				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
 			});
 
 			//need to watch the model for changes
@@ -309,6 +323,22 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 					$compile(html)(scope).insertAfter(element);
 					place();
 				});
+
+				//when we scroll, should try to reposition because it may
+				//go off the bottom/top and we may want to flip it
+				//TODO; If it goes off the screen, should we dismiss it?
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				//when the window resizes, we may need to reposition the popup
+				$(window).on('resize.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
 			}
 
 			//Remove the day of the week popup
@@ -337,6 +367,9 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 					element.off('mouseout.ADE');
 					element.off('click.ADE');
 				}
+				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
+
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();
 					stopObserving = null;

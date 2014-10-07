@@ -8,8 +8,14 @@
 .ade-popup.dropdown-menu.flip:after {border-bottom:0px; border-top: 6px solid #FFF;top:auto;bottom:-5px;}
 .ade-popup.dropdown-menu.rarrow:before {left: 176px;}
 .ade-popup.dropdown-menu.rarrow:after {left: 177px;}
-
 .ade-popup span{padding:3px;margin:0;cursor:pointer;}
+@media screen and (max-width: 480px) { /* popup goes full width on small screens */
+	.ade-popup.dropdown-menu.open {left:5px;width: 92%;}
+	.ade-popup.dropdown-menu:before,
+	.ade-popup.dropdown-menu:after,
+	.ade-popup.dropdown-menu.flip:before,
+	.ade-popup.dropdown-menu.flip:after {display:none; border: 0px;}
+}
 
 /* Icon Directive */
 .ade-icons { position:absolute;}
@@ -17,11 +23,18 @@
 .ade-icon.icon-ban-circle{color:#999;}
 .ade-popup a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
 .ade-icons span { width:14px; height:16px;display:inline-block; text-align: center;}
+@media screen and (max-width: 480px) {
+	.ade-icon{font-size: 1.3em; }
+	.ade-icons span { width:30px; height:30px;}
+}
 
 /* Link Popup */
 .ade-links.dropdown-menu.open{padding:4px;}
 .ade-links a{display:inline-block;padding:0 6px;color:#fff;}
 .ade-links .icon.icon-remove{margin:3px 0 0 0;}
+@media screen and (max-width: 480px) {
+	.ade-links a{margin:0px 10px; padding:2px 10px;}
+}
 
 /* Rich text Directive */
 .ade-rich { position:absolute;}
@@ -56,3 +69,10 @@
 /* Date Directive */
 .datepicker { min-width:210px; }
 .ade-date-popup p{margin:5px 0 0 0;}
+@media screen and (max-width: 480px) {
+	.dropdown-menu {left:5px;width:94%;}
+	.datepicker:before,
+	.datepicker:after,
+	.datepicker.flipped:before,
+	.datepicker.flipped:after {display:none; border: 0px;}
+}

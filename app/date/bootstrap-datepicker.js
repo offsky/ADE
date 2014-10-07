@@ -11,6 +11,7 @@
 	7) Remove unnecessary changeDate events
 	8) Added wasClick boolean to event so we can tell how the date was changed
 	9) Supresses notifications when nothing actually changed
+	10) Make full screen on small windows
  * ========================================================= */
 
 
@@ -207,11 +208,13 @@
 		//place the popup in the proper place on the screen
 		place: function() {
 			var offset = this.component ? this.component.offset() : this.element.offset();
-			this.picker.css({
-				top: offset.top + this.height,
-				left: offset.left
-			});
-
+			var windowW = $(window).width();
+			var scrollH = $(window).scrollLeft();
+			if(windowW<=480) {
+				offset.left = scrollH+5;
+			}
+			this.picker.css({ top: offset.top + this.height, left: offset.left });
+			
 			//flip up top if off bottom of page
 			var windowH = $(window).height();
 			var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
@@ -219,8 +222,7 @@
 
 			if (pickerHeight - scroll > windowH) {
 				this.picker.css({
-					top: offset.top - this.picker[0].offsetHeight - 5,
-					left: offset.left
+					top: offset.top - this.picker[0].offsetHeight - 5
 				}).addClass("flipped");
 			} else {
        	 	this.picker.removeClass("flipped");

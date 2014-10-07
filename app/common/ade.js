@@ -132,7 +132,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 
 	//place the popup in the proper place on the screen
-	function place(id,element, extraV, extraH) {
+	function place(id,element, extraV, extraH) {		
 		var popup = $(id);
 		if(popup.length==0) return; //doesn't exist. oops
 		
@@ -152,6 +152,10 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
 		var pickerRight = elOffset.left-7 + popupW;
 
+		if(windowW<=480) {
+			posLeft = scrollH+5;
+		}
+
 		popup.removeClass("flip");
 		popup.removeClass("rarrow");
 
@@ -162,7 +166,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		}
 
 		//Move to the left if it would be off the right of page
-		if (pickerRight-scrollH > windowW) {
+		if (pickerRight-scrollH > windowW && windowW>480) {
 			posLeft = posLeft - popupW + 30;
 			popup.addClass("rarrow");
 		}
