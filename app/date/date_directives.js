@@ -73,7 +73,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				}
 			};
 			
-	
 			//initialization of the datapicker
 			element.datepicker(options).on('changeDate.ADE',function(e) {
 				//sometimes this is called inside Angular scope, sometimes not.
@@ -103,18 +102,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				}
 			});
 			
-			//when we scroll, should try to reposition because it may
-			//go off the bottom/top and we may want to flip it
-			//TODO; If it goes off the screen, should we dismiss it?
-			$(document).on('scroll.ADE',function() {
-				 element.datepicker('place');
-			});
-
-			//when the window resizes, we may need to reposition the popup
-			$(window).on('resize.ADE',function() {
-				 element.datepicker('place');
-			});
-
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
 					element.off('keypress.ADE');
@@ -124,8 +111,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 						element.datepicker('remove');
 					}
 				}
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
 			});
 
 			//need to watch the model for changes
@@ -244,6 +229,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 
 			var clickHandler = function() {
 				ADE.hidePopup(element);
+				destroy();
 				if (editing) return;
 				editing = true;
 				exit = 0;
@@ -322,28 +308,30 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 					var html = '<div class="' + ADE.popupClass + ' ade-date-popup dropdown-menu open"><p>' + content + dayOfWeek + '.</p></div>';
 					$compile(html)(scope).insertAfter(element);
 					place();
-				});
 
-				//when we scroll, should try to reposition because it may
-				//go off the bottom/top and we may want to flip it
-				//TODO; If it goes off the screen, should we dismiss it?
-				$(document).on('scroll.ADE',function() {
-					scope.$apply(function() {
-						place();
-					}); 
-				});
+					//when we scroll, should try to reposition because it may
+					//go off the bottom/top and we may want to flip it
+					//TODO; If it goes off the screen, should we dismiss it?
+					$(document).on('scroll.ADE',function() {
+						scope.$apply(function() {
+							place();
+						}); 
+					});
 
-				//when the window resizes, we may need to reposition the popup
-				$(window).on('resize.ADE',function() {
-					scope.$apply(function() {
-						place();
-					}); 
+					//when the window resizes, we may need to reposition the popup
+					$(window).on('resize.ADE',function() {
+						scope.$apply(function() {
+							place();
+						}); 
+					});
+
 				});
 			}
 
 			//Remove the day of the week popup
 			element.on('mouseout.ADE', function() {
 			  ADE.hidePopup(element);
+			  destroy();
 			});
 
 			if(!readonly) {
@@ -361,14 +349,19 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
 
+			var destroy = function() {
+				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
+			};
+
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				destroy();
+
 				if(element) {
 					element.off('mouseover.ADE');
 					element.off('mouseout.ADE');
 					element.off('click.ADE');
 				}
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
 
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();

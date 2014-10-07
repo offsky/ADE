@@ -12,6 +12,7 @@
 	8) Added wasClick boolean to event so we can tell how the date was changed
 	9) Supresses notifications when nothing actually changed
 	10) Make full screen on small windows
+	11) Get popup calendar to position correctly on resize/scroll of window
  * ========================================================= */
 
 
@@ -108,6 +109,8 @@
 			this.place();
 			$(window).off('resize.boot');
 			$(window).on('resize.boot', $.proxy(this.place, this));
+			$(document).off('scroll.boot');
+			$(document).on('scroll.boot', $.proxy(this.place, this));
 			if (e) {
 				e.stopPropagation();
 				e.preventDefault();
@@ -135,7 +138,8 @@
 
 		hide: function() {
 			this.picker.hide();
-			$(window).off('resize', this.place);
+			$(window).off('resize.boot');
+			$(document).off('scroll.boot');
 			this.viewMode = this.startViewMode;
 			this.showMode();
 			if (!this.isInput) {
