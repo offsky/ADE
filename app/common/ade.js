@@ -132,7 +132,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 
 	//place the popup in the proper place on the screen
-	function place(id,element, extraV, extraH) {		
+	function place(id,element, extraV, extraH) {
 		var popup = $(id);
 		if(popup.length==0) return; //doesn't exist. oops
 		
@@ -160,8 +160,9 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		popup.removeClass("rarrow");
 
 		//flip it up top if it would be off the bottom of page			
-		if (pickerBottom-scrollV > windowH) {
-			posTop = Math.round(elPosition.top) - popupH - 13;
+		var posTopFlip = Math.round(elPosition.top) - popupH - 13;
+		if (pickerBottom-scrollV > windowH && posTopFlip>0) {
+			posTop = posTopFlip;
 			popup.addClass("flip");
 		}
 

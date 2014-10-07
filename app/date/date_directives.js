@@ -263,10 +263,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
 				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
 				
-				var userAgent = window.navigator.userAgent;
-				if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-
-				}
+				// var userAgent = window.navigator.userAgent;
+				// if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+						//TODO: do something special for iOS since they have native calendar wheels?
+				// }
 
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
