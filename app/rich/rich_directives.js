@@ -311,7 +311,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if(scope.ngModel) modelValue = scope.ngModel;
 
 				var touchClass="";
-				if(supportsTouch) touchClass = " ade-hasTouch"; //because touch devices (iOS) put copy/paste controls that would cover the rich text toolbar
+//				if(supportsTouch) touchClass = " ade-hasTouch"; //because touch devices (iOS) put copy/paste controls that would cover the rich text toolbar
 
 				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
@@ -327,9 +327,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					theme: "modern",
 					menubar: "false",
 					plugins: ["textcolor", "link", 'fullscreen'],
-					toolbar: "saveButton | cancelButton | styleselect | bold italic | forecolor backcolor | bullist numlist | outdent indent | hr | link",
+					toolbar: "saveButton | cancelButton | styleselect | bold italic | forecolor backcolor | bullist numlist | outdent indent | link",
 					baseURL: "",
-					handleKeyEvents: handleKeyEvents, //This interacts with a 1 line modification that we made to TinyMCE
 					setup: function(ed) {
 						ed.on('init', function(args) {
 							//go fullscreen on small windows
@@ -338,6 +337,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							//focus the text area. In a timer to allow tinymce to initialize.
 							tinymce.execCommand('mceFocus',false,"tinyText" + id);
 						});
+						ed.on('keydown', handleKeyEvents);
 						ed.addButton('saveButton', {
 							title: "Save",
 							text: "Save",
