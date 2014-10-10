@@ -170,6 +170,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			adeReadonly: "@",
 			adeAbsolute: "@",
 			adeTimezone: "@",
+			adeHover: "@",
 			ngModel: "="
 		},
 
@@ -189,6 +190,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 
 			if(scope.adeDate!==undefined) format = scope.adeDate;
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeHover!==undefined && scope.adeHover=="0") scope.adeHover = false; else scope.adeHover=true;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeAbsolute!==undefined && scope.adeAbsolute=="1") absolute = true;
 			if(scope.adeTimezone!==undefined && scope.adeTimezone=="1") timezone = true;
@@ -287,7 +289,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			};
 
 			//When mousing over the div it will display a popup with the day of the week
-			if(!('ontouchstart' in window)) {
+			if(!('ontouchstart' in window) && scope.adeHover) {
 				element.on('mouseover.ADE', function() {
 					ADE.hidePopup();
 					var value = element.text();
@@ -309,20 +311,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 					$compile(html)(scope).insertAfter(element);
 					place();
 
-					//when we scroll, should try to reposition because it may
-					//go off the bottom/top and we may want to flip it
-					//TODO; If it goes off the screen, should we dismiss it?
-					$(document).on('scroll.ADE',function() {
+					ADE.setupScrollEvents(element,function() {
 						scope.$apply(function() {
 							place();
-						}); 
-					});
-
-					//when the window resizes, we may need to reposition the popup
-					$(window).on('resize.ADE',function() {
-						scope.$apply(function() {
-							place();
-						}); 
+						});
 					});
 
 				});
@@ -350,8 +342,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
+				ADE.teardownScrollEvents(element);
 			};
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed

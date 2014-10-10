@@ -40,7 +40,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		if (id) {
 			$rootScope.$broadcast('ADE-start', id);
 		}
-	}
+	};
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
@@ -54,7 +54,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				});
 			});
 		}
-	}
+	};
 
 	//=========================================================================================
 	//registers a blur event on the input so we can know when we clicked outside
@@ -65,7 +65,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		});
 
 		if(!skipTouch) setupTouchBlur(input);
-	}
+	};
 
 	//=========================================================================================
 	// enables blur to work on touch devices by listing for any touch and bluring
@@ -87,12 +87,12 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				}
 			});
 		}
-	}
+	};
 
 	function teardownBlur(input) {
 		if(input) input.off('blur.ADE');
 		$(document).off('touchend.ADE');
-	}
+	};
 
 	//=========================================================================================
 	//registers the keyboard events on the input so we know how we left edit mode
@@ -119,7 +119,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			}
 
 		});
-	}
+	};
 
 	function teardownKeys(input) {
 		if(input) {
@@ -128,21 +128,43 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		}
 		//bound = false; //tells the key event listener to stop processing the current event
 							//this seems to be necessary since stopPropigation wasn't working.
-	}
+	};
 
+
+	//=========================================================================================
+	// Watch for scrolling and resizing to reposition our popups
+	function setupScrollEvents(element,callback) {
+		var sp = scrollParent(element);
+
+		//when we scroll, should try to reposition because it may
+		//go off the bottom/top and we may want to flip it
+		//TODO; If it goes off the screen, should we dismiss it?
+		$(sp).on('scroll.ADE',callback);
+
+		//when the window resizes, we may need to reposition the popup
+		$(window).on('resize.ADE',callback); 
+	};
+
+	function teardownScrollEvents(element) {
+		var sp = scrollParent(element);
+		$(sp).off('scroll.ADE');
+		$(window).off('resize.ADE');
+	};
 
 	//place the popup in the proper place on the screen
 	function place(id,element, extraV, extraH) {
 		var popup = $(id);
 		if(popup.length==0) return; //doesn't exist. oops
 		
+		var sp = scrollParent(element);
+
 		if(!extraV) extraV = 2;
 		if(!extraH) extraH = 7;
 
 		var windowH = $(window).height();
 		var windowW = $(window).width();
-		var scrollV = $(window).scrollTop();
-		var scrollH = $(window).scrollLeft();
+		var scrollV = $(sp).scrollTop();
+		var scrollH = $(sp).scrollLeft();
 		var elPosition = element.position(); //offset relative to document
 		var elOffset = element.offset(); //offset relative to positioned parent
 		var posLeft = Math.round(elPosition.left) - extraH;  // extraH = custom offset
@@ -151,10 +173,6 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		var popupW = popup.width();
 		var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
 		var pickerRight = elOffset.left-7 + popupW;
-
-		if(windowW<=480) {
-			posLeft = scrollH+5;
-		}
 
 		popup.removeClass("flip");
 		popup.removeClass("rarrow");
@@ -166,16 +184,39 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			popup.addClass("flip");
 		}
 
-		//Move to the left if it would be off the right of page
-		if (pickerRight-scrollH > windowW && windowW>480) {
-			posLeft = posLeft - popupW + 30;
-			popup.addClass("rarrow");
-		}
+		if(windowW<=480) {
+			posLeft = scrollH+5;
+			popup.css({ left: posLeft, top: posTop, width: windowW-30});
+			// console.log(posLeft, windowW, scrollH);
 
-		// console.log("place",posLeft,posTop);
-		popup.css({ left: posLeft, top: posTop });
+		} else {
+			//Move to the left if it would be off the right of page
+			if (pickerRight-scrollH > windowW && windowW>480) {
+				posLeft = posLeft - popupW + 30;
+				popup.addClass("rarrow");
+			}
+
+			// console.log("place",posLeft,posTop);
+			popup.css({ left: posLeft, top: posTop});
+		}
 	};
 
+	function scrollParent(elem) {
+		//taken and modified from jquery UI project
+		var includeHidden = false;
+		var position = elem.css( "position" ),
+			excludeStaticParent = position === "absolute",
+			overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/,
+			scrollParent = elem.parents().filter( function() {
+				var parent = $( this );
+				if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+					return false;
+				}
+				return overflowRegex.test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
+			}).eq( 0 );
+
+		return position === "fixed" || !scrollParent.length ? $( elem[ 0 ].ownerDocument || document ) : scrollParent;
+	 };
 
 	//=========================================================================================
 	//exports public functions to ADE directives
@@ -192,6 +233,8 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		popupClass: popupClass,
 		miniBtnClasses: miniBtnClasses,
 		keyboardEdit: keyboardEdit,
-		place: place
+		place: place,
+		setupScrollEvents: setupScrollEvents,
+		teardownScrollEvents: teardownScrollEvents
 	};
 }]);

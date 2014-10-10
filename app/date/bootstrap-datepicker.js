@@ -119,8 +119,8 @@
 				$(document).off('mousedown.boot');
 				$(document).on('mousedown.boot', $.proxy(this.hide, this));
 			}
-			$(document).off('touchend.boot');
-			$(document).on('touchend.boot', $.proxy(this.touch, this));
+			$(document).off('touchstart.boot');
+			$(document).on('touchstart.boot', $.proxy(this.touchstart, this));
 
 			this.element.trigger({
 				type: 'show',
@@ -129,7 +129,17 @@
 		},
 
 		//Added to support touch devices like iOS
-		touch: function() {		
+		touchstart: function() {
+			$(document).off('touchmove.boot');
+			$(document).off('touchend.boot');
+			$(document).on('touchend.boot', $.proxy(this.touchend, this));
+			$(document).on('touchmove.boot', function() {
+				$(document).off('touchmove.boot');
+				$(document).off('touchend.boot');
+			});
+		},
+
+		touchend: function() {		
 			var that = this;			
 			this.touchTimeout = setTimeout(function() {
 				that.element.blur();
@@ -145,6 +155,7 @@
 			if (!this.isInput) {
 				$(document).off('mousedown.boot');
 			}
+			$(document).off('touchstart.boot');
 			$(document).off('touchend.boot');
 
 			this.wasClick=false;
