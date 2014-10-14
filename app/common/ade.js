@@ -25,13 +25,14 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 	//Causes display problems on iOS where there is no keyboard
 	//Override in your contoller if you want
 	var keyboardEdit = true; 
-	
+	var blurTimeout = false; //a timeout that allows external factors to cancel a blur event
+
 	function hidePopup(elm) {
 		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
 			elPopup.removeClass('open').remove();
 		}
-	};
+	}
 
 	//=========================================================================================
 	//broadcasts the message that we are starting editing
@@ -40,7 +41,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		if (id) {
 			$rootScope.$broadcast('ADE-start', id);
 		}
-	};
+	}
 
 	//=========================================================================================
 	//broadcasts the message that we are done editing
@@ -54,18 +55,22 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				});
 			});
 		}
-	};
+	}
 
 	//=========================================================================================
 	//registers a blur event on the input so we can know when we clicked outside
 	//sends 0 to the callback to indicate that the blur was not caused by a keyboard event
 	function setupBlur(input, callback, scope, skipTouch) {
 		input.on('blur.ADE', function() {
-			scope.$apply(function() { callback(0); });
+			if(blurTimeout) clearTimeout(blurTimeout);
+			blurTimeout = window.setTimeout(function() {
+				blurTimeout = false;
+				scope.$apply(function() { callback(0); });
+			},100);
 		});
 
 		if(!skipTouch) setupTouchBlur(input);
-	};
+	}
 
 	//=========================================================================================
 	// enables blur to work on touch devices by listing for any touch and bluring
@@ -79,20 +84,27 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 				var didTouchInList = target.parents('.ade-list-input').length>0;
 				var didTouchIcon = target.hasClass(miniBtnClasses);
 				var didTouchInput = target.hasClass('ade-input');
-
+				var didTouchInDate = target.parents('.ade-date-popup').length>0;
 
 				//ignore taps on ADE elements
-				if(!didTouchIcon && !didTouchInPopup && !didTouchInTag && !didTouchInList && !didTouchInput) {
+				if(!didTouchIcon && !didTouchInPopup && !didTouchInTag && !didTouchInList && !didTouchInput && !didTouchInDate) {
 					if(input) input.blur(); //it has to be in a timeout to allow other events to fire first
 				}
 			});
 		}
-	};
+	}
 
 	function teardownBlur(input) {
 		if(input) input.off('blur.ADE');
 		$(document).off('touchend.ADE');
-	};
+	}
+
+	function cancelBlur() {
+		if(blurTimeout) {
+			clearTimeout(blurTimeout);
+			blurTimeout = false;
+		}
+	}
 
 	//=========================================================================================
 	//registers the keyboard events on the input so we know how we left edit mode
@@ -119,7 +131,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			}
 
 		});
-	};
+	}
 
 	function teardownKeys(input) {
 		if(input) {
@@ -128,7 +140,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		}
 		//bound = false; //tells the key event listener to stop processing the current event
 							//this seems to be necessary since stopPropigation wasn't working.
-	};
+	}
 
 
 	//=========================================================================================
@@ -143,13 +155,13 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 		//when the window resizes, we may need to reposition the popup
 		$(window).on('resize.ADE',callback); 
-	};
+	}
 
 	function teardownScrollEvents(element) {
 		var sp = scrollParent(element);
 		$(sp).off('scroll.ADE');
 		$(window).off('resize.ADE');
-	};
+	}
 
 	//place the popup in the proper place on the screen
 	function place(id,element, extraV, extraH) {
@@ -191,7 +203,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 
 		} else {
 			//Move to the left if it would be off the right of page
-			if (pickerRight-scrollH > windowW && windowW>480) {
+			if (pickerRight-scrollH > windowW) {
 				posLeft = posLeft - popupW + 30;
 				popup.addClass("rarrow");
 			}
@@ -199,7 +211,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			// console.log("place",posLeft,posTop);
 			popup.css({ left: posLeft, top: posTop});
 		}
-	};
+	}
 
 	function scrollParent(elem) {
 		//taken and modified from jquery UI project
@@ -216,7 +228,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			}).eq( 0 );
 
 		return position === "fixed" || !scrollParent.length ? $( elem[ 0 ].ownerDocument || document ) : scrollParent;
-	 };
+	 }
 
 	//=========================================================================================
 	//exports public functions to ADE directives
@@ -227,6 +239,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 		setupBlur: setupBlur,
 		setupTouchBlur: setupTouchBlur,
 		teardownBlur: teardownBlur,
+		cancelBlur: cancelBlur,
 		setupKeys: setupKeys,
 		teardownKeys: teardownKeys,
 		icons: icons,

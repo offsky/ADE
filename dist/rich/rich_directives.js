@@ -62,6 +62,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var adeId = scope.adeId;
 			var supportsTouch = ('ontouchend' in window);
 			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
+			var windowW = $(window).width();
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
@@ -105,7 +106,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var saveEdit = function(exited) {
 				var oldValue = scope.ngModel;
 				exit = exited;
-
+						
 				var editor = $('#tinyText' + id + '_ifr').contents().find('#tinymce')[0];
 				var currentLength = $(editor).text().length;
 
@@ -137,6 +138,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				input.remove();
 				editing = false;
 
+				ADE.hidePopup(element);
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
 
 				if (exit == 1) {
@@ -150,9 +152,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				}
 
 				// we're done, no need to listen to events
-				$(document).off('click.ADE');
-				$(document).off('touchend.ADE');
-				$(document).off('scroll.ADE');
+				destroy();
 				setupElementEvents();
 			};
 
@@ -190,19 +190,26 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					if(outerClick) mouseout();
 				});
 				
-				//because the popup is fixed positioned, if we scroll it would
-				//get disconnected. So, we just hide it. In the future it might
-				//be better to dynamially update it's position
-				// $(document).on('scroll.ADE',function() {
-				// 	scope.$apply(function() {
-				// 		//TODO: Save instead of hide, or position as you scroll
-				// 		ADE.hidePopup(element);
-				// 	}); 
-				// });
+				//when we scroll, should try to reposition because it may
+				//go off the bottom/top and we may want to flip it
+				//TODO; If it goes off the screen, should we dismiss it?
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				//when the window resizes, we may need to reposition the popup
+				$(window).on('resize.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
 			};
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
+				if(windowW<=480 && editing) return;
 				ADE.place('.ade-rich',element,25,-5);
 			};
 
@@ -243,10 +250,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 					// blur and save changes
 					if (!startsMce) {
-						mouseout();
 						saveEdit(0);
-						$(document).off('click.ADE');
-						$(document).off('touchend.ADE');
 					}
 				}
 			};
@@ -276,7 +280,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				switch(e.keyCode) {
 					case 27: // esc
 						scope.$apply(function() {
-							mouseout();
 							saveEdit(3); // don't save results
 						});
 						e.preventDefault();
@@ -285,7 +288,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					case 9: // tab
 						var exit = e.shiftKey ? -1 : 1;
 						scope.$apply(function() {
-							mouseout();
 							saveEdit(exit); // blur and save
 						});
 						e.preventDefault();
@@ -300,8 +302,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var editRichText = function() {
 				window.clearTimeout(timeout);
 				if(input) input.off('.ADE');
-				$(document).off('touchend.ADE');
 				element.off('.ADE');
+				destroy();
 
 				ADE.hidePopup(element);
 
@@ -309,7 +311,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if(scope.ngModel) modelValue = scope.ngModel;
 
 				var touchClass="";
-				if(supportsTouch) touchClass = " ade-hasTouch"; //because touch devices (iOS) put copy/paste controls that would cover the rich text toolbar
+//				if(supportsTouch) touchClass = " ade-hasTouch"; //because touch devices (iOS) put copy/paste controls that would cover the rich text toolbar
 
 				var content = '<textarea id="tinyText' + id + '" class="' + inputClass + '" style="height:30px">' + modelValue + '</textarea>';
 				
@@ -324,10 +326,35 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					selector: "#tinyText" + id,
 					theme: "modern",
 					menubar: "false",
-					plugins: ["textcolor", "link"],
-					toolbar: "styleselect | bold italic | bullist numlist outdent indent | hr | link | forecolor backcolor",
+					plugins: ["textcolor", "link", 'fullscreen'],
+					toolbar: "saveButton | cancelButton | styleselect | bold italic | forecolor backcolor | bullist numlist | outdent indent | link",
 					baseURL: "",
-					handleKeyEvents: handleKeyEvents //This interacts with a 1 line modification that we made to TinyMCE
+					setup: function(ed) {
+						ed.on('init', function(args) {
+							//go fullscreen on small windows
+							if(windowW<=480) tinymce.execCommand('mceFullScreen');
+
+							//focus the text area. In a timer to allow tinymce to initialize.
+							tinymce.execCommand('mceFocus',false,"tinyText" + id);
+						});
+						ed.on('keydown', handleKeyEvents);
+						ed.addButton('saveButton', {
+							title: "Save",
+							text: "Save",
+							icon:false,
+							onclick: function() {
+								saveEdit(0); // blur and save
+							}
+						});
+						ed.addButton('cancelButton', {
+							title: "Cancel",
+							text: "Cancel",
+							icon:false,
+							onclick: function() {
+								saveEdit(3); // blur and cancel
+							}
+						});
+					}
 				});
 
 				editing = true;
@@ -351,10 +378,21 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					});					
 				});
 
-				//focus the text area. In a timer to allow tinymce to initialize.
-				timeout = window.setTimeout(function() {
-					tinymce.execCommand('mceFocus',false,"tinyText" + id);
-				}, supportsTouch ? 1000 : 100);
+				//when we scroll, should try to reposition because it may
+				//go off the bottom/top and we may want to flip it
+				//TODO; If it goes off the screen, should we dismiss it?
+				$(document).on('scroll.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
+
+				//when the window resizes, we may need to reposition the popup
+				$(window).on('resize.ADE',function() {
+					scope.$apply(function() {
+						place();
+					}); 
+				});
 			};
 
 			//When the mouse enters, show the popup view of the note
@@ -376,8 +414,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
 						if(input) input.off('.ADE');
-						$(document).off('touchend.ADE');
 						ADE.hidePopup(element);
+						destroy();
 					},400);
 				}
 			};
@@ -427,12 +465,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
 
-			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
-				if(element) element.off();
-				if(input) input.off();
+			var destroy = function() {
 				$(document).off('click.ADE');
 				$(document).off('touchend.ADE');
 				$(document).off('scroll.ADE');
+				$(window).off('resize.ADE');
+			};
+
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+				destroy();
+
+				if(element) element.off();
+				if(input) input.off();
 
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();

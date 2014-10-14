@@ -59,27 +59,30 @@
 		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to clicking on the popup calendar, you can also type in things like "today" or "next week". Try it.</p>
 
 		
-		<table>
-		<tr><th>Year</th><th>Date</th><th>Date+Time</th></tr>
-		<tr>
-			<td><input ade-calpop="yyyy" ade-yearonly="1" ng-model="date1a" type="text" class="input-small" /></td>
-			<td><input ade-calpop="MMM d, yyyy" ng-model="date1b" type="text" class="input-small" /></td>
-			<td><input ade-calpop="MMM d, yyyy h:mm:ss a" ng-model="date1c" type="text" class="input-large" /></td>
-			<td><div class="input-append date">
-  				<input ng-model="date1b" type="text" class="input-small" />
- 				<span class="add-on"><i class="icon-calendar" ade-calpop="MMM d, yyyy" ng-model="date1b" ></i></span>
-			</div></td>
-		</tr>
-		</table>
-		
+		Year<br />
+		<input ade-calpop="yyyy" ade-yearonly="1" ng-model="date1a" type="text" class="input-small" /><br />
+		Date<br />
+		<input ade-calpop="MMM d, yyyy" ng-model="date1b" type="text" class="input-small" /><br />
+		Date + Time<br />
+		<input ade-calpop="MMM d, yyyy h:mm:ss a" ng-model="date1c" type="text" class="input-large" /><br />
+		Button<br />
+		<div class="input-append date">
+			<input ng-model="date1d" type="text" class="input-small" />
+			<span class="add-on"><i class="icon-calendar" ade-calpop="MMM d, yyyy" ng-model="date1d" ></i></span>
+		</div>
 
 		<p>There is also a directive for making a non-input element editable:</p>
 
 
 		<div ng-controller="ctrl">
+			Year<br />
 			<div class="ade-editme" ade-date='yyyy' ade-class="input-small" ade-id="1234" ade-absolute="0" ade-timezone="0" ade-hover="0" ng-model="date2a"></div><br />
+			Date<br />
 			<div class="ade-editme" ade-date='MMM d, yyyy' ade-class="input-medium" ade-id="1234" ade-absolute="0" ade-timezone="0" ng-model="date2a"></div><br />
+			Date + Time<br />
 			<div class="ade-editme" ade-date='MMM d, yyyy h:mm:ss a' ade-class="input-large" ade-id="1234" ade-absolute="0" ade-timezone="0" ng-model="date2a"></div><br />
+			Button<br />
+			<div class="ade-editme" ade-date='MMM d, yyyy' ade-class="input-medium" ade-id="1234" ade-absolute="0" ade-timezone="0" ade-button="1" ng-model="date2a"></div><br />
 		</div>
 		<p>The non-input directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 

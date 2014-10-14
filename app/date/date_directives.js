@@ -84,10 +84,11 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					});
 				});
 			});
+
 			if(scope.ngModel) {
 				element.datepicker('setValue', scope.ngModel);
 			}
-		
+					
 			//Handles return key pressed on in-line text box
 			element.on('keypress.ADE', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
@@ -171,6 +172,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			adeAbsolute: "@",
 			adeTimezone: "@",
 			adeHover: "@",
+			adeButton: "@",
 			ngModel: "="
 		},
 
@@ -178,6 +180,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 		link: function(scope, element, attrs) {
 			var editing = false;
 			var input = null;
+			var parent = null; //the optional container for the input
+			var button = null; //the optional cal button for an input
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 			var readonly = false;
 			var inputClass = "";
@@ -187,6 +191,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			var stringDate = ""; //The string displayed to the user after conversion from timestamp
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var blurTimeout = null; //delay for bluring the event so a button can cancel
 
 			if(scope.adeDate!==undefined) format = scope.adeDate;
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
@@ -222,8 +227,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				ADE.teardownKeys(input);
 
 				input.datepicker('remove'); //tell datepicker to remove self
-				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
-				input.remove(); //remove the input
+				if(input.scope()) input.scope().$destroy(); //destroy the scope for the input to remove the watchers
+				if(input) input.remove(); //remove the input
+				if(parent) parent.remove();
+
 				editing = false;
 
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
@@ -260,26 +267,57 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
-				element.hide();
-				var extraDPoptions = '';
-				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
-				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
-				
 				// var userAgent = window.navigator.userAgent;
 				// if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
 						//TODO: do something special for iOS since they have native calendar wheels?
 				// }
 
-				$compile(html)(scope).insertAfter(element);
-				input = element.next('input');
+				element.hide();
+				var html;
+				var extraDPoptions = '';
+				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
+				if(scope.adeButton!==undefined && scope.adeButton=="1") {
+					//directive specifies a button accessor instead of input attached
+					html='<div class="input-append ade-date-popup" ng-controller="adeDateDummyCtrl"><input ng-model="adePickDate" type="text" class="' + inputClass + '" />';
+					html+='<span class="add-on"><i class="icon-calendar" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'"></i></span></div>';
+					$compile(html)(scope).insertAfter(element);
+				
+					parent = element.next('.input-append'); 
+					input = parent.children('input');
+					button = parent.children('.add-on').children('i');
 
-				input.focus(); //I do not know why both of these are necessary, but they are
-				setTimeout(function() {
-					input.focus();
-				});
+					button.on('click touchstart', function() {
+						ADE.cancelBlur();
+					}).on('hide',function(e) {						
+						//allow focus on input to cancel the blur of the calendar
+						if(blurTimeout) clearTimeout(blurTimeout);
+						blurTimeout = window.setTimeout(function() {
+							blurTimeout = false;
+							saveEdit(0);
+						},100);
+					});
+					input.on('focus',function() {
+						if(blurTimeout) {
+							clearTimeout(blurTimeout);
+							blurTimeout = false;
+						}
+					});
 
-				//Handles blur of in-line text box
-				ADE.setupBlur(input, saveEdit, scope, true);
+					ADE.setupBlur(input, saveEdit, scope, false);
+
+				} else {
+					html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
+					$compile(html)(scope).insertAfter(element);
+					
+					input = element.next('input');
+					input.focus(); //I do not know why both of these are necessary, but they are
+					window.setTimeout(function() {
+						input.focus();
+					});
+
+					ADE.setupBlur(input, saveEdit, scope, true);
+				}
+
 				ADE.setupKeys(input, saveEdit, false, scope);
 			};
 

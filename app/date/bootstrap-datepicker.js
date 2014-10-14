@@ -44,7 +44,7 @@
 							.appendTo('body')
 							.on({
 								click: $.proxy(this.click, this),
-								touchstart: $.proxy(this.touched, this),
+								touchend: $.proxy(this.touched, this),
 								mousedown: $.proxy(this.mousedown, this)
 							});
 		this.isInput = this.element.is('input');
@@ -131,13 +131,13 @@
 
 		//Added to support touch devices like iOS
 		touchstart: function() {
-			console.log("touchstart");
+			// console.log("touchstart");
 			$(document).off('touchmove.boot');
 			$(document).off('touchend.boot');
 			$(document).on('touchend.boot', $.proxy(this.touchend, this));
 			$(document).on('touchmove.boot', function() {
 				//if we moved, its not a touch anymore, so cancel the touchend
-				console.log("touchmove");
+				// console.log("touchmove");
 				$(document).off('touchmove.boot');
 				$(document).off('touchend.boot');
 			});
@@ -147,17 +147,17 @@
 			$(document).off('touchmove.boot');
 			$(document).off('touchend.boot');
 
-			console.log("touchend",this.touchTimeout);
+			// console.log("touchend",this.touchTimeout);
 			var that = this;
 			if(this.touchTimeout) { //double tap 
 				//cancel previous and do nothing. Allow OS to zoom
-				console.log("double clear");
+				// console.log("double clear");
 				clearTimeout(this.touchTimeout);
 				this.touchTimeout = false;
 				return;
 			}	
 			this.touchTimeout = setTimeout(function() {
-				console.log("touch timeout");
+				// console.log("touch timeout");
 				if(that.isInput) {
 					that.element.blur();
 				} else {
@@ -168,7 +168,7 @@
 		},
 
 		hide: function() {
-			console.log("hide");
+			// console.log("hide");
 			this.picker.hide();
 			$(window).off('resize.boot');
 			$(document).off('scroll.boot');
@@ -197,7 +197,7 @@
 		set: function() {
 
 			if(this.touchTimeout) { //cancel the touch timeout because we don't want to blur for this touch
-				console.log("set clear");
+				// console.log("set clear");
 				clearTimeout(this.touchTimeout);
 				this.touchTimeout = false;
 			}
@@ -248,9 +248,19 @@
 		place: function() {
 			var offset = this.component ? this.component.offset() : this.element.offset();
 			var windowW = $(window).width();
-			var scrollH = $(window).scrollLeft();
+			var scroll = $(window).scrollLeft();
+
+			this.picker.removeClass("rarrow");
 			if(windowW<=480) {
-				offset.left = scrollH+5;
+				offset.left = scroll+5;
+			} else {
+				var pickerRight = offset.left + this.picker[0].offsetWidth;
+
+				//Move to the left if it would be off the right of page
+				if (pickerRight-scroll > windowW) {
+					offset.left = offset.left - this.picker[0].offsetWidth + 30;
+					this.picker.addClass("rarrow");
+				}
 			}
 			this.picker.css({ top: offset.top + this.height, left: offset.left });
 			
@@ -389,18 +399,18 @@
 		},
 
 		touched: function(e) {
-			console.log("touched",e);
+			// console.log("touched",e);
 			this.click(e);
 		},
 
 		//updates the calendar's state and selected value and sends the message that the value changed
 		click: function(e) {
-			console.log("click",e);
+			// console.log("click",e);
 			e.stopPropagation();
 			e.preventDefault();
 
 			if(this.touchTimeout) { //cancel the touch timeout because we don't want to blur for this touch
-				console.log("click clear");
+				// console.log("click clear");
 				clearTimeout(this.touchTimeout);
 				this.touchTimeout = false;
 			}
@@ -480,7 +490,7 @@
 		},
 
 		mousedown: function(e) {
-			console.log("mousedown");
+			// console.log("mousedown");
 			e.stopPropagation();
 			e.preventDefault();
 		},
