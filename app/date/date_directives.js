@@ -78,7 +78,7 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				//sometimes this is called inside Angular scope, sometimes not.
 				//scope.$$phase is always null for some reason so can't check it
 				//instead I am putting it in a timer to take it out of angular scope
-				setTimeout(function() { 
+				window.setTimeout(function() { 
 					scope.$apply(function() { //we then put it back into angular scope
 						updateModel(e);
 					});

@@ -65,9 +65,14 @@
 			<td><input ade-calpop="yyyy" ade-yearonly="1" ng-model="date1a" type="text" class="input-small" /></td>
 			<td><input ade-calpop="MMM d, yyyy" ng-model="date1b" type="text" class="input-small" /></td>
 			<td><input ade-calpop="MMM d, yyyy h:mm:ss a" ng-model="date1c" type="text" class="input-large" /></td>
+			<td><div class="input-append date">
+  				<input ng-model="date1b" type="text" class="input-small" />
+ 				<span class="add-on"><i class="icon-calendar" ade-calpop="MMM d, yyyy" ng-model="date1b" ></i></span>
+			</div></td>
 		</tr>
 		</table>
 		
+
 		<p>There is also a directive for making a non-input element editable:</p>
 
 
