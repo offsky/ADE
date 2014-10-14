@@ -47,7 +47,9 @@
     "karma-opera-launcher": "~0.1.0",
     "grunt-manifest": "~0.4.0",
     "grunt-protractor-webdriver": "~0.1.8",
-    "grunt-protractor-runner": "~1.1.0"
+    "grunt-protractor-runner": "~1.1.0",
+    "grunt-plato": "~1.3.0",
+    "jshint-stylish": "~1.0.0"
   },
   "engines": {
     "node": ">=0.8.0"
