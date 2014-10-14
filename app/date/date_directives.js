@@ -44,12 +44,12 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				options.minViewMode = 2;//tells the datepicker to limit to year only
 			}
 
-			//iOS has a good native picker for input type=date, so use it
-			var userAgent = window.navigator.userAgent;
-			var nativePicker = false;
-			if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-				nativePicker = true;
-			}
+			//iOS has a good native picker for input type=date, so use it?
+			// var userAgent = window.navigator.userAgent;
+			// var nativePicker = false;
+			// if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+			// 	nativePicker = true;
+			// }
 
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
@@ -87,19 +87,18 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			if(scope.ngModel) {
 				element.datepicker('setValue', scope.ngModel);
+				
 			}
-					
-			//Handles return key pressed on in-line text box
-			element.on('keypress.ADE', function(e) {
+
+			//Handles keys pressed on in-line text box
+			element.on('keydown.ADE', function(e) {
 				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 
-				if (keyCode == 13) { //return key
+				if (keyCode == 13 || keyCode == 27) { //return or esc key
 					e.preventDefault();
 					e.stopPropagation();
 					element.datepicker('hide');
 					element.blur();
-				} else if (keyCode == 27) { //esc
-					element.datepicker('hide');
 				}
 			});
 			
@@ -267,11 +266,6 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
-				// var userAgent = window.navigator.userAgent;
-				// if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-						//TODO: do something special for iOS since they have native calendar wheels?
-				// }
-
 				element.hide();
 				var html;
 				var extraDPoptions = '';
@@ -304,6 +298,9 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 					});
 
 					ADE.setupBlur(input, saveEdit, scope, false);
+
+					button.datepicker('show');
+
 
 				} else {
 					html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
