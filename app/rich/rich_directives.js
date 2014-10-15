@@ -321,6 +321,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				$compile(html)(scope).insertAfter(element);
 				place();
 
+				var toolbarOptions = "cancelButton | styleselect | bold italic | forecolor backcolor | bullist numlist | outdent indent | link";
+
+				// Add save button for fullscreen use case
+				if (window.innerWidth <= 480) {
+					toolbarOptions = "saveButton | " + toolbarOptions;
+				}
+
 				// Initialize tinymce
 				// Full example:
 				// http://www.tinymce.com/tryit/full.php
@@ -329,7 +336,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					theme: "modern",
 					menubar: "false",
 					plugins: ["textcolor", "link", 'fullscreen'],
-					toolbar: "saveButton | cancelButton | styleselect | bold italic | forecolor backcolor | bullist numlist | outdent indent | link",
+					toolbar: toolbarOptions,
 					baseURL: "",
 					setup: function(ed) {
 						ed.on('init', function(args) {
