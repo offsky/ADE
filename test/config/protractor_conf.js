@@ -85,7 +85,7 @@ exports.config = {
     // browser.driver.manage().window().setSize(1600, 800);
 
     global.getHomepage = function() {
-      browser.get('http://localhost/~jake/ADE/app/');
+      browser.get('http://local.toodledo.com/ADE/app/');
     };
   },
 
