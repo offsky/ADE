@@ -300,6 +300,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//enters edit mode for the text
 			var editRichText = function() {
+				id = Math.floor(Math.random() * 100000);
+				
 				window.clearTimeout(timeout);
 				if(input) input.off('.ADE');
 				element.off('.ADE');
