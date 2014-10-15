@@ -73,7 +73,8 @@ exports.config = {
   // Spec patterns are relative to the current working directly when
   // protractor is called.
   specs: [    
-    '../exampleSpec.js'
+    '../exampleSpec.js',
+    '../richTextSpec.js'
   ],
 
   onPrepare: function() {
