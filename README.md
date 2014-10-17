@@ -75,7 +75,7 @@ CSS
 JavaScript
 
 ```html
-<script src="../bower_components/jquery/jquery.js"></script>
+<script src="../bower_components/jquery/dist/jquery.js"></script>
 <script src="../bower_components/angular/angular.js"></script>
 <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 
