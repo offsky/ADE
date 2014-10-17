@@ -6,7 +6,7 @@ describe('date', function() {
 	});
 
 	it('should render 3 controls', function() {
-		expect(element('.ade-editme').count()).toEqual(3);
+		expect(element('.ade-editme').count()).toEqual(4);
 	});
 
 	it('should go into edit mode', function() {

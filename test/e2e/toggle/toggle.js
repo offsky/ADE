@@ -7,11 +7,12 @@ describe('toggle', function() {
     });
 
     it('should render 3 controls', function() {
-        expect(element('div[ade-toggle]').count()).toEqual(3);
+        expect(element('div[ade-toggle]').count()).toEqual(2);
     });
 
     it('should toggle on click', function() {
-        element('.ade-star.ade-on:eq(0)').click();
-        expect(element('.ade-star.ade-off').count()).toEqual(1);
+        expect(element('div .icon-star').count()).toEqual(1);
+        element('div .icon-star').click();
+        expect(element('div .icon-star').count()).toEqual(0);
     });
 });

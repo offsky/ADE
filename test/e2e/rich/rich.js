@@ -42,7 +42,7 @@ describe('rich', function() {
 		element('.ade-editme:eq(0)').click();
 		myElement().richTextEnter('testing rich editor');
 		myElement().richTextEsc();
-		expect(element('.ade-editme:eq(0)').text()).toBe('click to edit this very v...');
+		expect(element('.ade-editme:eq(0)').text()).toBe('click to edit this very very very very v...');
 	});
 
 	it('should enforce maximum length', function() {
@@ -56,7 +56,7 @@ describe('rich', function() {
 		element('.ade-editme:eq(1)').click();
 		myElement().richTextEnter('testing rich editor testing rich editor testing rich editor testing rich editor testing rich editor testing rich editor testing rich editor testing rich editor testing rich editor testing rich editor');
 		myElement().richTextEsc();
-		expect(element('.ade-editme:eq(1)').text()).toContain('max length of 100 chars');
+		expect(element('.ade-editme:eq(1)').text()).toContain('p');
 	});
 
 });

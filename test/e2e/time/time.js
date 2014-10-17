@@ -32,7 +32,7 @@ describe('time', function() {
     });
 
     it('should go into edit mode', function() {
-        element('.ade-editme').click();
+        element('.ade-editme:eq(0)').click();
         expect(element('.ade-editme + input').count()).toEqual(1);
     });
 
