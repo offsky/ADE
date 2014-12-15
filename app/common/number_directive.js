@@ -119,7 +119,7 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 				if(angular.isArray(value) && value.length>0) value = value[0];
 				if(angular.isString(value)) value = parseFloat(value.replace(/[$]/g, ''));
 				else if(!angular.isNumber(value)) value = '';
-				value = value ? value : '';
+				value = (value || value===0) ? value : '';
 
 				element.hide();
 				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
@@ -135,7 +135,7 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 				input.on('keypress.ADE', function(e) {
 					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 					
-					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==44 || keyCode==45 || keyCode==46 || keyCode==9 || keyCode==27 || keyCode==13) { //0-9 and .,-%$
+					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==38 || keyCode==39 || keyCode==40 || keyCode==44 || keyCode==45 || keyCode==46 || keyCode==8 || keyCode==9 || keyCode==27 || keyCode==13) { //0-9 and .,-%$
 						;//allowed characters
 					} else {
 						e.preventDefault();
