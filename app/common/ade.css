@@ -49,7 +49,7 @@
 }
 
 /* Rating/Star Directives */
-.ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;}
+.ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
 .ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;text-decoration:none;}
 .ade-rating .ade-rate { color: #000;}
@@ -67,11 +67,11 @@
 .ade-rate-one.ade-zero{text-decoration:none;}
 
 /* Toggle Directive */
-.ade-toggle{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;}
+.ade-toggle{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
 .ade-toggle.ade-editable.ade-hover:hover{color: #666;}
 
 /* Toggle Multi */
-.ade-multi{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;}
+.ade-multi{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
 .ade-multi.ade-editable.ade-hover:hover{color: #666;}
 
 
