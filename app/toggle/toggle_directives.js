@@ -13,7 +13,8 @@ ade-class:
 	A custom class to give to the div so that you can use your own images
 ade-readonly:
 	If you don't want the stars to be editable
-
+ade-truthy:
+	The value you want the model to have when the checkbox is checked. Defaults to true.
 
  Messages:
  name: ADE-start
@@ -33,6 +34,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 			adeId: "@",
 			adeClass: "@",
 			adeReadonly: "@",
+			adeTruthy: "@",
 			ngModel: "="
 		},
 
@@ -40,10 +42,12 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 		link: function(scope, element, attrs) {
 			var starClass = "icon-star";
 			var readonly = false;
+			var truthy = true;
 
 			if(scope.adeClass!==undefined) starClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
-
+			if(scope.adeTruthy!==undefined) truthy = scope.adeTruthy;
+			
 			//generates HTML for the star
 			var makeHTML = function() {
 				var input = scope.ngModel;
@@ -53,7 +57,7 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 					if(input=='false' || input=='no' || input=='0' || input=='o') input = false;
 				}
 				var editable = (readonly ? "" : " ade-editable");
-				var state = (input ? '' : '-empty');
+				var state = (input==truthy ? '' : '-empty');
 
 				var hoverable = " ade-hover";
 				var userAgent = window.navigator.userAgent;
@@ -71,7 +75,9 @@ angular.module('ADE').directive('adeToggle', ['ADE','$compile','$filter', functi
 				ADE.begin(scope.adeId);
 
 				var oldValue = scope.ngModel;
-				scope.ngModel = (scope.ngModel) ? false : true;
+
+				if(scope.ngModel!=truthy) scope.ngModel = truthy;
+				else scope.ngModel = false;
 
 				ADE.done(scope.adeId, oldValue, scope.ngModel, 0);
 
