@@ -205,6 +205,7 @@ angular.module('ADE', []).factory('ADE', ['$rootScope', function($rootScope) {
 			//Move to the left if it would be off the right of page
 			if (pickerRight-scrollH > windowW) {
 				posLeft = posLeft - popupW + 30;
+				if(posLeft<0) posLeft = 0;
 				popup.addClass("rarrow");
 			}
 
