@@ -78,7 +78,7 @@
 /* Date Directive */
 .datepicker { min-width:210px; }
 .ade-date-popup p{margin:5px 0 0 0;}
- .input-append.ade-date-popup .add-on i, .input-prepend.ade-date-popup .add-on i { display: block; cursor: pointer; width: 16px; height: 16px; }
+.input-append.ade-date-popup .add-on i, .input-prepend.ade-date-popup .add-on i { display: block; cursor: pointer; width: 16px; height: 16px; }
 @media screen and (max-width: 480px) {
 	.dropdown-menu {left:5px;width:94%;}
 	.datepicker:before,

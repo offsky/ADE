@@ -10,9 +10,6 @@ grunt build
 if [[ $? == 0 ]] #if unit tests pass
 then
    #build passed
-	
-	cp -r $BASE_DIR/../dist/common/adeImg $BASE_DIR/../dist/build
-
 	grunt karma:dist
 	if [[ $? == 0 ]]
 	then
