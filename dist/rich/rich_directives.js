@@ -343,7 +343,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							text: "Save",
 							icon:false,
 							onclick: function() {
-								saveEdit(0); // blur and save
+								scope.$apply(function() {
+									saveEdit(0); // blur and save
+								});
 							}
 						});
 						ed.addButton('cancelButton', {
@@ -351,7 +353,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							text: "Cancel",
 							icon:false,
 							onclick: function() {
-								saveEdit(3); // blur and cancel
+								scope.$apply(function() {
+									saveEdit(3); // blur and cancel
+								});
 							}
 						});
 					}
