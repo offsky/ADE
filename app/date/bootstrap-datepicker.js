@@ -189,6 +189,17 @@
 			});
 		},
 
+		//You can pass in the event when a return key is pressed on the parent input
+		//and use this to hide the calendar the first time it is pressed
+		//the second time it is pressed it will do the default action (submit form perhaps)
+		typedReturn: function(e) {
+			if(this.picker.is(':visible')) {
+				e.preventDefault();
+				e.stopPropagation();
+				this.hide();
+			}
+		},
+
 		remove: function() {
 			this.picker.remove();
 		},
