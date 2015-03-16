@@ -13,12 +13,12 @@ describe('url', function() {
     }));
 
     it('should convert url string into a clickable link', function() {
-        expect(urlFilter("http://www.apple.com")).toEqual('<a href="http://www.apple.com">http://www.apple.com</a>');
-        expect(urlFilter(" http://www.apple.com ")).toEqual('<a href="http://www.apple.com">http://www.apple.com</a>');
-        expect(urlFilter("https://www.apple.com")).toEqual('<a href="https://www.apple.com">https://www.apple.com</a>');
-        expect(urlFilter("www.apple.com")).toEqual('<a href="http://www.apple.com">http://www.apple.com</a>');
-        expect(urlFilter(" www.apple.com ")).toEqual('<a href="http://www.apple.com">http://www.apple.com</a>');
-        expect(urlFilter("http://www.apple.com/~jake/index.html#tag")).toEqual('<a href="http://www.apple.com/~jake/index.html#tag">http://www.apple.com/~jake/index.html#tag</a>');
+        expect(urlFilter("http://www.apple1.com")).toEqual('<a href="http://www.apple1.com">http://www.apple1.com</a>');
+        expect(urlFilter(" http://www.apple2.com ")).toEqual('<a href="http://www.apple2.com">http://www.apple2.com</a>');
+        expect(urlFilter("https://www.apple3.com")).toEqual('<a href="https://www.apple3.com">https://www.apple3.com</a>');
+        expect(urlFilter("www.apple4.com")).toEqual('<a href="http://www.apple4.com">www.apple4.com</a>');
+        expect(urlFilter(" www.apple5.com ")).toEqual('<a href="http://www.apple5.com">www.apple5.com</a>');
+        expect(urlFilter("http://www.apple6.com/~jake/index.html#tag")).toEqual('<a href="http://www.apple6.com/~jake/index.html#tag">http://www.apple6.com/~jake/index.html#tag</a>');
 
     });
 
