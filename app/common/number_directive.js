@@ -119,7 +119,7 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
-				value = scope.ngModel;
+				var value = scope.ngModel;
 				if(angular.isArray(value) && value.length>0) value = value[0];
 				if(angular.isString(value)) value = parseFloat(value.replace(/[$]/g, ''));
 				else if(!angular.isNumber(value)) value = '';

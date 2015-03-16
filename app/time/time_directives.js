@@ -222,9 +222,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 					if(validMins<10) validMins = "0"+validMins;
 					var cleanedValue = validHrs+":"+validMins+" "+ampm;
 
-					value = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
-
-					scope.ngModel = value;
+					scope.ngModel = (hrsmin.length > 1) ? Date.parse(cleanedValue).getTime() / 1000 : '';
 				}
 
 				element.show();

@@ -216,7 +216,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				exit = exited;
 				
 				if (exited != 3) { //don't save value on esc
-					value = parseDateString(input.val());
+					var value = parseDateString(input.val());
 					if (value == null || value==0) {
 						value = [0,0,0];
 					} else {
