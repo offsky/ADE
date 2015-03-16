@@ -23,7 +23,7 @@
 angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div b-timepicker=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-timepop=""></div>
 
 		scope: {
 			adeTimepop: "@",
@@ -39,7 +39,7 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 
 			//creates a callback for when the time is changed, we need to make
 			//sure that it is formatted correctly
-			var updateModel = function(e) {
+			var updateModel = function() {
 				if(!keydown) { //don't want to reformat time if in middle of keypress
 					scope.ngModel  = $filter('time')(scope.ngModel, format);
 				}
@@ -123,20 +123,22 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 			//initialization of the datapicker
 			element.timepicker({showMeridian:format=="24" ? false : true });
 	
-			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+			var destroy = function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
 					element.off('keydown.ADE');
 					element.off('keyup.ADE');
 				}
-			});
+				element.timepicker('removeWidget');
+			}
+
+			scope.$on('$destroy', destroy);
 
 			//need to watch the model for changes
 			scope.$watch(function(scope) {
 				return scope.ngModel;
 			}, function () {
-				//updateModel is expecting a certain object from the popup calendar
-				//so we have to simulate it, but add external flag so we can handle it differently
-				updateModel({time:scope.ngModel});
+				if(scope.ngModel===undefined) destroy();
+				else updateModel();
 			});
 
 		}
@@ -229,8 +231,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				ADE.teardownBlur(input);
 				ADE.teardownKeys(input);
 
-				input.timepicker('removeWidget');
-				if(input.scope()) input.scope().$destroy(); //destroy the scope for the input to remove the watchers
+				scope.adePickTime = undefined;
 				input.remove(); //remove the input
 				editing=false;
 
@@ -243,14 +244,14 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				editing=true;
 				exit = 0;
 
-				var preset = scope.ngModel || 0;
+				scope.adePickTime = scope.ngModel || 0;
 				var timeLength = 8;
 				if (format === "24") timeLength = 5;
 
 				ADE.begin(scope.adeId);
 
 				element.hide();
-				var html = '<input ng-controller="adeTimeDummyCtrl" ade-timepop="'+format+'" ng-model="adePickTime" ng-init="adePickTime='+preset+'" maxlength="'+timeLength+'" type="text" class="'+inputClass+'" />';
+				var html = '<input ade-timepop="'+format+'" ng-model="adePickTime" maxlength="'+timeLength+'" type="text" class="'+inputClass+'" />';
 				$compile(html)(scope).insertAfter(element);
 				input = element.next('input');
 
@@ -284,13 +285,6 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 	};
 }]);
 
-/* ==================================================================
-	Angular needs to have a controller in order to make a fresh scope (to my knowledge)
-	and we need a fresh scope for the input that we are going to create because we need
-	to be able to destroy that scope without bothering its siblings/parent. We need to
-	destroy the scope to prevent leaking memory with ngModelWatchers
-------------------------------------------------------------------*/
-function adeTimeDummyCtrl() { }
 
 /*
  References
