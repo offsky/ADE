@@ -1,4 +1,4 @@
-function ctrl($rootScope, ADE) {
+angular.module('ADE').controller('ctrl',['$rootScope','ADE',function($rootScope,ADE) {
 	ADE.keyboardEdit = true; //set to false for touch devices/ true for mouse
 
 	if(!$rootScope.initialized) {
@@ -29,4 +29,7 @@ function ctrl($rootScope, ADE) {
 			}
 		});
 	}
-}
+
+}]);
+
+

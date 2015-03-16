@@ -1,5 +1,6 @@
+angular.module('ADE').controller('TagCtrl',['$rootScope','ADE','$q','$scope',function($rootScope,ADE,$q,scope) {
 
-function TagCtrl($rootScope,scope,$q) {
+
 
 	scope.listOptions = {
 		list1: ['apple', 'pear', 'cherry', 'pineapple', 'watermelon'],
@@ -77,6 +78,4 @@ function TagCtrl($rootScope,scope,$q) {
 		}
 	});
 
-}
-
-TagCtrl.$inject = ['$rootScope','$scope','$q'];
+}]);
