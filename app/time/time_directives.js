@@ -127,17 +127,18 @@ angular.module('ADE').directive('adeTimepop', ['$filter',function($filter){
 				if(element) {
 					element.off('keydown.ADE');
 					element.off('keyup.ADE');
+					if(element.timepicker) element.timepicker('removeWidget');
 				}
-				element.timepicker('removeWidget');
-			}
+				if(unwatch) unwatch();
+			};
 
 			scope.$on('$destroy', destroy);
 
 			//need to watch the model for changes
-			scope.$watch(function(scope) {
+			var unwatch = scope.$watch(function(scope) {
 				return scope.ngModel;
 			}, function () {
-				if(scope.ngModel===undefined) destroy();
+				if(scope.ngModel===-2) destroy();
 				else updateModel();
 			});
 
@@ -231,7 +232,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				ADE.teardownBlur(input);
 				ADE.teardownKeys(input);
 
-				scope.adePickTime = undefined;
+				scope.adePickTime = -2;
 				input.remove(); //remove the input
 				editing=false;
 
@@ -273,10 +274,11 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				if(element) {
 					element.off('click.ADE');
 				}
+				if(unwatch) unwatch();
 			});
 
 			//need to watch the model for changes
-			scope.$watch(function(scope) {
+			var unwatch = scope.$watch(function(scope) {
 				return scope.ngModel;
 			}, function () {
 				makeHTML();
