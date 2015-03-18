@@ -98,6 +98,8 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 					element.datepicker('hide');
 				} else if (keyCode == 13) { //return
 					element.datepicker('typedReturn',e);
+				} else if (keyCode == 9) { //tab
+					element.datepicker('hide');
 				} else {
 					element.datepicker('show');
 				}
