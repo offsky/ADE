@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Date JS Unit Tests</title>
+    <xscript type="text/javascript" src="../../../bower_components/datejs/build/date.js"></script>
     <script type="text/javascript" src="../../../common/date.js"></script>
     <link rel="stylesheet" href="../../../bower_components/qunit/qunit/qunit.css"/>  
 </head>
@@ -11,6 +12,25 @@
     <div id="qunit-fixture"></div>
     <script src="../../../bower_components/qunit/qunit/qunit.js"></script>
     <script>
+        Date.Config.i18n = "../../../bower_components/datejs/build/i18n/";
+
+        Date.prototype.toUnixTimestamp = function () {
+            return Math.round(this.getTime() / 1000);
+        };
+
+        var parseDateString = function(s, debug, gmt)
+        {
+            var date = Date.parse(s);
+            if (date != null)
+            {
+                var time = date.toUnixTimestamp();
+                if(gmt) {
+                    time -= date.getTimezoneOffset()*60;
+                }
+                return debug ? date.toString() : time;
+            }
+            return null;
+        };
 
         var dp = parseDateString;
 
@@ -19,11 +39,11 @@
 
             },
             teardown: function () {
-                DateJSLoadCultureInfo(window.navigator.userLanguage || window.navigator.language);
+                Date.i18n.setLanguage("en-US");
             }
         });
 
-        test("tom, tomorrow, tod, today, yest, yesterday, now", 7, function () {
+        test("tom, tomorrow, tod, today, yest, yesterday, now", 8, function () {
 
             var t = Date.today();
             var today = t.clone().toUnixTimestamp();
@@ -32,6 +52,7 @@
 
             equal(dp("yest"), yesterday, "'yest' parses to " + yesterday);
             equal(dp("yesterday"), yesterday, "'yesterday' parses to " + yesterday);
+            equal(dp("YESTERDAY"), yesterday, "'YESTERDAY' parses to " + yesterday);
             equal(dp("tod"), today, "'tod' parses to " + today);
             equal(dp("today"), today, "'today' parses to " + today);
             equal(dp("tom"), tomorrow, "'tom' parses to " + tomorrow);
@@ -156,7 +177,7 @@
 
             },
             teardown: function () {
-                DateJSLoadCultureInfo(window.navigator.userLanguage || window.navigator.language);
+                Date.i18n.setLanguage("en-US");
             }
         });
 
@@ -174,7 +195,7 @@
 
         test("Numeric - Locale ('en', 'en-US') - Month / Day / Year", function () {
 
-            DateJSLoadCultureInfo('en');
+            Date.i18n.setLanguage("en-US");
 
             var t1 = new Date(2013, 0, 5).toUnixTimestamp();
 
@@ -193,7 +214,7 @@
 
         test("Numeric - Locale ('en-GB') - Day / Month / Year", function () {
 
-            DateJSLoadCultureInfo('en-GB');
+            Date.i18n.setLanguage("en-GB");
 
             var t1 = new Date(2013, 4, 1).toUnixTimestamp();
 
@@ -208,7 +229,7 @@
 
          test("With time", function () {
 
-            DateJSLoadCultureInfo('en');
+            Date.i18n.setLanguage("en-US");
 
             var thedate = new Date(Date.UTC(2013, 0, 1, 12));
             var t1 = thedate.toUnixTimestamp(); //1357041600
@@ -218,7 +239,7 @@
 
         test("Numeric/String in past without specified year", function () {
             /*
-            NOTE:  As written, these tests will fail when a new year rolls around
+            NOTE:  As written, these tests may fail when a new year rolls around
             so they will need to be updated each year, or the tests will need to be
             rewritten in such a way that the current year is taken into account
             */
@@ -228,10 +249,11 @@
             var pastDate = today.addMonths(-6);
             var futrDate = pastDate.clone().addYears(1).toUnixTimestamp();
 
-            var monthName = Date.prototype.getMonthName(pastDate.getMonth());
+            var monthName = Date.getMonthName(pastDate.getMonth());
             var dateString = monthName + " " + pastDate.getDate();  // [month name] [day] (6 months ago)
 
-            var jan1 = new Date(2014, 0, 1).toUnixTimestamp();
+            var year = new Date().getFullYear()+1;
+            var jan1 = new Date(year, 0, 1).toUnixTimestamp();
 
             equal(dp(dateString), futrDate, "'" + dateString + "' parses to " + futrDate);
             equal(dp("Jan 1"), jan1, "'Jan 1' parses to " + jan1);

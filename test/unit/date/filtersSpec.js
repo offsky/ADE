@@ -109,7 +109,7 @@ describe('date', function() {
 	});
 
 	//can't figure out why this works in dev and breaks in production
-	xit('should pass through pre-formated results', function() {
+	it('should pass through pre-formated results', function() {
 		expect(dateFilter('2014-10-03')).toBe('Oct 3, 2014'); 
 		expect(dateFilter('Jan 1, 2013')).toBe('Jan 1, 2013');
 	});
