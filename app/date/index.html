@@ -118,8 +118,12 @@
 			function updateDate() {
 				var unix = parseDateString($("#input").val());
 				$('#unix').text(unix);
-				var date = new Date(unix*1000);
-				$('#text').text(date.toString());
+				if(unix!==null) {
+					var date = new Date(unix*1000);
+					$('#text').text(date.toString());
+				} else {
+					$('#text').text('');
+				}
 			}
 			$(document).ready(function() {
 				updateDate();

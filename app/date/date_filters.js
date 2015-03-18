@@ -88,7 +88,7 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 				timestamp = number;
 			} else {
 				var date = Date.parse(timestamp); //use date.js library to interpret string
-				if (date != null) {
+				if (date !== null) {
 					timestamp = date.toUnixTimestamp();
 				} else {
 					timestamp = null;
@@ -96,10 +96,10 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 				absolutetimestamp = timestamp;
 			}
 		}
-		
+
 		var output = '';
 	
-		if (absolute) { //we want to display fixed GMT time regardless of user's timezone
+		if (absolute && absolutetimestamp!==null) { //we want to display fixed GMT time regardless of user's timezone
 			//need to get timezoneoffset of absolute time to account for daylight savings time
 			var currentOffset = new Date(absolutetimestamp*1000).getTimezoneOffset(); //minutes
 
@@ -113,7 +113,7 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 				if(offset>0) offset = "+"+offset;
 				output += " ("+offset+" h)";
 			}
-		} else { //display in local time
+		} else if(timestamp!==null){ //display in local time
 			output = $filter('date')(timestamp * 1000, dateFormat);
 		}
 
