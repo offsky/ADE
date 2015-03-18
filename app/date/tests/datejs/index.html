@@ -12,8 +12,20 @@
     <script src="../../../bower_components/qunit/qunit/qunit.js"></script>
     <script>
 
-        var dp = parseDateString;
-
+        var dp = function(s, debug, gmt)
+        {
+            var date = Date.parse(s);
+            if (date != null)
+            {
+                var time = date.toUnixTimestamp();
+                if(gmt) {
+                    time -= date.getTimezoneOffset()*60;
+                }
+                return debug ? date.toString() : time;
+            }
+            return null;
+        };
+        
         module("Relative", {
             setup: function () {
 
@@ -231,7 +243,8 @@
             var monthName = Date.prototype.getMonthName(pastDate.getMonth());
             var dateString = monthName + " " + pastDate.getDate();  // [month name] [day] (6 months ago)
 
-            var jan1 = new Date(2014, 0, 1).toUnixTimestamp();
+            var year = new Date().getFullYear()+1;
+            var jan1 = new Date(year, 0, 1).toUnixTimestamp();
 
             equal(dp(dateString), futrDate, "'" + dateString + "' parses to " + futrDate);
             equal(dp("Jan 1"), jan1, "'Jan 1' parses to " + jan1);

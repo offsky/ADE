@@ -209,6 +209,15 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				element.html(stringDate);
 			};
 
+			var parseDateString = function(s) {
+				var date = Date.parse(s);
+				if (date != null) {
+					var time = date.toUnixTimestamp();
+					return time;
+				}
+				return null;
+			};
+
 			//callback once the edit is done
 			var saveEdit = function(exited) {
 

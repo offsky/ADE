@@ -576,12 +576,10 @@
 		//attemps to parse the incoming date into day, month and year.
 		parseDate: function(dateStr) {
 			if (!dateStr) return null;
-			var date = new Date();
+			var date = new Date.parse(dateStr);
+			if(typeof date.getTime === "undefined") date = new Date();
 
-			var unix = parseDateString(dateStr);
-			if (unix) date.setTime(unix * 1000);
-			else return null;
-
+			if(!date) return null;
 			return date;
 		},
 

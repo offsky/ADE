@@ -87,7 +87,12 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 			if (timestamp === number + '') {
 				timestamp = number;
 			} else {
-				timestamp = parseDateString(timestamp); //uses date.js library to parse non integer strings
+				var date = Date.parse(timestamp); //use date.js library to interpret string
+				if (date != null) {
+					timestamp = date.toUnixTimestamp();
+				} else {
+					timestamp = null;
+				}
 				absolutetimestamp = timestamp;
 			}
 		}

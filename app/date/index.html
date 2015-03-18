@@ -106,6 +106,14 @@
 		
 		<script type="text/javascript">
 			var currentOffset = new Date().getTimezoneOffset(); //seconds
+			var parseDateString = function(s) {
+			    var date = Date.parse(s);
+			    if (date != null) {
+			        var time = date.toUnixTimestamp();
+			        return time;
+			    }
+			    return null;
+			};
 
 			function updateDate() {
 				var unix = parseDateString($("#input").val());
