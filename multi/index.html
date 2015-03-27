@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title>ADE :: Multi-state Switch Directive</title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
+		<link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+		<link rel="stylesheet" href="../common/ade.css"/>
+		<style>
+			/* Example of how to customize */
+			.ade-balloon{display:inline-block;width:32px;height:32px;background:url(balloon.png) no-repeat 0 0;cursor:pointer;}
+			.ade-balloon.ade-off{background-position:0px 0px;}
+			.ade-balloon.ade-on{background-position:-32px 0px;}
+			.ade-balloon.ade-off:hover{background-position:0px 0px;}
+			.ade-balloon.ade-on:hover{background-position:-32px 0px;}
+		</style>
+	</head>
+	<body ng-app="app" ng-init="valuea=0;valueb=1;">
+		<div class="container" ng-controller="ctrl">
+				<!--[if lt IE 7]>
+					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+				<![endif]-->
+				<a href="../index.html">back</a>
+				<h1>Multi-state switch Directive</h1>
+				<p>A directive that toggles an icon between N states.  It also has optional hover states and can support different size icons easily.</p>
+
+
+				<span ade-multi ade-id="1001" ade-classes='["icon-star-empty","icon-star","icon-heart"]' tabindex="1" ng-model="valuea"></span>
+
+				<br />
+
+				<span ade-multi ade-id="1002" ade-classes='["icon-check-empty","icon-check","icon-check-sign","icon-check-minus"]' tabindex="2" ng-model="valueb"></span>
+				
+				
+				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+
+				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+
+
+		</div>
+
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
+
+		<script src="multi_directive.js"></script>
+		 
+	</body>
+</html>

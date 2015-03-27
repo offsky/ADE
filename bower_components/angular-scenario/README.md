@@ -1,16 +1,35 @@
-# bower-angular-scenario
+# packaged angular-scenario
 
-This repo is for distribution on `bower`. The source for this module is in the
+This tool is now in maintenance mode. If you are starting a new project, please use
+[Protractor](https://github.com/angular/protractor). Existing projects using scenario runner are
+advised to migrate to protractor, as this tool is unlikely to receive updates.
+
+This repo is for distribution on `npm` and `bower`. The source for this module is in the
 [main AngularJS repo](https://github.com/angular/angular.js/tree/master/src/ngScenario).
 Please file issues and pull requests against that repo.
 
 ## Install
 
-Install with `bower`:
+You can install this package either with `npm` or with `bower`.
+
+### npm
+
+```shell
+npm install angular-scenario
+```
+
+The files are then available at `node_modules/angular-scenario/`.
+
+Note that this package is not in CommonJS format, so doing `require('angular-scenario')` will
+return `undefined`.
+
+### bower
 
 ```shell
 bower install angular-scenario
 ```
+
+The files are then available at `bower_components/angular-scenario/`.
 
 ## Documentation
 
@@ -21,7 +40,7 @@ Documentation is available on the
 
 The MIT License
 
-Copyright (c) 2010-2012 Google, Inc. http://angularjs.org
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

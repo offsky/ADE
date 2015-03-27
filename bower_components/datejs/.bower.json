@@ -1,0 +1,34 @@
+{
+  "name": "DateJS",
+  "version": "1.0.0-rc1",
+  "homepage": "https://github.com/abritinthebay/datejs",
+  "authors": [
+    "Gregory Wild-Smith"
+  ],
+  "description": "Datejs is an open-source JavaScript Date Library.",
+  "main": "build/production/date.min.js",
+  "keywords": [
+    "date",
+    "javascript",
+    "js",
+    "mit"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "specs"
+  ],
+  "_release": "1.0.0-rc1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.0-rc1",
+    "commit": "81386c518a7ea72bd79a471fffd80e4e90a14930"
+  },
+  "_source": "git://github.com/abritinthebay/datejs.git",
+  "_target": "1.0.0-rc1",
+  "_originalSource": "datejs"
+}

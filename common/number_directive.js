@@ -9,7 +9,7 @@
 
 	Config:
 	ade-url:
-		Defaults to "integer" but you can set "money" or "percemt" or "decimal" to make it a certain type of number
+		Defaults to "integer" but you can set "money" or "percemt" or "decimal" or "flex" to make it a certain type of number
 	ade-id:
 		If this id is set, it will be used in messages broadcast to the app on state changes.
 	ade-class:
@@ -75,6 +75,10 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 							html = $filter('decimal')(value,precision);
 							break;
 
+						case 'flex':
+							html = $filter('flexnum')(value);
+							break;
+
 						case 'integer':
 						default:
 							html = $filter('integer')(value);
@@ -115,14 +119,21 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
-				value = scope.ngModel;
+				var value = scope.ngModel;
 				if(angular.isArray(value) && value.length>0) value = value[0];
 				if(angular.isString(value)) value = parseFloat(value.replace(/[$]/g, ''));
 				else if(!angular.isNumber(value)) value = '';
-				value = value ? value : '';
+				value = (value || value===0) ? value : '';
+
+				var type = "text";
+
+				//We don't really need this, but its a nice touch for iOS to present the number keyboard
+				//Its not a good idea to always use number input because some desktop browsers dont display it correctly, or enforce integers
+				var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
+				if(iOS) type="number";
 
 				element.hide();
-				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
+				$compile('<input type="'+type+'" class="ade-input '+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
 				input = element.next('input');
 				input.focus();
 				
@@ -134,8 +145,9 @@ angular.module('ADE').directive('adeNumber', ['ADE', '$compile', '$filter', func
 
 				input.on('keypress.ADE', function(e) {
 					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
+					var control = e.ctrlKey || e.altKey || e.metaKey;
 					
-					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==44 || keyCode==45 || keyCode==46 || keyCode==9 || keyCode==27 || keyCode==13) { //0-9 and .,-%$
+					if ((keyCode >= 48 && keyCode <= 57) || keyCode==36 || keyCode==37 || keyCode==38 || keyCode==39 || keyCode==40 || keyCode==44 || keyCode==45 || keyCode==46 || keyCode==8 || keyCode==9 || keyCode==27 || keyCode==13 || control) { //0-9 and .,-%$
 						;//allowed characters
 					} else {
 						e.preventDefault();

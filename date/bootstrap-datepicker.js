@@ -11,6 +11,8 @@
 	7) Remove unnecessary changeDate events
 	8) Added wasClick boolean to event so we can tell how the date was changed
 	9) Supresses notifications when nothing actually changed
+	10) Make full screen on small windows
+	11) Get popup calendar to position correctly on resize/scroll of window
  * ========================================================= */
 
 
@@ -42,6 +44,7 @@
 							.appendTo('body')
 							.on({
 								click: $.proxy(this.click, this),
+								touchend: $.proxy(this.touched, this),
 								mousedown: $.proxy(this.mousedown, this)
 							});
 		this.isInput = this.element.is('input');
@@ -107,6 +110,8 @@
 			this.place();
 			$(window).off('resize.boot');
 			$(window).on('resize.boot', $.proxy(this.place, this));
+			$(document).off('scroll.boot');
+			$(document).on('scroll.boot', $.proxy(this.place, this));
 			if (e) {
 				e.stopPropagation();
 				e.preventDefault();
@@ -115,8 +120,8 @@
 				$(document).off('mousedown.boot');
 				$(document).on('mousedown.boot', $.proxy(this.hide, this));
 			}
-			$(document).off('touchend.boot');
-			$(document).on('touchend.boot', $.proxy(this.touch, this));
+			$(document).off('touchstart.boot');
+			$(document).on('touchstart.boot', $.proxy(this.touchstart, this));
 
 			this.element.trigger({
 				type: 'show',
@@ -125,22 +130,56 @@
 		},
 
 		//Added to support touch devices like iOS
-		touch: function() {		
-			var that = this;			
+		touchstart: function() {
+			// console.log("touchstart");
+			$(document).off('touchmove.boot');
+			$(document).off('touchend.boot');
+			$(document).on('touchend.boot', $.proxy(this.touchend, this));
+			$(document).on('touchmove.boot', function() {
+				//if we moved, its not a touch anymore, so cancel the touchend
+				// console.log("touchmove");
+				$(document).off('touchmove.boot');
+				$(document).off('touchend.boot');
+			});
+		},
+
+		touchend: function() {
+			$(document).off('touchmove.boot');
+			$(document).off('touchend.boot');
+
+			// console.log("touchend",this.touchTimeout);
+			var that = this;
+			if(this.touchTimeout) { //double tap 
+				//cancel previous and do nothing. Allow OS to zoom
+				// console.log("double clear");
+				clearTimeout(this.touchTimeout);
+				this.touchTimeout = false;
+				return;
+			}	
 			this.touchTimeout = setTimeout(function() {
-				that.element.blur();
-			},500);
+				// console.log("touch timeout");
+				if(that.isInput) {
+					that.element.blur();
+				} else {
+					that.hide();
+				}
+				that.touchTimeout = false;
+			},350); //wait a little bit (at least 300ms) before bluring to allow a valid touch to cancel the blur
 		},
 
 		hide: function() {
+			// console.log("hide");
 			this.picker.hide();
-			$(window).off('resize', this.place);
+			$(window).off('resize.boot');
+			$(document).off('scroll.boot');
 			this.viewMode = this.startViewMode;
 			this.showMode();
 			if (!this.isInput) {
 				$(document).off('mousedown.boot');
 			}
+			$(document).off('touchstart.boot');
 			$(document).off('touchend.boot');
+			$(document).off('touchmove.boot');
 
 			this.wasClick=false;
 			this.set();
@@ -148,6 +187,17 @@
 				type: 'hide',
 				date: this.date
 			});
+		},
+
+		//You can pass in the event when a return key is pressed on the parent input
+		//and use this to hide the calendar the first time it is pressed
+		//the second time it is pressed it will do the default action (submit form perhaps)
+		typedReturn: function(e) {
+			if(this.picker.is(':visible')) {
+				e.preventDefault();
+				e.stopPropagation();
+				this.hide();
+			}
 		},
 
 		remove: function() {
@@ -158,6 +208,7 @@
 		set: function() {
 
 			if(this.touchTimeout) { //cancel the touch timeout because we don't want to blur for this touch
+				// console.log("set clear");
 				clearTimeout(this.touchTimeout);
 				this.touchTimeout = false;
 			}
@@ -207,11 +258,23 @@
 		//place the popup in the proper place on the screen
 		place: function() {
 			var offset = this.component ? this.component.offset() : this.element.offset();
-			this.picker.css({
-				top: offset.top + this.height,
-				left: offset.left
-			});
+			var windowW = $(window).width();
+			var scroll = $(window).scrollLeft();
 
+			this.picker.removeClass("rarrow");
+			if(windowW<=480) {
+				offset.left = scroll+5;
+			} else {
+				var pickerRight = offset.left + this.picker[0].offsetWidth;
+
+				//Move to the left if it would be off the right of page
+				if (pickerRight-scroll > windowW) {
+					offset.left = offset.left - this.picker[0].offsetWidth + 30;
+					this.picker.addClass("rarrow");
+				}
+			}
+			this.picker.css({ top: offset.top + this.height, left: offset.left });
+			
 			//flip up top if off bottom of page
 			var windowH = $(window).height();
 			var scroll = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
@@ -219,8 +282,7 @@
 
 			if (pickerHeight - scroll > windowH) {
 				this.picker.css({
-					top: offset.top - this.picker[0].offsetHeight - 5,
-					left: offset.left
+					top: offset.top - this.picker[0].offsetHeight - 5
 				}).addClass("flipped");
 			} else {
        	 	this.picker.removeClass("flipped");
@@ -347,16 +409,29 @@
 			yearCont.html(html);
 		},
 
+		touched: function(e) {
+			// console.log("touched",e);
+			this.click(e);
+		},
+
 		//updates the calendar's state and selected value and sends the message that the value changed
 		click: function(e) {
+			// console.log("click",e);
 			e.stopPropagation();
 			e.preventDefault();
+
+			if(this.touchTimeout) { //cancel the touch timeout because we don't want to blur for this touch
+				// console.log("click clear");
+				clearTimeout(this.touchTimeout);
+				this.touchTimeout = false;
+			}
+
 			var target = $(e.target).closest('span, td, th');
 			if (target.length === 1) {
 				switch (target[0].nodeName.toLowerCase()) {
 					case 'th':
 						switch (target[0].className) {
-							case 'switch':
+							case 'switch': //clicked on the month/year to enter the switcher
 								this.showMode(1);
 								break;
 							case 'prev':
@@ -426,6 +501,7 @@
 		},
 
 		mousedown: function(e) {
+			// console.log("mousedown");
 			e.stopPropagation();
 			e.preventDefault();
 		},
@@ -500,12 +576,10 @@
 		//attemps to parse the incoming date into day, month and year.
 		parseDate: function(dateStr) {
 			if (!dateStr) return null;
-			var date = new Date();
+			var date = new Date.parse(dateStr);
+			if(typeof date.getTime === "undefined") date = new Date();
 
-			var unix = parseDateString(dateStr);
-			if (unix) date.setTime(unix * 1000);
-			else return null;
-
+			if(!date) return null;
 			return date;
 		},
 

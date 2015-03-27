@@ -196,20 +196,10 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 						},500);
 					});
 
-					//when we scroll, should try to reposition because it may
-					//go off the bottom/top and we may want to flip it
-					//TODO; If it goes off the screen, should we dismiss it?
-					$(document).on('scroll.ADE',function() {
+					ADE.setupScrollEvents(element,function() {
 						scope.$apply(function() {
 							place();
-						}); 
-					});
-
-					//when the window resizes, we may need to reposition the popup
-					$(window).on('resize.ADE',function() {
-						scope.$apply(function() {
-							place();
-						}); 
+						});
 					});
 
 					$(document).on('ADE_hidepops.ADE',function() {
@@ -273,12 +263,11 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() { 
+				ADE.teardownScrollEvents(element);
 				ADE.hidePopup();
 				ADE.teardownBlur(input);
 				if(input) input.off();
 				stopListening();
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
 				$(document).off('ADE_hidepops.ADE');
 			};
 
