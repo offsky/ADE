@@ -30,6 +30,8 @@
 			
 			<div class="ade-editme" tabindex="2" ade-rich ade-class="input-xlarge" ade-id="1235" ade-max="10" ade-cut="40" ng-model="data2"></div>
 
+			{{ data | rich:30 }}
+
 			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
 			<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
@@ -43,6 +45,7 @@
 		<script src="../common/demoCtrl.js"></script>
 		<script src="../common/demoApp.js"></script>
 		<script src="rich_directives.js"></script>
+		<script src="rich_filters.js"></script>
 		<script src="tinymce/tinymce-ade.min.js"></script>
 	</body>
 </html>
