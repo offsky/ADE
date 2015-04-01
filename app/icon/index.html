@@ -26,7 +26,7 @@
 				<div id="a" ade-icon ade-id="1001" tabindex="1" ng-model="icon"></div>
 				<div id="b" ade-icon ade-id="1002" tabindex="2" ng-model="icon2"></div>
 
-				<br />Without a popup: {{ icon3 | icon }} <br />
+				<br />Without a popup: <span ng-bind-html="icon3 | icon"></span> <br />
 				<div id="c" ade-icon ade-id="1002" ade-nopop="1" tabindex="2" ng-model="icon3"></div>
 
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
