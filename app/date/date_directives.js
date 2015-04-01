@@ -87,7 +87,6 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 
 			if(scope.ngModel) {
 				element.datepicker('setValue', scope.ngModel);
-				
 			}
 
 			//Handles keys pressed on in-line text box
