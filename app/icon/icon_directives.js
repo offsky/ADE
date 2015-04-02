@@ -12,6 +12,8 @@ ade-id:
 	If this id is set, it will be used in messages broadcast to the app on state changes.
 ade-readonly:
 	If you don't want the icon to be editable	
+ade-nopop:
+	If you don't want the icon to edit in a popup
 
 To use different icons, adjust the array in ade.js
 
@@ -49,6 +51,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 		scope: {
 			adeId: "@",
 			adeReadonly: "@",
+			adeNopop: "@",
 			ngModel: "="
 		},
 
@@ -60,14 +63,24 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var readonly = false;
+			var nopop = false;
 			var stopObserving = null;
 			var adeId = scope.adeId;
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
+			if(scope.adeNopop!==undefined && scope.adeNopop=="1") nopop = true;
 
 			var makeHTML = function() {
-				var html = $filter('icon')(scope.ngModel);
-				element.html(html);
+				var html = "";
+
+				if(nopop) {
+					html = '<div class="ade-icons ade-nopop"><h4>Select an Icon</h4>' + iconsPopupTemplate + '</div>';
+					element.html(html);
+					setupEvents();
+				} else {
+					html = $filter('icon')(scope.ngModel);
+					element.html(html);
+				}
 			};
 
 			var saveEdit = function(exited, newValue) {				
@@ -140,85 +153,85 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					$compile('<div class="' + ADE.popupClass + ' ade-icons dropdown-menu open"><h4>Select an Icon</h4>' + iconsPopupTemplate + '<div class="ade-hidden"><input id="invisicon" type="text" /></div></div>')(scope).insertAfter(element);
 					place();
 
-					input = angular.element('#invisicon');
-					
-					var nextElement = element.next('.ade-popup');
-					var clearNode = nextElement.find('.ade-clear');
-					var iconNode = nextElement.find('span');
-
-					clearNode.on('click.ADE', function() {
-						scope.$apply(function() {
-							saveEdit(0, 'ban');
-						});
-					});
-
-					//handles click on an icon inside a popup
-					angular.forEach(iconNode, function(el) {
-						var node = angular.element(el);
-						node.on('click.ADE', function() {
-							window.clearTimeout(timeout); 
-							var iconClass =  node.attr('class'); //gets what you clicked on by class name
-
-							if (iconClass.match('ade-icon')) { //makes sure we clicked
-								var classes = iconClass.split(" ");// grab the last class which is what we are about
-								var iconType = classes.pop().substring(5);
-								scope.$apply(function() {
-									saveEdit(0, iconType);
-								});
-							}
-						});
-
-					});
-
-					if(ADE.keyboardEdit) input.focus();
-
-					ADE.setupKeys(input, saveEdit, false, scope);
-
-					// TODO: handle keyboard inputs to change icons
-					// input.bind('keydown.ADE', function(e) {
-					// 	if(e.keyCode==37) { //left
-					// 		e.preventDefault();
-					// 		e.stopPropagation();
-					// 	} else if(e.keyCode==39) { //right
-					// 		e.preventDefault();
-					// 		e.stopPropagation();
-					// 	}
-					// });
-
-					//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-					input.on('blur.ADE', function(e) {
-						//We delay the closure of the popup to give the internal icons a chance to
-						//fire their click handlers and change the value.
-						timeout = window.setTimeout(function() {
-							scope.$apply(function() {
-								saveEdit(0);
-							});
-						},500);
-					});
-
-					//when we scroll, should try to reposition because it may
-					//go off the bottom/top and we may want to flip it
-					//TODO; If it goes off the screen, should we dismiss it?
-					$(document).on('scroll.ADE',function() {
-						scope.$apply(function() {
-							place();
-						}); 
-					});
-
-					//when the window resizes, we may need to reposition the popup
-					$(window).on('resize.ADE',function() {
-						scope.$apply(function() {
-							place();
-						}); 
-					});
-
-					$(document).on('ADE_hidepops.ADE',function() {
-						saveEdit(3);
-					});
-
-					ADE.setupTouchBlur(input);
+					setupEvents();
 				}
 			};
+
+			var setupEvents = function() {
+				input = angular.element('#invisicon');
+					
+				var nextElement = element;
+				if(!nopop) nextElement = element.next('.ade-popup');
+				var clearNode = nextElement.find('.ade-clear');
+				var iconNode = nextElement.find('span');
+
+				//highlight current selection
+				var current = nextElement.find(".icon-"+scope.ngModel);
+				current.addClass('selected');
+
+				//handles click on clear link
+				clearNode.on('click.ADE', function() {
+					scope.$apply(function() {
+						saveEdit(0, 'ban');
+					});
+				});
+
+				//handles click on an icon inside a popup
+				angular.forEach(iconNode, function(el) {
+					var node = angular.element(el);
+					node.on('click.ADE', function() {
+						window.clearTimeout(timeout); 
+						var iconClass =  node.attr('class'); //gets what you clicked on by class name
+
+						if (iconClass.match('ade-icon')) { //makes sure we clicked
+							var classes = iconClass.split(" ");// grab the last class which is what we are about
+							var iconType = classes.pop().substring(5);
+							scope.$apply(function() {
+								saveEdit(0, iconType);
+							});
+						}
+					});
+
+				});
+
+				if(ADE.keyboardEdit) input.focus();
+
+				ADE.setupKeys(input, saveEdit, false, scope);
+
+				// TODO: handle keyboard inputs to change icons
+				// input.bind('keydown.ADE', function(e) {
+				// 	if(e.keyCode==37) { //left
+				// 		e.preventDefault();
+				// 		e.stopPropagation();
+				// 	} else if(e.keyCode==39) { //right
+				// 		e.preventDefault();
+				// 		e.stopPropagation();
+				// 	}
+				// });
+
+				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
+				input.on('blur.ADE', function(e) {
+					//We delay the closure of the popup to give the internal icons a chance to
+					//fire their click handlers and change the value.
+					timeout = window.setTimeout(function() {
+						scope.$apply(function() {
+							saveEdit(0);
+						});
+					},500);
+				});
+
+				ADE.setupScrollEvents(element,function() {
+					scope.$apply(function() {
+						place();
+					});
+				});
+
+				$(document).on('ADE_hidepops.ADE',function() {
+					saveEdit(3);
+				});
+
+				ADE.setupTouchBlur(input);
+			}
 
 			var focusHandler = function(e) {
 				//if this is an organic focus, then do a click to make the popup appear.
@@ -249,7 +262,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			});
 
 			//setup editing events
-			if(!readonly) {
+			if(!readonly && !nopop) {
 				element.on('click.ADE', function(e) { 
 					//scope.$apply(function() { 
 						clickHandler(e); //not necessary?
@@ -273,12 +286,11 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() { 
+				ADE.teardownScrollEvents(element);
 				ADE.hidePopup();
 				ADE.teardownBlur(input);
 				if(input) input.off();
 				stopListening();
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
 				$(document).off('ADE_hidepops.ADE');
 			};
 

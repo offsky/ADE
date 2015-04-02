@@ -94,15 +94,77 @@ module.exports = function (grunt) {
 
 		//
 		jshint: {
-			options: {
-				jshintrc: '.jshintrc'
-			},
-			all: [
-				'Gruntfile.js',
-				'app/js/{,*/}*.js'
-			]
-		},
+	      options: {
+	        reporter: require('jshint-stylish'),
+	        globals: {
+	          "jQuery": true,
+	          "$": true,
+	          "angular": true,
+	          "console": true,
+	          "window": true,
+	        }
+	      },
+	      all: [
+            'app/common/*.js',
+            'app/date/*.js',
+            'app/decimal/*.js',
+            'app/duration/*.js',
+            'app/email/*.js',
+            'app/icon/*.js',
+            'app/integer/*.js',
+            'app/list/*.js',
+            'app/money/*.js',
+            'app/percent/*.js',
+            'app/phone/*.js',
+            'app/rating/*.js',
+            'app/rich/*.js',
+            'app/tag/*.js',
+            'app/text/*.js',
+            'app/time/*.js',
+            'app/toggle/*.js',
+            'app/url/*.js'
+
+	      ]
+	    },
 		
+		plato: {
+        options: {
+          jshint: {
+            globals: {
+             "jQuery": true,
+             "$": true,
+             "angular": true,
+             "console": true,
+             "window": true,
+            }
+          }
+        },
+        report: {
+            files: {
+                'reports/': [
+                 'app/common/*.js',
+		            'app/date/*.js',
+		            'app/decimal/*.js',
+		            'app/duration/*.js',
+		            'app/email/*.js',
+		            'app/icon/*.js',
+		            'app/integer/*.js',
+		            'app/list/*.js',
+		            'app/money/*.js',
+		            'app/percent/*.js',
+		            'app/phone/*.js',
+		            'app/rating/*.js',
+		            'app/rich/*.js',
+		            'app/tag/*.js',
+		            'app/text/*.js',
+		            'app/time/*.js',
+		            'app/toggle/*.js',
+		            'app/url/*.js'
+                ],
+            }
+        }
+    },
+
 		// not used since Uglify task does concat,
 		// but still available if needed
 		/*concat: {
@@ -268,6 +330,8 @@ module.exports = function (grunt) {
 		}
 	});
 
+   grunt.loadNpmTasks('grunt-contrib-jshint');
+
 	grunt.registerTask('p:test', [
 		'protractor_webdriver',
 		'protractor'
@@ -294,7 +358,9 @@ module.exports = function (grunt) {
 		'copy:styles',      //
 		'autoprefixer',     //
 		'connect:test',     //
-		'karma:unit'        //
+		'karma:unit',       //
+		//'jshint',
+    	'plato:report'
 	]);
 
 	//what gets executed when you run "grunt build"

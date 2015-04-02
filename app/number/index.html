@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title>ADE :: Number Directive</title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+	</head>
+	<body ng-app="app" ng-init="int=1234" >
+		<div class="container" ng-controller="ctrl">
+		<!--[if lt IE 7]>
+			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+		<![endif]-->
+		<a href="../index.html">back</a>
+		<h1>Number Filter</h1>
+		<p>A filter that displays a number. This is a wrapper for Angular's built in filter so that we can display invalid inputs better.</p>
+		  <ul>
+				<li>Integer: {{ 1234 | flexnum}} </li>
+				<li>Decimal: {{ 1234.567 | flexnum}} </li>
+				<li>Integer string: {{ "1234" | flexnum}} </li>
+				<li>Invalid integer "integer": {{ "integer" | flexnum }}</li>
+		  </ul>
+
+		<h1>Number editing directive</h1>
+		<p>A directive that makes a number editable. It can be either an integer or decimal, it doesn't enforce any constraints. For display purposes, decimals will be rounded to 3 decimal places.</p>
+
+		
+		<div class="ade-editme" ade-number="flex" ade-class="input-medium" ade-id="1234" ng-model="int"></div>
+		
+		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+
+		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
+
+		</div>
+		
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
+		<script src="../common/number_directive.js"></script>
+		<script src="number_filters.js"></script>
+	</body>
+</html>

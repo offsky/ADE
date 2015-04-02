@@ -24,6 +24,7 @@ ADE currently supports the following datatypes:
 - List (pick multiple)
 - Rating
 - Boolean
+- Multi select
 - Icon
 
 

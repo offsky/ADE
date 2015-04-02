@@ -26,7 +26,7 @@
 angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 	return {
 		require: '?ngModel', //optional dependency for ngModel
-		restrict: 'A', //Attribute declaration eg: <div b-datepicker=""></div>
+		restrict: 'A', //Attribute declaration eg: <div ade-calpop=""></div>
 
 		scope: {
 			adeCalpop: "@",
@@ -44,12 +44,12 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				options.minViewMode = 2;//tells the datepicker to limit to year only
 			}
 
-			//iOS has a good native picker for input type=date, so use it
-			var userAgent = window.navigator.userAgent;
-			var nativePicker = false;
-			if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-				nativePicker = true;
-			}
+			//iOS has a good native picker for input type=date, so use it?
+			// var userAgent = window.navigator.userAgent;
+			// var nativePicker = false;
+			// if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+			// 	nativePicker = true;
+			// }
 
 			//creates a callback for when something is picked from the popup or typed
 			var updateModel = function(e) {
@@ -78,31 +78,33 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 				//sometimes this is called inside Angular scope, sometimes not.
 				//scope.$$phase is always null for some reason so can't check it
 				//instead I am putting it in a timer to take it out of angular scope
-				setTimeout(function() { 
+				window.setTimeout(function() { 
 					scope.$apply(function() { //we then put it back into angular scope
 						updateModel(e);
 					});
 				});
 			});
+
 			if(scope.ngModel) {
 				element.datepicker('setValue', scope.ngModel);
 			}
-		
-			//Handles return key pressed on in-line text box
-			element.on('keypress.ADE', function(e) {
-				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
 
-				if (keyCode == 13) { //return key
-					e.preventDefault();
-					e.stopPropagation();
+			//Handles keys pressed on in-line text box
+			element.on('keydown.ADE', function(e) {
+				var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
+				
+				if (keyCode == 27) { //esc key
 					element.datepicker('hide');
-					element.blur();
-				} else if (keyCode == 27) { //esc
+				} else if (keyCode == 13) { //return
+					element.datepicker('typedReturn',e);
+				} else if (keyCode == 9) { //tab
 					element.datepicker('hide');
+				} else {
+					element.datepicker('show');
 				}
 			});
 			
-			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+			var destroy = function() { //need to clean up the event watchers when the scope is destroyed
 				if(element) {
 					element.off('keypress.ADE');
 					element.off('changeDate.ADE');
@@ -111,15 +113,19 @@ angular.module('ADE').directive('adeCalpop', ['$filter', function($filter) {
 						element.datepicker('remove');
 					}
 				}
-			});
+				if(unwatch) unwatch();
+			};
+
+			scope.$on('$destroy', destroy);
 
 			//need to watch the model for changes
-			scope.$watch(function(scope) {
+			var unwatch = scope.$watch(function(scope) {
 				return scope.ngModel;
 			}, function () {
 				//updateModel is expecting a certain object from the popup calendar
 				//so we have to simulate it, but add external flag so we can handle it differently
-				updateModel({date:scope.ngModel,external:true});
+				if(scope.ngModel===-2) destroy();
+				else updateModel({date:scope.ngModel,external:true});
 			});
 
 		}
@@ -170,6 +176,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			adeReadonly: "@",
 			adeAbsolute: "@",
 			adeTimezone: "@",
+			adeHover: "@",
+			adeButton: "@",
 			ngModel: "="
 		},
 
@@ -177,6 +185,8 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 		link: function(scope, element, attrs) {
 			var editing = false;
 			var input = null;
+			var parent = null; //the optional container for the input
+			var button = null; //the optional cal button for an input
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return. controls if you exited the field so you can focus the next field if appropriate
 			var readonly = false;
 			var inputClass = "";
@@ -186,9 +196,11 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			var stringDate = ""; //The string displayed to the user after conversion from timestamp
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var blurTimeout = null; //delay for bluring the event so a button can cancel
 
 			if(scope.adeDate!==undefined) format = scope.adeDate;
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
+			if(scope.adeHover!==undefined && scope.adeHover=="0") scope.adeHover = false; else scope.adeHover=true;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeAbsolute!==undefined && scope.adeAbsolute=="1") absolute = true;
 			if(scope.adeTimezone!==undefined && scope.adeTimezone=="1") timezone = true;
@@ -198,6 +210,15 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				element.html(stringDate);
 			};
 
+			var parseDateString = function(s) {
+				var date = Date.parse(s);
+				if (date != null) {
+					var time = date.toUnixTimestamp();
+					return time;
+				}
+				return null;
+			};
+
 			//callback once the edit is done
 			var saveEdit = function(exited) {
 
@@ -205,7 +226,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				exit = exited;
 				
 				if (exited != 3) { //don't save value on esc
-					value = parseDateString(input.val());
+					var value = parseDateString(input.val());
 					if (value == null || value==0) {
 						value = [0,0,0];
 					} else {
@@ -219,9 +240,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				ADE.teardownBlur(input);
 				ADE.teardownKeys(input);
 
-				input.datepicker('remove'); //tell datepicker to remove self
-				input.scope().$destroy(); //destroy the scope for the input to remove the watchers
-				input.remove(); //remove the input
+				scope.adePickDate = -2;
+				if(input) input.remove(); //remove the input
+				if(parent) parent.remove();
+
 				editing = false;
 
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
@@ -258,26 +280,57 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
+				scope.adePickDate = stringDate;
+
 				element.hide();
+				var html;
 				var extraDPoptions = '';
 				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
-				var html = '<input ng-controller="adeDateDummyCtrl" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" ng-init="adePickDate=\'' + stringDate + '\'" type="text" class="' + inputClass + '" />';
+				if(scope.adeButton!==undefined && scope.adeButton=="1") {
+					//directive specifies a button accessor instead of input attached
+					html='<div class="input-append ade-date-popup"><input ng-model="adePickDate" type="text" class="' + inputClass + '" />';
+					html+='<span class="add-on"><i class="icon-calendar" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate"></i></span></div>';
+					$compile(html)(scope).insertAfter(element);
 				
-				// var userAgent = window.navigator.userAgent;
-				// if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-						//TODO: do something special for iOS since they have native calendar wheels?
-				// }
+					parent = element.next('.input-append'); 
+					input = parent.children('input');
+					button = parent.children('.add-on').children('i');
 
-				$compile(html)(scope).insertAfter(element);
-				input = element.next('input');
+					button.on('click touchstart', function() {
+						ADE.cancelBlur();
+					}).on('hide',function(e) {						
+						//allow focus on input to cancel the blur of the calendar
+						if(blurTimeout) clearTimeout(blurTimeout);
+						blurTimeout = window.setTimeout(function() {
+							blurTimeout = false;
+							saveEdit(0);
+						},100);
+					});
+					input.on('focus',function() {
+						if(blurTimeout) {
+							clearTimeout(blurTimeout);
+							blurTimeout = false;
+						}
+					});
 
-				input.focus(); //I do not know why both of these are necessary, but they are
-				setTimeout(function() {
-					input.focus();
-				});
+					ADE.setupBlur(input, saveEdit, scope, false);
 
-				//Handles blur of in-line text box
-				ADE.setupBlur(input, saveEdit, scope, true);
+					button.datepicker('show');
+
+
+				} else {
+					html = '<input ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate" type="text" class="' + inputClass + '" />';
+					$compile(html)(scope).insertAfter(element);
+					
+					input = element.next('input');
+					input.focus(); //I do not know why both of these are necessary, but they are
+					window.setTimeout(function() {
+						input.focus();
+					});
+
+					ADE.setupBlur(input, saveEdit, scope, true);
+				}
+
 				ADE.setupKeys(input, saveEdit, false, scope);
 			};
 
@@ -287,7 +340,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			};
 
 			//When mousing over the div it will display a popup with the day of the week
-			if(!('ontouchstart' in window)) {
+			if(!('ontouchstart' in window) && scope.adeHover) {
 				element.on('mouseover.ADE', function() {
 					ADE.hidePopup();
 					var value = element.text();
@@ -309,20 +362,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 					$compile(html)(scope).insertAfter(element);
 					place();
 
-					//when we scroll, should try to reposition because it may
-					//go off the bottom/top and we may want to flip it
-					//TODO; If it goes off the screen, should we dismiss it?
-					$(document).on('scroll.ADE',function() {
+					ADE.setupScrollEvents(element,function() {
 						scope.$apply(function() {
 							place();
-						}); 
-					});
-
-					//when the window resizes, we may need to reposition the popup
-					$(window).on('resize.ADE',function() {
-						scope.$apply(function() {
-							place();
-						}); 
+						});
 					});
 
 				});
@@ -350,8 +393,7 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
+				ADE.teardownScrollEvents(element);
 			};
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
@@ -369,10 +411,11 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				} else {
 					delete attrs.$$observers['adeId'];
 				}
+				if(unwatch) unwatch();
 			});
 
 			//need to watch the model for changes
-			scope.$watch(function(scope) {
+			var unwatch = scope.$watch(function(scope) {
 				return scope.ngModel;
 			}, function () {
 				makeHTML();
@@ -382,13 +425,6 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 	};
 }]);
 
-/* ==================================================================
-	Angular needs to have a controller in order to make a fresh scope (to my knowledge)
-	and we need a fresh scope for the input that we are going to create because we need
-	to be able to destroy that scope without bothering its siblings/parent. We need to
-	destroy the scope to prevent leaking memory with ngModelWatchers
-------------------------------------------------------------------*/
-function adeDateDummyCtrl() { }
 
 /*
 References

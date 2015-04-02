@@ -27,12 +27,12 @@ describe('duration', function() {
 		expect(durationFilter("1hr")).toBe("1hr");
 		expect(durationFilter("1h")).toBe("1hr");
 		expect(durationFilter("1m")).toBe("1min");
-		expect(durationFilter("1.2m")).toBe("1min");
+		expect(durationFilter("1.2m")).toBe("1.2mins");
 		expect(durationFilter("1minute")).toBe("1min");
 		expect(durationFilter("11hr")).toBe("11hrs");
 		expect(durationFilter("1.5h")).toBe("1hr 30mins");
 		expect(durationFilter("5.30h")).toBe("5hrs 18mins");
-		expect(durationFilter("5.015h")).toBe("5hrs 1min");
+		expect(durationFilter("5.015h")).toBe("5hrs 0.9mins");
 		expect(durationFilter("1.5h 5mins")).toBe("1hr 35mins");
 	});
 

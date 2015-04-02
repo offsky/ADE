@@ -25,9 +25,6 @@
 		<script src="bower_components/angular/angular.js"></script>
 		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 		
-		<script src="common/demoApp.js"></script>
-		<script src="common/demoCtrl.js"></script>
-		<script src="common/demoTagCtrl.js"></script>
 		
 		<script src="rich/tinymce/tinymce-ade.min.js"></script>
 
@@ -44,16 +41,20 @@
 		<script src="icon/icon_directives.js"></script>
 		<script src="icon/icon_filters.js"></script>
 		<script src="integer/integer_filters.js"></script>
+		<script src="number/number_filters.js"></script>
 		<script src="duration/duration_directives.js"></script>
 		<script src="duration/duration_filters.js"></script>
 		<script src="list/list_directives.js"></script>
 		<script src="rich/rich_directives.js"></script>
+		<script src="rich/rich_filters.js"></script>
 		<script src="money/money_filters.js"></script>
+		<script src="multi/multi_directive.js"></script>
 		<script src="percent/percent_filters.js"></script>
 		<script src="phone/phone_filters.js"></script>
 		<script src="rating/rating_directives.js"></script>
 		<script src="common/ng-tags-input/ng-tags-input.js"></script>
 		<script src="tag/tag_directives.js"></script>
+		<script src="tag/tag_filters.js"></script>
 		<script src="text/text_directives.js"></script>
 		<script src="time/time_directives.js"></script>
 		<script src="time/time_filters.js"></script>
@@ -62,8 +63,12 @@
 		<script src="url/url_filters.js"></script>
 		<!-- endbuild -->
 
+		<script src="common/demoApp.js"></script>
+		<script src="common/demoCtrl.js"></script>
+		<script src="common/demoTagCtrl.js"></script>
+
 	</head>
-	<body ng-app="tagapp" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataint=9;datasingle='apple';datamulti=['dog','cat']" >
+	<body ng-app="tagapp" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataflex=1.2;dataint=9;datasingle='apple';datamulti=['dog','cat']" >
 		<a href="https://github.com/Toodledo/ADE"><img class="github" src="forkme_right_red.png" alt="Fork me on GitHub"></a>
 
 		<div class="container" ng-controller="ctrl">
@@ -133,6 +138,10 @@
 			Example: <div class="sample" ade-number='integer' ng-model="dataint"></div>
 			<br /><br />
 
+		<a href="number/">Number</a> - Formats an integer or a decimal depending on input.<br />
+			Example: <div class="sample" ade-number='flex' ng-model="dataflex"></div>
+			<br /><br />
+
 		<a href="percent/">Percent</a> - Formats a decimal as a percentage with an appended percent sign.<br />
 			Example: <div class="sample" ade-number='percent' ng-model="datapercent"></div>
 			<br /><br />
@@ -158,7 +167,11 @@
 			<br /><br />
 		
 		<a href="toggle/">Toggle Icon (Star/Checkbox)</a> - A boolean that is represented as an image that can be toggled between two states.<br />
-			Example: <div style="display:inline-block;" ade-toggle ng-model="datatoggle"></div> <div style="display:inline-block;" ade-toggle ade-class="ade-check" ng-model="datatoggle2"></div>
+			Example: <div style="display:inline-block;" ade-toggle ng-model="datatoggle"></div> <div style="display:inline-block;" ade-toggle ade-class="icon-check" ng-model="datatoggle2"></div>
+			<br /><br />
+
+		<a href="multi/">Multi-state Icon</a> - Toggle an icon between N states.<br />
+			Example: <div style="display:inline-block;" ade-multi ng-model="datamulticon"></div>
 			<br /><br />
 		
 		<a href="icon/">Icon</a> - An icon that can be switched between a number of different options with a popup editor.<br />

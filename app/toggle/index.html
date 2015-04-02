@@ -6,23 +6,15 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-		<title></title>
+		<title>ADE :: Star/Checkbox Directive</title>
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
 		<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
 		<link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css"/>
 		<link rel="stylesheet" href="../common/demo.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
-		<style>
-			/* Example of how to customize */
-			.ade-balloon{display:inline-block;width:32px;height:32px;background:url(balloon.png) no-repeat 0 0;cursor:pointer;}
-			.ade-balloon.ade-off{background-position:0px 0px;}
-			.ade-balloon.ade-on{background-position:-32px 0px;}
-			.ade-balloon.ade-off:hover{background-position:0px 0px;}
-			.ade-balloon.ade-on:hover{background-position:-32px 0px;}
-		</style>
 	</head>
-	<body ng-app="app" ng-init="starvalue=1;chkvalue=true;balloon=false">
+	<body ng-app="app" ng-init="starvalue=1;chkvalue=true">
 		<div class="container" ng-controller="ctrl">
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>

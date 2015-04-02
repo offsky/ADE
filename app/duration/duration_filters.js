@@ -18,9 +18,11 @@ angular.module('ADE').filter('duration', function() {
 		var mod = 0;
 
 		if(value < 60 && value > 0) {
+			value = Math.round(value*100)/100; //only show minutes to 2 decimal places
 			output = (value === 1) ? value + 'min' : value + 'mins';
 		} else if (value >= 60){
 			mod = value % 60;
+			mod = Math.round(mod*100)/100; //only show minutes to 2 decimal places
 			hours = Math.round((value-mod) / 60);
 			output =  (hours === 1) ? hours + 'hr': hours + 'hrs';
 
@@ -38,7 +40,7 @@ angular.module('ADE').filter('duration', function() {
 	function single2Mins(value) {
 		var clean = parseFloat(value, 10);
 		if((value.indexOf('h') !== -1)) clean = clean*60;
-		return Math.round(clean);
+		return Math.round(clean*100)/100;
 	}
 
 	//Duration was specified as two units (1hrs 90mins). Return minutes
