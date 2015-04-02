@@ -42,7 +42,7 @@
 
 /* Rich text Directive */
 .ade-rich { position:absolute;}
-.ade-rich.dropdown-menu.open{padding:5px 10px;width:auto;max-width:500px;}
+.ade-rich.dropdown-menu.open{padding:5px 10px;width:auto;max-width:550px;}
 .ade-rich .ade-richview { max-height:200px; overflow:auto;}
 .ade-rich textarea{margin-top:15px;width:279px;line-height:16px;min-height:50px; max-height:400px;}
 .ade-rich .mce-colorbutton span {padding:0px;}

@@ -235,13 +235,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
 					// the latter include texcolor color pickup background element, link ok and cancel buttons
 					
-					// check if id starts with 'mce_'
+					// check if id starts with 'mce'
 					//   0: true
 					//  -1: false
 					var parent = e.target;
 					var startsMce = false;
 					while (parent) {
-						if (parent.id.search('mce_') === 0) {
+						if (parent.id.search('mce') === 0) {
 							startsMce = true;
 							break;
 						}
@@ -334,15 +334,24 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				tinymce.init({
 					selector: "#tinyText" + id,
 					theme: "modern",
-					menubar: "false",
+					menubar: false,
+					statusbar: false,
 					plugins: ["textcolor", "link", 'fullscreen'],
 					toolbar: toolbarOptions,
 					baseURL: "",
 					setup: function(ed) {
 						ed.on('init', function(args) {
 							//go fullscreen on small windows
-							if(windowW<=480) tinymce.execCommand('mceFullScreen');
-
+							if(windowW<=480) {
+								window.setTimeout(function() {
+									tinymce.execCommand('mceFullScreen');
+									
+									//this fixes an apparent bug with tinymce calculating the height of the inner iframe
+									var top = $('.ade-popup iframe')[0].offsetTop;
+									var height = $('.ade-popup .mce-tinymce')[0].clientHeight;
+									$('.ade-popup iframe').css('height',height-top+"px");
+								},100); //full screen doesnt work in startup. Must do after short delay
+							}
 							//focus the text area. In a timer to allow tinymce to initialize.
 							tinymce.execCommand('mceFocus',false,"tinyText" + id);
 						});
