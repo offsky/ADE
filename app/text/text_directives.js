@@ -60,7 +60,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile','$sanitize',functio
 				//TODO: truncate to maxlength for display of pre-existing data
 				if(value!==undefined) {
 					if (angular.isArray(value)) value = value[0];
-					if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
+					if (!angular.isString(value)) value = value.toString(); //convert to string if not string
 					value = $sanitize(value).replace(/<[^>]+>/gm, '');
 
 					html = value;

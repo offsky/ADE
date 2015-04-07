@@ -14,7 +14,7 @@
 		<link rel="stylesheet" href="../common/demo.css"/>
       <link rel="stylesheet" href="../common/ade.css"/>
 	</head>
-	<body ng-app="app" ng-init="data='click to edit this very very very very very very very very very very very very very very very very very very very very very very very very long text';data2='p'" >
+	<body ng-app="app" ng-init="data='click to edit this very very very very very very very very very very very very very very very very very very very very very very very very long text';data2='p';data3='<b>Yes</b> I can have bold text';" >
 		<div class="container" ng-controller="ctrl">
 			<!--[if lt IE 7]>
 				<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -22,34 +22,40 @@
 			<a href="../index.html">back</a>
 			<h1>Text editing filter</h1>
 			<p>This filter will take a long bit of HTML and strip the formatting and print the first N characters.</p>
-			{{ data | rich:30 }}
+			{{ 'This is a very long string that should be truncated about now.' | rich:30 }}
 
 			<br />
 			<h1>Text editing directive</h1>
 			<p>A directive that makes a text string editable.</p>
 			<p>This directive has an external dependency on <a href="http://www.tinymce.com">TinyMCE</a> with the fullscreen, link and textcolor plugins.</p>
 
-			<div class="ade-editme" tabindex="1" ade-rich ade-class="input-xlarge" ade-id="1234" ade-max="2000" ade-cut="40" ng-model="data"></div>
+			<div class="ade-editme" tabindex="1" ade-rich ade-id="1234" ade-max="2000" ade-cut="40" ng-model="data"></div>
 
 			<br />
 			
-			<div class="ade-editme" tabindex="2" ade-rich ade-class="input-xlarge" ade-id="1235" ade-max="20" ade-cut="40" ng-model="data2"></div> (has 20 char max)
+			<div class="ade-editme" tabindex="2" ade-rich ade-id="1235" ade-max="20" ade-cut="40" ng-model="data2"></div> (has 20 char max)
 
 
 			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
 			<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+
+			<h1>Directive Starts Open</h1>
+			<p>You can also have the directive start in the open editable state</p>
+			<div class="ade-editme" ade-rich ade-open="0" ade-save-cancel="0" ade-id="1236" ade-max="2000" ade-cut="40" ng-model="data3"></div>
+
+
 		</div>
 		
 		<script src="../bower_components/jquery/dist/jquery.js"></script>
 		<script src="../bower_components/angular/angular.js"></script>
 		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		<script src="../bower_components/tinymce/tinymce.min.js"></script>
 		
 		<script src="../common/ade.js"></script>
 		<script src="../common/demoCtrl.js"></script>
 		<script src="../common/demoApp.js"></script>
 		<script src="rich_directives.js"></script>
-		<script src="tinymce/tinymce.min.js"></script>
 		<script src="rich_filters.js"></script>
 	</body>
 </html>
