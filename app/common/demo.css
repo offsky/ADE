@@ -8,7 +8,7 @@ body {
 }
 
 h1 { margin:20px 0px 20px 0px;}
-p { margin:10px 0px 20px 0px;}
+.container > p { margin:10px 0px 20px 0px;}
 td {vertical-align: top;}
 .ade-editme{ display: block; margin:4px 0px 4px 0px; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
 .container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:90%; max-width:700px;}

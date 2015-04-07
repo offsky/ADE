@@ -30,6 +30,7 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 	function hidePopup(elm) {
 		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {
+			$rootScope.$broadcast('ADE-hideall');
 			elPopup.removeClass('open').remove();
 		}
 	}

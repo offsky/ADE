@@ -117,6 +117,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
 			var saveEdit = function(exited) {
+				console.log("save",adeId);
 				var oldValue = scope.ngModel;
 				exit = exited;
 						
@@ -133,7 +134,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							maxLength = currentLength;
 					}
 
-					if(editor!=undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+					if(editor!==undefined && editor[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
 						var value = editor[0].innerHTML;
 						// check if contents are empty
 						if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
@@ -167,11 +168,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				// we're done, no need to listen to events
 				destroy();
-				setupElementEvents();
 			};
 
 			//shows a popup with the full text in read mode
-			//TODO: handle scrolling of very long text blobs
 			var viewRichText = function() {
 				ADE.hidePopup();
 
@@ -233,14 +232,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					var top = $('.ade-rich')[0].offsetTop;
 					var scrollTop = $(window).scrollTop();
 					var height = $('.ade-toolbar').height();
+					if(height==0) height=30; //take a guess
 					var pos = 5-height; //toolbar is fixed, so we need to place it right above the text area
 					if(scrollTop-top>pos) pos = scrollTop-top; //unless that is off the screen, then place it at thet op of the screen, obscuring the top of the text area
-					var width = $('.ade-rich').width()+20;
+					var width = $('.ade-rich').width()+10;
 
 					$('.ade-toolbar').css('top',pos+"px");
 					$('.ade-toolbar').css('width',width+'px');
 
-					//console.log("place",top,scrollTop,pos,scrollTop-top);
+					var marginFix = scrollTop;
+					$('.mce-floatpanel').css('margin-top',marginFix+"px");
+
+					console.log("place",top,scrollTop,height,pos,scrollTop-top);
 					// console.log("rich",$('.ade-rich').offset(),$('.ade-rich').position());
 					// console.log("tool",$('.ade-toolbar').offset(),$('.ade-toolbar').position());
 				}
@@ -330,7 +333,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				
 				window.clearTimeout(timeout);
 				if(input) input.off('.ADE');
-				element.off('.ADE');
+				//element.off('.ADE');
 				destroy();
 
 				ADE.hidePopup(element);
@@ -435,6 +438,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				input = element.next('.ade-rich');
 
+				$('.ade-toolbar').on('click.ADE', function() {
+					console.log('tool click');
+					place();
+				});
+
 				// save when user blurs out of text editor
 				// listen to clicks on all elements on page
 				// in a timer to prevent clicks on read popup from bleeding through
@@ -471,7 +479,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//go full screen if necessary or take out
 			var goFullScreen = function(ed) {
-				console.log("go fullscreen ",isFullScreen);
 				if(ed===undefined) ed = tinymce.activeEditor;
 				windowW = $(window).width();
 
@@ -501,6 +508,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
+				console.log("mouse in",adeId,editing);
+				if(editing) return;
 				window.clearTimeout(timeout);
 				
 				//if any other popup is open in edit mode, don't do this view
@@ -513,7 +522,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			//if the mouse leaves, hide the popup note view if in read mode
-			var mouseout = function() {				
+			var mouseout = function() {		
+				console.log("mouse out",adeId,editing);		
+				if(editing) return;
 				var linkPopup = element.next('.ade-popup');
 				if (linkPopup.length && !editing) { //checks for read/edit mode
 					timeout = window.setTimeout(function() {
@@ -526,6 +537,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
+				console.log("mouse click",adeId,editing);	
+				if(editing) return;
 				window.clearTimeout(timeout);
 				if (editing) return;
 				editing = true;
@@ -540,6 +553,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
 			var setupElementEvents = function() {
+				console.log("setup",adeId,editing);
 				element.on('mouseenter.ADE', mousein);
 				element.on('mouseleave.ADE', mouseout);
 				
@@ -570,12 +584,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				console.log("destroy");
+				console.log("destroy",adeId);
 				$(document).off('click.ADE');
 				$(document).off('touchend.ADE');
 				$(document).off('scroll.ADE');
 				$(window).off('resize.ADE');
 			};
+			
+			scope.$on('ADE-hideall', function() {
+				console.log("hide",adeId,editing);
+				if(editing) saveEdit(0);
+			});
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				destroy();
