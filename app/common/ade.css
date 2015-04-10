@@ -16,6 +16,33 @@ h2 {
 
 /*------------------------------------------------------- Common CSS (ade.css) */
 
+/*Inputs*/
+.input-large,
+.input-large:focus {
+	line-height: 1.8em;
+	height: 1.8em;
+	padding: 0 .5em;
+	font-size: 1em;
+}
+
+.input-medium,
+.input-medium:focus,
+.ade-input,
+.ade-input:focus {
+	line-height: 1.7em;
+	height: 1.7em;
+	padding: 0 .4em;
+	font-size: .85em;
+}
+
+.input-small,
+.input-small:focus {
+	line-height: 1.6em;
+	height: 1.6em;
+	padding: 0 .3em;
+	font-size: .75em;
+}
+
 /*Popup (AKA Dropdown Menu)*/
 .ade-popup {
 	position: absolute;
