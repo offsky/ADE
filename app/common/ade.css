@@ -146,26 +146,16 @@ h2 {
 /*Inputs*/
 .input-large,
 .input-medium,
+.input-small,
 .ade-input {
 	border: 2px solid transparent;
 }
 
 .input-large:focus,
 .input-medium:focus,
+.input-small:focus,
 .ade-input:focus {
 	border: 2px solid #1B75BC;
-}
-
-.input-large,
-.input-large:focus,
-.input-medium,
-.input-medium:focus,
-.ade-input,
-.ade-input:focus {
-	line-height: 1.8em;
-	height: 1.8em;
-	padding: 0 .5em;
-	font-size: 1em;
 }
 
 /*Popovers (AKA dropdown-menu)*/
