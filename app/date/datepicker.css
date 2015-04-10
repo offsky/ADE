@@ -1,10 +1,119 @@
+ 
+/*------------------------------------------------------- Common CSS (ade.css) */
+.datepicker {
+	max-width: 240px;
+}
+
+.datepicker th.switch,
+.datepicker span.month:hover,
+.datepicker td.day:hover,
+.datepicker th.next:hover,
+.datepicker th.prev:hover {
+	cursor: pointer;
+}
+
+.datepicker th.dow:hover {
+	cursor: default;
+}
+
+.datepicker th.switch { /*Month & Year*/
+	font-weight: normal;
+	font-size: 1.1em;
+}
+
+.datepicker th.next,
+.datepicker th.prev {
+	font-size: 1.2em;
+} 
+
+.datepicker th.dow { /*Days of the Week*/
+	font-size: .75em;
+	text-transform: uppercase;
+	letter-spacing: .02em;
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.datepicker td.day {
+	font-size: .9em;
+}
+
+.datepicker td.day.active { /*Selected Item*/
+	background-color: rgba(0, 0, 0, 0.1);
+} 
+
+.datepicker td.day:hover,
+.datepicker span.month:hover,
+.datepicker span.year:hover {
+	background-color: rgba(0, 0, 0, 0.03);
+	cursor: pointer;
+}
+
+.datepicker td.day.new,
+.datepicker td.day.old { /*Days in the Next Month*/
+	color: rgba(0, 0, 0, 0.3);
+}
+.datepicker th.dow, /*Sets fixed sizes for each cell*/
+.datepicker td.day,
+.datepicker th.next,
+.datepicker th.prev  {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+}
+
+.datepicker span.month,
+.datepicker span.year {
+	padding: 0 10px;
+	height: 30px;
+	line-height: 30px;
+	font-size: .9em;
+	display: inline-block;
+}
+
+
+/*------------------------------------------------------- Toodledo Skin for Ade input */
+.datepicker th.next,
+.datepicker th.prev {
+	background-color: rgba(163,197,246,.5);
+	color: #1b75bc;
+	  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  -ms-border-radius: 15px;
+  -o-border-radius: 15px;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.datepicker th.next:hover,
+.datepicker th.prev:hover {
+	background-color: rgba(163,197,246,1);
+}
+
+.datepicker th.switch {
+	color: #1b75bc;
+}
+
+.datepicker th.switch:hover {
+	text-decoration: underline;
+}
+
+.datepicker td.day.active { /*Selected Item*/
+	background-color: #1b75bc;
+	color: #fafafa;
+} 
+
+
  /*
 	Datepicker for Bootstrap
 	Copyright 2012 Stefan Petre
 	Licensed under the Apache License v2.0
 	http://www.apache.org/licenses/LICENSE-2.0
-*/
- .datepicker { top: 0; left: 0; padding: 4px; margin-top: 1px; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; /*.dow { border-top: 1px solid #ddd !important; }*/ } 
+
+ .datepicker { top: 0; left: 0; padding: 4px; margin-top: 1px; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; /*.dow { border-top: 1px solid #ddd !important; } } 
  .datepicker:before { content: ''; display: inline-block; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 7px solid rgba(0, 0, 0, 0.3);  position: absolute; top: -7px; left: 6px; } 
  .datepicker:after { content: ''; display: inline-block; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 6px solid #fff; position: absolute; top: -6px; left: 7px; } 
  .datepicker.flipped:before { border-bottom:0; border-top: 7px solid rgba(0, 0, 0, 0.3); top: auto; bottom: -7px; } 
