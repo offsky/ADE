@@ -1,23 +1,189 @@
-/* Popups Directive */
-.ade-hidden{width: 0;height:0;overflow: hidden;}
-.ade-popup{position: absolute;}
-.ade-popup.dropdown-menu.open,.ade-nopop{display:inline-block;padding:0 10px 5px 10px;border-radius:4px;width:200px;white-space:normal;font-weight:normal;}
-.ade-popup.dropdown-menu:before {border-bottom: 7px solid rgba(0, 0, 0, 0.3);border-left: 8px solid transparent;border-right: 8px solid transparent;content: "";left: 6px;position: absolute;top: -7px;}
-.ade-popup.dropdown-menu:after {border-bottom: 6px solid #FFF;border-left: 7px solid transparent;border-right: 7px solid transparent;content: "";left: 7px;position: absolute;top: -6px;}
-.ade-popup.dropdown-menu.flip:before {border-bottom:0px; border-top: 7px solid rgba(0, 0, 0, 0.3);top:auto;bottom:-7px;}
-.ade-popup.dropdown-menu.flip:after {border-bottom:0px; border-top: 6px solid #FFF;top:auto;bottom:-5px;}
-.ade-popup.dropdown-menu.rarrow:before {left: auto; right:6px;}
-.ade-popup.dropdown-menu.rarrow:after {left: auto; right:7px;}
-.ade-popup span,.ade-nopop span{padding:3px;margin:0;cursor:pointer;}
+/*------------------------------------------------------- Temporary CSS for demo*/
+
+body {
+	font-family: arial;
+} 
+
+h2 {
+	font-size: 1.6em;
+	font-weight: normal;
+}
+
+.dropdown-menu {
+	border: 1px solid gray;
+	padding: 5px;
+}
+
+/*------------------------------------------------------- Common CSS (ade.css) */
+
+/*Popup (AKA Dropdown Menu)*/
+.ade-popup {
+	position: absolute;
+	min-width: 200px;
+	max-width: 450px;
+}
+
+.ade-hidden {
+	width: 0;
+	height:0;
+	overflow: hidden;
+} 
+
+.dropdown-menu {
+	position: absolute;
+	z-index: 1000;
+	background-color: #ffffff;
+	background-clip: padding-box;
+}
+
+.ade-popup.dropdown-menu.open,
+.ade-nopop {
+	display:inline-block;
+	padding: 15px;
+	border-radius:4px;
+	white-space:normal;
+	font-weight:normal;
+}
+
+.ade-popup.dropdown-menu:before { /*Arrow Up Shadow*/
+	border-bottom: 9px solid rgba(0, 0, 0, 0.3);
+	border-left: 9px solid transparent;
+	border-right: 9px solid transparent;
+	content: "";
+	left: 11px;
+	position: absolute;
+	top: -10px;
+}
+
+.ade-popup.dropdown-menu.flip:before { /*Arrow Down Shadow*/
+	border-bottom: 0px; 
+	border-top: 9px solid rgba(0, 0, 0, 0.3);
+	top: auto;
+	bottom: -10px;
+}
+
+.ade-popup.dropdown-menu:after { /*Arrow Up Fill*/
+	border-bottom: 9px solid #FAFAFA;
+	border-left: 9px solid transparent;
+	border-right: 9px solid transparent;
+	content: "";
+	left: 9px;
+	position: absolute;
+	top: -9px;
+}
+
+.ade-popup.dropdown-menu.flip:after { /*Arrow Down Fill*/
+	border-bottom: 0px; 
+	border-top: 9px solid #FAFAFA;
+	top: auto;
+	bottom: -9px;
+}
+
+.ade-popup.dropdown-menu.rarrow:before {
+	left: auto; 
+	right:6px;
+}
+.ade-popup.dropdown-menu.rarrow:after {
+	left: auto; 
+	right:7px;
+}
+
+.ade-popup span,.ade-nopop span{
+	padding:3px;
+	margin:0;
+	cursor:pointer;
+}
+
 @media screen and (max-width: 480px) { /* popup goes full width on small screens */
-	.ade-popup.dropdown-menu.open {width: auto;}
+	.ade-popup.dropdown-menu.open {
+		width: auto;
+	}
 	.ade-popup.dropdown-menu:before,
 	.ade-popup.dropdown-menu:after,
 	.ade-popup.dropdown-menu.flip:before,
-	.ade-popup.dropdown-menu.flip:after {display:none; border: 0px;}
+	.ade-popup.dropdown-menu.flip:after {
+		display:none; 
+		border: 0px;
+	}
 }
 
-/* Icon Directive */
+
+
+/*------------------------------------------------------- Toodledo Skin for Ade input */
+
+/*Overwrites*/
+:focus {
+  outline: -webkit-focus-ring-color auto 0px;
+}
+
+/*Inputs*/
+.input-large,
+.input-medium,
+.ade-input {
+	border: 2px solid transparent;
+}
+
+.input-large:focus,
+.input-medium:focus,
+.ade-input:focus {
+	border: 2px solid #1B75BC;
+}
+
+.input-large,
+.input-large:focus,
+.input-medium,
+.input-medium:focus,
+.ade-input,
+.ade-input:focus {
+	line-height: 1.8em;
+	height: 1.8em;
+	padding: 0 .5em;
+	font-size: 1em;
+}
+
+/*Popovers (AKA dropdown-menu)*/
+.dropdown-menu {
+	background-color: #FAFAFA;
+	border: 0px;
+	padding: 10px;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;	
+	-webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	-moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+.ade-popup.dropdown-menu {
+	font-size: .9em;
+	color: #333;
+}
+
+.ade-popup.dropdown-menu:before { /*Up Arrow*/
+  	border-bottom: 9px solid #E4E6E9;
+}
+
+.ade-popup.dropdown-menu:after { /*Up Arrow*/
+  	border-bottom: 9px solid #FAFAFA;
+}
+
+.ade-popup.dropdown-menu.open,
+.ade-nopop {
+	border-radius: 0;
+}
+
+
+
+/*Old CSS */
+
+
+/* Popups Directive */
+
+
+
+
+
+/* Icon Directive 
 .ade-icon{cursor:pointer; width:14px; height:16px; color: #000; display:inline-block; text-align: center;}
 .ade-icon.icon-ban-circle{color:#999;}
 .ade-popup a.ade-clear,.ade-nopop a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
