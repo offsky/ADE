@@ -1,4 +1,67 @@
-.bootstrap-timepicker.dropdown-menu {
+/* We should rename this class "timepicker" to exlcude the word "bootstrap." */
+/*------------------------------------------------------- Common CSS (ade.css) */
+.bootstrap-timepicker {
+    max-width: 240px;
+}
+
+.bootstrap-timepicker input[type="text"]{
+    width: 30px;
+    height: 30px
+    line-height: 30px;
+    text-align: center;
+    font-size: .9em;
+    text-transform: uppercase;
+}
+
+.bootstrap-timepicker td {
+    text-align: center;
+}
+
+.bootstrap-timepicker a {
+    text-decoration: none;
+    height: 30px;
+    line-height: 30px;
+    height: 30px;
+    margin: 5px auto;
+}
+
+
+.bootstrap-timepicker input[type="text"]:last-child {
+    background-color: transparent;
+    border: 0px;
+    outline: 0;
+}
+/*------------------------------------------------------- Toodledo Skin for Ade input */
+
+.bootstrap-timepicker a {
+    font-size: .75em;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    text-align: center;
+        background-color: rgba(163,197,246,.5);
+    color: #1b75bc;
+      border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.bootstrap-timepicker a:hover {
+    background-color: rgba(163,197,246,1);
+}
+
+.bootstrap-timepicker input[type="text"]{
+    
+}
+
+/*.bootstrap-timepicker.dropdown-menu {
     border-radius: 4px 4px 4px 4px;
     display: none;
     left: 0;
@@ -79,4 +142,4 @@
     display: block;
     height: 16px;
     width: 16px;
-}
+}*/
