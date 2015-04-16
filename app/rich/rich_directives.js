@@ -20,8 +20,6 @@
 	ade-cut:
 		The number of characters to show as a preview before cutting off and showing
 		the rest after a click or hover	
-	ade-open:
-		If you want it to start in the editable state
 	ade-save-cancel:
 		If you want save/cancel buttons
 
@@ -42,7 +40,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 		scope: {
 			adeId: "@",
 			adeReadonly: "@",
-			adeOpen: "@",
 			adeSaveCancel: "@",
 			adeMax: "@",
 			adeCut: "@",
@@ -60,7 +57,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null; //the delay when mousing out of the ppopup
 			var readonly = false;
-			var startOpen = false;
 			var cutLength = 100; 
 			var maxLength = null; //the maxLength is enforced on edit, not from external changes
 			var origMaxLength = null;
@@ -75,7 +71,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
-			if(scope.adeOpen!==undefined && scope.adeOpen=="1") startOpen = true;
 			if(scope.adeCut!==undefined) cutLength = parseInt(scope.adeCut);
 			if(scope.adeSaveCancel!==undefined && scope.adeSaveCancel=="0") saveCancel = false;
 
@@ -110,9 +105,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				}
 
 				element.html(html);
-
-
-				if(startOpen) mouseclick();
 			};
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
@@ -251,6 +243,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			// detect clicks outside tinymce textarea
 			var outerBlur = function(e) {
+				return;
 				// check where click occurred
 				//   1: inside ade popup
 				//   0: outside ade popup
