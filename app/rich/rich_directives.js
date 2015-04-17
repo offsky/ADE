@@ -19,7 +19,7 @@
 		The optional maximum length to enforce
 	ade-cut:
 		The number of characters to show as a preview before cutting off and showing
-		the rest after a click or hover	
+		the rest after a click or hover.  Set to -1 to show all characters and disable hover preview
 	ade-save-cancel:
 		If you want save/cancel buttons
 
@@ -89,18 +89,27 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					//set the max length higher or it would be truncated right away on editing
 					if(maxLength && value.length>maxLength) maxLength = value.length;
 		
-					// strip html
-					value = $sanitize(value).replace(/<[^>]+>/gm, '');
-
-					var lines = value.split(/\r?\n|\r/);
-					value = lines[0]; //get first line
-
-					if (len < value.length) {
-						html = value.substring(0, len) + '...';
-					} else if(lines.length>1) {
-						html = value + "...";
-					} else {
+					if(len==-1) { //wanting to display all text in read mode
 						html = value;
+					} else {
+						//wanting to truncate display
+						
+						// strip html if we are truncating, to prevent unclosed tags
+						//TODO: allow html, but close them properly 
+						//similar to php http://stackoverflow.com/questions/3380407/puzzle-splitting-an-html-string-correctly
+						//http://ejohn.org/apps/htmlparser/
+						value = $sanitize(value).replace(/<[^>]+>/gm, '');
+
+						var lines = value.split(/\r?\n|\r/);
+						value = lines[0]; //get first line. We wont display other lines otherwise they would run together and look strange
+
+						if (len < value.length) { // if the first line is longer than the max allowed trucate and print ...
+							html = value.substring(0, len) + '...';
+						} else if(lines.length>1) { //if there is more than 1 line, display entire line and ...
+							html = value + "...";
+						} else {
+							html = value; //if there is only one line that is short enough. dont print ...
+						}
 					}
 				}
 
@@ -109,7 +118,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
 			var saveEdit = function(exited) {
-				console.log("save",adeId);
+				// console.log("save",adeId);
 				var oldValue = scope.ngModel;
 				exit = exited;
 						
@@ -215,7 +224,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
 				if(isFullScreen && editing) return;
-				ADE.place('.ade-rich',element,25,-5);
+				ADE.place('.ade-rich',element,7,-5);
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
 				
@@ -243,7 +252,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			// detect clicks outside tinymce textarea
 			var outerBlur = function(e) {
-				return;
 				// check where click occurred
 				//   1: inside ade popup
 				//   0: outside ade popup
@@ -432,7 +440,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				input = element.next('.ade-rich');
 
 				$('.ade-toolbar').on('click.ADE', function() {
-					console.log('tool click');
 					place();
 				});
 
@@ -501,8 +508,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//When the mouse enters, show the popup view of the note
 			var mousein = function()  {
-				console.log("mouse in",adeId,editing);
-				if(editing) return;
+				// console.log("mouse in",adeId,editing);
+				if(editing || cutLength==-1) return; //dont display read version if editing, or if showing all already
 				window.clearTimeout(timeout);
 				
 				//if any other popup is open in edit mode, don't do this view
@@ -516,7 +523,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//if the mouse leaves, hide the popup note view if in read mode
 			var mouseout = function() {		
-				console.log("mouse out",adeId,editing);		
+				// console.log("mouse out",adeId,editing);		
 				if(editing) return;
 				var linkPopup = element.next('.ade-popup');
 				if (linkPopup.length && !editing) { //checks for read/edit mode
@@ -530,7 +537,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				console.log("mouse click",adeId,editing);	
+				// console.log("mouse click",adeId,editing);	
 				if(editing) return;
 				window.clearTimeout(timeout);
 				if (editing) return;
@@ -546,7 +553,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
 			var setupElementEvents = function() {
-				console.log("setup",adeId,editing);
+				// console.log("setup",adeId,editing);
 				element.on('mouseenter.ADE', mousein);
 				element.on('mouseleave.ADE', mouseout);
 				
@@ -577,7 +584,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				console.log("destroy",adeId);
+				// console.log("destroy",adeId);
 				$(document).off('click.ADE');
 				$(document).off('touchend.ADE');
 				$(document).off('scroll.ADE');
@@ -585,7 +592,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 			
 			scope.$on('ADE-hideall', function() {
-				console.log("hide",adeId,editing);
+				// console.log("hide",adeId,editing);
 				if(editing) saveEdit(0);
 			});
 
