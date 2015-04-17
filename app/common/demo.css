@@ -11,7 +11,8 @@ h1 { margin:20px 0px 20px 0px;}
 .container > p { margin:10px 0px 20px 0px;}
 td {vertical-align: top;}
 .ade-editme{ display: block; margin:4px 0px 4px 0px; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
-.ade-editme2{ display: block; margin:4px 0px 4px 0px; background-color: #eee; width:200px;  padding:3px; cursor:pointer; }
+.ade-editrich{display: block; margin:0px; border:1px solid transparent; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
+
 .container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:90%; max-width:700px;}
 .github { position: absolute; top: 0; right: 0; border: 0; }
 .sample { background-color: #eee; height:19px; padding:10px; cursor:pointer; display:inline-block;}

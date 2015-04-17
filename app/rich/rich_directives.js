@@ -42,7 +42,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			adeReadonly: "@",
 			adeSaveCancel: "@",
 			adeMax: "@",
-			adeCut: "@",
 			ngModel: "="
 		},
 
@@ -52,12 +51,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			// this is not needed but makes it clearer that were dealing with separate editors
 			var id = Math.floor(Math.random() * 100000);
 			var editing = false;
-			var txtArea = null;
-			var input = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var timeout = null; //the delay when mousing out of the ppopup
 			var readonly = false;
-			var cutLength = 100; 
 			var maxLength = null; //the maxLength is enforced on edit, not from external changes
 			var origMaxLength = null;
 			var stopObserving = null;
@@ -65,55 +61,29 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var supportsTouch = ('ontouchend' in window);
 			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 			var windowW = $(window).width();
-			var fullScreenBreakpoint = 480;
-			var isFullScreen = false;
 			var saveCancel = true;
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
-			if(scope.adeCut!==undefined) cutLength = parseInt(scope.adeCut);
 			if(scope.adeSaveCancel!==undefined && scope.adeSaveCancel=="0") saveCancel = false;
 
 			//Whenever the model changes we need to regenerate the HTML for displaying it
 			var makeHTML = function() {
-				var html = "";
 				var value = scope.ngModel;
-				var len = cutLength || 100;
 				
 				if (value!==undefined) {
 					if (angular.isArray(value)) value = value[0];
 
 					if(value==null || value==undefined) value = "";
 					if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
-
-					//set the max length higher or it would be truncated right away on editing
-					if(maxLength && value.length>maxLength) maxLength = value.length;
-		
-					if(len==-1) { //wanting to display all text in read mode
-						html = value;
-					} else {
-						//wanting to truncate display
-						
-						// strip html if we are truncating, to prevent unclosed tags
-						//TODO: allow html, but close them properly 
-						//similar to php http://stackoverflow.com/questions/3380407/puzzle-splitting-an-html-string-correctly
-						//http://ejohn.org/apps/htmlparser/
-						value = $sanitize(value).replace(/<[^>]+>/gm, '');
-
-						var lines = value.split(/\r?\n|\r/);
-						value = lines[0]; //get first line. We wont display other lines otherwise they would run together and look strange
-
-						if (len < value.length) { // if the first line is longer than the max allowed trucate and print ...
-							html = value.substring(0, len) + '...';
-						} else if(lines.length>1) { //if there is more than 1 line, display entire line and ...
-							html = value + "...";
-						} else {
-							html = value; //if there is only one line that is short enough. dont print ...
-						}
-					}
+				} else {
+					value="";
 				}
 
-				element.html(html);
+				element.html(value);
+
+				//set the max length higher or it would be truncated right away on editing
+				if(maxLength && element.text().length>maxLength) maxLength = element.text().length;
 			};
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
@@ -122,21 +92,20 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var oldValue = scope.ngModel;
 				exit = exited;
 						
-				var editor = $('#tinyText' + id);
-				var currentLength = editor.text().length;
+				var currentLength = $("#tinyText"+id).text().length;
 
 				// don't save value on esc (revert)
-				// and if the current length is greater than the previous max length
-				// 100 padding covers html tags
+				// and if the current length is greater than max length
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
-					// Special case: Length surpasses maxLength and maxLength is artificially high
-					// Reduce maxLength to current length until it reaches origMaxLength
-					if (maxLength > origMaxLength && maxLength>currentLength) {
-							maxLength = currentLength;
-					}
+					if(element!==undefined && element[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+						var value = $("#tinyText"+id)[0].innerHTML;
+						
+						//readjust maxLength if it was artifically extended
+						var text = $("#tinyText"+id).text();
+						if (maxLength > origMaxLength && maxLength>text.length) {
+							maxLength = text.length;
+						}
 
-					if(editor!==undefined && editor[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
-						var value = editor[0].innerHTML;
 						// check if contents are empty
 						if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
 							value = '';
@@ -148,13 +117,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					}
 				}
 
-				input.off();
-
-				input.remove();
 				editing = false;
-				isFullScreen = false;
+				hideDiv();
 
-				ADE.hidePopup(element);
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
 
 				if (exit == 1) {
@@ -173,89 +138,68 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//shows a popup with the full text in read mode
 			var viewRichText = function() {
-				ADE.hidePopup();
+				ADE.hidePopup(); //hide any ADE popups already presented
 
-				var content = scope.ngModel; //what is inside the popup
-
-				if(scope.ngModel && angular.isString(scope.ngModel)) content = scope.ngModel.replace(/\n/g, '<br />');
-
-				if (!content) return; //dont show popup if there is nothing to show
-
-				$compile('<div class="ade-popup ade-rich dropdown-menu open"><div class="ade-richview">' + content + '</div></div>')(scope).insertAfter(element);
+				var modelValue = scope.ngModel ? scope.ngModel : "";
+				var editor = '<div class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
+				$compile(editor)(scope).insertAfter(element);
 				place();
+
+				window.setTimeout(function() {
+					$('#tinyText'+id).addClass("ade-hover");						
+				});
 
 				// Convert relative urls to absolute urls
 				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
-				$('.ade-richview').find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
-					var href = this.getAttribute('href');
-					var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
-					this.setAttribute('href', hrefType + href);
+				// $('.ade-richview').find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+				// 	var href = this.getAttribute('href');
+				// 	var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
+				// 	this.setAttribute('href', hrefType + href);
+				// });
+
+				$('#tinyText'+id).on('mouseleave.ADE', mouseout);
+				$('#tinyText'+id).on('click.ADE', mouseclick);
+				$('#tinyText'+id).on('mouseenter.ADE', function() {
+					window.clearTimeout(timeout);
 				});
 
-				editing = false;
-
-				input = element.next('.ade-rich');
-				input.on('mouseenter.ADE', mousein); //these two are to debounce the mouse leaving/entering
-				input.on('mouseleave.ADE', mouseout);
-				if(!readonly) input.on('click.ADE', mouseclick);
-
-				$(document).on('touchend.ADE', function(e) {
-					var outerClick = $('.ade-popup').has(e.target).length === 0;
-					if(outerClick) mouseout();
-				});
-				
-				//when we scroll, should try to reposition because it may
-				//go off the bottom/top and we may want to flip it
-				//TODO; If it goes off the screen, should we dismiss it?
-				$(document).on('scroll.ADE',function() {
-					scope.$apply(function() {
-						place();
-					}); 
-				});
-
-				//when the window resizes, we may need to reposition the popup
-				$(window).on('resize.ADE',function() {
-					scope.$apply(function() {
-						place();
-					}); 
-				});
+				// $(document).on('touchend.ADE', function(e) {
+				// 	var outerClick = element.has(e.target).length === 0;
+				// 	if(outerClick) mouseout();
+				// });
 			};
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
-				if(isFullScreen && editing) return;
-				ADE.place('.ade-rich',element,7,-5);
+				ADE.place('.ade-rich',element,-20,-5);
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
-				
+
+				//position the editable content
+				if($('#tinyText'+id).length) {
+					var top = element[0].offsetTop;
+					var left = element[0].offsetLeft;
+					
+					$('#tinyText'+id).css('top',top+"px").css('left',left+"px");
+				}
+
 				//If the toolbar exists, we need to place it at the proper place
 				if($('.ade-toolbar').length) {
-					var top = $('.ade-rich')[0].offsetTop;
-					var scrollTop = $(window).scrollTop();
+					var top = element[0].offsetTop;
+					var left = element[0].offsetLeft;
 					var height = $('.ade-toolbar').height();
 					if(height==0) height=30; //take a guess
-					var pos = 5-height; //toolbar is fixed, so we need to place it right above the text area
-					if(scrollTop-top>pos) pos = scrollTop-top; //unless that is off the screen, then place it at thet op of the screen, obscuring the top of the text area
-					var width = $('.ade-rich').width()+10;
+					var pos = top-height; //toolbar is fixed, so we need to place it right above the text area
+					var width = $("#tinyText"+id).width()+6;
 
-					$('.ade-toolbar').css('top',pos+"px");
+					$('.ade-toolbar').css('top',pos+"px").css('left',left+"px");
 					$('.ade-toolbar').css('width',width+'px');
-
-					var marginFix = scrollTop;
-					$('.mce-floatpanel').css('margin-top',marginFix+"px");
-
-					console.log("place",top,scrollTop,height,pos,scrollTop-top);
-					// console.log("rich",$('.ade-rich').offset(),$('.ade-rich').position());
-					// console.log("tool",$('.ade-toolbar').offset(),$('.ade-toolbar').position());
 				}
 			};
 
-			// detect clicks outside tinymce textarea
+			// detect clicks outside tinymce while editing
 			var outerBlur = function(e) {
-				// check where click occurred
-				//   1: inside ade popup
-				//   0: outside ade popup
-				var outerClick = $('.ade-popup').has(e.target).length === 0;
+				var outerClick = $('.ade-rich').has(e.target).length === 0;
 
 				// check if modal for link is shown
 				var modalShown = $('.mce-floatpanel').css('display') === 'block';
@@ -264,10 +208,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					// some elements are outside popup but belong to mce
 					// these elements start with the text 'mce_' or have a parent/grandparent that starts with the text 'mce_'
 					// the latter include texcolor color pickup background element, link ok and cancel buttons
-					
-					// check if id starts with 'mce'
-					//   0: true
-					//  -1: false
 					var parent = e.target;
 					var startsMce = false;
 					while (parent) {
@@ -295,9 +235,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				// Do not enforce on special codes
 				if (maxLength && specialCodes.indexOf(e.keyCode) == -1) {
-					var editor = $('#tinyText' + id);
-					var editorValue = editor[0].innerHTML;
-					var length = editor.text().length;
+					var editorValue = $('#tinyText'+id)[0].innerHTML;
+					var length = $('#tinyText'+id).text().length;
 
 					// Don't allow more characters
 					if (length >= maxLength) {
@@ -330,28 +269,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//enters edit mode for the text
 			var editRichText = function() {
-				id = Math.floor(Math.random() * 100000);
 				
 				window.clearTimeout(timeout);
-				if(input) input.off('.ADE');
-				//element.off('.ADE');
 				destroy();
-
-				ADE.hidePopup(element);
-
-				var modelValue = "";
-				if(scope.ngModel) modelValue = scope.ngModel;
 
 				var touchClass="";
 				if(iOS) touchClass = " ade-hasTouch"; //because touch devices (iOS) put copy/paste controls that would cover the rich text toolbar
 
-				var content = '';
-				content += '<div id="tinyToolbar' + id + '" class="ade-toolbar mce-panel"></div>';
-				content += '<div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div>';
+				var toolbar = '<div id="tinyToolbar' + id + '" class="ade-toolbar mce-panel"></div>';
 				
-				var html = '<div class="ade-popup ade-rich dropdown-menu open '+ touchClass + '">' + content + '</div>';
-				$compile(html)(scope).insertAfter(element);
+				$compile(toolbar)(scope).insertAfter($('#tinyText'+id));
 				place();
+//				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
 
 				var toolbarOptions = "saveButton cancelButton | styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 				if(!saveCancel) toolbarOptions = "styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
@@ -360,7 +289,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// Full example:
 				// http://www.tinymce.com/tryit/full.php
 				tinymce.init({
-					selector: "#tinyText" + id,
+					selector: "#tinyText"+id,
 					theme: "modern",
 					menubar: false,
 					statusbar: true,
@@ -405,11 +334,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 					setup: function(ed) {
 						ed.on('init', function(args) {
-							
-							//goFullScreen(ed);
-							
+														
 							//focus the text area. In a timer to allow tinymce to initialize.
-							tinymce.execCommand('mceFocus',false,"tinyText" + id);
+							tinymce.execCommand('mceFocus',false,"tinyText"+id);
 						});
 						ed.on('keydown', handleKeyEvents);
 						ed.addButton('saveButton', {
@@ -436,12 +363,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				});
 
 				editing = true;
+				$('#tinyText'+id).addClass("ade-editing").removeClass('ade-hover');
 
-				input = element.next('.ade-rich');
-
-				$('.ade-toolbar').on('click.ADE', function() {
-					place();
-				});
+				// $('.ade-toolbar').on('click.ADE', function() {
+				// 	place();
+				// });
 
 				// save when user blurs out of text editor
 				// listen to clicks on all elements on page
@@ -460,87 +386,43 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					});					
 				});
 
-				//when we scroll, should try to reposition because it may
-				//go off the bottom/top and we may want to flip it
-				//TODO; If it goes off the screen, should we dismiss it?
-				$(document).on('scroll.ADE',function() {
-					scope.$apply(function() {
-						place();
-					}); 
-				});
-
-				//when the window resizes, we may need to reposition the popup
-				$(window).on('resize.ADE',function() {
-					scope.$apply(function() {
-						place();
-					}); 
-				});
 			};
 
-			//go full screen if necessary or take out
-			var goFullScreen = function(ed) {
-				if(ed===undefined) ed = tinymce.activeEditor;
-				windowW = $(window).width();
-
-				if(windowW<=fullScreenBreakpoint) { //small window
-					if(isFullScreen) return; //already full screen
-					isFullScreen = true;
-
-					//full screen doesnt work in startup. Must do after short delay
-					window.setTimeout(function() {
-						tinymce.execCommand('mceFullScreen');
-						
-						//this fixes an apparent bug with tinymce calculating the height of the inner iframe
-						var top = $('.ade-popup iframe')[0].offsetTop;
-						var height = $('.ade-popup .mce-tinymce')[0].clientHeight;
-						var newHeight = 100;//height-top
-						$('.ade-popup iframe').css('height',newHeight+"px");
-
-					//	window.scrollTo(0,0);
-					},100); 
-
-					//TODO: Force save/cancel buttons onto their own row to prevent odd wrapping
-
-				} else { //large window
-					isFullScreen = false;
-				}
-			};
-
-			//When the mouse enters, show the popup view of the note
+			//When the mouse enters, show the exanded text
 			var mousein = function()  {
 				// console.log("mouse in",adeId,editing);
-				if(editing || cutLength==-1) return; //dont display read version if editing, or if showing all already
+				if(editing) return; //dont display read version if editing
 				window.clearTimeout(timeout);
 				
 				//if any other popup is open in edit mode, don't do this view
-				if (angular.element('.ade-rich').hasClass('open') && angular.element('.ade-rich').find('textarea').length) return;
+				if (angular.element('.ade-toolbar').length) return;
 
-				var linkPopup = element.next('.ade-rich');
-				if (!linkPopup.length) {
-					viewRichText();
-				}
+				viewRichText();
 			};
 
-			//if the mouse leaves, hide the popup note view if in read mode
+			//if the mouse leaves, hide the expanded note view if in read mode
 			var mouseout = function() {		
 				// console.log("mouse out",adeId,editing);		
 				if(editing) return;
-				var linkPopup = element.next('.ade-popup');
-				if (linkPopup.length && !editing) { //checks for read/edit mode
-					timeout = window.setTimeout(function() {
-						if(input) input.off('.ADE');
-						ADE.hidePopup(element);
-						destroy();
-					},400);
-				}
+				window.clearTimeout(timeout);
+				timeout = window.setTimeout(hideDiv,500);
 			};
 
+			var hideDiv = function() { 
+				$("#tinyToolbar"+id).remove();
+				$('#tinyText'+id).removeClass('ade-editing').removeClass('ade-hover');
+				window.setTimeout(function() {
+					$("#tinyText"+id).remove();
+					$('.ade-rich').remove();
+					destroy();
+				},210);
+			};
+			
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
 				// console.log("mouse click",adeId,editing);	
 				if(editing) return;
 				window.clearTimeout(timeout);
-				if (editing) return;
 				editing = true;
 				exit = 0;
 
@@ -548,14 +430,12 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				ADE.begin(adeId);
 
 				editRichText();
-				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
 			};
 
 			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
 			var setupElementEvents = function() {
 				// console.log("setup",adeId,editing);
 				element.on('mouseenter.ADE', mousein);
-				element.on('mouseleave.ADE', mouseout);
 				
 				if(!readonly) {
 					element.on('click.ADE', mouseclick);
@@ -563,7 +443,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					//handles enter keydown on the read version of the data
 					element.on('keydown.ADE', function(e) {
 						if (e.keyCode === 13) { // enter
-							mouseclick();
+							mousein();
+						} else if (e.keyCode === 9 || e.keyCode === 27) { // tab, esc
+							hideDiv();
 						}
 					});
 				}
@@ -587,8 +469,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// console.log("destroy",adeId);
 				$(document).off('click.ADE');
 				$(document).off('touchend.ADE');
-				$(document).off('scroll.ADE');
-				$(window).off('resize.ADE');
 			};
 			
 			scope.$on('ADE-hideall', function() {
@@ -600,7 +480,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				destroy();
 
 				if(element) element.off();
-				if(input) input.off();
 
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();
