@@ -72,40 +72,6 @@
 }
 
 
-/*------------------------------------------------------- Toodledo Skin for Ade input */
-.datepicker th.next,
-.datepicker th.prev {
-	background-color: rgba(163,197,246,.5);
-	color: #1b75bc;
-	  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -ms-border-radius: 15px;
-  -o-border-radius: 15px;
-  transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
-}
-
-.datepicker th.next:hover,
-.datepicker th.prev:hover {
-	background-color: rgba(163,197,246,1);
-}
-
-.datepicker th.switch {
-	color: #1b75bc;
-}
-
-.datepicker th.switch:hover {
-	text-decoration: underline;
-}
-
-.datepicker td.day.active { /*Selected Item*/
-	background-color: #1b75bc;
-	color: #fafafa;
-} 
-
 
  /*
 	Datepicker for Bootstrap

@@ -62,13 +62,7 @@ tags-input .tags .tag-list {
 tags-input .tags .tag-item,
 tags-input .autocomplete .suggestion-item.selected,
 tags-input .autocomplete .suggestion-item {
-  text-transform: uppercase;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: .5px;
-  color: #333;
-  background-color: #F5F5F3;
-  border-radius: 4px;
+  background-color: #eee;
   height: 26px;
   line-height: 26px;
   padding: 0 10px;
@@ -76,15 +70,17 @@ tags-input .autocomplete .suggestion-item {
   margin: 5px;
 }
 
+tags-input .tags .tag-item:hover,
+tags-input .autocomplete .suggestion-item.selected:hover,
+tags-input .autocomplete .suggestion-item:hover {
+  background-color: #ccc;
+}
+
+
 /* LIST */
 tags-input.ade-list-input .tags .tag-item,
 tags-input.ade-list-input .autocomplete .suggestion-item.selected,
 tags-input.ade-list-input .autocomplete .suggestion-item {
-  text-transform: none;
-  font-weight: normal;
-  letter-spacing: none;
-  font-size: .9em;
-  border-radius: 0;
   height: 30px;
   line-height: 30px;
   padding: 0 20px;
@@ -97,7 +93,7 @@ tags-input.ade-list-input .autocomplete .suggestion-item {
 tags-input.ade-list-input .tags .tag-item:hover,
 tags-input.ade-list-input .autocomplete .suggestion-item.selected:hover,
 tags-input.ade-list-input .autocomplete .suggestion-item:hover {
-  background-color: #eaeaea;
+  background-color: #ccc;
 }
 
 /* ---------------------------------------------- Searched Character */
@@ -142,6 +138,11 @@ tags-input .tags .tag-item {
   float: left;
 }
 
+tags-input .tags .tag-item:hover {
+  background-color: #eee;
+}
+
+
 /* LIST */
 tags-input.ade-list-input .tags .tag-item {
   float: none;
@@ -149,7 +150,7 @@ tags-input.ade-list-input .tags .tag-item {
 }
 
 tags-input.ade-list-input .tags .tag-item:hover {
-  background-color: #F5F5F3;
+  background-color: #eee;
 }
 
 
@@ -170,15 +171,12 @@ tags-input .tags .input {
   margin: 5px;
 }
 
-tags-input .tags .input:focus {
-  border: 2px solid #1B75BC;
-}
-
 /* LIST */
 tags-input.ade-list-input .tags .input {
   float: none;
   margin: 10px 0 0 0;
   width: 100%;
+  border: 1px solid #a1a1a1;
 }
 
 /* -------------------------------------- Tag Suggestion Popover */
@@ -189,10 +187,8 @@ tags-input .autocomplete {
   position: absolute;
   padding: 5px 0;
   z-index: 999;
-  background-color: #fafafa;
-    -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  background-color: #fff;
+  border: 1px solid #a1a1a1;
 }
 
 /* LIST */

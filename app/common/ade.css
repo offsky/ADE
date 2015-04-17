@@ -73,18 +73,18 @@ h2 {
 }
 
 .ade-popup.dropdown-menu:before { /*Arrow Up Shadow*/
-	border-bottom: 9px solid rgba(0, 0, 0, 0.3);
+	border-bottom: 9px solid rgba(0, 0, 0, 1);
 	border-left: 9px solid transparent;
 	border-right: 9px solid transparent;
 	content: "";
-	left: 11px;
+	left: 9px;
 	position: absolute;
 	top: -10px;
 }
 
 .ade-popup.dropdown-menu.flip:before { /*Arrow Down Shadow*/
 	border-bottom: 0px; 
-	border-top: 9px solid rgba(0, 0, 0, 0.3);
+	border-top: 9px solid rgba(0, 0, 0, 1);
 	top: auto;
 	bottom: -10px;
 }
@@ -134,66 +134,16 @@ h2 {
 	}
 }
 
-
-
-/*------------------------------------------------------- Toodledo Skin for Ade input */
-
-/*Overwrites*/
-:focus {
-  outline: -webkit-focus-ring-color auto 0px;
 /*Links*/
 .ade-edit-link {
 	color: blue;
 	text-decoration: underline;
 }
-
-/*Inputs*/
-.input-large,
-.input-medium,
-.input-small,
-.ade-input {
-	border: 2px solid transparent;
 .ade-edit-link:hover {
 	cursor: pointer;
 }
 
-.input-large:focus,
-.input-medium:focus,
-.input-small:focus,
-.ade-input:focus {
-	border: 2px solid #1B75BC;
-}
 
-/*Popovers (AKA dropdown-menu)*/
-.dropdown-menu {
-	background-color: #FAFAFA;
-	border: 0px;
-	padding: 10px;
-	border-radius: 0;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;	
-	-webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-	-moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-	box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-}
-
-.ade-popup.dropdown-menu {
-	font-size: .9em;
-	color: #333;
-}
-
-.ade-popup.dropdown-menu:before { /*Up Arrow*/
-  	border-bottom: 9px solid #E4E6E9;
-}
-
-.ade-popup.dropdown-menu:after { /*Up Arrow*/
-  	border-bottom: 9px solid #FAFAFA;
-}
-
-.ade-popup.dropdown-menu.open,
-.ade-nopop {
-	border-radius: 0;
-}
 
 
 
