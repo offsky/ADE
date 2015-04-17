@@ -3,7 +3,7 @@
 
 /* ------------------------------------ Base Style & Overwrites */
 tags-input {
-  display: block;
+  display: block; 
 }
 
 tags-input *, tags-input *:before, tags-input *:after {
@@ -57,8 +57,8 @@ tags-input .tags .tag-list {
   list-style-type: none;
 }
 
-
 /* ---------------------------------------------- General Tag Styles */
+/* TAG */
 tags-input .tags .tag-item,
 tags-input .autocomplete .suggestion-item.selected,
 tags-input .autocomplete .suggestion-item {
@@ -74,6 +74,30 @@ tags-input .autocomplete .suggestion-item {
   padding: 0 10px;
   display: inline-block;
   margin: 5px;
+}
+
+/* LIST */
+tags-input.ade-list-input .tags .tag-item,
+tags-input.ade-list-input .autocomplete .suggestion-item.selected,
+tags-input.ade-list-input .autocomplete .suggestion-item {
+  text-transform: none;
+  font-weight: normal;
+  letter-spacing: none;
+  font-size: .9em;
+  border-radius: 0;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 20px;
+  margin: 0;
+  display:block;
+  border-bottom: 1px solid  #eaeaea;
+  z-index: 1000;
+}
+
+tags-input.ade-list-input .tags .tag-item:hover,
+tags-input.ade-list-input .autocomplete .suggestion-item.selected:hover,
+tags-input.ade-list-input .autocomplete .suggestion-item:hover {
+  background-color: #eaeaea;
 }
 
 /* ---------------------------------------------- Searched Character */
@@ -111,12 +135,27 @@ tags-input .tags .tag-item .remove-button:active {
 }
 
 /* --------------------------------- Existing Tags in input area */
+
+/* TAG */
 tags-input .tags .tag-item {
   display: inline-block;
   float: left;
 }
 
+/* LIST */
+tags-input.ade-list-input .tags .tag-item {
+  float: none;
+  display: inline-block;
+}
+
+tags-input.ade-list-input .tags .tag-item:hover {
+  background-color: #F5F5F3;
+}
+
+
 /* ----------------------------------------------- New Tag Input */
+
+/* TAG */
 tags-input .tags .input {
   border: 0;
   outline: none;
@@ -135,7 +174,16 @@ tags-input .tags .input:focus {
   border: 2px solid #1B75BC;
 }
 
+/* LIST */
+tags-input.ade-list-input .tags .input {
+  float: none;
+  margin: 10px 0 0 0;
+  width: 100%;
+}
+
 /* -------------------------------------- Tag Suggestion Popover */
+
+/* TAG */
 tags-input .autocomplete {
   margin-top: 5px;
   position: absolute;
@@ -147,10 +195,17 @@ tags-input .autocomplete {
   box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 }
 
+/* LIST */
+tags-input.ade-list-input .autocomplete {
+  padding: 0;
+  margin: 0;
+}
+
 /* ----------------------------------------------- Invalid Tag */
 tags-input .tags .input.invalid-tag {
   color: #DB2625;
 }
+
 
 
 
