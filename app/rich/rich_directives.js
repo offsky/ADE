@@ -98,6 +98,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// and if the current length is greater than max length
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
 					if(element!==undefined && element[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+						//auto-convert urls
+						
+
+						// Convert relative urls to absolute urls
+						// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
+						$('#tinyText'+id).find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+							var href = this.getAttribute('href');
+							var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
+							this.setAttribute('href', hrefType + href);
+						});
+						
 						var value = $("#tinyText"+id)[0].innerHTML;
 						
 						//readjust maxLength if it was artifically extended
@@ -110,6 +121,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 						if (value === '<p><br data-mce-bogus="1"></p>' || value === '<p></p>' || value === '<p><br></p>') {
 							value = '';
 						}
+
 						value = $.trim(value);
 						scope.ngModel = value;
 					} else {
@@ -141,21 +153,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				ADE.hidePopup(); //hide any ADE popups already presented
 
 				var modelValue = scope.ngModel ? scope.ngModel : "";
-				var editor = '<div class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
+				var editor = '<div id="ade-rich' + id + '" class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
 				$compile(editor)(scope).insertAfter(element);
 				place();
+				window.setTimeout(place,300);
 
 				window.setTimeout(function() {
 					$('#tinyText'+id).addClass("ade-hover");						
 				});
-
-				// Convert relative urls to absolute urls
-				// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
-				// $('.ade-richview').find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
-				// 	var href = this.getAttribute('href');
-				// 	var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
-				// 	this.setAttribute('href', hrefType + href);
-				// });
 
 				$('#tinyText'+id).on('mouseleave.ADE', mouseout);
 				$('#tinyText'+id).on('click.ADE', mouseclick);
@@ -171,7 +176,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
-				ADE.place('.ade-rich',element,-20,-5);
+				ADE.place('#ade-rich'+id,element,-20,-5);
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
 
@@ -179,8 +184,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if($('#tinyText'+id).length) {
 					var top = element[0].offsetTop;
 					var left = element[0].offsetLeft;
+					var height = element.height();
+					var width = element.width();
 					
-					$('#tinyText'+id).css('top',top+"px").css('left',left+"px");
+					$('#tinyText'+id).css('top',top+"px").css('left',left+"px").css('width',width+"px").css('height',height+"px");
 				}
 
 				//If the toolbar exists, we need to place it at the proper place
@@ -199,7 +206,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			// detect clicks outside tinymce while editing
 			var outerBlur = function(e) {
-				var outerClick = $('.ade-rich').has(e.target).length === 0;
+				var outerClick = $('#ade-rich'+id).has(e.target).length === 0;
 
 				// check if modal for link is shown
 				var modalShown = $('.mce-floatpanel').css('display') === 'block';
@@ -397,6 +404,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				//if any other popup is open in edit mode, don't do this view
 				if (angular.element('.ade-toolbar').length) return;
 
+				//immediatly hide any other expanded text fields 
+				$('.ade-toolbar').remove();
+				$('.ade-content').remove();
+				$('.ade-rich').remove();
+				
 				viewRichText();
 			};
 
@@ -413,7 +425,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				$('#tinyText'+id).removeClass('ade-editing').removeClass('ade-hover');
 				window.setTimeout(function() {
 					$("#tinyText"+id).remove();
-					$('.ade-rich').remove();
+					$('#ade-rich'+id).remove();
 					destroy();
 				},210);
 			};
@@ -427,7 +439,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				exit = 0;
 
 				adeId = scope.adeId;
-				ADE.begin(adeId);
+
+				scope.$apply(function() {
+					ADE.begin(adeId);
+				});
 
 				editRichText();
 			};
@@ -438,7 +453,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				element.on('mouseenter.ADE', mousein);
 				
 				if(!readonly) {
-					element.on('click.ADE', mouseclick);
+					element.on('click.ADE', mousein);
 
 					//handles enter keydown on the read version of the data
 					element.on('keydown.ADE', function(e) {

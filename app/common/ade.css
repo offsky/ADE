@@ -43,9 +43,9 @@
 /* Rich text Directive */
 
 .ade-rich { z-index:99; max-width:500px; min-width:350px;}
-.ade-rich .ade-content{position: absolute; display: block; border:1px solid #999; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; transition: all .2s ease-in-out;}
-.ade-rich .ade-content.ade-hover{height:200px; width:350px; overflow: auto; text-overflow: clip; white-space: normal;}
-.ade-rich .ade-content.ade-editing{height:200px; width:350px; border:1px solid #666; overflow: auto; text-overflow: clip; white-space: normal; background-color: #fff;}
+.ade-rich .ade-content{position: absolute; display: block; border:1px solid #999; white-space: nowrap; background-color: #eee; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; transition: all .2s ease-in-out;}
+.ade-rich .ade-content.ade-hover{min-height:200px; min-width:350px; overflow: auto; text-overflow: clip; white-space: normal;}
+.ade-rich .ade-content.ade-editing{min-height:200px; min-width:350px; border:1px solid #666; overflow: auto; text-overflow: clip; white-space: normal; background-color: #fff;}
 .ade-rich .mce-colorbutton span {padding:0px;}
 /*.ade-hasTouch .mce-tinymce .mce-edit-area {padding-top: 40px; }*/
 .ade-rich .ade-toolbar { z-index:100; position:absolute; height:30px; left:-1px; background-color: #f0f0f0; border:1px solid #9e9e9e;}
