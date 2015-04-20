@@ -52,7 +52,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var id = Math.floor(Math.random() * 100000);
 			var editing = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
-			var timeout = null; //the delay when mousing out of the ppopup
+			var timeout = null; //the delay when mousing out of the popup
+			var timeout_open = null; //the short delay when mousing over the popup
 			var readonly = false;
 			var maxLength = null; //the maxLength is enforced on edit, not from external changes
 			var origMaxLength = null;
@@ -156,7 +157,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			//shows a popup with the full text in read mode
-			var viewRichText = function() {
+			var viewRichText = function(e,goEdit) {
+				// console.log("show",id);
+
+				//already showing
+				if($('#ade-rich'+id).length) {
+					if(goEdit!==undefined && goEdit) editRichText();				
+					return;
+				}
+
 				ADE.hidePopup(); //hide any ADE popups already presented
 
 				var modelValue = scope.ngModel ? scope.ngModel : "";
@@ -165,8 +174,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				place();
 				// window.setTimeout(place,300);
 
-				window.setTimeout(function() {
-					$('#tinyText'+id).addClass("ade-hover");						
+				window.setTimeout(function() { //in a timeout for css transition to work
+					$('#tinyText'+id).addClass("ade-hover");
+					if(goEdit!==undefined && goEdit) editRichText();				
 				});
 
 				$('#tinyText'+id).on('mouseleave.rADE', mouseout);
@@ -175,7 +185,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					window.clearTimeout(timeout);
 				});
 
-				$(document).on('scroll.rADE', hideDiv);
+				$(document).on('scroll.rADE'+id, hideDiv);
 
 				// $(document).on('touchend.rADE', function(e) {
 				// 	var outerClick = element.has(e.target).length === 0;
@@ -196,7 +206,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var height = element.height();
 				var width = element.width();
 				
-				console.log("POSITION",offset,height,width,scrollV,scrollH);
+				// console.log("POSITION",offset,height,width,scrollV,scrollH);
 
 				//position the editable content
 				if($('#tinyText'+id).length) {
@@ -296,7 +306,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				
 				$compile(toolbar)(scope).insertAfter($('#tinyText'+id));
 				place();
-//				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
+				setTimeout(place,300); //needs to be in a timeout for the popup's height to be calculated correctly
 
 				var toolbarOptions = "saveButton cancelButton | styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 				if(!saveCancel) toolbarOptions = "styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
@@ -400,7 +410,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							outerBlur(e);
 						});
 					});
-					$(document).on('scroll.rADE', function() {
+					$(document).on('scroll.rADE'+id, function() {
 						saveEdit(3);
 					});				
 				});
@@ -408,10 +418,12 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			//When the mouse enters, show the exanded text
-			var mousein = function()  {
+			var mousein = function(e,force)  {
 				// console.log("mouse in",adeId,editing);
 				if(editing) return; //dont display read version if editing
-				window.clearTimeout(timeout);
+				if(scope.ngModel===undefined || scope.ngModel===null || scope.ngModel==="") return; //don't show if empty
+
+				window.clearTimeout(timeout_open);
 				
 				//if any other popup is open in edit mode, don't do this view
 				if (angular.element('.ade-toolbar').length) return;
@@ -421,7 +433,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				$('.ade-content').remove();
 				$('.ade-rich').remove();
 				
-				viewRichText();
+				if(force!==undefined && force) viewRichText();
+				else timeout_open = window.setTimeout(viewRichText,300);
 			};
 
 			//if the mouse leaves, hide the expanded note view if in read mode
@@ -433,13 +446,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			var hideDiv = function() {
+				// console.log("hide",id);
+				destroy();
+				window.clearTimeout(timeout);
 				$('#tinyText'+id).off('.rADE')
 				$("#tinyToolbar"+id).remove();
 				$('#tinyText'+id).removeClass('ade-editing').removeClass('ade-hover');
 				window.setTimeout(function() { //after the animation has finished, remove
 					$("#tinyText"+id).remove();
 					$('#ade-rich'+id).remove();
-					destroy();
 				},210);
 			};
 			
@@ -464,14 +479,23 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var setupElementEvents = function() {
 				// console.log("setup",adeId,editing);
 				element.on('mouseenter.rADE', mousein);
-				
+				element.on('mouseleave.rADE', function() {
+					window.clearTimeout(timeout_open);
+				})
+				element.on('focus.rADE',function(e) {
+					mousein(e);
+				});
+
 				if(!readonly) {
-					element.on('click.rADE', mousein);
+					element.on('click.rADE', function(e) {
+						viewRichText(null,true);
+					});
 
 					//handles enter keydown on the read version of the data
 					element.on('keydown.rADE', function(e) {
 						if (e.keyCode === 13) { // enter
-							mousein();
+							e.preventDefault();
+							viewRichText(null,true);
 						} else if (e.keyCode === 9 || e.keyCode === 27) { // tab, esc
 							hideDiv();
 						}
@@ -494,8 +518,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				// console.log("destroy",adeId);
+				// console.log("destroy",id);
+				// console.trace();
 				$(document).off('.rADE');
+				$(document).off('.rADE'+id);
 			};
 			
 			scope.$on('ADE-hideall', function() {
