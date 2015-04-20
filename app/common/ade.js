@@ -250,6 +250,7 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 		keyboardEdit: keyboardEdit,
 		place: place,
 		setupScrollEvents: setupScrollEvents,
-		teardownScrollEvents: teardownScrollEvents
+		teardownScrollEvents: teardownScrollEvents,
+		scrollParent:scrollParent
 	};
 }]);

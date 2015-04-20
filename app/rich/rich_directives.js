@@ -98,9 +98,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// and if the current length is greater than max length
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
 					if(element!==undefined && element[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
-						//auto-convert urls
 						
-
 						// Convert relative urls to absolute urls
 						// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
 						$('#tinyText'+id).find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
@@ -108,9 +106,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
 							this.setAttribute('href', hrefType + href);
 						});
-						
+
 						var value = $("#tinyText"+id)[0].innerHTML;
-						
+												
+						//auto-convert urls
+						//https://regex101.com/#javascript
+						urlPattern1 = /(https?:\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])([ \n])/gim; //matches urls followed by space or newline only
+						urlPattern2 = /(https?:\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])(<\/(?!a>)|<br>)/gim; //matches urls followed by a closing tag or br tag, only if not an "a" tag
+						value = value.replace(urlPattern1, '<a href="$1">$1</a>$2');
+						value = value.replace(urlPattern2, '<a href="$1">$1</a>$2');
+				    	// var urlPattern = /\b(?:https?):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim; //this one causes a double encoding of already converted links
+			        	// value = value.replace(urlPattern, '<a href="$&">$&</a>');				
+
 						//readjust maxLength if it was artifically extended
 						var text = $("#tinyText"+id).text();
 						if (maxLength > origMaxLength && maxLength>text.length) {
@@ -156,19 +163,21 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var editor = '<div id="ade-rich' + id + '" class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
 				$compile(editor)(scope).insertAfter(element);
 				place();
-				window.setTimeout(place,300);
+				// window.setTimeout(place,300);
 
 				window.setTimeout(function() {
 					$('#tinyText'+id).addClass("ade-hover");						
 				});
 
-				$('#tinyText'+id).on('mouseleave.ADE', mouseout);
-				$('#tinyText'+id).on('click.ADE', mouseclick);
-				$('#tinyText'+id).on('mouseenter.ADE', function() {
+				$('#tinyText'+id).on('mouseleave.rADE', mouseout);
+				$('#tinyText'+id).on('click.rADE', mouseclick);
+				$('#tinyText'+id).on('mouseenter.rADE', function() {
 					window.clearTimeout(timeout);
 				});
 
-				// $(document).on('touchend.ADE', function(e) {
+				$(document).on('scroll.rADE', hideDiv);
+
+				// $(document).on('touchend.rADE', function(e) {
 				// 	var outerClick = element.has(e.target).length === 0;
 				// 	if(outerClick) mouseout();
 				// });
@@ -180,27 +189,29 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
 
+				var sp = ADE.scrollParent(element);
+				var scrollV = $(sp).scrollTop();
+				var scrollH = $(sp).scrollLeft();
+				var offset = element.offset();
+				var height = element.height();
+				var width = element.width();
+				
+				console.log("POSITION",offset,height,width,scrollV,scrollH);
+
 				//position the editable content
 				if($('#tinyText'+id).length) {
-					var top = element[0].offsetTop;
-					var left = element[0].offsetLeft;
-					var height = element.height();
-					var width = element.width();
-					
-					$('#tinyText'+id).css('top',top+"px").css('left',left+"px").css('width',width+"px").css('height',height+"px");
+					$('#tinyText'+id).css('top',(offset.top-scrollV)+"px").css('left',(offset.left-scrollH)+"px").css('width',width+"px").css('height',height+"px");
 				}
 
 				//If the toolbar exists, we need to place it at the proper place
 				if($('.ade-toolbar').length) {
-					var top = element[0].offsetTop;
-					var left = element[0].offsetLeft;
 					var height = $('.ade-toolbar').height();
 					if(height==0) height=30; //take a guess
-					var pos = top-height; //toolbar is fixed, so we need to place it right above the text area
-					var width = $("#tinyText"+id).width()+6;
+					var pos = offset.top-scrollV-height; //toolbar is fixed, so we need to place it right above the text area
+					var txtwidth = $("#tinyText"+id).width()+6;
 
-					$('.ade-toolbar').css('top',pos+"px").css('left',left+"px");
-					$('.ade-toolbar').css('width',width+'px');
+					$('.ade-toolbar').css('top',pos+"px").css('left',(offset.left-scrollH)+"px");
+					$('.ade-toolbar').css('width',txtwidth+'px');
 				}
 			};
 
@@ -259,7 +270,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							saveEdit(3); // don't save results
 						});
 						e.preventDefault();
-						$(document).off('click.ADE');
 						break;
 					case 9: // tab
 						var exit = e.shiftKey ? -1 : 1;
@@ -267,7 +277,6 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							saveEdit(exit); // blur and save
 						});
 						e.preventDefault();
-						$(document).off('click.ADE');
 						break;
 					default:
 						break;
@@ -372,7 +381,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				editing = true;
 				$('#tinyText'+id).addClass("ade-editing").removeClass('ade-hover');
 
-				// $('.ade-toolbar').on('click.ADE', function() {
+				// $('.ade-toolbar').on('click.rADE', function() {
 				// 	place();
 				// });
 
@@ -386,11 +395,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 						external tap (document.click isn't called on ios). 
 						Can't find a way around this.
 					*/
-					$(document).on('click.ADE touchend.ADE', function(e) {
+					$(document).on('click.rADE touchend.rADE', function(e) {
 						scope.$apply(function() {
 							outerBlur(e);
 						});
-					});					
+					});
+					$(document).on('scroll.rADE', function() {
+						saveEdit(3);
+					});				
 				});
 
 			};
@@ -420,10 +432,11 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				timeout = window.setTimeout(hideDiv,500);
 			};
 
-			var hideDiv = function() { 
+			var hideDiv = function() {
+				$('#tinyText'+id).off('.rADE')
 				$("#tinyToolbar"+id).remove();
 				$('#tinyText'+id).removeClass('ade-editing').removeClass('ade-hover');
-				window.setTimeout(function() {
+				window.setTimeout(function() { //after the animation has finished, remove
 					$("#tinyText"+id).remove();
 					$('#ade-rich'+id).remove();
 					destroy();
@@ -450,13 +463,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
 			var setupElementEvents = function() {
 				// console.log("setup",adeId,editing);
-				element.on('mouseenter.ADE', mousein);
+				element.on('mouseenter.rADE', mousein);
 				
 				if(!readonly) {
-					element.on('click.ADE', mousein);
+					element.on('click.rADE', mousein);
 
 					//handles enter keydown on the read version of the data
-					element.on('keydown.ADE', function(e) {
+					element.on('keydown.rADE', function(e) {
 						if (e.keyCode === 13) { // enter
 							mousein();
 						} else if (e.keyCode === 9 || e.keyCode === 27) { // tab, esc
@@ -482,8 +495,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			var destroy = function() {
 				// console.log("destroy",adeId);
-				$(document).off('click.ADE');
-				$(document).off('touchend.ADE');
+				$(document).off('.rADE');
 			};
 			
 			scope.$on('ADE-hideall', function() {
