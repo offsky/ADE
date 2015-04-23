@@ -37,7 +37,9 @@
 	font-size: .9em;
 }
 
-.datepicker td.day.active { /*Selected Item*/
+.datepicker td.day.active,
+.datepicker span.month.active,
+.datepicker span.year.active { /*Selected Item*/
 	background-color: rgba(0, 0, 0, 0.1);
 } 
 
@@ -52,6 +54,7 @@
 .datepicker td.day.old { /*Days in the Next Month*/
 	color: rgba(0, 0, 0, 0.3);
 }
+.datepicker td.today { background: #D8D7D7; } 
 .datepicker th.dow, /*Sets fixed sizes for each cell*/
 .datepicker td.day,
 .datepicker th.next,
@@ -62,8 +65,7 @@
 	text-align: center;
 }
 
-.datepicker span.month,
-.datepicker span.year {
+.datepicker span.month {
 	padding: 0 10px;
 	height: 30px;
 	line-height: 30px;
@@ -71,7 +73,13 @@
 	display: inline-block;
 }
 
-
+.datepicker span.year {
+	padding: 0 10px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.2em;
+	display: inline-block;
+}
 
  /*
 	Datepicker for Bootstrap
