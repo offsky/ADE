@@ -109,19 +109,34 @@
 
 
 
+/* Rating/Star Directives */
+.ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
+.ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
+.ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;text-decoration:none;}
+.ade-rating .ade-rate { color: #000;}
+.ade-rating .ade-rate-empty { color: #666;}
+.ade-rating.ade-editable.ade-hover .ade-rate-container:hover .ade-rate-empty{color: #000;}
+.ade-rating.ade-editable.ade-hover .ade-rate:hover { color: #000;}
+.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover { color: #000;}
+.ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate,
+.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate { color: #999;}
+.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover~.ade-rate-empty,
+.ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate-empty,
+.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate-empty { color: #666;}
+.ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
+.ade-rate-one.ade-zero{text-decoration:none;}
 
+/* Toggle Directive */
+.ade-toggle{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
+.ade-toggle.ade-editable.ade-hover:hover{color: #666;}
 
-/*Old CSS */
+/* Toggle Multi */
+.ade-multi{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
+.ade-multi.ade-editable.ade-hover:hover{color: #666;}
 
-
-/* Popups Directive */
-
-
-
-
-
-/* Icon Directive 
+/* Icon Directive */
 .ade-icon{cursor:pointer; width:14px; height:16px; color: #000; display:inline-block; text-align: center;}
+.ade-icons h4 {margin:0px;}
 .ade-icon.icon-ban-circle{color:#999;}
 .ade-popup a.ade-clear,.ade-nopop a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
 .ade-icons span { width:14px; height:16px;display:inline-block; text-align: center;}
@@ -130,9 +145,13 @@
 	.ade-icon{font-size: 1.3em; }
 	.ade-icons span { width:30px; height:30px;}
 }
-.ade-nopop {
+
+
+/*Old CSS */
+
+/*.ade-nopop {
 	border:1px solid #ccc;
-}
+}*/
 
 /* Link Popup 
 .ade-links.dropdown-menu.open{padding:4px;}
@@ -154,32 +173,6 @@
 	.ade-rich.dropdown-menu.open{padding:5px 10px;width:92%;}
 	div.mce-fullscreen { bottom:0;}
 }
-
-/* Rating/Star Directives 
-.ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
-.ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
-.ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;text-decoration:none;}
-.ade-rating .ade-rate { color: #000;}
-.ade-rating .ade-rate-empty { color: #666;}
-.ade-rating.ade-editable.ade-hover .ade-rate-container:hover .ade-rate-empty{color: #000;}
-.ade-rating.ade-editable.ade-hover .ade-rate:hover { color: #000;}
-.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover { color: #000;}
-.ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate,
-.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate { color: #999;}
-.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover~.ade-rate-empty,
-.ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate-empty,
-.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate-empty { color: #666;}
-
-.ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
-.ade-rate-one.ade-zero{text-decoration:none;}
-
-/* Toggle Directive 
-.ade-toggle{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
-.ade-toggle.ade-editable.ade-hover:hover{color: #666;}
-
-/* Toggle Multi 
-.ade-multi{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
-.ade-multi.ade-editable.ade-hover:hover{color: #666;}
 
 
 /* Date Directive 
