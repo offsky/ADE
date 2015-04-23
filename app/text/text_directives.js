@@ -62,6 +62,7 @@ angular.module('ADE').directive('adeText', ['ADE','$compile','$sanitize',functio
 					if(angular.isArray(value)) value = value[0];
 					if(value===null || value===undefined) value="";
 					if(!angular.isString(value)) value = value.toString();
+
 					value = $sanitize(value).replace(/<[^>]+>/gm, '');
 
 					html = value;
