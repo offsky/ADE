@@ -288,13 +288,13 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				if (format == 'yyyy') extraDPoptions = 'ade-yearonly="1"';
 				if(scope.adeButton!==undefined && scope.adeButton=="1") {
 					//directive specifies a button accessor instead of input attached
-					html='<div class="input-append ade-date-popup"><input ng-model="adePickDate" type="text" class="' + inputClass + '" />';
-					html+='<span class="add-on"><i class="icon-calendar" ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate"></i></span></div>';
+					html='<div class="ade-date-popup"><input ng-model="adePickDate" type="text" class="' + inputClass + '" />';
+					html+='<button ade-calpop="'+format+'" '+extraDPoptions+' ng-model="adePickDate">Edit</button></div>';
 					$compile(html)(scope).insertAfter(element);
 				
-					parent = element.next('.input-append'); 
+					parent = element.next('.ade-date-popup'); 
 					input = parent.children('input');
-					button = parent.children('.add-on').children('i');
+					button = parent.children('button');
 
 					button.on('click touchstart', function() {
 						ADE.cancelBlur();
