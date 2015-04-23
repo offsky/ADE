@@ -231,6 +231,7 @@ angular.module('ADE').directive('adeTime', ['ADE', '$compile', '$filter', functi
 				ADE.teardownKeys(input);
 
 				scope.adePickTime = -2;
+				input.timepicker('removeWidget');
 				input.remove(); //remove the input
 				editing=false;
 
