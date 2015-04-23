@@ -17,11 +17,10 @@
 		If you don't want the stars to be editable	
 	ade-max:
 		The optional maximum length to enforce
-	ade-cut:
-		The number of characters to show as a preview before cutting off and showing
-		the rest after a click or hover.  Set to -1 to show all characters and disable hover preview
 	ade-save-cancel:
 		If you want save/cancel buttons
+	ade-preview:
+		If you want mouse over to cause an expanded preview (default 1)
 
 	Messages:
 		name: ADE-start
@@ -41,6 +40,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			adeId: "@",
 			adeReadonly: "@",
 			adeSaveCancel: "@",
+			adePreview: "@",
 			adeMax: "@",
 			ngModel: "="
 		},
@@ -63,10 +63,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 			var windowW = $(window).width();
 			var saveCancel = true;
+			var adePreview = true;
+			var ignoreClick = false; //gets set to true if on touch device, so click to immediate edit is ignored
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeSaveCancel!==undefined && scope.adeSaveCancel=="0") saveCancel = false;
+			if(scope.adePreview!==undefined && scope.adePreview=="0") adePreview = false;
 
 			//Whenever the model changes we need to regenerate the HTML for displaying it
 			var makeHTML = function() {
@@ -172,7 +175,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var editor = '<div id="ade-rich' + id + '" class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
 				$compile(editor)(scope).insertAfter(element);
 				place();
-				// window.setTimeout(place,300);
+				window.setTimeout(place,300);
 
 				window.setTimeout(function() { //in a timeout for css transition to work
 					$('#tinyText'+id).addClass("ade-hover");
@@ -185,12 +188,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					window.clearTimeout(timeout);
 				});
 
-				$(document).on('scroll.rADE'+id, hideDiv);
+				$(document).on('scroll.rADE'+id, place);
 
-				// $(document).on('touchend.rADE', function(e) {
-				// 	var outerClick = element.has(e.target).length === 0;
-				// 	if(outerClick) mouseout();
-				// });
+				$(document).on('touchend.rADE', function(e) {
+					var outerClick = $('#ade-rich'+id).has(e.target).length === 0;
+					if(outerClick) mouseout();
+				});
+
+				element.css("opacity","0");
 			};
 
 			//place the popup in the proper place on the screen by flipping it if necessary
@@ -205,8 +210,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var offset = element.offset();
 				var height = element.height();
 				var width = element.width();
-				
-				// console.log("POSITION",offset,height,width,scrollV,scrollH);
+				var windowW = $(window).width();
+
+				console.log("POSITION",offset.top,height,width,scrollV,scrollH,windowW);
+				// console.trace();
 
 				//position the editable content
 				if($('#tinyText'+id).length) {
@@ -222,6 +229,20 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 					$('.ade-toolbar').css('top',pos+"px").css('left',(offset.left-scrollH)+"px");
 					$('.ade-toolbar').css('width',txtwidth+'px');
+				}
+
+				var popW = $('#tinyText'+id).width();
+				var popL = $('#tinyText'+id).offset().left;
+				if(windowW<popL+popW) { //if it would be off the right side, move it over
+					var space = windowW-popW;
+					
+					if(space>0) {
+						$('#tinyText'+id).css('left',(space/2)+"px");
+						$('.ade-toolbar').css('left',(space/2)+"px");
+					} else {
+						$('#tinyText'+id).css('left',"0px");
+						$('.ade-toolbar').css('left',"0px");
+					} 
 				}
 			};
 
@@ -306,7 +327,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				
 				$compile(toolbar)(scope).insertAfter($('#tinyText'+id));
 				place();
-				setTimeout(place,300); //needs to be in a timeout for the popup's height to be calculated correctly
+				//setTimeout(place,300); //needs to be in a timeout for the popup's height to be calculated correctly
 
 				var toolbarOptions = "saveButton cancelButton | styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 				if(!saveCancel) toolbarOptions = "styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
@@ -391,6 +412,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				editing = true;
 				$('#tinyText'+id).addClass("ade-editing").removeClass('ade-hover');
 
+				element.css("opacity","0");
+
 				// $('.ade-toolbar').on('click.rADE', function() {
 				// 	place();
 				// });
@@ -411,13 +434,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 						});
 					});
 					$(document).on('scroll.rADE'+id, function() {
-						saveEdit(3);
+						//yeah, I know this is terrible. Find a better way for me, please
+						if(!iOS) place(); //breaks ios because auto-keyboard triggers a scroll when it comes up causing box to be positioned crazy
 					});				
 				});
 
 			};
 
-			//When the mouse enters, show the exanded text
+			//When the mouse enters, show the expanded text
 			var mousein = function(e,force)  {
 				// console.log("mouse in",adeId,editing);
 				if(editing) return; //dont display read version if editing
@@ -455,12 +479,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				window.setTimeout(function() { //after the animation has finished, remove
 					$("#tinyText"+id).remove();
 					$('#ade-rich'+id).remove();
+					element.css("opacity","1");
 				},210);
 			};
 			
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				// console.log("mouse click",adeId,editing);	
+				console.log("mouse click",adeId,editing);	
 				if(editing) return;
 				window.clearTimeout(timeout);
 				editing = true;
@@ -478,17 +503,26 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
 			var setupElementEvents = function() {
 				// console.log("setup",adeId,editing);
-				element.on('mouseenter.rADE', mousein);
-				element.on('mouseleave.rADE', function() {
-					window.clearTimeout(timeout_open);
-				})
-				element.on('focus.rADE',function(e) {
-					mousein(e);
-				});
-
+				if(adePreview) {
+					element.on('mouseenter.rADE', mousein);
+					element.on('mouseleave.rADE', function() {
+						window.clearTimeout(timeout_open);
+					})
+					element.on('focus.rADE',function(e) {
+						console.log("focus");
+						mousein(e);
+					});
+					element.on('touchstart.rADE',function(e) {
+						console.log("touchstart");
+						ignoreClick = true;
+					});
+				}
 				if(!readonly) {
 					element.on('click.rADE', function(e) {
-						viewRichText(null,true);
+						console.log("click");
+						if(!ignoreClick) viewRichText(null,true);
+						else mousein(e);
+						ignoreClick = false;
 					});
 
 					//handles enter keydown on the read version of the data
@@ -511,7 +545,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				 //this gets called even when the value hasn't changed, 
 				 //so we need to check for changes ourselves
 				 if(editing && adeId!==value) saveEdit(3);
-				 else if(adeId!==value) ADE.hidePopup(element);
+				 else if(adeId!==value) hideDiv();
 			};
 
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel

@@ -47,7 +47,6 @@
 .ade-rich .ade-content.ade-hover{min-height:200px; min-width:350px; overflow: auto; text-overflow: clip; white-space: normal;}
 .ade-rich .ade-content.ade-editing{min-height:200px; min-width:350px; border:1px solid #666; overflow: auto; text-overflow: clip; white-space: normal; background-color: #fff;}
 .ade-rich .mce-colorbutton span {padding:0px;}
-/*.ade-hasTouch .mce-tinymce .mce-edit-area {padding-top: 40px; }*/
 .ade-rich .ade-toolbar { z-index:100; position:fixed; height:30px; left:-1px; background-color: #f0f0f0; border:1px solid #9e9e9e;}
 .ade-rich .mce-edit-focus { outline: none;}
 .ade-rich .ade-toolbar .mce-panel { border: 0; display: block !important;}

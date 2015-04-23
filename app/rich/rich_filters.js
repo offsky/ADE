@@ -16,11 +16,13 @@ angular.module('ADE').filter('rich', ['$sanitize', function($sanitize) {
 		if(value==null || value==undefined) value = "";
 		if (!value.split) value = value.toString(); //convert to string if not string (to prevent split==undefined)
 
-		// strip html
-		value = $sanitize(value).replace(/<[^>]+>/gm, '').replace(/&#[0-9]*;/gm,'');
-
+		//get the first line
+		value = value.replace('</p>', '</p>\n');
 		var lines = value.split(/\r?\n|\r/);
 		value = lines[0]; //get first line
+
+		// strip html
+		value = $sanitize(value).replace(/<[^>]+>/gm, '').replace(/&#[0-9]*;/gm,'');
 
 		if (len < value.length) {
 			html = value.substring(0, len) + '...';
