@@ -30,7 +30,7 @@ td {vertical-align: top;}
 .sample-rich p { margin:0px 0px 10px 0px;}
 
 
-.ade-tag-input, .ade-list-input { display: inline-block; width:80%;}
+.ade-tag-input, .ade-list-input { display: inline-block; }
 
 input[type="text"] {
 	

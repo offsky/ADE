@@ -69,6 +69,9 @@ tags-input .autocomplete .suggestion-item {
   display: inline-block;
   margin: 5px;
 }
+tags-input .autocomplete .suggestion-item.selected {
+  background-color: #ccc;
+}
 
 tags-input .tags .tag-item:hover,
 tags-input .autocomplete .suggestion-item.selected:hover,
@@ -89,12 +92,16 @@ tags-input.ade-list-input .autocomplete .suggestion-item {
   border-bottom: 1px solid  #eaeaea;
   z-index: 1000;
 }
+tags-input.ade-list-input .autocomplete .suggestion-item.selected {
+  background-color: #ccc;
+}
 
 tags-input.ade-list-input .tags .tag-item:hover,
 tags-input.ade-list-input .autocomplete .suggestion-item.selected:hover,
 tags-input.ade-list-input .autocomplete .suggestion-item:hover {
   background-color: #ccc;
 }
+
 
 /* ---------------------------------------------- Searched Character */
 tags-input .autocomplete .suggestion-item.selected em,
@@ -201,10 +208,3 @@ tags-input.ade-list-input .autocomplete {
 tags-input .tags .input.invalid-tag {
   color: #DB2625;
 }
-
-
-
-
-
-
-
