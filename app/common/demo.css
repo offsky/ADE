@@ -1,14 +1,24 @@
 body {
   margin: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: arial;
   font-size: 14px;
   line-height: 20px;
   color: #333333;
   background-color: #ffffff;
 }
 
+h2 {
+	font-size: 1.6em;
+	font-weight: normal;
+}
+
+.dropdown-menu {
+	border: 1px solid gray;
+	padding: 5px;
+}
+
 h1 { margin:20px 0px 20px 0px;}
-p { margin:10px 0px 20px 0px;}
+.container > p { margin:10px 0px 20px 0px;}
 td {vertical-align: top;}
 .ade-editme{ display: block; margin:4px 0px 4px 0px; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
 .container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:90%; max-width:700px;}
@@ -17,30 +27,12 @@ td {vertical-align: top;}
 
 
 .ade-tag-input, .ade-list-input { display: inline-block; width:80%;}
-input[type="text"] {
-	display: inline-block;
-	height: 20px;
-	padding: 4px 6px;
-	margin-top:0px;
-	margin-bottom: 8px;
-	font-size: 14px;
-	line-height: 20px;
-	color: #555555;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
 
-	background-color: #ffffff;
-	border: 1px solid #cccccc;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-	 box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-	-webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
-	-moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-	-o-transition: border linear 0.2s, box-shadow linear 0.2s;
-	transition: border linear 0.2s, box-shadow linear 0.2s;
+input[type="text"] {
+	
 }
 
-.sample + input {
-	margin-top:4px;
+.sample + input,.sample + input:focus {
+	margin:8px 0px 0px 4px;
+	padding:2px;
 }
