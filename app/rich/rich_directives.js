@@ -195,7 +195,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					if(outerClick) mouseout();
 				});
 
-				element.css("opacity","0");
+				element.addClass("ade-rich-hide");
 			};
 
 			//place the popup in the proper place on the screen by flipping it if necessary
@@ -412,7 +412,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				editing = true;
 				$('#tinyText'+id).addClass("ade-editing").removeClass('ade-hover');
 
-				element.css("opacity","0");
+				element.addClass("ade-rich-hide");
 
 				// $('.ade-toolbar').on('click.rADE', function() {
 				// 	place();
@@ -452,7 +452,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				//if any other popup is open in edit mode, don't do this view
 				if (angular.element('.ade-toolbar').length) return;
 
-				//immediatly hide any other expanded text fields 
+				//immediatly hide any other expanded text fields
+				$('.ade-rich-hide').removeClass("ade-rich-hide");
 				$('.ade-toolbar').remove();
 				$('.ade-content').remove();
 				$('.ade-rich').remove();
@@ -479,7 +480,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				window.setTimeout(function() { //after the animation has finished, remove
 					$("#tinyText"+id).remove();
 					$('#ade-rich'+id).remove();
-					element.css("opacity","1");
+					element.removeClass('ade-rich-hide');
 				},210);
 			};
 			

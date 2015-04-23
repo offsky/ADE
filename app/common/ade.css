@@ -120,6 +120,7 @@
 .ade-rich .mce-i-cancel { text-align:center;}
 .ade-rich .mce-i-cancel:before { font-family:Arial; content: " ×";}
 .ade-rich .mce-btn button { padding:2px 4px;}
+.ade-rich-hide { visibility: hidden;}
 
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
