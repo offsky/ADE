@@ -28,8 +28,7 @@
 	background-clip: padding-box;
 }
 
-.ade-popup.dropdown-menu.open,
-.ade-nopop {
+.ade-popup.dropdown-menu.open {
 	display:inline-block;
 	border-radius:4px;
 	white-space:normal;
@@ -79,7 +78,7 @@
 	right:7px;
 }
 
-.ade-popup span,.ade-nopop span{
+.ade-popup span {
 	padding:3px;
 	margin:0;
 	cursor:pointer;
@@ -107,8 +106,6 @@
 	cursor: pointer;
 }
 
-
-
 /* Rating/Star Directives */
 .ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
 .ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
@@ -135,41 +132,23 @@
 .ade-multi.ade-editable.ade-hover:hover{color: #666;}
 
 /* Icon Directive */
+.ade-icons { max-width:200px;}
 .ade-icon{cursor:pointer; width:14px; height:16px; color: #000; display:inline-block; text-align: center;}
 .ade-icons h4 {margin:0px;}
 .ade-icon.icon-ban-circle{color:#999;}
+.ade-nopop {
+	padding:8px;
+	border:1px solid #ccc;
+}
+.ade-nopop span {
+	padding:3px;
+	margin:0;
+	cursor:pointer;
+}
 .ade-popup a.ade-clear,.ade-nopop a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
 .ade-icons span { width:14px; height:16px;display:inline-block; text-align: center;}
 .ade-icons span.selected { background-color: #B9D3F8;}
 @media screen and (max-width: 480px) {
 	.ade-icon{font-size: 1.3em; }
 	.ade-icons span { width:30px; height:30px;}
-}
-
-
-/*Old CSS */
-
-/*.ade-nopop {
-	border:1px solid #ccc;
-}*/
-
-/* Link Popup 
-.ade-links.dropdown-menu.open{padding:4px;}
-.ade-links a{display:inline-block;padding:0 6px;color:#fff;}
-.ade-links .icon.icon-remove{margin:3px 0 0 0;}
-@media screen and (max-width: 480px) {
-	.ade-links.dropdown-menu.open{min-width: 180px;}
-	.ade-links a{margin:0px 10px; padding:2px 10px;}
-}
-
-/* Rich text Directive 
-.ade-rich { position:absolute;}
-.ade-rich.dropdown-menu.open{padding:5px 10px;width:auto;max-width:500px;}
-.ade-rich .ade-richview { max-height:200px; overflow:auto;}
-.ade-rich textarea{margin-top:15px;width:279px;line-height:16px;min-height:50px; max-height:400px;}
-.ade-rich .mce-colorbutton span {padding:0px;}
-.ade-hasTouch .mce-tinymce .mce-edit-area {padding-top: 40px; }
-@media screen and (max-width: 480px) {
-	.ade-rich.dropdown-menu.open{padding:5px 10px;width:92%;}
-	div.mce-fullscreen { bottom:0;}
 }
