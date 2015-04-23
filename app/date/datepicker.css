@@ -65,14 +65,7 @@
 	text-align: center;
 }
 
-.datepicker span.month {
-	padding: 0 10px;
-	height: 30px;
-	line-height: 30px;
-	font-size: .9em;
-	display: inline-block;
-}
-
+.datepicker span.month,
 .datepicker span.year {
 	padding: 0 10px;
 	height: 40px;

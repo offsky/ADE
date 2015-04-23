@@ -241,7 +241,10 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 				ADE.teardownKeys(input);
 
 				scope.adePickDate = -2;
-				if(input) input.remove(); //remove the input
+				if(input) {
+					input.datepicker('remove')
+					input.remove(); //remove the input
+				}
 				if(parent) parent.remove();
 
 				editing = false;
