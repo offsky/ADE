@@ -2,6 +2,7 @@
 /*------------------------------------------------------- Common CSS (ade.css) */
 .datepicker {
 	max-width: 240px;
+	display:none;
 }
 
 .datepicker th.switch,

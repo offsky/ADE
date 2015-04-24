@@ -31,8 +31,7 @@
     outline: 0;
 }
 
-/*.bootstrap-timepicker.dropdown-menu {
-    border-radius: 4px 4px 4px 4px;
+.bootstrap-timepicker.dropdown-menu {
     display: none;
     left: 0;
     margin-top: 1px;
@@ -44,6 +43,7 @@
 .bootstrap-timepicker.dropdown-menu.open {
     display: inline-block;
 }
+/*
 .bootstrap-timepicker.dropdown-menu:before {
     border-bottom: 7px solid rgba(0, 0, 0, 0.2);
     border-left: 7px solid transparent;
