@@ -231,18 +231,20 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					$('.ade-toolbar').css('width',txtwidth+'px');
 				}
 
-				var popW = $('#tinyText'+id).width();
-				var popL = $('#tinyText'+id).offset().left;
-				if(windowW<popL+popW) { //if it would be off the right side, move it over
-					var space = windowW-popW;
-					
-					if(space>0) {
-						$('#tinyText'+id).css('left',(space/2)+"px");
-						$('.ade-toolbar').css('left',(space/2)+"px");
-					} else {
-						$('#tinyText'+id).css('left',"0px");
-						$('.ade-toolbar').css('left',"0px");
-					} 
+				if($('#tinyText'+id).length) {
+					var popW = $('#tinyText'+id).width();
+					var popL = $('#tinyText'+id).offset().left;
+					if(windowW<popL+popW) { //if it would be off the right side, move it over
+						var space = windowW-popW;
+						
+						if(space>0) {
+							$('#tinyText'+id).css('left',(space/2)+"px");
+							$('.ade-toolbar').css('left',(space/2)+"px");
+						} else {
+							$('#tinyText'+id).css('left',"0px");
+							$('.ade-toolbar').css('left',"0px");
+						} 
+					}
 				}
 			};
 
