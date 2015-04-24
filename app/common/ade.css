@@ -6,6 +6,19 @@
 	height: 1.7em;
 	padding: 0 .4em;
 	font-size: .85em;
+	border: 2px solid transparent;
+}
+.ade-input:focus {
+	border: 2px solid #1B75BC;
+  outline: -webkit-focus-ring-color auto 0px;
+}
+.ade-input:hover {
+  cursor: pointer;
+  color: #1B75BC;
+}
+.ade-input:focus:hover {
+  cursor: text;
+  color: #333;
 }
 
 /*Popups*/
@@ -24,19 +37,32 @@
 .dropdown-menu {
 	position: absolute;
 	z-index: 1000;
-	background-color: #ffffff;
 	background-clip: padding-box;
+	background-color: #FAFAFA;
+	border: 0px;
+	padding: 10px;
+	border-radius: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;	
+	-webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	-moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+.ade-popup.dropdown-menu {
+	font-size: .9em;
+	color: #333;
 }
 
 .ade-popup.dropdown-menu.open {
 	display:inline-block;
-	border-radius:4px;
+	border-radius:0;
 	white-space:normal;
 	font-weight:normal;
 }
 
 .ade-popup.dropdown-menu:before { /*Arrow Up Shadow*/
-	border-bottom: 9px solid rgba(0, 0, 0, 1);
+  	border-bottom: 9px solid #E4E6E9;
 	border-left: 9px solid transparent;
 	border-right: 9px solid transparent;
 	content: "";
@@ -53,13 +79,20 @@
 }
 
 .ade-popup.dropdown-menu:after { /*Arrow Up Fill*/
-	border-bottom: 9px solid #FAFAFA;
+  	border-bottom: 9px solid #FAFAFA;
 	border-left: 9px solid transparent;
 	border-right: 9px solid transparent;
 	content: "";
 	left: 9px;
 	position: absolute;
 	top: -9px;
+}
+
+.ade-popup.dropdown-menu.flip:before { /*Arrow Down Shadow*/
+	border-bottom: 0px; 
+	border-top: 9px solid rgba(0, 0, 0, 0.3);
+	top: auto;
+	bottom: -10px;
 }
 
 .ade-popup.dropdown-menu.flip:after { /*Arrow Down Fill*/
@@ -99,8 +132,9 @@
 
 /*Links*/
 .ade-edit-link {
-	color: blue;
-	text-decoration: underline;
+	 color: #1B75BC;
+  text-decoration: underline;
+  margin-left: 8px;
 }
 .ade-edit-link:hover {
 	cursor: pointer;
@@ -148,11 +182,46 @@
 .ade-multi.ade-editable.ade-hover:hover{color: #666;}
 
 /* Icon Directive */
-.ade-icons { max-width:200px;}
-.ade-icon{cursor:pointer; width:14px; height:16px; color: #000; display:inline-block; text-align: center;}
+.ade-popup.dropdown-menu.open h2,
+.ade-nopop h2 {
+  font-size: 1.3em;
+  margin-top: 10px 0;
+ }
+
+.ade-icons .remove {
+  display: block;
+  margin: 10px 0;
+}
+
+.ade-icons .remove:before {
+  margin-right: 3px;
+}
+
+.ade-icons { max-width:380px;}
+.ade-icons .ade-icon {
+  font-size: 1.3em;
+  height: 2em;
+  width: 2em;
+  line-height: 2em;
+  text-align: center;
+  display: inline-block;
+  color: #747369;
+  background-color: white;
+  border: 1px solid #E4E6E9;
+  margin: 2px;
+  cursor:pointer; 
+}
+
+.ade-icons .ade-icon:hover {
+  background-color: #F5F5F3;
+  color: #1B75BC;
+  cursor: pointer;
+}
+
 .ade-icons h4 {margin:0px;}
 .ade-icon.icon-ban-circle{color:#999;}
 .ade-nopop {
+	border-radius: 0;
 	padding:8px;
 	border:1px solid #ccc;
 }
@@ -163,7 +232,10 @@
 }
 .ade-popup a.ade-clear,.ade-nopop a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
 .ade-icons span { width:14px; height:16px;display:inline-block; text-align: center;}
-.ade-icons span.selected { background-color: #B9D3F8;}
+.ade-icons span.selected { color: #333; }
+.ade-icons span.selected:hover { color: #1B75BC; }
+
+
 @media screen and (max-width: 480px) {
 	.ade-icon{font-size: 1.3em; }
 	.ade-icons span { width:30px; height:30px;}

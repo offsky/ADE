@@ -208,3 +208,83 @@ tags-input.ade-list-input .autocomplete {
 tags-input .tags .input.invalid-tag {
   color: #DB2625;
 }
+
+
+
+/*---The following should be merged with the above  */
+
+
+/* TAG */
+tags-input .tags {
+  background-color: transparent;
+}
+tags-input .tags .tag-item,
+tags-input .autocomplete .suggestion-item.selected,
+tags-input .autocomplete .suggestion-item,
+.input-tags {
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: .5px;
+  color: #333;
+   border-radius: 4px;
+}
+
+tags-input .tags .tag-item, /*If tag picker is located in gray box*/
+tags-input .autocomplete .suggestion-item.selected,
+tags-input .autocomplete .suggestion-item {
+  -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+tags-input .tags .tag-item:hover, 
+tags-input .autocomplete .suggestion-item.selected:hover,
+tags-input .autocomplete .suggestion-item:hover {
+  cursor: default;
+}
+
+.gray tags-input .tags .tag-item, /*If tag picker is located in gray box*/
+.gray tags-input .autocomplete .suggestion-item.selected,
+.gray tags-input .autocomplete .suggestion-item,
+tags-input.ade-list-input .tags .tag-item:hover {
+  background-color: white;
+}
+
+
+tags-input .tags .input:focus {
+  border: 2px solid #1B75BC;
+}
+
+tags-input .autocomplete {
+    -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+.input-tags {
+    height: 1.8em;
+    display: block;
+    padding: 5px;
+}
+
+.input-tags:hover,
+.input-list:hover {
+  cursor: pointer;
+}
+
+tags-input.ade-list-input .tags .tag-item:hover {
+  cursor: default;
+}
+
+/* LIST */
+tags-input.ade-list-input .tags .tag-item,
+tags-input.ade-list-input .autocomplete .suggestion-item.selected,
+tags-input.ade-list-input .autocomplete .suggestion-item {
+  text-transform: none;
+  font-weight: normal;
+  letter-spacing: none;
+  font-size: .9em;
+  border-radius: 0;
+ }
+
