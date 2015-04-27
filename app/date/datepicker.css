@@ -2,7 +2,7 @@
 /*------------------------------------------------------- Common CSS (ade.css) */
 .datepicker {
 	max-width: 240px;
-	display:none;
+	display:none; 
 }
 
 .datepicker th.switch,
@@ -18,27 +18,37 @@
 }
 
 .datepicker th.switch { /*Month & Year*/
-	color: #1b75bc;
+	color: blue;
 	font-weight: normal;
 	font-size: 1.1em;
 }
 
+.datepicker th.switch:hover {
+	text-decoration: underline;
+}
+
 .datepicker th.next,
 .datepicker th.prev {
-	background-color: rgba(163,197,246,.5);
-	color: #1b75bc;
-  line-height: 25px;
-  overflow:hidden;
-	  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -ms-border-radius: 15px;
-  -o-border-radius: 15px;
-  transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
+	background-color: rgba(0, 0, 0, 0.03);
+	color: blue;
+  	line-height: 25px;
+  	overflow:hidden;
+	border-radius: 15px;
+  	-webkit-border-radius: 15px;
+  	-moz-border-radius: 15px;
+  	-ms-border-radius: 15px;
+  	-o-border-radius: 15px;
+  	transition: all 0.2s ease-in-out;
+  	-webkit-transition: all 0.2s ease-in-out;
+  	-moz-transition: all 0.2s ease-in-out;
+  	-o-transition: all 0.2s ease-in-out;
 } 
+
+.datepicker th.next:hover,
+.datepicker th.prev:hover {
+	background-color: blue;
+	color: white;
+}
 
 .datepicker th.dow { /*Days of the Week*/
 	font-size: .75em;
@@ -47,15 +57,20 @@
 	color: rgba(0, 0, 0, 0.5);
 }
 
-.datepicker td.day {
+.datepicker td.day,
+.datepicker span.month,
+.datepicker span.year {
 	font-size: .9em;
 }
 
 .datepicker td.day.active,
 .datepicker span.month.active,
-.datepicker span.year.active { /*Selected Item*/
-	background-color: #1b75bc;
-	color: #fafafa;
+.datepicker span.year.active,
+.datepicker td.day.active:hover,
+.datepicker span.month.active:hover,
+.datepicker span.year.active:hover { /*Selected Item*/
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
 } 
 
 .datepicker td.day:hover,
@@ -69,7 +84,12 @@
 .datepicker td.day.old { /*Days in the Next Month*/
 	color: rgba(0, 0, 0, 0.3);
 }
-.datepicker td.today { background: #D8D7D7; } 
+
+.datepicker td.today,
+.datepicker td.today:hover { 
+	background: rgba(0, 0, 0, 0.03);
+} 
+
 .datepicker th.dow, /*Sets fixed sizes for each cell*/
 .datepicker td.day,
 .datepicker th.next,
@@ -82,18 +102,19 @@
 
 .datepicker span.month,
 .datepicker span.year {
-	padding: 0 10px;
+	padding: 0;
+	text-align: center;
 	height: 40px;
 	line-height: 40px;
-	font-size: 1.2em;
 	display: inline-block;
 }
 
-.datepicker th.next:hover,
-.datepicker th.prev:hover {
-	background-color: rgba(163,197,246,1);
+.datepicker span.month { /*5 columns*/
+	width: 20%;
 }
 
-.datepicker th.switch:hover {
-	text-decoration: underline;
+.datepicker span.year { /*4 columns*/
+	width: 25%;
 }
+
+
