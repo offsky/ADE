@@ -7,6 +7,10 @@ body {
   background-color: #ffffff;
 }
 
+input {
+	font-family: arial;
+}
+
 .container { 
 	margin: 0 auto 200px auto; 
 	width:90%; 
@@ -89,12 +93,19 @@ td {
 	border: 0; 
 }
 
-.sample { 
-	background-color: #eee; 
-	height:19px; 
-	padding:10px; 
-	cursor:pointer; 
+.sample {
+	border: 1px solid transparent;
+	background-color: #eee;
+	cursor:pointer;
 	display:inline-block;
+}
+
+.sample,
+input[type="text"] { 
+	line-height: 1.7em;
+	height: 1.7em;
+	padding: 0 .4em;
+	font-size: 1em;
 }
 .sample-rich { 
 	background-color: #eee; 
