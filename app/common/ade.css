@@ -1,8 +1,3 @@
-/*Overwrite Gray Focus Ring*/
-:focus {
-  outline: -webkit-focus-ring-color auto 0px;
-}
-
 
 /*Inputs*/
 .ade-input,
