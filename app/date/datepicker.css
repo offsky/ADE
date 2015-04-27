@@ -18,7 +18,7 @@
 }
 
 .datepicker th.switch { /*Month & Year*/
-	color: blue;
+	color: #1B75BC;
 	font-weight: normal;
 	font-size: 1.1em;
 }
@@ -30,7 +30,7 @@
 .datepicker th.next,
 .datepicker th.prev {
 	background-color: rgba(0, 0, 0, 0.03);
-	color: blue;
+	color: #1B75BC;
   	line-height: 25px;
   	overflow:hidden;
 	border-radius: 15px;
@@ -46,7 +46,7 @@
 
 .datepicker th.next:hover,
 .datepicker th.prev:hover {
-	background-color: blue;
+	background-color: #1B75BC;
 	color: white;
 }
 

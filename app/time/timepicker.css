@@ -26,7 +26,7 @@
     line-height: 20px;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.03);
-    color: blue;
+    color: #1B75BC;
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -38,7 +38,7 @@
     -o-transition: all 0.2s ease-in-out;
 }
 .bootstrap-timepicker a:hover {
-    background-color: blue;
+    background-color: #1B75BC;
     color: white;
 }
 
