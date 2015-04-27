@@ -7,6 +7,10 @@ body {
   background-color: #ffffff;
 }
 
+:focus { /*Overwrite Gray Focus Ring*/
+  outline: -webkit-focus-ring-color auto 0px;
+}
+
 input {
 	font-family: arial;
 }
