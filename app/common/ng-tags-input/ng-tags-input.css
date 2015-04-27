@@ -170,9 +170,7 @@ tags-input.ade-list-input .tags .tag-item:hover {
 
 /* TAG */
 tags-input .tags .input {
-  border: 0;
   outline: none;
-  border: 2px solid transparent;
   float: left;
   line-height: 1.8em;
   height: 1.8em;
@@ -198,7 +196,7 @@ tags-input.ade-list-input .tags .input {
 tags-input .autocomplete {
   margin-top: 5px;
   position: absolute;
-  padding: 5px 0;
+  padding: 10px 10px 7px 10px;
   z-index: 999;
   background-color: #fafafa;
   -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
