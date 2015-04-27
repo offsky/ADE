@@ -25,20 +25,21 @@
     width: 20px;
     line-height: 20px;
     text-align: center;
-        background-color: rgba(163,197,246,.5);
-    color: #1b75bc;
-      border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-  transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.03);
+    color: blue;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
 }
 .bootstrap-timepicker a:hover {
-    background-color: rgba(163,197,246,1);
+    background-color: blue;
+    color: white;
 }
 
 .bootstrap-timepicker input[type="text"]:last-child {
