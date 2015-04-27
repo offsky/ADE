@@ -30,13 +30,6 @@ td {vertical-align: top;}
 .sample-rich { background-color: #eee; height:19px; padding:4px; cursor:pointer; display:inline-block;}
 .sample-rich p { margin:0px 0px 10px 0px;}
 
-
-.ade-tag-input, .ade-list-input { display: inline-block; }
-
-input[type="text"] {
-	
-}
-
 .sample + input,.sample + input:focus {
 	margin:8px 0px 0px 4px;
 	padding:2px;
