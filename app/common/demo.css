@@ -57,15 +57,22 @@ pre {
 	background-color: white;
 	padding: 5px 10px;
 	border-left: 5px solid #1B75BC;
+	white-space: pre-wrap;
 }
 
-.container a {
+.container a,
+.back a {
 	color: #1B75BC;
 	text-decoration: none;
 }
 
-.container a:hover {
+.container a:hover,
+.back a:hover {
 	text-decoration: underline;
+}
+
+.back a:before {
+	content: ' < ';
 }
 
 section {
@@ -82,10 +89,6 @@ section {
 	padding: 5px;
 }
 
-input {
-	display: block;
-}
-
 td {
 	vertical-align: top;
 }
@@ -100,8 +103,8 @@ td {
 .sample {
 	border: 1px solid transparent;
 	background-color: #eee;
-	cursor:pointer;
-	display:inline-block;
+	cursor: pointer;
+	display: inline-block;
 }
 
 .sample,
@@ -116,5 +119,11 @@ input[type="text"] {
 	height:19px; padding:4px; 
 	cursor:pointer; 
 	display:inline-block;
+}
+
+.back {
+	width: 98%;
+	padding: 1% 5px;
+	background-color: #F5F5F3;
 }
 
