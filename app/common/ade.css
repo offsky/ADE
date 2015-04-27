@@ -128,15 +128,7 @@
 	}
 }
 
-/*Links*/
-.ade-edit-link {
-	 color: #1B75BC;
-  text-decoration: underline;
-  margin-left: 8px;
-}
-.ade-edit-link:hover {
-	cursor: pointer;
-}
+
 
 /* Rich text Directive */
 
