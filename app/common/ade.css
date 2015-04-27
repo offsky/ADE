@@ -1,3 +1,8 @@
+/*Overwrite Gray Focus Ring*/
+:focus {
+  outline: -webkit-focus-ring-color auto 0px;
+}
+
 
 /*Inputs*/
 .ade-input,
@@ -6,10 +11,8 @@
 	height: 1.7em;
 	padding: 0 .4em;
 	font-size: .85em;
-	border: 2px solid transparent;
 }
 .ade-input:focus {
-	border: 2px solid #1B75BC;
   outline: -webkit-focus-ring-color auto 0px;
 }
 .ade-input:hover {
