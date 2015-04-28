@@ -13,28 +13,33 @@
 		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
 	<body ng-app="app" ng-init="phone='760-555-1234';phone2=''">
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Phone
+		</div>
 		<div class="container" ng-controller="ctrl">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
-		<a href="../index.html">back</a>
-		<h1>Phone filter</h1>
+		<h2>Phone Filter</h2>
 		<p>A filter that convert a phone string into a clickable link that should work on a device that supports phone calls.</p>
-
+		<section>
 		  <ul>
 				<li>Phone 760-555-1234: <span ng-bind-html="'760-555-1234' | phone"></span> </li>
 				<li>Invalid phone "phone": <span ng-bind-html='"phone" | phone'></span></li>
 		  </ul>
+		</section>
+		<section>
+			<h3>Phone number editing directive</h3>
+			<p>A simple directive that makes a phone number string editable.</p>
 
-		<h1>Phone number editing directive</h1>
-		<p>A simple directive that makes a phone number string editable.</p>
-
-		<div class="ade-editme" ade-url='phone' ade-id="123" ade-class="input-medium" ng-model="phone"></div>
-		<div class="ade-editme" ade-url='phone' ade-id="125" ade-class="input-medium" ng-model="phone2"></div>
+			<div class="ade-editme" ade-url='phone' ade-id="123" ade-class="input-medium" ng-model="phone"></div>
+			<div class="ade-editme" ade-url='phone' ade-id="125" ade-class="input-medium" ng-model="phone2"></div>
 		
-		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-		<b>Last Message :</b> <span id="message" ng-controller="ctrl">{{ lastMessage }}</span>
+			<b>Last Message :</b> 
+			<pre><span id="message" ng-controller="ctrl">{{ lastMessage }}</span></pre>
+		</section>
 
 		</div>
 		
