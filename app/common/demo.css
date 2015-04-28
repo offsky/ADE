@@ -112,7 +112,9 @@ input[type="text"] {
 }
 .sample-rich { 
 	background-color: #eee; 
-	height:19px; padding:4px; 
+	border: 1px solid transparent;
+	height: auto;
+	padding:4px; 
 	cursor:pointer; 
 	display:inline-block;
 }
