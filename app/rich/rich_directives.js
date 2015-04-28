@@ -212,7 +212,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var width = element.width();
 				var windowW = $(window).width();
 
-				console.log("POSITION",offset.top,height,width,scrollV,scrollH,windowW);
+				// console.log("POSITION",offset.top,height,width,scrollV,scrollH,windowW);
 				// console.trace();
 
 				//position the editable content
