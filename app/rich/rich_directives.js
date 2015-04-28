@@ -340,6 +340,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				tinymce.init({
 					selector: "#tinyText"+id,
 					theme: "modern",
+					skin: 'ade',
 					menubar: false,
 					statusbar: true,
 					plugins: ["textcolor", "link", 'fullscreen'],
