@@ -14,26 +14,31 @@
 		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
 	<body ng-app="tagapp" ng-init="data=['apple','pear','cherry'];">
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Tags
+		</div>
 		<div class="container" ng-controller="TagCtrl">
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 				<![endif]-->
-				<a href="../index.html">back</a>
-				<h1>Tag Directive</h1>
+				
+				<h2>Tag Directive</h2>
 				<p>A directive that allows you to pick values from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). Uses a modified version of <a href="http://mbenford.github.io/ngTagsInput">ngTagsInput</a>.</p>
+				<section>
+					<tags-input ng-model="tags" min-length="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true">
+						<auto-complete source="query($query,'list1')" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>
+					</tags-input>
+				
 
-				<tags-input ng-model="tags" min-length="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true">
-					<auto-complete source="query($query,'list1')" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>
-				</tags-input>
-				<br /><br />
-
-				<div class="ade-editme" ade-tag='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="2" ng-model="data"></div>
-				<br />
-				<div class="ade-editme" ade-tag='list2' ade-query="query(val,listId)" ade-id="1002" tabindex="3" ng-model="data2"></div>
+					<div class="ade-editme" ade-tag='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="2" ng-model="data"></div>
+				
+					<div class="ade-editme" ade-tag='list2' ade-query="query(val,listId)" ade-id="1002" tabindex="3" ng-model="data2"></div>
 								
-				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+					<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+					<b>Last Message :</b> 
+					<pre><span id="message">{{ lastMessage }}</span></pre>
+				</section>
 		</div>
 
 		<script src="../bower_components/jquery/dist/jquery.js"></script>
