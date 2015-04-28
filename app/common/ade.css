@@ -32,7 +32,8 @@
 	overflow: hidden;
 } 
 
-.dropdown-menu {
+.dropdown-menu,
+.ade-nopop {
 	position: absolute;
 	z-index: 1000;
 	background-clip: padding-box;
@@ -45,6 +46,11 @@
 	-webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 	-moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 	box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+.ade-nopop {
+	position: relative;
+	z-index: inherit;
 }
 
 .ade-popup.dropdown-menu {
@@ -209,11 +215,7 @@
 
 .ade-icons h4 {margin:0px;}
 .ade-icon.icon-ban-circle{color:#999;}
-.ade-nopop {
-	border-radius: 0;
-	padding:8px;
-	border:1px solid #ccc;
-}
+
 .ade-nopop span {
 	padding:3px;
 	margin:0;
