@@ -58,6 +58,7 @@ pre {
 	padding: 5px 10px;
 	border-left: 5px solid #1B75BC;
 	white-space: pre-wrap;
+	min-height: 20px;
 }
 
 .container a,
