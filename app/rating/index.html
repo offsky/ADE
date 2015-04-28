@@ -14,33 +14,37 @@
 		<link rel="stylesheet" href="../common/ade.css"/>
 	</head>
 	<body ng-app="app" ng-init="value=1">
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Rating
+		</div>
 		<div class="container" ng-controller="ctrl">
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 				<![endif]-->
-				<a href="../index.html">back</a>
-				<h1>Rating edit directive</h1>
+
+				<h2>Rating edit directive</h2>
 				<p>A simple directive that makes a star rating clickable. Supports customizable icons, sizes and number of stars.</p>
 
+				<section>
+				<p><div ade-rating ade-id='1001' tabindex="1" ng-model="value"></div> </p>
+				
+				<p><div ade-rating ade-id='1002' ade-num="10" ade-class="icon-heart" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div></p>
+				
 
-				<div ade-rating ade-id='1001' tabindex="1" ng-model="value"></div> 
-				<br />
+				<p><div ade-rating ade-id='1002' ade-num="3" ade-class="icon-check" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div></p>
+				
 
-				<div ade-rating ade-id='1002' ade-num="10" ade-class="icon-heart" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div>
-				<br />
-
-				<div ade-rating ade-id='1002' ade-num="3" ade-class="icon-check" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div>
-				<br />
-
-				<div ade-rating ade-id='1002' ade-num="5" ade-class="icon-bookmark" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div>
+				<p><div ade-rating ade-id='1002' ade-num="5" ade-class="icon-bookmark" ade-width="16" ade-arrows="1" tabindex="2" ng-model="value"></div></p>
 
 
-				<br />Value: {{ value }}
+				<pre>Value: {{ value }}</pre>
 
-				<br /><br />
+				
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+				<b>Last Message :</b> 
+				<pre><span id="message">{{ lastMessage }}</span></pre>
+			</section>
 
 		</div>
 
