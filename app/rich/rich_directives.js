@@ -42,6 +42,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			adeSaveCancel: "@",
 			adePreview: "@",
 			adeMax: "@",
+			adeSkin: "=",
 			ngModel: "="
 		},
 
@@ -334,13 +335,66 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var toolbarOptions = "saveButton cancelButton | styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 				if(!saveCancel) toolbarOptions = "styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 
-				// Initialize tinymce
-				// Full example:
-				// http://www.tinymce.com/tryit/full.php
-				tinymce.init({
+				var style_menu = [
+					 {title: "Headers", items: [
+						  {title: "Header 1", format: "h1"},
+						  {title: "Header 2", format: "h2"},
+						  {title: "Header 3", format: "h3"},
+						  {title: "Header 4", format: "h4"},
+						  {title: "Header 5", format: "h5"},
+						  {title: "Header 6", format: "h6"}
+					 ]},
+					 {title: "Sizes", items: [
+						  {title: "Small", inline: 'span', styles: {fontSize: '0.8em'}},
+						  {title: "Normal", inline: 'span', styles: {fontSize: '1em'}},
+						  {title: "Large", inline: 'span', styles: {fontSize: '1.3em'}},
+						  {title: "Huge", inline: 'span', styles: {fontSize: '1.7em'}}
+					 ]},
+					 {title: "Styles", items: [
+						  {title: "Bold", icon: "bold", format: "bold"},
+						  {title: "Italic", icon: "italic", format: "italic"},
+						  {title: "Underline", icon: "underline", format: "underline"},
+						  {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
+						  {title: "Superscript", icon: "superscript", format: "superscript"},
+						  {title: "Subscript", icon: "subscript", format: "subscript"},
+						  {title: "Code", icon: "code", format: "code"}
+					 ]},
+					 {title: "Alignment", items: [
+						  {title: "Left", icon: "alignleft", format: "alignleft"},
+						  {title: "Center", icon: "aligncenter", format: "aligncenter"},
+						  {title: "Right", icon: "alignright", format: "alignright"},
+						  {title: "Justify", icon: "alignjustify", format: "alignjustify"},
+						  {title: "Blockquote", icon: "blockquote",format: "blockquote"},
+					 ]}
+				];
+
+				var tinymce_setup = function(ed) {
+					ed.on('init', function(args) {
+						//focus the text area. In a timer to allow tinymce to initialize.
+						tinymce.execCommand('mceFocus',false,"tinyText"+id);
+					});
+					ed.on('keydown', handleKeyEvents);
+					ed.addButton('saveButton', {
+						title: "Save", text: "", icon:"save",
+						onclick: function() {
+							scope.$apply(function() {
+								saveEdit(0); // blur and save
+							});
+						}
+					});
+					ed.addButton('cancelButton', {
+						title: "Cancel", text: "", icon:"cancel",
+						onclick: function() {
+							scope.$apply(function() {
+								saveEdit(3); // blur and cancel
+							});
+						}
+					});
+				};
+
+				var params = {
 					selector: "#tinyText"+id,
 					theme: "modern",
-					skin: 'ade',
 					menubar: false,
 					statusbar: true,
 					plugins: ["textcolor", "link", 'fullscreen'],
@@ -349,68 +403,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					inline:true,
 					resize: "both",
 					fixed_toolbar_container: "#tinyToolbar"+id,
-					style_formats: [
-						 {title: "Headers", items: [
-							  {title: "Header 1", format: "h1"},
-							  {title: "Header 2", format: "h2"},
-							  {title: "Header 3", format: "h3"},
-							  {title: "Header 4", format: "h4"},
-							  {title: "Header 5", format: "h5"},
-							  {title: "Header 6", format: "h6"}
-						 ]},
-						 {title: "Sizes", items: [
-							  {title: "Small", inline: 'span', styles: {fontSize: '0.8em'}},
-							  {title: "Normal", inline: 'span', styles: {fontSize: '1em'}},
-							  {title: "Large", inline: 'span', styles: {fontSize: '1.3em'}},
-							  {title: "Huge", inline: 'span', styles: {fontSize: '1.7em'}}
-						 ]},
-						 {title: "Styles", items: [
-							  {title: "Bold", icon: "bold", format: "bold"},
-							  {title: "Italic", icon: "italic", format: "italic"},
-							  {title: "Underline", icon: "underline", format: "underline"},
-							  {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
-							  {title: "Superscript", icon: "superscript", format: "superscript"},
-							  {title: "Subscript", icon: "subscript", format: "subscript"},
-							  {title: "Code", icon: "code", format: "code"}
-						 ]},
-						 {title: "Alignment", items: [
-							  {title: "Left", icon: "alignleft", format: "alignleft"},
-							  {title: "Center", icon: "aligncenter", format: "aligncenter"},
-							  {title: "Right", icon: "alignright", format: "alignright"},
-							  {title: "Justify", icon: "alignjustify", format: "alignjustify"},
-							  {title: "Blockquote", icon: "blockquote",format: "blockquote"},
-						 ]}
-					],
+					style_formats: style_menu,
+					setup: tinymce_setup
+				};
 
-					setup: function(ed) {
-						ed.on('init', function(args) {
-														
-							//focus the text area. In a timer to allow tinymce to initialize.
-							tinymce.execCommand('mceFocus',false,"tinyText"+id);
-						});
-						ed.on('keydown', handleKeyEvents);
-						ed.addButton('saveButton', {
-							title: "Save",
-							text: "",
-							icon:"save",
-							onclick: function() {
-								scope.$apply(function() {
-									saveEdit(0); // blur and save
-								});
-							}
-						});
-						ed.addButton('cancelButton', {
-							title: "Cancel",
-							text: "",
-							icon:"cancel",
-							onclick: function() {
-								scope.$apply(function() {
-									saveEdit(3); // blur and cancel
-								});
-							}
-						});
-					}
-				});
+				if(scope.adeSkin!==undefined) params.skin_url = scope.adeSkin;
+
+				tinymce.init(params);  // Initialize tinymce http://www.tinymce.com/tryit/full.php
 
 				editing = true;
 				$('#tinyText'+id).addClass("ade-editing").removeClass('ade-hover');
