@@ -1,9 +1,9 @@
-
+ 
 /* ADE Tag Picker */
 
 /* ------------------------------------ Base Style & Overwrites */
 tags-input {
-  display: block; 
+  display: inline-block; 
 }
 
 tags-input *, tags-input *:before, tags-input *:after {
@@ -19,7 +19,7 @@ tags-input .tags {
   overflow: hidden;
   word-wrap: break-word;
   cursor: text;
-  background-color: white;
+  background-color: transparent;
   height: 100%;
 }
 
@@ -68,7 +68,13 @@ tags-input .autocomplete .suggestion-item {
   padding: 0 10px;
   display: inline-block;
   margin: 5px;
+  color: #333;
+  border-radius: 4px;
+  -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 }
+
 tags-input .autocomplete .suggestion-item.selected {
   background-color: #ccc;
 }
@@ -77,6 +83,7 @@ tags-input .tags .tag-item:hover,
 tags-input .autocomplete .suggestion-item.selected:hover,
 tags-input .autocomplete .suggestion-item:hover {
   background-color: #ccc;
+  cursor: pointer;
 }
 
 
@@ -85,36 +92,33 @@ tags-input.ade-list-input .tags .tag-item,
 tags-input.ade-list-input .autocomplete .suggestion-item.selected,
 tags-input.ade-list-input .autocomplete .suggestion-item {
   height: 30px;
+  background-color: #fafafa;
   line-height: 30px;
   padding: 0 20px;
   margin: 0;
   display:block;
-  border-bottom: 1px solid  #eaeaea;
   z-index: 1000;
-}
-tags-input.ade-list-input .autocomplete .suggestion-item.selected {
-  background-color: #ccc;
+  border-radius: 0;
 }
 
-tags-input.ade-list-input .tags .tag-item:hover,
-tags-input.ade-list-input .autocomplete .suggestion-item.selected:hover,
-tags-input.ade-list-input .autocomplete .suggestion-item:hover {
-  background-color: #ccc;
+tags-input.ade-list-input .autocomplete .suggestion-item.selected {
+  background-color: #eee;
+}
+
+tags-input.ade-list-input .tags .tag-item:hover {
+  cursor: default;
 }
 
 
 /* ---------------------------------------------- Searched Character */
 tags-input .autocomplete .suggestion-item.selected em,
 tags-input .autocomplete .suggestion-item em {
-  text-transform: uppercase;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: .5px;
   color: #000;
-  background-color: #E4E6E9;
+  background-color: #FFFF38;
   padding: 3px 0;
   font-style: normal;
 } 
+
 
 /* ---------------------------------------------- Cancel tag (x) */
 tags-input .tags .tag-item .remove-button {
@@ -154,6 +158,7 @@ tags-input .tags .tag-item:hover {
 tags-input.ade-list-input .tags .tag-item {
   float: none;
   display: inline-block;
+  background-color: #eee;
 }
 
 tags-input.ade-list-input .tags .tag-item:hover {
@@ -165,9 +170,7 @@ tags-input.ade-list-input .tags .tag-item:hover {
 
 /* TAG */
 tags-input .tags .input {
-  border: 0;
   outline: none;
-  border: 2px solid transparent;
   float: left;
   line-height: 1.8em;
   height: 1.8em;
@@ -177,6 +180,7 @@ tags-input .tags .input {
   min-width: 100px;
   margin: 5px;
 }
+
 
 /* LIST */
 tags-input.ade-list-input .tags .input {
@@ -192,10 +196,12 @@ tags-input.ade-list-input .tags .input {
 tags-input .autocomplete {
   margin-top: 5px;
   position: absolute;
-  padding: 5px 0;
+  padding: 10px 10px 7px 10px;
   z-index: 999;
-  background-color: #fff;
-  border: 1px solid #a1a1a1;
+  background-color: #fafafa;
+  -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 }
 
 /* LIST */
@@ -211,80 +217,12 @@ tags-input .tags .input.invalid-tag {
 
 
 
-/*---The following should be merged with the above  */
 
 
-/* TAG */
-tags-input .tags {
-  background-color: transparent;
-}
-tags-input .tags .tag-item,
-tags-input .autocomplete .suggestion-item.selected,
-tags-input .autocomplete .suggestion-item,
-.input-tags {
-  text-transform: uppercase;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: .5px;
-  color: #333;
-   border-radius: 4px;
-}
-
-tags-input .tags .tag-item, /*If tag picker is located in gray box*/
-tags-input .autocomplete .suggestion-item.selected,
-tags-input .autocomplete .suggestion-item {
-  -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-}
-
-tags-input .tags .tag-item:hover, 
-tags-input .autocomplete .suggestion-item.selected:hover,
-tags-input .autocomplete .suggestion-item:hover {
-  cursor: default;
-}
-
-.gray tags-input .tags .tag-item, /*If tag picker is located in gray box*/
-.gray tags-input .autocomplete .suggestion-item.selected,
-.gray tags-input .autocomplete .suggestion-item,
-tags-input.ade-list-input .tags .tag-item:hover {
-  background-color: white;
-}
 
 
-tags-input .tags .input:focus {
-  border: 2px solid #1B75BC;
-}
 
-tags-input .autocomplete {
-    -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-}
 
-.input-tags {
-    height: 1.8em;
-    display: block;
-    padding: 5px;
-}
 
-.input-tags:hover,
-.input-list:hover {
-  cursor: pointer;
-}
 
-tags-input.ade-list-input .tags .tag-item:hover {
-  cursor: default;
-}
-
-/* LIST */
-tags-input.ade-list-input .tags .tag-item,
-tags-input.ade-list-input .autocomplete .suggestion-item.selected,
-tags-input.ade-list-input .autocomplete .suggestion-item {
-  text-transform: none;
-  font-weight: normal;
-  letter-spacing: none;
-  font-size: .9em;
-  border-radius: 0;
- }
 

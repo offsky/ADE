@@ -14,23 +14,32 @@
 		<link rel="stylesheet" href="../common/demo.css"/>
 	</head>
 	<body ng-app="app" ng-init="icon='music';icon3='asterisk';">
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Icon Picker
+		</div>
 		<div class="container" ng-controller="ctrl">
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 				<![endif]-->
-				<a href="../index.html">back</a>
-				<h1>Icon Directive</h1>
-				<p>A directive that allows you to pick an icon from a selection of <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> icons.</p>
+				
+				<h2>Icon Directive</h2>
+				<p>A directive that allows you to pick an icon from a selection of <a href="http://fortawesome.github.com/Font-Awesome/" target="new">Font Awesome</a> icons.</p>
+				<section>
+					With a popup:<br />
+					<div id="a" class="ade-editme-icon" ade-icon ade-id="1001" tabindex="1" ng-model="icon"></div>
+					<br /><br />
+					<div id="b" class="ade-editme-icon" ade-icon ade-id="1002" tabindex="2" ng-model="icon2"></div>
+				 
+				 	<br /><br />
+					Without a popup:
+					<span ng-bind-html="icon3 | icon"></span><br />
+					<div id="c" ade-icon ade-id="1002" ade-nopop="1" tabindex="2" ng-model="icon3"></div>
 
-				<div id="a" ade-icon ade-id="1001" tabindex="1" ng-model="icon"></div>
-				<div id="b" ade-icon ade-id="1002" tabindex="2" ng-model="icon2"></div>
+					<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-				<br />Without a popup: <span ng-bind-html="icon3 | icon"></span> <br />
-				<div id="c" ade-icon ade-id="1002" ade-nopop="1" tabindex="2" ng-model="icon3"></div>
-
-				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-
-				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
+					<b>Last Message :</b> 
+					<pre><span id="message">{{ lastMessage }}</span></pre>
+				</section>
 		</div>
 				
 		<script src="../bower_components/jquery/dist/jquery.js"></script>

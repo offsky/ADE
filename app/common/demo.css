@@ -7,37 +7,132 @@ body {
   background-color: #ffffff;
 }
 
+:focus { /*Overwrite Gray Focus Ring*/
+  outline: -webkit-focus-ring-color auto 0px;
+}
+
+input {
+	font-family: arial;
+}
+
+.container { 
+	margin: 0 auto 200px auto; 
+	width:90%; 
+	max-width:700px;
+}
+
+
+.container > p { 
+	margin: 10px 0px 20px 0px;
+}
+
+
+h1 { 
+	margin:20px 0px;
+	line-height: 1.5em;
+}
+
 h2 {
 	font-size: 1.6em;
 	font-weight: normal;
+	border-bottom: 1px solid #E4E6E9;
+	padding-bottom: 15px;
+	margin: 40px 0 20px 0;
 }
 
-.dropdown-menu {
-	border: 1px solid gray;
-	padding: 5px;
+h3:first-child {
+	margin: 10px 0;
 }
 
-h1 { margin:20px 0px 20px 0px;}
-.container > p { margin:10px 0px 20px 0px;}
-td {vertical-align: top;}
-.ade-editme{ display: block; margin:4px 0px 4px 0px; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
-.ade-editrich{display: block; margin:0px; border:1px solid transparent; white-space: nowrap; background-color: #eee; width:200px; height:20px; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis;}
-.ade-editrich p { margin:0px 0px 10px 0px;}
-
-.container { margin-bottom:200px; margin-right:auto; margin-left:auto; width:90%; max-width:700px;}
-.github { position: absolute; top: 0; right: 0; border: 0; }
-.sample { background-color: #eee; height:19px; padding:10px; cursor:pointer; display:inline-block;}
-.sample-rich { background-color: #eee; height:19px; padding:4px; cursor:pointer; display:inline-block;}
-.sample-rich p { margin:0px 0px 10px 0px;}
-
-
-.ade-tag-input, .ade-list-input { display: inline-block; }
-
-input[type="text"] {
-	
+h3 {
+	font-weight: normal;
+	margin: 30px 0 10px 0;
 }
 
-.sample + input,.sample + input:focus {
-	margin:8px 0px 0px 4px;
+h3 a {
+	font-size: .8em;
+}
+
+pre {
+	background-color: white;
+	padding: 5px 10px;
+	border-left: 5px solid #1B75BC;
+	white-space: pre-wrap;
+	min-height: 20px;
+}
+
+.container a,
+.back a {
+	color: #1B75BC;
+	text-decoration: none;
+}
+
+.container a:hover,
+.back a:hover {
+	text-decoration: underline;
+}
+
+.back a:before {
+	content: ' < ';
+}
+
+section {
+	background-color: #F5F5F3;
+	-webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	-moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+	padding: 20px;
+	margin: 20px auto;
+}
+
+td {
+	vertical-align: top;
+}
+
+.github { 
+	position: absolute; 
+	top: 0; 
+	right: 0; 
+	border: 0; 
+}
+
+.sample,
+.ade-editme {
+	border: 1px solid transparent;
+	background-color: #ddd;
+	cursor: pointer;
+	display: inline-block;
+	min-width: 100px;
+}
+.ade-editme-icon {
+	border: 1px solid transparent;
+	background-color: #ddd;
+	cursor: pointer;
+	display: inline-block;
+	min-width: 16px;
 	padding:2px;
 }
+
+.sample,
+.ade-editme,
+input[type="text"] { 
+	line-height: 1.7em;
+	height: 1.7em;
+	padding: 0 .4em;
+	font-size: 1em;
+}
+.sample-rich { 
+	background-color: #ddd; 
+	border: 1px solid transparent;
+	height: auto;
+	padding:4px; 
+	cursor:pointer; 
+	display:inline-block;
+}
+
+.back {
+	width: 98%;
+	padding: 1% 5px;
+	background-color: #F5F5F3;
+}
+

@@ -1,242 +1,428 @@
-
-/*Inputs*/
+/*--------------------------------------- Inputs*/
 .ade-input,
 .ade-input:focus {
-	line-height: 1.7em;
-	height: 1.7em;
-	padding: 0 .4em;
-	font-size: .85em;
-	border: 2px solid transparent;
-}
-.ade-input:focus {
-	border: 2px solid #1B75BC;
-  outline: -webkit-focus-ring-color auto 0px;
-}
-.ade-input:hover {
-  cursor: pointer;
-  color: #1B75BC;
-}
-.ade-input:focus:hover {
-  cursor: text;
-  color: #333;
+    line-height: 1.7em;
+    height: 1.7em;
+    padding: 0 .4em;
+    font-size: 1em;
 }
 
-/*Popups*/
+.ade-input:focus {
+    outline: -webkit-focus-ring-color auto 0px;
+}
+
+.ade-input:hover {
+    cursor: pointer;
+    color: #1B75BC;
+}
+
+.ade-input:focus:hover {
+    cursor: text;
+    color: #333;
+}
+
+/*-------------------------------------- Popups*/
 .ade-popup {
-	position: absolute;
-	min-width: 200px;
-	max-width: 450px;
+    position: absolute;
+    min-width: 200px;
+    max-width: 450px;
 }
 
 .ade-hidden {
-	width: 0;
-	height:0;
-	overflow: hidden;
-} 
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
 
-.dropdown-menu {
-	position: absolute;
-	z-index: 1000;
-	background-clip: padding-box;
-	background-color: #FAFAFA;
-	border: 0px;
-	padding: 10px;
-	border-radius: 0;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;	
-	-webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-	-moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-	box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+.dropdown-menu,
+.ade-nopop {
+    position: absolute;
+    z-index: 1000;
+    background-clip: padding-box;
+    background-color: #FAFAFA;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+    -moz-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+    box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+.ade-nopop {
+    position: relative;
+    z-index: inherit;
 }
 
 .ade-popup.dropdown-menu {
-	font-size: .9em;
-	color: #333;
+    font-size: .9em;
+    color: #333;
 }
 
 .ade-popup.dropdown-menu.open {
-	display:inline-block;
-	border-radius:0;
-	white-space:normal;
-	font-weight:normal;
+    display: inline-block;
+    border-radius: 0;
+    white-space: normal;
+    font-weight: normal;
 }
 
-.ade-popup.dropdown-menu:before { /*Arrow Up Shadow*/
-  	border-bottom: 9px solid #E4E6E9;
-	border-left: 9px solid transparent;
-	border-right: 9px solid transparent;
-	content: "";
-	left: 9px;
-	position: absolute;
-	top: -10px;
+.ade-popup.dropdown-menu:before {
+    /*Arrow Up Shadow*/
+    border-bottom: 9px solid #bbb;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    content: "";
+    left: 9px;
+    position: absolute;
+    top: -10px;
 }
 
-.ade-popup.dropdown-menu.flip:before { /*Arrow Down Shadow*/
-	border-bottom: 0px; 
-	border-top: 9px solid rgba(0, 0, 0, 1);
-	top: auto;
-	bottom: -10px;
+.ade-popup.dropdown-menu.flip:before {
+    /*Arrow Down Shadow*/    
+    border-bottom: 0px;
+    border-top: 9px solid rgba(0, 0, 0, 1);
+    top: auto;
+    bottom: -10px;
 }
 
-.ade-popup.dropdown-menu:after { /*Arrow Up Fill*/
-  	border-bottom: 9px solid #FAFAFA;
-	border-left: 9px solid transparent;
-	border-right: 9px solid transparent;
-	content: "";
-	left: 9px;
-	position: absolute;
-	top: -9px;
+.ade-popup.dropdown-menu:after {
+    /*Arrow Up Fill*/  
+    border-bottom: 9px solid #FAFAFA;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    content: "";
+    left: 9px;
+    position: absolute;
+    top: -9px;
 }
 
-.ade-popup.dropdown-menu.flip:before { /*Arrow Down Shadow*/
-	border-bottom: 0px; 
-	border-top: 9px solid rgba(0, 0, 0, 0.3);
-	top: auto;
-	bottom: -10px;
+.ade-popup.dropdown-menu.flip:before {
+    /*Arrow Down Shadow*/    
+    border-bottom: 0px;
+    border-top: 9px solid rgba(0, 0, 0, 0.3);
+    top: auto;
+    bottom: -10px;
 }
 
-.ade-popup.dropdown-menu.flip:after { /*Arrow Down Fill*/
-	border-bottom: 0px; 
-	border-top: 9px solid #FAFAFA;
-	top: auto;
-	bottom: -9px;
+.ade-popup.dropdown-menu.flip:after {
+    /*Arrow Down Fill*/    
+    border-bottom: 0px;
+    border-top: 9px solid #FAFAFA;
+    top: auto;
+    bottom: -9px;
 }
 
 .ade-popup.dropdown-menu.rarrow:before {
-	left: auto; 
-	right:6px;
+    left: auto;
+    right: 6px;
 }
+
 .ade-popup.dropdown-menu.rarrow:after {
-	left: auto; 
-	right:7px;
+    left: auto;
+    right: 7px;
 }
 
 .ade-popup span {
-	padding:3px;
-	margin:0;
-	cursor:pointer;
+    padding: 3px;
+    margin: 0;
+    cursor: pointer;
 }
 
-@media screen and (max-width: 480px) { /* popup goes full width on small screens */
-	.ade-popup.dropdown-menu.open {
-		width: auto;
-	}
-	.ade-popup.dropdown-menu:before,
-	.ade-popup.dropdown-menu:after,
-	.ade-popup.dropdown-menu.flip:before,
-	.ade-popup.dropdown-menu.flip:after {
-		display:none; 
-		border: 0px;
-	}
+.ade-popup .ade-edit-link {
+    cursor: pointer;
 }
 
-/*Links*/
-.ade-edit-link {
-	 color: #1B75BC;
-  text-decoration: underline;
-  margin-left: 8px;
-}
-.ade-edit-link:hover {
-	cursor: pointer;
+@media screen and (max-width: 480px) {
+    /* popup goes full width on small screens */  
+    .ade-popup.dropdown-menu.open {
+        width: auto;
+    }
+    .ade-popup.dropdown-menu:before,
+    .ade-popup.dropdown-menu:after,
+    .ade-popup.dropdown-menu.flip:before,
+    .ade-popup.dropdown-menu.flip:after {
+        display: none;
+        border: 0px;
+    }
 }
 
-/* Rich text Directive */
+/*--------------------------------------  Rich text Directive */
+.ade-rich {
+    z-index: 99;
+    max-width: 500px;
+}
 
-.ade-rich { z-index:99; max-width:500px;}
-.ade-rich .ade-content{position: fixed; z-index:99; display: block; border:1px solid #999; white-space: nowrap; background-color: #eee; padding:3px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; transition: width .2s, height .2s, min-width .2s, min-height .2s;}
-.ade-rich .ade-content p { margin:0px 0px 10px 0px;}
-.ade-rich .ade-content.ade-hover{min-height:200px; min-width:350px; overflow: auto; text-overflow: clip; white-space: normal;}
-.ade-rich .ade-content.ade-editing{min-height:200px; min-width:350px; border:1px solid #666; overflow: auto; text-overflow: clip; white-space: normal; background-color: #fff;}
-.ade-rich .mce-colorbutton span {padding:0px;}
-.ade-rich .ade-toolbar { z-index:100; position:fixed; height:30px; left:-1px; background-color: #f0f0f0; border:1px solid #9e9e9e;}
-.ade-rich .mce-edit-focus { outline: none;}
-.ade-rich .ade-toolbar .mce-panel { border: 0; display: block !important;}
-.ade-rich .mce-i-cancel { text-align:center;}
-.ade-rich .mce-i-cancel:before { font-family:Arial; content: " ×";}
-.ade-rich .mce-btn button { padding:2px 4px;}
-.ade-rich-hide { visibility: hidden;}
+.ade-rich .ade-content,
+.ade-rich .ade-content.ade-editing {
+    background-color: #fff;
+    border: 1px solid #E4E6E9;
+    padding: 4px;
+    -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+    -moz-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+    box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
+}
+
+.ade-rich .ade-content {
+    position: fixed;
+    z-index: 99;
+    display: block;
+    white-space: nowrap;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: width .2s, height .2s, min-width .2s, min-height .2s;
+}
+
+.ade-rich .ade-content.ade-editing {
+    min-height: 200px;
+    min-width: 350px;
+    overflow: auto;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.ade-rich .ade-toolbar {
+    z-index: 100;
+    position: fixed;
+    height: 30px;
+    background-color: #fafafa;
+    border: 1px solid #E4E6E9;
+    padding: 2px;
+    left: -1px;/*
+    background-color: #f0f0f0;
+    border: 1px solid #9e9e9e;*/
+}
+
+.ade-rich .ade-content p {
+    margin: 0px 0px 10px 0px;
+}
+
+.ade-rich .ade-content.ade-hover {
+    min-height: 200px;
+    min-width: 350px;
+    overflow: auto;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.ade-rich .mce-colorbutton span {
+    padding: 0px;
+}
+
+
+
+.ade-rich .mce-edit-focus {
+    outline: none;
+}
+
+.ade-rich .ade-toolbar .mce-panel {
+    border: 0;
+    display: block !important;
+}
+
+.ade-rich .mce-i-cancel {
+    text-align: center;
+}
+
+.ade-rich .mce-i-cancel:before {
+    font-family: Arial;
+    content: " ×";
+}
+
+.ade-rich .mce-btn button {
+    padding: 2px 4px;
+}
+
+.ade-rich-hide {
+    visibility: hidden;
+}
 
 /* Rating/Star Directives */
-.ade-rating{position:relative;overflow:hidden;z-index:1;height:16px;padding-right:10px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
-.ade-rating .ade-rate-container{position:relative;left:0;z-index:3;height:16px;}
-.ade-rating .ade-rate-one{width:16px;height:16px;display:inline-block;cursor:pointer;text-decoration:none;}
-.ade-rating .ade-rate { color: #000;}
-.ade-rating .ade-rate-empty { color: #666;}
-.ade-rating.ade-editable.ade-hover .ade-rate-container:hover .ade-rate-empty{color: #000;}
-.ade-rating.ade-editable.ade-hover .ade-rate:hover { color: #000;}
-.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover { color: #000;}
+.ade-rating {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    height: 16px;
+    padding-right: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.ade-rating .ade-rate-container {
+    position: relative;
+    left: 0;
+    z-index: 3;
+    height: 16px;
+}
+
+.ade-rating .ade-rate-one {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.ade-rating .ade-rate {
+    color: #000;
+}
+
+.ade-rating .ade-rate-empty {
+    color: #666;
+}
+
+.ade-rating.ade-editable.ade-hover .ade-rate-container:hover .ade-rate-empty {
+    color: #000;
+}
+
+.ade-rating.ade-editable.ade-hover .ade-rate:hover {
+    color: #000;
+}
+
+.ade-rating.ade-editable.ade-hover .ade-rate-empty:hover {
+    color: #000;
+}
+
 .ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate,
-.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate { color: #999;}
+.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate {
+    color: #999;
+}
+
 .ade-rating.ade-editable.ade-hover .ade-rate-empty:hover~.ade-rate-empty,
 .ade-rating.ade-editable.ade-hover .ade-rate:hover~.ade-rate-empty,
-.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate-empty { color: #666;}
-.ade-rate-one.ade-zero{background:none;width:10px;vertical-align:top;}
-.ade-rate-one.ade-zero{text-decoration:none;}
+.ade-rating.ade-editable.ade-hover .ade-zero:hover~.ade-rate-empty {
+    color: #666;
+}
 
-/* Toggle Directive */
-.ade-toggle{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
-.ade-toggle.ade-editable.ade-hover:hover{color: #666;}
+.ade-rate-one.ade-zero {
+    background: none;
+    width: 10px;
+    vertical-align: top;
+}
 
-/* Toggle Multi */
-.ade-multi{display:inline-block;width:16px;height:16px;cursor:pointer;color:#000;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
-.ade-multi.ade-editable.ade-hover:hover{color: #666;}
+.ade-rate-one.ade-zero {
+    text-decoration: none;
+}
 
-/* Icon Directive */
+/*--------------------------------------  Toggle Directive */
+.ade-toggle {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    color: #000;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.ade-toggle.ade-editable.ade-hover:hover {
+    color: #666;
+}
+
+/*--------------------------------------  Toggle Multi */
+.ade-multi {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    color: #000;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.ade-multi.ade-editable.ade-hover:hover {
+    color: #666;
+}
+
+/*--------------------------------------  Icon Directive */
 .ade-popup.dropdown-menu.open h2,
 .ade-nopop h2 {
-  font-size: 1.3em;
-  margin-top: 10px 0;
- }
+    font-size: 1.3em;
+    margin-top: 10px 0;
+}
 
 .ade-icons .remove {
-  display: block;
-  margin: 10px 0;
+    display: block;
+    margin: 10px 0;
 }
 
 .ade-icons .remove:before {
-  margin-right: 3px;
+    margin-right: 3px;
 }
 
-.ade-icons { max-width:380px;}
+.ade-icons {
+    max-width: 380px;
+}
+
 .ade-icons .ade-icon {
-  font-size: 1.3em;
-  height: 2em;
-  width: 2em;
-  line-height: 2em;
-  text-align: center;
-  display: inline-block;
-  color: #747369;
-  background-color: white;
-  border: 1px solid #E4E6E9;
-  margin: 2px;
-  cursor:pointer; 
+    font-size: 1.3em;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    text-align: center;
+    display: inline-block;
+    color: #747369;
+    background-color: white;
+    border: 1px solid #E4E6E9;
+    margin: 2px;
+    cursor: pointer;
 }
 
 .ade-icons .ade-icon:hover {
-  background-color: #F5F5F3;
-  color: #1B75BC;
-  cursor: pointer;
+    color: #000;
+    cursor: pointer;
 }
 
-.ade-icons h4 {margin:0px;}
-.ade-icon.icon-ban-circle{color:#999;}
-.ade-nopop {
-	border-radius: 0;
-	padding:8px;
-	border:1px solid #ccc;
+.ade-icons h4 {
+    margin: 0px;
 }
+
+.ade-icon.icon-ban-circle {
+    color: #999;
+}
+
 .ade-nopop span {
-	padding:3px;
-	margin:0;
-	cursor:pointer;
+    padding: 3px;
+    margin: 0;
+    cursor: pointer;
 }
-.ade-popup a.ade-clear,.ade-nopop a.ade-clear{cursor:pointer;background:none;float:right;padding:3px 0px;margin:-30px 0 0 0;color:#08c;font-size:12px;}
-.ade-icons span { width:14px; height:16px;display:inline-block; text-align: center;}
-.ade-icons span.selected { color: #333; }
-.ade-icons span.selected:hover { color: #1B75BC; }
 
+.ade-popup a.ade-clear,
+.ade-nopop a.ade-clear {
+    cursor: pointer;
+    background: none;
+    float: right;
+    padding: 3px 0px;
+    margin: -30px 0 0 0;
+    color: #08c;
+    font-size: 12px;
+}
+
+.ade-icons span {
+    width: 14px;
+    height: 16px;
+    display: inline-block;
+    text-align: center;
+}
+
+.ade-icons span.selected {
+    color: #333;
+}
+
+.ade-icons span.selected:hover {
+    color: #1B75BC;
+}
 
 @media screen and (max-width: 480px) {
-	.ade-icon{font-size: 1.3em; }
-	.ade-icons span { width:30px; height:30px;}
+    .ade-icon {
+        font-size: 1.3em;
+    }
+    .ade-icons span {
+        width: 30px;
+        height: 30px;
+    }
 }

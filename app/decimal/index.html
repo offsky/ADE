@@ -9,28 +9,33 @@
 		<link rel="stylesheet" href="../common/demo.css"/>
 	</head>
 	<body ng-app="app" ng-init="dec=1234.324545" >
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Decimal
+		</div>
 		<div class="container" ng-controller="ctrl">
-		<a href="../index.html">back</a>
+		
 
-      <h1>Decimal filter</h1>
+      <h2>Decimal filter</h2>
 		<p>A filter that displays a number as a decimal with a specified precision. This is a wrapper for Angular's built in filter so that we can display invalid inputs better.</p>
+		<section>
 
-        <ul>
-            <li>Decimal 1234.3453: {{ 1234.3453 | decimal:2 }} </li>
-            <li>Decimal string "1234.3453": {{ "1234.3453" | decimal:2 }} </li>
-            <li>Invalid decimal "decimal": {{ "integer" | decimal }}</li>
-        </ul>
+	        <ul>
+	            <li>Decimal 1234.3453: {{ 1234.3453 | decimal:2 }} </li>
+	            <li>Decimal string "1234.3453": {{ "1234.3453" | decimal:2 }} </li>
+	            <li>Invalid decimal "decimal": {{ "integer" | decimal }}</li>
+	        </ul>
+	    </section>
 
-		<h1>Decimal editing directive</h1>
+		<h2>Decimal editing directive</h2>
 		<p>A directive that makes a decimal editable.</p>
+		<section>		
+			<div class="ade-editme" ade-number='decimal' ade-class="input-medium" ade-id="1234" ade-precision="2" ng-model="dec"></div>
+			
+			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-		
-		<div class="ade-editme" ade-number='decimal' ade-class="input-medium" ade-id="1234" ade-precision="2" ng-model="dec"></div>
-		
-		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
-
-		<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
-
+			<b>Last Message :</b> 
+			<pre><span id="message">{{ lastMessage }}</span></pre>
+		</section>
 		</div>
 
 		<script src="../bower_components/jquery/dist/jquery.js"></script>
