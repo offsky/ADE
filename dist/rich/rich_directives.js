@@ -17,11 +17,10 @@
 		If you don't want the stars to be editable	
 	ade-max:
 		The optional maximum length to enforce
-	ade-cut:
-		The number of characters to show as a preview before cutting off and showing
-		the rest after a click or hover.  Set to -1 to show all characters and disable hover preview
 	ade-save-cancel:
 		If you want save/cancel buttons
+	ade-preview:
+		If you want mouse over to cause an expanded preview (default 1)
 
 	Messages:
 		name: ADE-start
@@ -41,7 +40,9 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			adeId: "@",
 			adeReadonly: "@",
 			adeSaveCancel: "@",
+			adePreview: "@",
 			adeMax: "@",
+			adeSkin: "=",
 			ngModel: "="
 		},
 
@@ -52,7 +53,8 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var id = Math.floor(Math.random() * 100000);
 			var editing = false;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
-			var timeout = null; //the delay when mousing out of the ppopup
+			var timeout = null; //the delay when mousing out of the popup
+			var timeout_open = null; //the short delay when mousing over the popup
 			var readonly = false;
 			var maxLength = null; //the maxLength is enforced on edit, not from external changes
 			var origMaxLength = null;
@@ -62,10 +64,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 			var windowW = $(window).width();
 			var saveCancel = true;
+			var adePreview = true;
+			var ignoreClick = false; //gets set to true if on touch device, so click to immediate edit is ignored
 
 			if(scope.adeMax!==undefined) origMaxLength = maxLength = parseInt(scope.adeMax);
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeSaveCancel!==undefined && scope.adeSaveCancel=="0") saveCancel = false;
+			if(scope.adePreview!==undefined && scope.adePreview=="0") adePreview = false;
 
 			//Whenever the model changes we need to regenerate the HTML for displaying it
 			var makeHTML = function() {
@@ -91,23 +96,24 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// console.log("save",adeId);
 				var oldValue = scope.ngModel;
 				exit = exited;
-						
-				var currentLength = $("#tinyText"+id).text().length;
+				
+				var tinyText = $("#tinyText"+id);
+				var currentLength = tinyText.text().length;
 
 				// don't save value on esc (revert)
 				// and if the current length is greater than max length
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
-					if(element!==undefined && element[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+					if(element!==undefined && element[0]!==undefined && tinyText.length) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
 						
 						// Convert relative urls to absolute urls
 						// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
-						$('#tinyText'+id).find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+						tinyText.find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
 							var href = this.getAttribute('href');
 							var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
 							this.setAttribute('href', hrefType + href);
 						});
 
-						var value = $("#tinyText"+id)[0].innerHTML;
+						var value = tinyText[0].innerHTML;
 												
 						//auto-convert urls
 						//https://regex101.com/#javascript
@@ -119,7 +125,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			        	// value = value.replace(urlPattern, '<a href="$&">$&</a>');				
 
 						//readjust maxLength if it was artifically extended
-						var text = $("#tinyText"+id).text();
+						var text = tinyText.text();
 						if (maxLength > origMaxLength && maxLength>text.length) {
 							maxLength = text.length;
 						}
@@ -156,17 +162,26 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			//shows a popup with the full text in read mode
-			var viewRichText = function() {
+			var viewRichText = function(e,goEdit) {
+				// console.log("show",id);
+
+				//already showing
+				if($('#ade-rich'+id).length) {
+					if(goEdit!==undefined && goEdit) editRichText();				
+					return;
+				}
+
 				ADE.hidePopup(); //hide any ADE popups already presented
 
 				var modelValue = scope.ngModel ? scope.ngModel : "";
 				var editor = '<div id="ade-rich' + id + '" class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
 				$compile(editor)(scope).insertAfter(element);
 				place();
-				// window.setTimeout(place,300);
+				window.setTimeout(place,300);
 
-				window.setTimeout(function() {
-					$('#tinyText'+id).addClass("ade-hover");						
+				window.setTimeout(function() { //in a timeout for css transition to work
+					$('#tinyText'+id).addClass("ade-hover");
+					if(goEdit!==undefined && goEdit) editRichText();				
 				});
 
 				$('#tinyText'+id).on('mouseleave.rADE', mouseout);
@@ -175,17 +190,19 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					window.clearTimeout(timeout);
 				});
 
-				$(document).on('scroll.rADE', hideDiv);
+				$(document).on('scroll.rADE'+id, place);
 
-				// $(document).on('touchend.rADE', function(e) {
-				// 	var outerClick = element.has(e.target).length === 0;
-				// 	if(outerClick) mouseout();
-				// });
+				$(document).on('touchend.rADE', function(e) {
+					var outerClick = $('#ade-rich'+id).has(e.target).length === 0;
+					if(outerClick) mouseout();
+				});
+
+				element.addClass("ade-rich-hide");
 			};
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
-				ADE.place('#ade-rich'+id,element,-20,-5);
+				//ADE.place('#ade-rich'+id,element,-20,-5);
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
 
@@ -195,8 +212,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				var offset = element.offset();
 				var height = element.height();
 				var width = element.width();
-				
-				// console.log("POSITION",offset,height,width,scrollV,scrollH);
+				var windowW = $(window).width();
+
+				// console.log("POSITION",offset.top,height,width,scrollV,scrollH,windowW);
+				// console.trace();
 
 				//position the editable content
 				if($('#tinyText'+id).length) {
@@ -212,6 +231,24 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 					$('.ade-toolbar').css('top',pos+"px").css('left',(offset.left-scrollH)+"px");
 					$('.ade-toolbar').css('width',txtwidth+'px');
+				}
+
+				if($('#tinyText'+id).length) {
+					var popW = $('#tinyText'+id).width();
+					var popL = $('#tinyText'+id).offset().left;
+					if(windowW+scrollH<popL+popW) { //if it would be off the right side, move it over
+						var off = popL+popW - windowW + 15;
+						var space = windowW-popW;
+						var newLeft = popL-off; //(space/2)
+
+						if(space>0) {
+							$('#tinyText'+id).css('left',newLeft+"px");
+							$('.ade-toolbar').css('left',newLeft+"px");
+						} else {
+							$('#tinyText'+id).css('left',"0px");
+							$('.ade-toolbar').css('left',"0px");
+						} 
+					}
 				}
 			};
 
@@ -296,15 +333,69 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				
 				$compile(toolbar)(scope).insertAfter($('#tinyText'+id));
 				place();
-//				setTimeout(place); //needs to be in a timeout for the popup's height to be calculated correctly
+				//setTimeout(place,300); //needs to be in a timeout for the popup's height to be calculated correctly
 
 				var toolbarOptions = "saveButton cancelButton | styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 				if(!saveCancel) toolbarOptions = "styleselect | forecolor backcolor | bullist numlist | outdent indent | link";
 
-				// Initialize tinymce
-				// Full example:
-				// http://www.tinymce.com/tryit/full.php
-				tinymce.init({
+				var style_menu = [
+					 {title: "Headers", items: [
+						  {title: "Header 1", format: "h1"},
+						  {title: "Header 2", format: "h2"},
+						  {title: "Header 3", format: "h3"},
+						  {title: "Header 4", format: "h4"},
+						  {title: "Header 5", format: "h5"},
+						  {title: "Header 6", format: "h6"}
+					 ]},
+					 {title: "Sizes", items: [
+						  {title: "Small", inline: 'span', styles: {fontSize: '0.8em'}},
+						  {title: "Normal", inline: 'span', styles: {fontSize: '1em'}},
+						  {title: "Large", inline: 'span', styles: {fontSize: '1.3em'}},
+						  {title: "Huge", inline: 'span', styles: {fontSize: '1.7em'}}
+					 ]},
+					 {title: "Styles", items: [
+						  {title: "Bold", icon: "bold", format: "bold"},
+						  {title: "Italic", icon: "italic", format: "italic"},
+						  {title: "Underline", icon: "underline", format: "underline"},
+						  {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
+						  {title: "Superscript", icon: "superscript", format: "superscript"},
+						  {title: "Subscript", icon: "subscript", format: "subscript"},
+						  {title: "Code", icon: "code", format: "code"}
+					 ]},
+					 {title: "Alignment", items: [
+						  {title: "Left", icon: "alignleft", format: "alignleft"},
+						  {title: "Center", icon: "aligncenter", format: "aligncenter"},
+						  {title: "Right", icon: "alignright", format: "alignright"},
+						  {title: "Justify", icon: "alignjustify", format: "alignjustify"},
+						  {title: "Blockquote", icon: "blockquote",format: "blockquote"},
+					 ]}
+				];
+
+				var tinymce_setup = function(ed) {
+					ed.on('init', function(args) {
+						//focus the text area. In a timer to allow tinymce to initialize.
+						tinymce.execCommand('mceFocus',false,"tinyText"+id);
+					});
+					ed.on('keydown', handleKeyEvents);
+					ed.addButton('saveButton', {
+						title: "Save", text: "", icon:"save",
+						onclick: function() {
+							scope.$apply(function() {
+								saveEdit(0); // blur and save
+							});
+						}
+					});
+					ed.addButton('cancelButton', {
+						title: "Cancel", text: "", icon:"cancel",
+						onclick: function() {
+							scope.$apply(function() {
+								saveEdit(3); // blur and cancel
+							});
+						}
+					});
+				};
+
+				var params = {
 					selector: "#tinyText"+id,
 					theme: "modern",
 					menubar: false,
@@ -315,71 +406,18 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					inline:true,
 					resize: "both",
 					fixed_toolbar_container: "#tinyToolbar"+id,
-					style_formats: [
-						 {title: "Headers", items: [
-							  {title: "Header 1", format: "h1"},
-							  {title: "Header 2", format: "h2"},
-							  {title: "Header 3", format: "h3"},
-							  {title: "Header 4", format: "h4"},
-							  {title: "Header 5", format: "h5"},
-							  {title: "Header 6", format: "h6"}
-						 ]},
-						 {title: "Sizes", items: [
-							  {title: "Small", inline: 'span', styles: {fontSize: '0.8em'}},
-							  {title: "Normal", inline: 'span', styles: {fontSize: '1em'}},
-							  {title: "Large", inline: 'span', styles: {fontSize: '1.3em'}},
-							  {title: "Huge", inline: 'span', styles: {fontSize: '1.7em'}}
-						 ]},
-						 {title: "Styles", items: [
-							  {title: "Bold", icon: "bold", format: "bold"},
-							  {title: "Italic", icon: "italic", format: "italic"},
-							  {title: "Underline", icon: "underline", format: "underline"},
-							  {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
-							  {title: "Superscript", icon: "superscript", format: "superscript"},
-							  {title: "Subscript", icon: "subscript", format: "subscript"},
-							  {title: "Code", icon: "code", format: "code"}
-						 ]},
-						 {title: "Alignment", items: [
-							  {title: "Left", icon: "alignleft", format: "alignleft"},
-							  {title: "Center", icon: "aligncenter", format: "aligncenter"},
-							  {title: "Right", icon: "alignright", format: "alignright"},
-							  {title: "Justify", icon: "alignjustify", format: "alignjustify"},
-							  {title: "Blockquote", icon: "blockquote",format: "blockquote"},
-						 ]}
-					],
+					style_formats: style_menu,
+					setup: tinymce_setup
+				};
 
-					setup: function(ed) {
-						ed.on('init', function(args) {
-														
-							//focus the text area. In a timer to allow tinymce to initialize.
-							tinymce.execCommand('mceFocus',false,"tinyText"+id);
-						});
-						ed.on('keydown', handleKeyEvents);
-						ed.addButton('saveButton', {
-							title: "Save",
-							text: "",
-							icon:"save",
-							onclick: function() {
-								scope.$apply(function() {
-									saveEdit(0); // blur and save
-								});
-							}
-						});
-						ed.addButton('cancelButton', {
-							title: "Cancel",
-							text: "",
-							icon:"cancel",
-							onclick: function() {
-								scope.$apply(function() {
-									saveEdit(3); // blur and cancel
-								});
-							}
-						});
-					}
-				});
+				if(scope.adeSkin!==undefined) params.skin_url = scope.adeSkin;
+
+				tinymce.init(params);  // Initialize tinymce http://www.tinymce.com/tryit/full.php
 
 				editing = true;
 				$('#tinyText'+id).addClass("ade-editing").removeClass('ade-hover');
+
+				element.addClass("ade-rich-hide");
 
 				// $('.ade-toolbar').on('click.rADE', function() {
 				// 	place();
@@ -400,28 +438,33 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 							outerBlur(e);
 						});
 					});
-					$(document).on('scroll.rADE', function() {
-						saveEdit(3);
+					$(document).on('scroll.rADE'+id, function() {
+						//yeah, I know this is terrible. Find a better way for me, please
+						if(!iOS) place(); //breaks ios because auto-keyboard triggers a scroll when it comes up causing box to be positioned crazy
 					});				
 				});
 
 			};
 
-			//When the mouse enters, show the exanded text
-			var mousein = function()  {
+			//When the mouse enters, show the expanded text
+			var mousein = function(e,force)  {
 				// console.log("mouse in",adeId,editing);
 				if(editing) return; //dont display read version if editing
-				window.clearTimeout(timeout);
+				if(scope.ngModel===undefined || scope.ngModel===null || scope.ngModel==="") return; //don't show if empty
+
+				window.clearTimeout(timeout_open);
 				
 				//if any other popup is open in edit mode, don't do this view
 				if (angular.element('.ade-toolbar').length) return;
 
-				//immediatly hide any other expanded text fields 
+				//immediatly hide any other expanded text fields
+				$('.ade-rich-hide').removeClass("ade-rich-hide");
 				$('.ade-toolbar').remove();
 				$('.ade-content').remove();
 				$('.ade-rich').remove();
 				
-				viewRichText();
+				if(force!==undefined && force) viewRichText();
+				else timeout_open = window.setTimeout(viewRichText,300);
 			};
 
 			//if the mouse leaves, hide the expanded note view if in read mode
@@ -433,19 +476,22 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			};
 
 			var hideDiv = function() {
+				// console.log("hide",id);
+				destroy();
+				window.clearTimeout(timeout);
 				$('#tinyText'+id).off('.rADE')
 				$("#tinyToolbar"+id).remove();
 				$('#tinyText'+id).removeClass('ade-editing').removeClass('ade-hover');
 				window.setTimeout(function() { //after the animation has finished, remove
 					$("#tinyText"+id).remove();
 					$('#ade-rich'+id).remove();
-					destroy();
+					element.removeClass('ade-rich-hide');
 				},210);
 			};
 			
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				// console.log("mouse click",adeId,editing);	
+				console.log("mouse click",adeId,editing);	
 				if(editing) return;
 				window.clearTimeout(timeout);
 				editing = true;
@@ -463,15 +509,33 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//sets up click, mouse enter and mouse leave events on the original element for preview and edit
 			var setupElementEvents = function() {
 				// console.log("setup",adeId,editing);
-				element.on('mouseenter.rADE', mousein);
-				
+				if(adePreview) {
+					element.on('mouseenter.rADE', mousein);
+					element.on('mouseleave.rADE', function() {
+						window.clearTimeout(timeout_open);
+					})
+					element.on('focus.rADE',function(e) {
+						console.log("focus");
+						mousein(e);
+					});
+					element.on('touchstart.rADE',function(e) {
+						console.log("touchstart");
+						ignoreClick = true;
+					});
+				}
 				if(!readonly) {
-					element.on('click.rADE', mousein);
+					element.on('click.rADE', function(e) {
+						console.log("click");
+						if(!ignoreClick) viewRichText(null,true);
+						else mousein(e);
+						ignoreClick = false;
+					});
 
 					//handles enter keydown on the read version of the data
 					element.on('keydown.rADE', function(e) {
 						if (e.keyCode === 13) { // enter
-							mousein();
+							e.preventDefault();
+							viewRichText(null,true);
 						} else if (e.keyCode === 9 || e.keyCode === 27) { // tab, esc
 							hideDiv();
 						}
@@ -487,15 +551,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				 //this gets called even when the value hasn't changed, 
 				 //so we need to check for changes ourselves
 				 if(editing && adeId!==value) saveEdit(3);
-				 else if(adeId!==value) ADE.hidePopup(element);
+				 else if(adeId!==value) hideDiv();
 			};
 
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				// console.log("destroy",adeId);
+				// console.log("destroy",id);
+				// console.trace();
 				$(document).off('.rADE');
+				$(document).off('.rADE'+id);
 			};
 			
 			scope.$on('ADE-hideall', function() {

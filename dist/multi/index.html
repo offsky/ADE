@@ -9,7 +9,6 @@
 		<title>ADE :: Multi-state Switch Directive</title>
 		<meta name="description" content=""/>
 		<meta name="viewport" content="width=device-width"/>
-		<link rel="stylesheet" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css"/>  
 		<link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css"/>
 		<link rel="stylesheet" href="../common/demo.css"/>
 		<link rel="stylesheet" href="../common/ade.css"/>
@@ -23,26 +22,27 @@
 		</style>
 	</head>
 	<body ng-app="app" ng-init="valuea=0;valueb=1;">
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Multi-state Icon
+		</div>
 		<div class="container" ng-controller="ctrl">
 				<!--[if lt IE 7]>
 					 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 				<![endif]-->
-				<a href="../index.html">back</a>
-				<h1>Multi-state switch Directive</h1>
+				
+				<h2>Multi-state Switch Directive</h2>
 				<p>A directive that toggles an icon between N states.  It also has optional hover states and can support different size icons easily.</p>
 
-
-				<span ade-multi ade-id="1001" ade-classes='["icon-star-empty","icon-star","icon-heart"]' tabindex="1" ng-model="valuea"></span>
-
-				<br />
-
-				<span ade-multi ade-id="1002" ade-classes='["icon-check-empty","icon-check","icon-check-sign","icon-check-minus"]' tabindex="2" ng-model="valueb"></span>
+				<section>
+				<p><span ade-multi ade-id="1001" class="ade-editme-icon ade-focus" ade-classes='["icon-star-empty","icon-star","icon-heart"]' tabindex="1" ng-model="valuea"></span></p>
+				<p><span ade-multi ade-id="1002" class="ade-editme-icon ade-focus" ade-classes='["icon-check-empty","icon-check","icon-check-sign","icon-check-minus"]' tabindex="2" ng-model="valueb"></span></p>
 				
 				
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-				<b>Last Message :</b> <span id="message">{{ lastMessage }}</span>
-
+				<b>Last Message :</b> 
+				<pre><span id="message">{{ lastMessage }}</span></pre>
+			</section>
 
 		</div>
 
