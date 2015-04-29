@@ -67,7 +67,8 @@
     font-weight: normal;
 }
 
-.ade-popup.dropdown-menu:before {
+/* To enable arrows on popups that point to the thing being edited, take out the X's */
+.Xade-popup.dropdown-menu:before {
     /*Arrow Up Shadow*/
     border-bottom: 9px solid #bbb;
     border-left: 9px solid transparent;
@@ -78,7 +79,7 @@
     top: -10px;
 }
 
-.ade-popup.dropdown-menu.flip:before {
+.Xade-popup.dropdown-menu.flip:before {
     /*Arrow Down Shadow*/    
     border-bottom: 0px;
     border-top: 9px solid rgba(0, 0, 0, 1);
@@ -86,7 +87,7 @@
     bottom: -10px;
 }
 
-.ade-popup.dropdown-menu:after {
+.Xade-popup.dropdown-menu:after {
     /*Arrow Up Fill*/  
     border-bottom: 9px solid #FAFAFA;
     border-left: 9px solid transparent;
@@ -97,7 +98,7 @@
     top: -9px;
 }
 
-.ade-popup.dropdown-menu.flip:before {
+.Xade-popup.dropdown-menu.flip:before {
     /*Arrow Down Shadow*/    
     border-bottom: 0px;
     border-top: 9px solid rgba(0, 0, 0, 0.3);
@@ -105,7 +106,7 @@
     bottom: -10px;
 }
 
-.ade-popup.dropdown-menu.flip:after {
+.Xade-popup.dropdown-menu.flip:after {
     /*Arrow Down Fill*/    
     border-bottom: 0px;
     border-top: 9px solid #FAFAFA;
@@ -113,14 +114,16 @@
     bottom: -9px;
 }
 
-.ade-popup.dropdown-menu.rarrow:before {
+.Xade-popup.dropdown-menu.rarrow:before {
+    /*Arrow on right side (shadow) */
     left: auto;
-    right: 6px;
+    right: 24px;
 }
 
-.ade-popup.dropdown-menu.rarrow:after {
+.Xade-popup.dropdown-menu.rarrow:after {
+    /*Arrow on right side (fill) */
     left: auto;
-    right: 7px;
+    right: 25px;
 }
 
 .ade-popup span {
@@ -135,9 +138,12 @@
 
 @media screen and (max-width: 480px) {
     /* popup goes full width on small screens */  
-    .ade-popup.dropdown-menu.open {
-        width: auto;
+    .dropdown-menu,
+    .ade-nopop {
+        padding: 3%;
+        width:91%;
     }
+
     .ade-popup.dropdown-menu:before,
     .ade-popup.dropdown-menu:after,
     .ade-popup.dropdown-menu.flip:before,
@@ -355,14 +361,14 @@
 }
 
 .ade-icons {
-    max-width: 380px;
+    width: 390px;
 }
 
 .ade-icons .ade-icon {
-    font-size: 1.3em;
-    height: 2em;
-    width: 2em;
-    line-height: 2em;
+    font-size: 18px;
+    height: 27px;
+    width: 27px;
+    line-height: 27px;
     text-align: center;
     display: inline-block;
     color: #747369;
@@ -418,6 +424,9 @@
 }
 
 @media screen and (max-width: 480px) {
+    .ade-icons {
+      width:91%;
+    }
     .ade-icon {
         font-size: 1.3em;
     }

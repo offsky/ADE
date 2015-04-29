@@ -179,6 +179,7 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 		var scrollV = $(sp).scrollTop();
 		var scrollH = $(sp).scrollLeft();
 		var elPosition = element.position(); //offset relative to document
+		var elWidth = element.width();
 		var elOffset = element.offset(); //offset relative to positioned parent
 		var posLeft = Math.round(elPosition.left) - extraH;  // extraH = custom offset
 		var posTop = Math.round(elPosition.top) + element.height() + extraV;
@@ -199,18 +200,19 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 
 		if(windowW<=480) {
 			posLeft = scrollH+5;
-			popup.css({ left: posLeft, top: posTop, width: windowW-30});
+			popup.css({ left: posLeft, top: posTop });
 			// console.log(posLeft, windowW, scrollH);
 
 		} else {
 			//Move to the left if it would be off the right of page
 			if (pickerRight-scrollH > windowW) {
-				posLeft = posLeft - popupW + 30;
+				var off = pickerRight-scrollH - windowW;
+				posLeft = posLeft - off;//popupW + 30;
 				if(posLeft<0) posLeft = 0;
 				popup.addClass("rarrow");
 			}
 
-			// console.log("place",posLeft,posTop);
+			console.log("place",posLeft,posTop);
 			popup.css({ left: posLeft, top: posTop});
 		}
 	}

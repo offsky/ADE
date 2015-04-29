@@ -111,6 +111,7 @@ td {
 	display: inline-block;
 	min-width: 16px;
 	padding:2px;
+	text-align: center;
 }
 
 .sample,

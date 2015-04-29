@@ -1,6 +1,6 @@
 /*------------------------------------------------------- Common CSS (ade.css) */
 .bootstrap-timepicker {
-    max-width: 240px;
+    width: 240px;
 }
 
 .bootstrap-timepicker input[type="text"]{

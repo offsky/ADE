@@ -139,7 +139,7 @@ angular.module('ADE').directive('adeUrl', ['ADE', '$compile', '$filter', functio
 
 			//place the popup in the proper place on the screen
 			var place = function() {
-				ADE.place('.'+ADE.popupClass,element,15,-5);
+				ADE.place('.'+ADE.popupClass,element,0,-5);
 			};
 
 			//when a link is clicked

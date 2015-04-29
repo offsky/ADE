@@ -269,7 +269,9 @@
 
 				//Move to the left if it would be off the right of page
 				if (pickerRight-scroll > windowW) {
-					offset.left = offset.left - this.picker[0].offsetWidth + 30;
+					var off = pickerRight-scroll - windowW;
+					offset.left = offset.left - off;//this.picker[0].offsetWidth + 30
+					if(offset.left<0) offset.left = 0;
 					this.picker.addClass("rarrow");
 				}
 			}
@@ -282,7 +284,7 @@
 
 			if (pickerHeight - scroll > windowH) {
 				this.picker.css({
-					top: offset.top - this.picker[0].offsetHeight - 5
+					top: offset.top - this.picker[0].offsetHeight
 				}).addClass("flipped");
 			} else {
        	 	this.picker.removeClass("flipped");
