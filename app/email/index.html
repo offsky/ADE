@@ -27,18 +27,19 @@
             <li>Email admin@toodledo.com: <span ng-bind-html="'admin@toodledo.com' | email"></span> </li>
             <li>Invalid email "email": <span ng-bind-html='"email" | email'></span></li>
         </ul>
-    </section>
-    <section>
-		<h3>Email editing directive</h3>
+    	</section>
+   	
+   	<h2>Email editing directive</h2>
 		<p>A directive that makes an email address editable.</p>
-      	<div class="ade-editme" ade-url='email' ade-class="input-medium" ade-id="1234" ng-model="emailstring"></div>      
-     	 <div class="ade-editme" ade-url='email' ade-class="input-medium" ade-id="1235" ng-model="emailstring2"></div>
+   
+	    <section>
+	   	<div class="ade-editme" ade-url='email' ade-class="input-medium" ade-id="1234" ng-model="emailstring"></div>      
 
-		<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 
-		<b>Last Message :</b> 
-		<pre><span id="message" ng-controller="ctrl">{{ lastMessage }}</span></pre>
-	</section>
+			<b>Last Message :</b> 
+			<pre><span id="message" ng-controller="ctrl">{{ lastMessage }}</span></pre>
+		</section>
 		</div>
 
 		

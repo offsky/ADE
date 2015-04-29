@@ -28,12 +28,12 @@
 				<li>Invalid phone "phone": <span ng-bind-html='"phone" | phone'></span></li>
 		  </ul>
 		</section>
-		<section>
-			<h3>Phone number editing directive</h3>
-			<p>A simple directive that makes a phone number string editable.</p>
+			
+		<h2>Phone number editing directive</h2>
+		<p>A simple directive that makes a phone number string editable.</p>
 
+		<section>
 			<div class="ade-editme" ade-url='phone' ade-id="123" ade-class="input-medium" ng-model="phone"></div>
-			<div class="ade-editme" ade-url='phone' ade-id="125" ade-class="input-medium" ng-model="phone2"></div>
 		
 			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 

@@ -30,10 +30,12 @@
 			<li><a href="tests/datejs/index.html">Tests</a></li>
 			</ul>
 		</section>
+
+
+		<h2>Date Filter</h2>
+		<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. However, it only works in one scenario where you want the date/time printed in the user's local timezone.  If you want to print the absolute time, it didn't work. Our filter wraps angular's date filter and allows the display of absolute time.  To do this, you need to pass an array to our filter that has some additional information.</p>
 		
 		<section>
-			<h3>Date Filter</h3>
-			<p>AngularJS already has a <a href="http://docs.angularjs.org/api/ng.filter:date">good filter</a> for dates. However, it only works in one scenario where you want the date/time printed in the user's local timezone.  If you want to print the absolute time, it didn't work. Our filter wraps angular's date filter and allows the display of absolute time.  To do this, you need to pass an array to our filter that has some additional information.</p>
 		
 			<p>The input is an array <pre>[timestamp,absolutetimestamp,timezone]</pre></p>	
 				<ul>
@@ -57,12 +59,12 @@
 			<pre>[0,0] | validDate:['medium'] : {{ [0,0] | validDate:['medium'] }} </pre>
 			
 		</section>
-		<section>	
-			<h3>Date Directives</h3>
-			<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to clicking on the popup calendar, you can also type in things like "today" or "next week". Try it.</p>
+		
+		<h2>Date Directives</h2>
+		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to clicking on the popup calendar, you can also type in things like "today" or "next week". Try it.</p>
 
-				
-				<p>Year
+		<section>		
+			<p>Year
 			<input ade-calpop="yyyy" ade-yearonly="1" ng-model="date1a" type="text" class="input-small" /></p>
 			<p>Date
 			<input ade-calpop="MMM d, yyyy" ng-model="date1b" type="text" class="input-small" /></p>

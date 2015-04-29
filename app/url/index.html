@@ -17,9 +17,7 @@
 			<a href="../index.html">ADE demo</a> / URL
 		</div>
 		<div class="container" ng-controller="ctrl">
-		<!--[if lt IE 7]>
-			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-		<![endif]-->
+		
 			<h2>URL Filter</h2>
 			<p>A filter that convert a url string into a clickable link.</p>
 			<section>
@@ -27,12 +25,13 @@
 					<li>Url www.apple.com: <span ng-bind-html="'http://www.apple.com' | url"></span> </li>
 					<li>Invalid url "apple": <span ng-bind-html='"apple" | url'></span></li>
 			  	</ul>
-			  </section>
-			  <section>
-				<h3>URL Editing Directives</h3>
-				<p>A simple directive that makes a URL string editable.</p>
+			</section>
+			 
+			<h2>URL Editing Directives</h2>
+			<p>A simple directive that makes a URL string editable.</p>
+				
+			<section>
 				<div class="ade-editme" ade-url='url' ade-class="input-medium" ade-id="1234" ng-model="urlstring"></div>
-				<div class="ade-editme" ade-url='url' ade-class="input-medium" ade-id="1235" ng-model="urlstring2"></div>
 
 				<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
 			

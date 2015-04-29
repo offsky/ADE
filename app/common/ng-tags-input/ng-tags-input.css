@@ -3,7 +3,7 @@
 
 /* ------------------------------------ Base Style & Overwrites */
 tags-input {
-  display: block; 
+  display: inline-block; 
 }
 
 tags-input *, tags-input *:before, tags-input *:after {
