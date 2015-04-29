@@ -18,6 +18,8 @@ var KEYS = {
     space: 32,
     up: 38,
     down: 40,
+    left:37,
+    right:39,
     comma: 188
 };
 
@@ -564,7 +566,7 @@ tagsInput.directive('autoComplete', ["$document","$timeout","$sce","tagsInputCon
         scope: { source: '&' },
         templateUrl: 'ngTagsInput/auto-complete.html',
         link: function(scope, element, attrs, tagsInputCtrl) {
-            var hotkeys = [KEYS.enter, KEYS.tab, KEYS.escape, KEYS.up, KEYS.down],
+            var hotkeys = [KEYS.enter, KEYS.tab, KEYS.escape, KEYS.up, KEYS.down, KEYS.left, KEYS.right],
                 suggestionList, tagsInput, options, getItem, getDisplayText, shouldLoadSuggestions;
 
             tagsInputConfig.load('autoComplete', scope, attrs, {
@@ -680,11 +682,11 @@ tagsInput.directive('autoComplete', ["$document","$timeout","$sce","tagsInputCon
 
                     if (suggestionList.visible) {
 
-                        if (key === KEYS.down) {
+                        if (key === KEYS.down || key === KEYS.right) {
                             suggestionList.selectNext();
                             handled = true;
                         }
-                        else if (key === KEYS.up) {
+                        else if (key === KEYS.up || key === KEYS.left) {
                             suggestionList.selectPrior();
                             handled = true;
                         }
