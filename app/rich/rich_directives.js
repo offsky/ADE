@@ -96,23 +96,24 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				// console.log("save",adeId);
 				var oldValue = scope.ngModel;
 				exit = exited;
-						
-				var currentLength = $("#tinyText"+id).text().length;
+				
+				var tinyText = $("#tinyText"+id);
+				var currentLength = tinyText.text().length;
 
 				// don't save value on esc (revert)
 				// and if the current length is greater than max length
 				if ((exited != 3) && (!maxLength || (currentLength <= maxLength))) {
-					if(element!==undefined && element[0]!==undefined) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
+					if(element!==undefined && element[0]!==undefined && tinyText.length) { //if we can't find the editor, dont overwrite the old text with nothing. Just cancel
 						
 						// Convert relative urls to absolute urls
 						// http://aknosis.com/2011/07/17/using-jquery-to-rewrite-relative-urls-to-absolute-urls-revisited/
-						$('#tinyText'+id).find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
+						tinyText.find('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function() {
 							var href = this.getAttribute('href');
 							var hrefType = href.indexOf('@') !== -1 ? 'mailto:' : 'http://';
 							this.setAttribute('href', hrefType + href);
 						});
 
-						var value = $("#tinyText"+id)[0].innerHTML;
+						var value = tinyText[0].innerHTML;
 												
 						//auto-convert urls
 						//https://regex101.com/#javascript
@@ -124,7 +125,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			        	// value = value.replace(urlPattern, '<a href="$&">$&</a>');				
 
 						//readjust maxLength if it was artifically extended
-						var text = $("#tinyText"+id).text();
+						var text = tinyText.text();
 						if (maxLength > origMaxLength && maxLength>text.length) {
 							maxLength = text.length;
 						}
