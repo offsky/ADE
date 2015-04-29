@@ -113,7 +113,14 @@ td {
 	padding:2px;
 	text-align: center;
 }
-
+.ade-editme-rating {
+	border: 1px solid transparent;
+	background-color: #ddd;
+	cursor: pointer;
+	display: inline-block;
+	min-width: 16px;
+	padding:2px;
+}
 .sample,
 .ade-editme,
 input[type="text"] { 

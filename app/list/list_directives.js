@@ -56,6 +56,7 @@ angular.module('ADE').directive('adeList',
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var listPicker = null; //the added div with all the stuff in it
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
@@ -147,7 +148,9 @@ angular.module('ADE').directive('adeList',
 				var html = '<tags-input class="ade-list-input" ng-model="tags" min-length="1" on-tag-added="addTag()" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" placeholder="..."><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
 				$compile(html)(scope).insertAfter(element);
 
-				$('.ade-list-input').on("keydown",function(e) { //prevent tab key from doing default behavior
+				listPicker = element.next(".ade-list-input");
+
+				listPicker.on("keydown",function(e) { //prevent tab key from doing default behavior
 					if (e.keyCode == 9) { //tab
 						e.preventDefault();
 						e.stopPropagation();
@@ -156,7 +159,7 @@ angular.module('ADE').directive('adeList',
 				});
 
 				setTimeout(function() {
-					input = $('.ade-list-input .tag-list + input');
+					input = listPicker.find('.tag-list + input');
 					input.focus();
 					ADE.setupTouchBlur(input);
 				},100); //tag input needs little time to initialize before it can accept a focus
@@ -206,8 +209,10 @@ angular.module('ADE').directive('adeList',
 				element.show();
 
 				if(input) input.off();
-				$('.ade-list-input').off();
-				$('.ade-list-input').remove();
+				if(listPicker && listPicker.length) {
+					listPicker.off();
+					listPicker.remove();
+				}
 
 				ADE.teardownBlur();
 

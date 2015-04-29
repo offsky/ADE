@@ -201,7 +201,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 			//place the popup in the proper place on the screen by flipping it if necessary
 			var place = function() {
-				ADE.place('#ade-rich'+id,element,-20,-5);
+				//ADE.place('#ade-rich'+id,element,-20,-5);
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
 
@@ -235,12 +235,14 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 				if($('#tinyText'+id).length) {
 					var popW = $('#tinyText'+id).width();
 					var popL = $('#tinyText'+id).offset().left;
-					if(windowW<popL+popW) { //if it would be off the right side, move it over
+					if(windowW+scrollH<popL+popW) { //if it would be off the right side, move it over
+						var off = popL+popW - windowW + 15;
 						var space = windowW-popW;
-						
+						var newLeft = popL-off; //(space/2)
+
 						if(space>0) {
-							$('#tinyText'+id).css('left',(space/2)+"px");
-							$('.ade-toolbar').css('left',(space/2)+"px");
+							$('#tinyText'+id).css('left',newLeft+"px");
+							$('.ade-toolbar').css('left',newLeft+"px");
 						} else {
 							$('#tinyText'+id).css('left',"0px");
 							$('.ade-toolbar').css('left',"0px");

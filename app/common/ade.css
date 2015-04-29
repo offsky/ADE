@@ -21,6 +21,10 @@
     color: #333;
 }
 
+.ade-focus:focus {
+    border: 1px solid #1B75BC;    
+}
+
 /*-------------------------------------- Popups*/
 .ade-popup {
     position: absolute;

@@ -26,11 +26,11 @@
 				<p>A directive that allows you to pick values from a list. It allows you to programatically fill the list with options, and it allows the user to add a new option if the one they want isn't included (this is configurable). Uses a modified version of <a href="http://mbenford.github.io/ngTagsInput">ngTagsInput</a>.</p>
 				<section>
 					As an input box:<br />
-					<tags-input ng-model="tags" min-length="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true">
+					<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" tabindex="1" enable-editing-last-tag="true">
 						<auto-complete source="query($query,'list1')" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>
 					</tags-input>
 				
-					<br />
+					<br /><br />
 					As a div:<br />
 					<div class="ade-editme" ade-tag='list1' ade-query="query(val,listId)" ade-id="1001" tabindex="2" ng-model="data"></div>
 					<br /><br />

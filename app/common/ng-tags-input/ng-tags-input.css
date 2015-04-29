@@ -15,7 +15,7 @@ tags-input *, tags-input *:before, tags-input *:after {
 tags-input .tags {
   -moz-appearance: textfield;
   -webkit-appearance: textfield;
-  padding: 1px;
+  padding: 1px 1px 0px 1px;
   overflow: hidden;
   word-wrap: break-word;
   cursor: text;
@@ -27,6 +27,9 @@ tags-input .autocomplete .suggestion-list {
   margin: 0;
   padding: 0;
   list-style-type: none;
+  max-width: 300px;
+  min-width: 120px;
+  white-space: normal;
 }
 
 tags-input .autocomplete .suggestion-item {
@@ -55,6 +58,7 @@ tags-input .tags .tag-list {
   margin: 0;
   padding: 0;
   list-style-type: none;
+  float:left;
 }
 
 /* ---------------------------------------------- General Tag Styles */
@@ -91,10 +95,10 @@ tags-input .autocomplete .suggestion-item:hover {
 tags-input.ade-list-input .tags .tag-item,
 tags-input.ade-list-input .autocomplete .suggestion-item.selected,
 tags-input.ade-list-input .autocomplete .suggestion-item {
-  height: 30px;
+  height: 26px;
   background-color: #fafafa;
-  line-height: 30px;
-  padding: 0 20px;
+  line-height: 26px;
+  padding: 0 10px;
   margin: 0;
   display:block;
   z-index: 1000;
@@ -155,6 +159,10 @@ tags-input .tags .tag-item:hover {
 
 
 /* LIST */
+tags-input.ade-list-input .tag-list {
+  float:right;
+}
+
 tags-input.ade-list-input .tags .tag-item {
   float: none;
   display: inline-block;
@@ -177,15 +185,14 @@ tags-input .tags .input {
   padding: 0 .5em;
   font-size: 1em;
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  min-width: 100px;
-  margin: 5px;
+  margin: 6px 5px 0 5px;
 }
 
 
 /* LIST */
 tags-input.ade-list-input .tags .input {
   float: none;
-  margin: 10px 0 0 0;
+  margin: 2px 0 0 0;
   width: 100%;
   border: 1px solid #a1a1a1;
 }
@@ -194,9 +201,8 @@ tags-input.ade-list-input .tags .input {
 
 /* TAG */
 tags-input .autocomplete {
-  margin-top: 5px;
-  position: absolute;
-  padding: 10px 10px 7px 10px;
+  position: fixed;
+  padding: 5px 5px 2px 5px;
   z-index: 999;
   background-color: #fafafa;
   -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);

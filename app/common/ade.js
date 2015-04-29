@@ -207,12 +207,12 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 			//Move to the left if it would be off the right of page
 			if (pickerRight-scrollH > windowW) {
 				var off = pickerRight-scrollH - windowW;
-				posLeft = posLeft - off;//popupW + 30;
+				posLeft = posLeft - off - 15;//popupW + 30;
 				if(posLeft<0) posLeft = 0;
 				popup.addClass("rarrow");
 			}
 
-			console.log("place",posLeft,posTop);
+			// console.log("place",posLeft,posTop);
 			popup.css({ left: posLeft, top: posTop});
 		}
 	}
