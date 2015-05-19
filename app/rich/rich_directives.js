@@ -206,15 +206,15 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 
 				//https://remysharp.com/2012/05/24/issues-with-position-fixed-scrolling-on-ios
 
-				var sp = ADE.scrollParent(element);
-				var scrollV = $(sp).scrollTop();
-				var scrollH = $(sp).scrollLeft();
+				//var sp = ADE.scrollParent(element);
+				var scrollV = $(window).scrollTop();
+				var scrollH = $(window).scrollLeft();
 				var offset = element.offset();
 				var height = element.height();
 				var width = element.width();
 				var windowW = $(window).width();
 
-				// console.log("POSITION",offset.top,height,width,scrollV,scrollH,windowW);
+				// console.log("POSITION TOP/HEIGHT/SCROLL: ",offset.top,height,scrollV,"calc:",(offset.top-scrollV));
 				// console.trace();
 
 				//position the editable content
