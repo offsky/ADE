@@ -99,6 +99,19 @@ angular.module('ADE').filter('validDate', ['$filter', function($filter) {
 
 		var output = '';
 	
+		//this is a custom format that will smartly display the date in a compact way without extraneous info
+		//For example, if the date is this year it will omit the year. If the date is today it will show the time and omit otherwise
+		if(dateFormat=="smart") {
+			var now = new Date();
+			var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000;
+			var startOfYear = new Date(now.getFullYear(),0,0).getTime()/1000;
+			var endOfYear = new Date(now.getFullYear(),11,31).getTime()/1000;
+			if(startOfDay<timestamp && timestamp<startOfDay+86400) dateFormat = "'Today' h:mm a";
+			else if(startOfDay-86400<timestamp && timestamp<startOfDay) dateFormat = "'Yesterday' h:mm a";
+			else if(startOfYear<timestamp && timestamp<endOfYear) dateFormat = "MMM d";
+			else dateFormat = "mediumDate";
+		}
+
 		if (absolute && absolutetimestamp!==null) { //we want to display fixed GMT time regardless of user's timezone
 			//need to get timezoneoffset of absolute time to account for daylight savings time
 			var currentOffset = new Date(absolutetimestamp*1000).getTimezoneOffset(); //minutes

@@ -54,12 +54,16 @@
 
 			<p>Examples (set your computer's clock to different timezones to see the changes):</p>
 			<pre>[1373936400,1373911200,420] | validDate:['medium',true,false] : {{ [1373936400,1373911200,420] | validDate:['medium',true,false] }} </pre>
-			<pre>[1373936400,1373911200,420] | validDate:['mediumDate',true,true] : {{ [1373936400,1373911200,420] | validDate:['mediumDate',true,true] }} </pre>
+			<pre>[1373936400,1373911200,6000] | validDate:['mediumDate',true,true] : {{ [1373936400,1373911200,6000] | validDate:['mediumDate',true,true] }} </pre>
 			<pre>[1373936400,1373911200,420] | validDate:['mediumDate',false,true] : {{ [1373936400,1373911200,420] | validDate:['mediumDate',false,true] }} </pre>
 			<pre>[0,0] | validDate:['medium'] : {{ [0,0] | validDate:['medium'] }} </pre>
+
+			<p>We have also made a custom date format called "smart" which will intelligently display a date. It shows the time if it's today or yesterday and drops the year if it is the current year.</p>
+			<pre>[1373936400,1373911200,420] | validDate:['smart',false,false] : {{ [1373936400,1373911200,420] | validDate:['smart',false,false] }}</pre>
 			
 		</section>
 		
+
 		<h2>Date Directives</h2>
 		<p>There is a nice library called <a href="http://www.eyecon.ro/bootstrap-datepicker">Datepicker for Bootstrap</a> that uses <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> to make a popup calendar. We made some substantial modifications to get it to work with the Datejs library and AngularJS. In addition to clicking on the popup calendar, you can also type in things like "today" or "next week". Try it.</p>
 
