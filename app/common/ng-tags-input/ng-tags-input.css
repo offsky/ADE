@@ -1,6 +1,10 @@
  
 /* ADE Tag Picker */
 
+.ade-tags {
+    width: 390px;
+}
+
 /* ------------------------------------ Base Style & Overwrites */
 tags-input {
   display: inline-block; 
@@ -200,14 +204,15 @@ tags-input.ade-list-input .tags .input {
 /* -------------------------------------- Tag Suggestion Popover */
 
 /* TAG */
+tags-input .ade-tag-suggestion {
+  padding-left:6px;
+  margin:10px 0px 0px 0px;
+}
+
 tags-input .autocomplete {
-  position: fixed;
   padding: 5px 5px 2px 5px;
   z-index: 999;
   background-color: #fafafa;
-  -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  -moz-box-shadow:    1px 1px 2px 0px rgba(50, 50, 50, 0.3);
-  box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 }
 
 /* LIST */
@@ -220,15 +225,3 @@ tags-input.ade-list-input .autocomplete {
 tags-input .tags .input.invalid-tag {
   color: #DB2625;
 }
-
-
-
-
-
-
-
-
-
-
-
-

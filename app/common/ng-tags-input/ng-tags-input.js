@@ -817,7 +817,7 @@ tagsInput.directive('tiBindAttrs', function() {
 tagsInput.provider('tagsInputConfig', function() {
     var globalDefaults = {},
         interpolationStatus = {},
-        autosizeThreshold = 3;
+        autosizeThreshold = 5;
 
     /**
      * @ngdoc method
