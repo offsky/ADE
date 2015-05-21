@@ -178,22 +178,24 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 		var windowW = $(window).width();
 		var scrollV = $(sp).scrollTop();
 		var scrollH = $(sp).scrollLeft();
+		var scrollVwin = $(window).scrollTop();
+		var scrollHwin = $(window).scrollLeft();
 		var elPosition = element.position(); //offset relative to document
 		var elWidth = element.width();
 		var elOffset = element.offset(); //offset relative to positioned parent
 		var posLeft = Math.round(elPosition.left) - extraH;  // extraH = custom offset
 		var posTop = Math.round(elPosition.top) + element.height() + extraV;
-		var popupH = popup.height();
-		var popupW = popup.width();
+		var popupH = popup.outerHeight();
+		var popupW = popup.outerWidth();
 		var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
-		var pickerRight = elOffset.left-7 + popupW;
+		var pickerRight = posLeft + popupW;
 
 		popup.removeClass("flip");
 		popup.removeClass("rarrow");
 
 		//flip it up top if it would be off the bottom of page			
 		var posTopFlip = Math.round(elPosition.top) - popupH - 13;
-		if (pickerBottom-scrollV > windowH && posTopFlip>0) {
+		if (pickerBottom-scrollVwin > windowH && posTopFlip>0) {
 			posTop = posTopFlip;
 			popup.addClass("flip");
 		}
@@ -205,8 +207,8 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 
 		} else {
 			//Move to the left if it would be off the right of page
-			if (pickerRight-scrollH > windowW) {
-				var off = pickerRight-scrollH - windowW;
+			if (pickerRight-scrollHwin > windowW) {
+				var off = pickerRight-scrollHwin - windowW;
 				posLeft = posLeft - off - 15;//popupW + 30;
 				if(posLeft<0) posLeft = 0;
 				popup.addClass("rarrow");
