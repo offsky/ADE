@@ -154,7 +154,7 @@ angular.module('ADE').directive('adeTag',
 				$compile(html)(scope).insertAfter(element);
 				place();
 
-				tagPicker = element.next(".ade-tag-input");
+				tagPicker = element.next('.ade-tags').find('.ade-tag-input');
 
 				tagPicker.on("keydown",function(e) { //prevent tab key from doing default behavior
 					if (e.keyCode == 9) { //tab

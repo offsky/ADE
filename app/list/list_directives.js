@@ -82,7 +82,7 @@ angular.module('ADE').directive('adeList',
 				scope.tags = scope.tags.slice(-1);
 			}
 
-			//generates HTML for the star
+			//generates HTML for the list in read mode
 			var makeHTML = function() {
 				var html = "";
 
@@ -105,7 +105,7 @@ angular.module('ADE').directive('adeList',
 			var saveEdit = function(exited) {
 				var oldValue = scope.ngModel;
 				exit = exited;
-
+				
 				if (exited != 3) { //don't save value on esc
 					var value = scope.tags;
 					if (angular.isArray(value)) {
@@ -134,8 +134,6 @@ angular.module('ADE').directive('adeList',
 
 				adeId = scope.adeId;
 				ADE.begin(adeId);
-				element.hide();
-
 
 				var listId = '';
 				if (scope.adeList) listId = scope.adeList; //data that is passed through to the query function
@@ -145,10 +143,15 @@ angular.module('ADE').directive('adeList',
 				scope.tags = angular.copy(scope.ngModel);
 				if (angular.isString(scope.tags)) scope.tags = scope.tags.split(',');
 
-				var html = '<tags-input class="ade-list-input" ng-model="tags" min-length="1" on-tag-added="addTag()" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" placeholder="..."><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete></tags-input>';
-				$compile(html)(scope).insertAfter(element);
+				var html = '<div class="' + ADE.popupClass + ' ade-list dropdown-menu open">';
+					html += '<tags-input class="ade-list-input" ng-model="tags" min-length="1" on-tag-added="addTag()" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" placeholder="New Value">';
+					html += '<auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>';
+					html += '</tags-input></div>';
 
-				listPicker = element.next(".ade-list-input");
+				$compile(html)(scope).insertAfter(element);
+				place();
+
+				listPicker = element.next('.ade-list').find('.ade-list-input');
 
 				listPicker.on("keydown",function(e) { //prevent tab key from doing default behavior
 					if (e.keyCode == 9) { //tab
@@ -158,12 +161,23 @@ angular.module('ADE').directive('adeList',
 					}
 				});
 
+				ADE.setupScrollEvents(element,function() {
+					scope.$apply(function() {
+						place();
+					});
+				});
+
 				setTimeout(function() {
 					input = listPicker.find('.tag-list + input');
 					input.focus();
 					ADE.setupTouchBlur(input);
 				},100); //tag input needs little time to initialize before it can accept a focus
 
+			};
+
+			//place the popup in the proper place on the screen
+			var place = function() {
+				ADE.place('.'+ADE.popupClass,element,0,15);
 			};
 
 			var focusHandler = function(e) {
@@ -206,7 +220,8 @@ angular.module('ADE').directive('adeList',
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				element.show();
+				ADE.hidePopup();
+				ADE.teardownScrollEvents(element);
 
 				if(input) input.off();
 				if(listPicker && listPicker.length) {

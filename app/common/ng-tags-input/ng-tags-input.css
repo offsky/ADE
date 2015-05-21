@@ -2,8 +2,14 @@
 /* ADE Tag Picker */
 
 .ade-tags {
-    width: 390px;
+    width: 350px;
 }
+
+.ade-list {
+    width: inherit;
+    height: 39px;
+}
+
 
 /* ------------------------------------ Base Style & Overwrites */
 tags-input {
@@ -83,6 +89,10 @@ tags-input .autocomplete .suggestion-item {
   box-shadow:         1px 1px 2px 0px rgba(50, 50, 50, 0.3);
 }
 
+tags-input .autocomplete .suggestion-item {
+  max-width: 200px;
+}
+
 tags-input .autocomplete .suggestion-item.selected {
   background-color: #ccc;
 }
@@ -141,6 +151,7 @@ tags-input .tags .tag-item .remove-button {
   border: none;
   background: none;
   cursor: pointer;
+  float:right;
 }
 
 tags-input .tags .tag-item .remove-button:hover,
@@ -165,6 +176,7 @@ tags-input .tags .tag-item:hover {
 /* LIST */
 tags-input.ade-list-input .tag-list {
   float:right;
+  margin-left: 10px;
 }
 
 tags-input.ade-list-input .tags .tag-item {
@@ -177,7 +189,14 @@ tags-input.ade-list-input .tags .tag-item:hover {
   background-color: #eee;
 }
 
-
+tags-input .tags .tag-item span {
+  max-width: 200px;
+  white-space: nowrap;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 20px;
+}
 /* ----------------------------------------------- New Tag Input */
 
 /* TAG */
@@ -194,6 +213,14 @@ tags-input .tags .input {
 
 
 /* LIST */
+.ade-list tags-input {
+  width:100%;
+}
+
+tags-input.ade-list-input .tags {
+  white-space: nowrap;
+}
+
 tags-input.ade-list-input .tags .input {
   float: none;
   margin: 2px 0 0 0;
