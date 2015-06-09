@@ -181,6 +181,7 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 					var node = angular.element(el);
 					node.on('click.ADE', function() {
 						window.clearTimeout(timeout); 
+						if(node.hasClass('selected')) return; //already selected
 						var iconClass =  node.attr('class'); //gets what you clicked on by class name
 
 						if (iconClass.match('ade-icon')) { //makes sure we clicked
