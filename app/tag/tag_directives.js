@@ -153,6 +153,9 @@ angular.module('ADE').directive('adeTag',
 					html += '</tags-input></div>';
 				$compile(html)(scope).insertAfter(element);
 				place();
+				setTimeout(function() { //need to give it time to render before moving it
+				place();
+				});
 
 				tagPicker = element.next('.ade-tags').find('.ade-tag-input');
 

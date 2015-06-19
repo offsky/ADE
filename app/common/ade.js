@@ -169,52 +169,48 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 		var popup = $(id);
 		if(popup.length==0) return; //doesn't exist. oops
 		
-		var sp = scrollParent(element);
-
 		if(!extraV) extraV = 2;
 		if(!extraH) extraH = 7;
 
 		var windowH = $(window).height();
 		var windowW = $(window).width();
-		var scrollV = $(sp).scrollTop();
-		var scrollH = $(sp).scrollLeft();
-		var scrollVwin = $(window).scrollTop();
-		var scrollHwin = $(window).scrollLeft();
-		var elPosition = element.position(); //offset relative to document
-		var elWidth = element.width();
-		var elOffset = element.offset(); //offset relative to positioned parent
-		var posLeft = Math.round(elPosition.left) - extraH;  // extraH = custom offset
-		var posTop = Math.round(elPosition.top) + element.height() + extraV;
+		// var sp = scrollParent(element);
+		// var scrollV = $(sp).scrollTop();
+		// var scrollH = $(sp).scrollLeft();
+		// var scrollVwin = $(window).scrollTop();
+		// var scrollHwin = $(window).scrollLeft();
+		// var elWidth = element.width();
+		// var elPosition = element.position(); //offset relative to document
+		// var elOffset = element.offset(); //offset relative to positioned parent
+		var elViewport = element[0].getBoundingClientRect();
+		var posLeft = Math.round(elViewport.left) - extraH;  // extraH = custom offset
+		var posTop = Math.round(elViewport.top) + element.height() + extraV;
 		var popupH = popup.outerHeight();
 		var popupW = popup.outerWidth();
-		var pickerBottom =  elOffset.top+element.height() + 2 + popupH;
+		var pickerBottom =  elViewport.top+element.height() + 2 + popupH;
 		var pickerRight = posLeft + popupW;
 
 		popup.removeClass("flip");
 		popup.removeClass("rarrow");
 
 		//flip it up top if it would be off the bottom of page			
-		var posTopFlip = Math.round(elPosition.top) - popupH - 13;
-		if (pickerBottom-scrollVwin > windowH && posTopFlip>0) {
+		var posTopFlip = Math.round(elViewport.top) - popupH - extraV;
+		if (pickerBottom > windowH && posTopFlip>0) {
 			posTop = posTopFlip;
 			popup.addClass("flip");
 		}
 
-		if(windowW<=480) {
-			posLeft = scrollH+5;
+		if(windowW<=480) { //on mobile screens, go full width
+			posLeft = 5;
 			popup.css({ left: posLeft, top: posTop });
-			// console.log(posLeft, windowW, scrollH);
-
 		} else {
 			//Move to the left if it would be off the right of page
-			if (pickerRight-scrollHwin > windowW) {
-				var off = pickerRight-scrollHwin - windowW;
+			if (pickerRight > windowW) {
+				var off = pickerRight - windowW;
 				posLeft = posLeft - off - 15;//popupW + 30;
 				if(posLeft<0) posLeft = 0;
 				popup.addClass("rarrow");
 			}
-
-			// console.log("place",posLeft,posTop);
 			popup.css({ left: posLeft, top: posTop});
 		}
 	}

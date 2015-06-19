@@ -3,6 +3,10 @@
     width: 240px;
 }
 
+.bootstrap-timepicker.dropdown-menu {
+    position: absolute;
+}
+
 .bootstrap-timepicker input[type="text"]{
     width: 30px;
     height: 30px

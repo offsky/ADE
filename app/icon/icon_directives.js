@@ -151,7 +151,11 @@ angular.module('ADE').directive('adeIcon', ['ADE', '$compile', '$filter', functi
 				if ((isMySpan || isMyDiv)  && (!iconPopup || !iconPopup.length)) {   //don't popup a second one
 					editing = true;
 					$compile('<div class="' + ADE.popupClass + ' ade-icons dropdown-menu open"><div class="ade-hidden"><input id="invisicon" type="text" /></div><h4>Select an Icon</h4>' + iconsPopupTemplate + '</div>')(scope).insertAfter(element);
+					
 					place();
+					setTimeout(function() { //need to give it time to render before moving it
+						place();
+					});
 
 					setupEvents();
 				}

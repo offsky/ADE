@@ -149,7 +149,11 @@ angular.module('ADE').directive('adeList',
 					html += '</tags-input></div>';
 
 				$compile(html)(scope).insertAfter(element);
+				
 				place();
+				setTimeout(function() { //need to give it time to render the extra height before moving it
+					place();
+				});
 
 				listPicker = element.next('.ade-list').find('.ade-list-input');
 

@@ -5,6 +5,9 @@
 	display:none; 
 }
 
+.datepicker.dropdown-menu {
+	position: absolute;
+}
 .datepicker th.switch,
 .datepicker span.month:hover,
 .datepicker td.day:hover,
