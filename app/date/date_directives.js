@@ -339,13 +339,13 @@ angular.module('ADE').directive('adeDate', ['ADE', '$compile', '$filter', functi
 
 			//place the popup in the proper place on the screen
 			var place = function() {
-				ADE.place('.'+ADE.popupClass,element,0,-5);
+				ADE.place('.ade-date-popup.'+ADE.popupClass,element,0,-5);
 			};
 
 			//When mousing over the div it will display a popup with the day of the week
 			if(!('ontouchstart' in window) && scope.adeHover) { //don't do on touch devices
 				element.on('mouseover.ADE', function() {
-					ADE.hidePopup();
+					ADE.hidePopup(element);
 					var value = element.text();
 					if (value === "" || value.length <= 4) return;
 					//strip off timezone if present

@@ -27,6 +27,9 @@ angular.module('ADE', ['ngSanitize']).factory('ADE', ['$rootScope', function($ro
 	var keyboardEdit = true; 
 	var blurTimeout = false; //a timeout that allows external factors to cancel a blur event
 
+
+	//=========================================================================================
+	// Hides the popup attached to the element
 	function hidePopup(elm) {
 		var elPopup = (elm) ? elm.next('.' + popupClass) : angular.element('.' + popupClass);
 		if (elPopup.length && elPopup.hasClass('open')) {

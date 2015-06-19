@@ -156,7 +156,7 @@ angular.module('ADE').directive('adeTag',
 				scope.tags = angular.copy(scope.ngModel);
 				if (angular.isString(scope.tags)) scope.tags = scope.tags.split(',');
 				if(!angular.isArray(scope.tags)) scope.tags = [];
-				
+
 				var html = '<div class="' + ADE.popupClass + ' ade-tags dropdown-menu open">';
 					html += '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" focus-on-load="true">';
 					html += '<div class="ade-tag-suggestion">Suggestions:</div><div class="ade-tag-emptytip">Type in a new tag and press return</div><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>';
@@ -234,8 +234,9 @@ angular.module('ADE').directive('adeTag',
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
 
+
 			var destroy = function() {
-				ADE.hidePopup();
+				ADE.hidePopup(element);
 				ADE.teardownScrollEvents(element);
 
 				if(input) input.off();
