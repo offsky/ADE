@@ -171,7 +171,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					return;
 				}
 
-				ADE.hidePopup(); //hide any ADE popups already presented
+				//ADE.hidePopup(); //hide any ADE popups already presented
 
 				var modelValue = scope.ngModel ? scope.ngModel : "";
 				var editor = '<div id="ade-rich' + id + '" class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
