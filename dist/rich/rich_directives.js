@@ -171,7 +171,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					return;
 				}
 
-				ADE.hidePopup(); //hide any ADE popups already presented
+				//ADE.hidePopup(); //hide any ADE popups already presented
 
 				var modelValue = scope.ngModel ? scope.ngModel : "";
 				var editor = '<div id="ade-rich' + id + '" class="ade-rich"><div id="tinyText' + id + '" class="ade-content">' + modelValue + '</div></div>';
@@ -520,7 +520,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					});
 					element.on('touchstart.rADE',function(e) {
 						console.log("touchstart");
-						ignoreClick = true;
+						//ignoreClick = true; //TODO: make this a preference. If uncommented, it will go into read mode first. Causes a problem if the read mode is empty. Can't edit an empty value
 					});
 				}
 				if(!readonly) {
