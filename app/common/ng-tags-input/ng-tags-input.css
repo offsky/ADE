@@ -236,6 +236,12 @@ tags-input .ade-tag-suggestion {
   margin:10px 0px 0px 0px;
 }
 
+tags-input .ade-tag-emptytip {
+  display:none;
+  padding-left:6px;
+  margin:10px 0px 0px 0px;
+}
+
 tags-input .autocomplete {
   padding: 5px 5px 2px 5px;
   z-index: 999;

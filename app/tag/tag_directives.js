@@ -61,7 +61,19 @@ angular.module('ADE').directive('adeTag',
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 
 			scope.query = function(val) { //called by ng-tags-input on each keystroke to get the autocomplete
-				return scope.adeQuery({val:val, listId: scope.adeTag});
+				setTimeout(function() { //need to give it time to render the extra height before moving it
+					var items = $("auto-complete .suggestion-list li");
+					if(items.length==0) {
+						$('.ade-tag-suggestion').hide();
+						$('.ade-tag-emptytip').show();
+					} else {
+						$('.ade-tag-suggestion').show();
+						$('.ade-tag-emptytip').hide();
+					}
+				},100);
+
+				var promise = scope.adeQuery({val:val, listId: scope.adeTag});
+				return promise;
 			};
 			scope.esc = function() { //called by ng-tags-input when esc key is pressed 
 				destroy();
@@ -139,22 +151,21 @@ angular.module('ADE').directive('adeTag',
 				adeId = scope.adeId;
 				ADE.begin(adeId);
 
-				var listId = '';
-				if (scope.adeList) listId = scope.adeList; //data that is passed through to the query function
-
 				var autocomplete = "query($query)";
 
 				scope.tags = angular.copy(scope.ngModel);
 				if (angular.isString(scope.tags)) scope.tags = scope.tags.split(',');
-
+				if(!angular.isArray(scope.tags)) scope.tags = [];
+				
 				var html = '<div class="' + ADE.popupClass + ' ade-tags dropdown-menu open">';
 					html += '<tags-input class="ade-tag-input" ng-model="tags" min-length="1" replace-spaces-with-dashes="false" enable-editing-last-tag="true" on-esc-key="esc()" on-ret-key="ret(e)" on-blurred="blurred(how)" focus-on-load="true">';
-					html += '<div class="ade-tag-suggestion">Suggestions:</div><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>';
+					html += '<div class="ade-tag-suggestion">Suggestions:</div><div class="ade-tag-emptytip">Type in a new tag and press return</div><auto-complete source="'+autocomplete+'" min-length="1" load-on-empty="true" load-on-focus="true"></auto-complete>';
 					html += '</tags-input></div>';
 				$compile(html)(scope).insertAfter(element);
+				
 				place();
 				setTimeout(function() { //need to give it time to render before moving it
-				place();
+					place();
 				});
 
 				tagPicker = element.next('.ade-tags').find('.ade-tag-input');

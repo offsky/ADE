@@ -59,7 +59,7 @@ function makeObjectArray(array, key) {
 }
 
 function findInObjectArray(array, obj, key) {
-    if(array===undefined) {
+    if(array===undefined || array===null) {
         return null;
     }
     var item = null;
