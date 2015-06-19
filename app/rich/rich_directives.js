@@ -520,7 +520,7 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 					});
 					element.on('touchstart.rADE',function(e) {
 						console.log("touchstart");
-						ignoreClick = true;
+						//ignoreClick = true; //TODO: make this a preference. If uncommented, it will go into read mode first. Causes a problem if the read mode is empty. Can't edit an empty value
 					});
 				}
 				if(!readonly) {
