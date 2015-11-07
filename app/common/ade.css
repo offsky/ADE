@@ -439,3 +439,69 @@
         height: 30px;
     }
 }
+
+
+/*--------------------------------------  Color Directive */
+
+.ade-color-picker {
+    width: 390px;
+}
+
+.ade-color-picker-gradient {
+    font-size: 18px;
+    height: 27px;
+    width: 27px;
+    line-height: 27px;
+    text-align: center;
+    display: inline-block;
+    color: #747369;
+    background-color: white;
+    border: 1px solid #E4E6E9;
+    margin: 2px;
+    cursor: pointer;
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#000000), to(rgba(204, 154, 129, 0)));
+    background-image: -moz-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00CC9A81, endColorstr=#FF000000)";
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CC9A81', endColorstr='#FF000000');
+}
+
+.ade-icons .ade-icon:hover {
+    color: #000;
+    cursor: pointer;
+}
+
+.ade-icons h4 {
+    margin: 0px;
+}
+
+.ade-icon.icon-ban-circle {
+    color: #999;
+}
+
+.ade-popup a.ade-clear,
+.ade-nopop a.ade-clear {
+    cursor: pointer;
+    background: none;
+    float: right;
+    padding: 3px 0px;
+    margin: -30px 0 0 0;
+    color: #08c;
+    font-size: 12px;
+}
+
+.ade-icons span {
+    width: 14px;
+    height: 16px;
+    display: inline-block;
+    text-align: center;
+}
+
+.ade-icons span.selected {
+    color: #1B75BC;
+}
+
+.ade-icons span.selected:hover {
+    color: #1B75BC;
+}
