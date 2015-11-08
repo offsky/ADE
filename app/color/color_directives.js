@@ -29,7 +29,7 @@ Messages:
  ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
-	var colorsPopupTemplate = '<span class="test-div"></span>';
+	var colorsPopupTemplate = '<div class="ade-color-gradient"><div class="ade-color-gradient-sat"><div class="ade-color-spot"></div></div></div><div class="ade-color-hue"></div>';
 
 	return {
 		require: '?ngModel', //optional dependency for ngModel
@@ -130,7 +130,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 
 				if ((isMySpan || isMyDiv)  && (!colorPopup || !colorPopup.length)) {   //don't popup a second one
 					editing = true;
-					$compile('<div class="' + ADE.popupClass + ' ade-color-picker-gradient dropdown-menu open"><div class="ade-hidden"><input id="invisicon" type="text" /></div><h4>Pick a color</h4>' + colorsPopupTemplate + '</div>')(scope).insertAfter(element);
+					$compile('<div class="' + ADE.popupClass + ' ade-color-picker dropdown-menu open"><div class="ade-hidden"><input id="invisicon" type="text" /></div><h4>Pick a color</h4>' + colorsPopupTemplate + '</div>')(scope).insertAfter(element);
 					
 					place();
 					setTimeout(function() { //need to give it time to render before moving it

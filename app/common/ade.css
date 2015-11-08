@@ -443,22 +443,40 @@
 
 /*--------------------------------------  Color Directive */
 
+.ade-color {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #333;
+}
 .ade-color-picker {
-    width: 390px;
+    width: 240px;
 }
 
-.ade-color-picker-gradient {
-    font-size: 18px;
-    height: 27px;
-    width: 27px;
-    line-height: 27px;
-    text-align: center;
+.ade-color-picker h4 {
+    margin: 0px;
+}
+
+.ade-color-gradient {
+    position: relative;
     display: inline-block;
-    color: #747369;
-    background-color: white;
-    border: 1px solid #E4E6E9;
-    margin: 2px;
-    cursor: pointer;
+    width: 200px;
+    height: 150px;
+    border: 1px solid #333;
+    background-color: red;
+    background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to right, #fff, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr=#FFFFFFFF, endColorstr=#00CC9A81)";
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr='#FFFFFFFF', endColorstr='#00CC9A81');
+}
+
+.ade-color-gradient-sat {
+    height: 100%;
+    width: 100%;
     background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#000000), to(rgba(204, 154, 129, 0)));
     background-image: -moz-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
     background-image: -o-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
@@ -467,41 +485,28 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CC9A81', endColorstr='#FF000000');
 }
 
-.ade-icons .ade-icon:hover {
-    color: #000;
+.ade-color-spot {
+    border-radius: 50%;
+    height: 4px;
+    width: 4px;
+    border: 1px solid #fff;
+    background: #333;
     cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-.ade-icons h4 {
-    margin: 0px;
-}
-
-.ade-icon.icon-ban-circle {
-    color: #999;
-}
-
-.ade-popup a.ade-clear,
-.ade-nopop a.ade-clear {
-    cursor: pointer;
-    background: none;
-    float: right;
-    padding: 3px 0px;
-    margin: -30px 0 0 0;
-    color: #08c;
-    font-size: 12px;
-}
-
-.ade-icons span {
-    width: 14px;
-    height: 16px;
+.ade-color-hue {
     display: inline-block;
-    text-align: center;
-}
-
-.ade-icons span.selected {
-    color: #1B75BC;
-}
-
-.ade-icons span.selected:hover {
-    color: #1B75BC;
+    width: 30px;
+    height: 150px;
+    border: 1px solid #333;
+    margin-left: 5px;
+    background: -moz-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -ms-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -o-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), color-stop(0.17, #ffff00), color-stop(0.33, #00ff00), color-stop(0.5, #00ffff), color-stop(0.67, #0000ff), color-stop(0.83, #ff00ff), to(#ff0000));
+    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
 }
