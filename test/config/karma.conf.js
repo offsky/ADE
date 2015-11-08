@@ -18,6 +18,9 @@ module.exports = function(config) {
 
       'app/common/*.js',
 
+      'app/color/*.js',
+      'test/unit/color/*.js',
+
       'app/date/*.js',
       'test/unit/date/*.js',
 

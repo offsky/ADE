@@ -105,6 +105,7 @@ module.exports = function (grunt) {
 	        }
 	      },
 	      all: [
+		  	'app/color/*.js',
             'app/common/*.js',
             'app/date/*.js',
             'app/decimal/*.js',
@@ -142,7 +143,8 @@ module.exports = function (grunt) {
         report: {
             files: {
                 'reports/': [
-                 'app/common/*.js',
+					'app/color/*.js',
+                 	'app/common/*.js',
 		            'app/date/*.js',
 		            'app/decimal/*.js',
 		            'app/duration/*.js',
