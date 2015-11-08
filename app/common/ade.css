@@ -450,7 +450,7 @@
     border: 1px solid #333;
 }
 .ade-color-picker {
-    width: 240px;
+    width: 205px;
 }
 
 .ade-color-picker h4 {
@@ -460,9 +460,8 @@
 .ade-color-gradient {
     position: relative;
     display: inline-block;
-    width: 200px;
+    width: 180px;
     height: 150px;
-    border: 1px solid #333;
     background-color: red;
     background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
     background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));
@@ -487,26 +486,35 @@
 
 .ade-color-spot {
     border-radius: 50%;
-    height: 4px;
-    width: 4px;
-    border: 1px solid #fff;
+    height: 6px;
+    width: 6px;;
     background: #333;
     cursor: pointer;
     position: absolute;
     top: 0;
     left: 0;
+    border: 1px solid #fff;
 }
 
 .ade-color-hue {
+    position: relative;
     display: inline-block;
-    width: 30px;
+    width: 20px;
     height: 150px;
-    border: 1px solid #333;
     margin-left: 5px;
-    background: -moz-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-    background: -ms-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-    background: -o-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-    background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), color-stop(0.17, #ffff00), color-stop(0.33, #00ff00), color-stop(0.5, #00ffff), color-stop(0.67, #0000ff), color-stop(0.83, #ff00ff), to(#ff0000));
-    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-    background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background-image: url(../color/img/slider.png);
+}
+
+.ade-color-hue-picker {
+    position: absolute;
+    top: 0;
+    left: -1px;
+    width: 18px;
+    height: 2px;
+    background: #fff;
+    border: solid 1px #000;
+    margin-top: -2px;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
 }

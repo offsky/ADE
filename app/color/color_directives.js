@@ -29,7 +29,7 @@ Messages:
  ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
-	var colorsPopupTemplate = '<div class="ade-color-gradient"><div class="ade-color-gradient-sat"><div class="ade-color-spot"></div></div></div><div class="ade-color-hue"></div>';
+	var colorsPopupTemplate = '<div class="ade-color-gradient"><div class="ade-color-gradient-sat"><div class="ade-color-spot"></div></div></div><div class="ade-color-hue"><div class="ade-color-hue-picker"></div></div>';
 
 	return {
 		require: '?ngModel', //optional dependency for ngModel
@@ -55,6 +55,157 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeNopop!==undefined && scope.adeNopop=="1") nopop = true;
+
+			function parseHex(string, expand) {
+				string = string.replace(/^#/g, '');
+				if (!string.match(/^[A-F0-9]{3,6}/ig)) return '';
+				if (string.length !== 3 && string.length !== 6) return '';
+				if (string.length === 3 && expand) {
+					string = string[0] + string[0] + string[1] + string[1] + string[2] + string[2];
+				}
+				return '#' + string;
+			}
+			function hsb2rgb(hsb) {
+				var rgb = {};
+				var h = Math.round(hsb.h);
+				var s = Math.round(hsb.s * 255 / 100);
+				var v = Math.round(hsb.b * 255 / 100);
+				if (s === 0) {
+					rgb.r = rgb.g = rgb.b = v;
+				} else {
+					var t1 = v;
+					var t2 = (255 - s) * v / 255;
+					var t3 = (t1 - t2) * (h % 60) / 60;
+					if (h === 360) h = 0;
+					if (h < 60) {
+						rgb.r = t1;
+						rgb.b = t2;
+						rgb.g = t2 + t3;
+					} else if (h < 120) {
+						rgb.g = t1;
+						rgb.b = t2;
+						rgb.r = t1 - t3;
+					} else if (h < 180) {
+						rgb.g = t1;
+						rgb.r = t2;
+						rgb.b = t2 + t3;
+					} else if (h < 240) {
+						rgb.b = t1;
+						rgb.r = t2;
+						rgb.g = t1 - t3;
+					} else if (h < 300) {
+						rgb.b = t1;
+						rgb.g = t2;
+						rgb.r = t2 + t3;
+					} else if (h < 360) {
+						rgb.r = t1;
+						rgb.g = t2;
+						rgb.b = t1 - t3;
+					} else {
+						rgb.r = 0;
+						rgb.g = 0;
+						rgb.b = 0;
+					}
+				}
+				return {
+					r: Math.round(rgb.r),
+					g: Math.round(rgb.g),
+					b: Math.round(rgb.b)
+				};
+			}
+			function hex2hsb(hex) {
+				var hsb = rgb2hsb(hex2rgb(hex));
+				if (hsb.s === 0) hsb.h = 360;
+				return hsb;
+			}
+			function rgb2hex(rgb) {
+				var hex = [rgb.r.toString(16), rgb.g.toString(16), rgb.b.toString(16)];
+				$.each(hex, function(nr, val) {
+					if (val.length === 1) hex[nr] = '0' + val;
+				});
+				return '#' + hex.join('');
+			}
+			function hsb2hex(hsb) {
+				return rgb2hex(hsb2rgb(hsb));
+			}
+
+			function keepWithin(value, min, max) {
+				if (value < min) value = min;
+				if (value > max) value = max;
+				return value;
+			}
+			function hex2rgb(hex) {
+				hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
+				return {
+					r: hex >> 16,
+					g: (hex & 0x00FF00) >> 8,
+					b: (hex & 0x0000FF)
+				};
+			}
+			function rgb2hsb(rgb) {
+				var hsb = {
+					h: 0,
+					s: 0,
+					b: 0
+				};
+				var min = Math.min(rgb.r, rgb.g, rgb.b);
+				var max = Math.max(rgb.r, rgb.g, rgb.b);
+				var delta = max - min;
+				hsb.b = max;
+				hsb.s = max !== 0 ? 255 * delta / max : 0;
+				if (hsb.s !== 0) {
+					if (rgb.r === max) {
+						hsb.h = (rgb.g - rgb.b) / delta;
+					} else if (rgb.g === max) {
+						hsb.h = 2 + (rgb.b - rgb.r) / delta;
+					} else {
+						hsb.h = 4 + (rgb.r - rgb.g) / delta;
+					}
+				} else {
+					hsb.h = -1;
+				}
+				hsb.h *= 60;
+				if (hsb.h < 0) {
+					hsb.h += 360;
+				}
+				hsb.s *= 100 / 255;
+				hsb.b *= 100 / 255;
+				return hsb;
+			}
+
+			function move(target, event) {
+				var picker = target.find('.ade-color-spot, .ade-color-hue-picker'),
+					offsetX = target.offset().left,
+					offsetY = target.offset().top,
+					x = Math.round(event.pageX - offsetX),
+					y = Math.round(event.pageY - offsetY),
+					wx, wy, r, phi, coords;
+
+				if (event.originalEvent.changedTouches) {
+					x = event.originalEvent.changedTouches[0].pageX - offsetX;
+					y = event.originalEvent.changedTouches[0].pageY - offsetY;
+				}
+				if (x < 0) x = 0;
+				if (y < 0) y = 0;
+				if (x > target.width()) x = target.width();
+				if (y > target.height()) y = target.height();
+
+				if (picker.hasClass('ade-color-hue-picker')) {
+					coords = {
+						top: y + 'px'
+					};
+				} else {
+					coords = {
+						top: y + 'px',
+						left: x + 'px'
+					};
+				}
+
+				picker.stop(true).animate(coords, 30, 'swing', function() {
+					getColor(target);
+				});
+
+			}
 
 			var makeHTML = function() {
 				var html = "";
@@ -136,66 +287,94 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 					setTimeout(function() { //need to give it time to render before moving it
 						place();
 					});
-
+				    setColor(scope.ngModel);
 					setupEvents();
 				}
 			};
 
+		    var setColor = function(color) {
+				var hex = color, hsb, x, y,
+					box = angular.element('.ade-color-gradient'),
+					boxPicker = box.find('.ade-color-spot'),
+					slider = angular.element('.ade-color-hue'),
+					sliderPicker = slider.find('.ade-color-hue-picker');
+
+				hsb = hex2hsb(parseHex(hex, true));
+
+				x = keepWithin(Math.ceil(hsb.s / (100 / box.width())), 0, box.width());
+				y = keepWithin(box.height() - Math.ceil(hsb.b / (100 / box.height())), 0, box.height());
+				boxPicker.css({
+					top: y - (boxPicker.outerHeight()/2) + 'px',
+					left: x - (boxPicker.outerWidth()/2) + 'px'
+				});
+				y = keepWithin(slider.height() - (hsb.h / (360 / slider.height())), 0, slider.height());
+				sliderPicker.css('top', y + 'px');
+				box.css('backgroundColor', hsb2hex({
+					h: hsb.h,
+				  	s: 100,
+					b: 100
+				}));
+			};
+
+			var getColor = function(target) {
+				function getCoords(picker, container) {
+					var left, top;
+					if (!picker.length || !container) return null;
+					left = picker.offset().left;
+					top = picker.offset().top;
+					return {
+						x: left - container.offset().left + (picker.outerWidth() / 2),
+						y: top - container.offset().top + (picker.outerHeight() / 2)
+					};
+				}
+				var hue, saturation, brightness, x, y, r, phi, hex,
+					box = angular.element('.ade-color-gradient'),
+					boxPicker = box.find('.ade-color-spot'),
+					slider = angular.element('.ade-color-hue'),
+					sliderPicker = slider.find('.ade-color-hue-picker'),
+					boxPos = getCoords(boxPicker, box),
+					sliderPos = getCoords(sliderPicker, slider);
+
+				hue = keepWithin(360 - parseInt(sliderPos.y * (360 / slider.height()), 10), 0, 360);
+				saturation = keepWithin(Math.floor(boxPos.x * (100 / box.width())), 0, 100);
+				brightness = keepWithin(100 - Math.floor(boxPos.y * (100 / box.height())), 0, 100);
+				hex = hsb2hex({
+					h: hue,
+					s: saturation,
+					b: brightness
+				});
+
+				if (target.hasClass('ade-color-hue')) {
+					box.css('backgroundColor', hsb2hex({
+						h: hue,
+						s: 100,
+						b: 100
+					}));
+				} else {
+					saveEdit(0, hex);
+				}
+			};
+
 			var setupEvents = function() {
-				input = angular.element('#invisicon');
-					
-				var nextElement = element;
-				if(!nopop) nextElement = element.next('.ade-popup');
-				var clearNode = nextElement.find('.ade-clear');
-				var iconNode = nextElement.find('span');
+				var box = angular.element('.ade-color-gradient');
+				var slider = angular.element('.ade-color-hue')
 
-				//highlight current selection
-				var current = nextElement.find(".icon-"+scope.ngModel);
-				current.addClass('selected');
-
-				//handles click on clear link
-				clearNode.on('click.ADE', function() {
-					scope.$apply(function() {
-						saveEdit(0, 'ban');
-					});
+				box.on('click.ADE', function(event) {
+					window.clearTimeout(timeout);
+					move(angular.element(this), event, true);
 				});
 
-				//handles click on an icon inside a popup
-				angular.forEach(iconNode, function(el) {
-					var node = angular.element(el);
-					node.on('click.ADE', function() {
-						window.clearTimeout(timeout); 
-						if(node.hasClass('selected')) return; //already selected
-						var iconClass =  node.attr('class'); //gets what you clicked on by class name
-
-						if (iconClass.match('ade-icon')) { //makes sure we clicked
-							var classes = iconClass.split(" ");// grab the last class which is what we are about
-							var iconType = classes.pop().substring(5);
-							scope.$apply(function() {
-								saveEdit(0, iconType);
-							});
-						}
-					});
-
+				slider.on('click.ADE', function(event) {
+					window.clearTimeout(timeout);
+					move(angular.element(this), event, true);
 				});
 
-				if(ADE.keyboardEdit) input.focus();
+				//if(ADE.keyboardEdit) input.focus();
 
-				ADE.setupKeys(input, saveEdit, false, scope);
-
-				// TODO: handle keyboard inputs to change icons
-				// input.bind('keydown.ADE', function(e) {
-				// 	if(e.keyCode==37) { //left
-				// 		e.preventDefault();
-				// 		e.stopPropagation();
-				// 	} else if(e.keyCode==39) { //right
-				// 		e.preventDefault();
-				// 		e.stopPropagation();
-				// 	}
-				// });
+				//ADE.setupKeys(input, saveEdit, false, scope);
 
 				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-				input.on('blur.ADE', function(e) {
+				/*input.on('blur.ADE', function(e) {
 					//We delay the closure of the popup to give the internal icons a chance to
 					//fire their click handlers and change the value.
 					timeout = window.setTimeout(function() {
@@ -203,7 +382,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 							saveEdit(0);
 						});
 					},500);
-				});
+				});   */
 
 				ADE.setupScrollEvents(element,function() {
 					scope.$apply(function() {
