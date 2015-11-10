@@ -28,7 +28,9 @@ Messages:
 
  ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', function(ADE, $compile, $filter) {
+angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colorUtils', function(ADE, $compile, $filter, utils) {
+	'use strict';
+
 	var colorsPopupTemplate = '<div class="ade-color-gradient"><div class="ade-color-gradient-sat"><div class="ade-color-spot"></div></div></div><div class="ade-color-hue"><div class="ade-color-hue-picker"></div></div>';
 
 	return {
@@ -56,121 +58,11 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
 			if(scope.adeNopop!==undefined && scope.adeNopop=="1") nopop = true;
 
-			function parseHex(string, expand) {
-				string = string.replace(/^#/g, '');
-				if (!string.match(/^[A-F0-9]{3,6}/ig)) return '';
-				if (string.length !== 3 && string.length !== 6) return '';
-				if (string.length === 3 && expand) {
-					string = string[0] + string[0] + string[1] + string[1] + string[2] + string[2];
-				}
-				return '#' + string;
-			}
-			function hsb2rgb(hsb) {
-				var rgb = {};
-				var h = Math.round(hsb.h);
-				var s = Math.round(hsb.s * 255 / 100);
-				var v = Math.round(hsb.b * 255 / 100);
-				if (s === 0) {
-					rgb.r = rgb.g = rgb.b = v;
-				} else {
-					var t1 = v;
-					var t2 = (255 - s) * v / 255;
-					var t3 = (t1 - t2) * (h % 60) / 60;
-					if (h === 360) h = 0;
-					if (h < 60) {
-						rgb.r = t1;
-						rgb.b = t2;
-						rgb.g = t2 + t3;
-					} else if (h < 120) {
-						rgb.g = t1;
-						rgb.b = t2;
-						rgb.r = t1 - t3;
-					} else if (h < 180) {
-						rgb.g = t1;
-						rgb.r = t2;
-						rgb.b = t2 + t3;
-					} else if (h < 240) {
-						rgb.b = t1;
-						rgb.r = t2;
-						rgb.g = t1 - t3;
-					} else if (h < 300) {
-						rgb.b = t1;
-						rgb.g = t2;
-						rgb.r = t2 + t3;
-					} else if (h < 360) {
-						rgb.r = t1;
-						rgb.g = t2;
-						rgb.b = t1 - t3;
-					} else {
-						rgb.r = 0;
-						rgb.g = 0;
-						rgb.b = 0;
-					}
-				}
-				return {
-					r: Math.round(rgb.r),
-					g: Math.round(rgb.g),
-					b: Math.round(rgb.b)
-				};
-			}
-			function hex2hsb(hex) {
-				var hsb = rgb2hsb(hex2rgb(hex));
-				if (hsb.s === 0) hsb.h = 360;
-				return hsb;
-			}
-			function rgb2hex(rgb) {
-				var hex = [rgb.r.toString(16), rgb.g.toString(16), rgb.b.toString(16)];
-				$.each(hex, function(nr, val) {
-					if (val.length === 1) hex[nr] = '0' + val;
-				});
-				return '#' + hex.join('');
-			}
-			function hsb2hex(hsb) {
-				return rgb2hex(hsb2rgb(hsb));
-			}
 
 			function keepWithin(value, min, max) {
 				if (value < min) value = min;
 				if (value > max) value = max;
 				return value;
-			}
-			function hex2rgb(hex) {
-				hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
-				return {
-					r: hex >> 16,
-					g: (hex & 0x00FF00) >> 8,
-					b: (hex & 0x0000FF)
-				};
-			}
-			function rgb2hsb(rgb) {
-				var hsb = {
-					h: 0,
-					s: 0,
-					b: 0
-				};
-				var min = Math.min(rgb.r, rgb.g, rgb.b);
-				var max = Math.max(rgb.r, rgb.g, rgb.b);
-				var delta = max - min;
-				hsb.b = max;
-				hsb.s = max !== 0 ? 255 * delta / max : 0;
-				if (hsb.s !== 0) {
-					if (rgb.r === max) {
-						hsb.h = (rgb.g - rgb.b) / delta;
-					} else if (rgb.g === max) {
-						hsb.h = 2 + (rgb.b - rgb.r) / delta;
-					} else {
-						hsb.h = 4 + (rgb.r - rgb.g) / delta;
-					}
-				} else {
-					hsb.h = -1;
-				}
-				hsb.h *= 60;
-				if (hsb.h < 0) {
-					hsb.h += 360;
-				}
-				hsb.s *= 100 / 255;
-				hsb.b *= 100 / 255;
-				return hsb;
 			}
 
 			function move(target, event) {
@@ -179,7 +71,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 					offsetY = target.offset().top,
 					x = Math.round(event.pageX - offsetX),
 					y = Math.round(event.pageY - offsetY),
-					wx, wy, r, phi, coords;
+					coords;
 
 				if (event.originalEvent.changedTouches) {
 					x = event.originalEvent.changedTouches[0].pageX - offsetX;
@@ -299,7 +191,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 					slider = angular.element('.ade-color-hue'),
 					sliderPicker = slider.find('.ade-color-hue-picker');
 
-				hsb = hex2hsb(parseHex(hex, true));
+				hsb = utils.hex2hsb(utils.parseHex(hex, true));
 
 				x = keepWithin(Math.ceil(hsb.s / (100 / box.width())), 0, box.width());
 				y = keepWithin(box.height() - Math.ceil(hsb.b / (100 / box.height())), 0, box.height());
@@ -309,7 +201,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 				});
 				y = keepWithin(slider.height() - (hsb.h / (360 / slider.height())), 0, slider.height());
 				sliderPicker.css('top', y + 'px');
-				box.css('backgroundColor', hsb2hex({
+				box.css('backgroundColor', utils.hsb2hex({
 					h: hsb.h,
 				  	s: 100,
 					b: 100
@@ -338,29 +230,33 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 				hue = keepWithin(360 - parseInt(sliderPos.y * (360 / slider.height()), 10), 0, 360);
 				saturation = keepWithin(Math.floor(boxPos.x * (100 / box.width())), 0, 100);
 				brightness = keepWithin(100 - Math.floor(boxPos.y * (100 / box.height())), 0, 100);
-				hex = hsb2hex({
+				hex = utils.hsb2hex({
 					h: hue,
 					s: saturation,
 					b: brightness
 				});
 
 				if (target.hasClass('ade-color-hue')) {
-					box.css('backgroundColor', hsb2hex({
+					box.css('backgroundColor', utils.hsb2hex({
 						h: hue,
 						s: 100,
 						b: 100
 					}));
+					scope.ngModel = hex;
+					scope.$apply();
+					input.focus();
 				} else {
 					saveEdit(0, hex);
 				}
 			};
 
 			var setupEvents = function() {
+				input = angular.element('#invisicon');
+
 				var box = angular.element('.ade-color-gradient');
-				var slider = angular.element('.ade-color-hue')
+				var slider = angular.element('.ade-color-hue');
 
 				box.on('click.ADE', function(event) {
-					window.clearTimeout(timeout);
 					move(angular.element(this), event, true);
 				});
 
@@ -369,12 +265,12 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 					move(angular.element(this), event, true);
 				});
 
-				//if(ADE.keyboardEdit) input.focus();
+				if(ADE.keyboardEdit) input.focus();
 
-				//ADE.setupKeys(input, saveEdit, false, scope);
+				ADE.setupKeys(input, saveEdit, false, scope);
 
 				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-				/*input.on('blur.ADE', function(e) {
+				input.on('blur.ADE', function() {
 					//We delay the closure of the popup to give the internal icons a chance to
 					//fire their click handlers and change the value.
 					timeout = window.setTimeout(function() {
@@ -382,7 +278,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 							saveEdit(0);
 						});
 					},500);
-				});   */
+				});
 
 				ADE.setupScrollEvents(element,function() {
 					scope.$apply(function() {
@@ -395,7 +291,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', funct
 				});
 
 				ADE.setupTouchBlur(input);
-			}
+			};
 
 			var focusHandler = function(e) {
 				//if this is an organic focus, then do a click to make the popup appear.
