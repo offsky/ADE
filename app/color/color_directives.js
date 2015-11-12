@@ -252,7 +252,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				var box = angular.element('.ade-color-gradient');
 				var slider = angular.element('.ade-color-hue');
 
-				box.on('mousedown.ADE', function() {
+				box.on('mousedown.ADE', function(event) {
 					ADE.cancelBlur();
 					var _target = angular.element(this);
 					_target.data('adePickerTarget', _target);
