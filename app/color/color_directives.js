@@ -67,20 +67,31 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 			function move(target, event) {
 				var picker = target.find('.ade-color-spot, .ade-color-hue-picker'),
-					offsetX = target.offset().left,
-					offsetY = target.offset().top,
+					offsetX = target.offset().left + 5,
+					offsetY = target.offset().top + 5,
 					x = Math.round(event.pageX - offsetX),
 					y = Math.round(event.pageY - offsetY),
-					coords;
+					wx, wy, r, phi, coords;
 
-				if (event.originalEvent.changedTouches) {
-					x = event.originalEvent.changedTouches[0].pageX - offsetX;
-					y = event.originalEvent.changedTouches[0].pageY - offsetY;
-				}
 				if (x < 0) x = 0;
 				if (y < 0) y = 0;
 				if (x > target.width()) x = target.width();
 				if (y > target.height()) y = target.height();
+
+				if (target.parent().is('.ade-color-gradient-sat') && picker.parent().is('.ade-color-spot')) {
+					wx = 75 - x;
+					wy = 75 - y;
+					r = Math.sqrt(wx * wx + wy * wy);
+					phi = Math.atan2(wy, wx);
+					if (phi < 0) phi += Math.PI * 2;
+					if (r > 75) {
+						r = 75;
+						x = 75 - (75 * Math.cos(phi));
+						y = 75 - (75 * Math.sin(phi));
+					}
+					x = Math.round(x);
+					y = Math.round(y);
+				}
 
 				if (picker.hasClass('ade-color-hue-picker')) {
 					coords = {
@@ -100,9 +111,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			}
 
 			var makeHTML = function() {
-				var html = "";
-
-				html = $filter('color')(scope.ngModel);
+				var html = $filter('color')(scope.ngModel);
 				element.html(html);
 			};
 
@@ -122,21 +131,11 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				destroy();
 
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
-
-				if (exit == 1) {
-					element.data('dontclick', true); //tells the focus handler not to click
-					element.focus();
-					//TODO: would prefer to advance the focus to the next logical element on the page
-				} else if (exit == -1) {
-					element.data('dontclick', true); //tells the focus handler not to click
-					element.focus();
-					//TODO: would prefer to advance the focus to the previous logical element on the page
-				}
 			};
 
 			//place the popup in the proper place on the screen
 			var place = function() {
-				ADE.place('.'+ADE.popupClass,element,6,15);
+				ADE.place('.'+ADE.popupClass,element);
 			};
 
 			//turns off all event listeners on the icons
@@ -236,18 +235,15 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					b: brightness
 				});
 
-				if (target.hasClass('ade-color-hue')) {
-					box.css('backgroundColor', utils.hsb2hex({
-						h: hue,
-						s: 100,
-						b: 100
-					}));
-					scope.ngModel = hex;
-					scope.$apply();
-					input.focus();
-				} else {
-					saveEdit(0, hex);
-				}
+				box.css('backgroundColor', utils.hsb2hex({
+					h: hue,
+					s: 100,
+					b: 100
+				}));
+
+				scope.ngModel = hex;
+				scope.$apply();
+				input.focus();
 			};
 
 			var setupEvents = function() {
@@ -256,29 +252,36 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				var box = angular.element('.ade-color-gradient');
 				var slider = angular.element('.ade-color-hue');
 
-				box.on('click.ADE', function(event) {
-					move(angular.element(this), event, true);
+				box.on('mousedown.ADE', function() {
+					ADE.cancelBlur();
+					var _target = angular.element(this);
+					_target.data('adePickerTarget', _target);
+					move(angular.element(this), event);
+				}).on('mousemove.ADE', function(event) {
+					if (angular.element(this).data('adePickerTarget')) {
+						move(angular.element(this), event);
+					}
+				}).on('mouseup.ADE', function(event) {
+					angular.element(this).removeData('adePickerTarget');
 				});
 
-				slider.on('click.ADE', function(event) {
-					window.clearTimeout(timeout);
-					move(angular.element(this), event, true);
+				slider.on('mousedown.ADE', function() {
+					var _target = angular.element(this);
+					_target.data('adePickerTarget', _target);
+					move(_target, event);
+				}).on('mousemove.ADE', function(event) {
+					var _target = angular.element(this);
+					if (_target.data('adePickerTarget')) {
+						window.clearTimeout(timeout);
+						move(_target, event);
+					}
+				}).on('mouseup.ADE', function(event) {
+					angular.element(this).removeData('adePickerTarget');
 				});
 
 				if(ADE.keyboardEdit) input.focus();
 
 				ADE.setupKeys(input, saveEdit, false, scope);
-
-				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-				input.on('blur.ADE', function() {
-					//We delay the closure of the popup to give the internal icons a chance to
-					//fire their click handlers and change the value.
-					timeout = window.setTimeout(function() {
-						scope.$apply(function() {
-							saveEdit(0);
-						});
-					},500);
-				});
 
 				ADE.setupScrollEvents(element,function() {
 					scope.$apply(function() {
@@ -290,49 +293,29 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					saveEdit(3);
 				});
 
-				ADE.setupTouchBlur(input);
-			};
-
-			var focusHandler = function(e) {
-				//if this is an organic focus, then do a click to make the popup appear.
-				//if this was a focus caused by myself then don't do the click
-				if (!element.data('dontclick')) {
-					clickHandler(e);
-					return;
-				}
-				window.setTimeout(function() { //IE needs this delay because it fires 2 focus events in quick succession.
-					element.data('dontclick',false);
-				},100);
-
-				//listen for keys pressed while the element is focused but not clicked
-				element.on('keypress.ADE', function(e) {
-					var keyCode = (e.keyCode ? e.keyCode : e.which); //firefox doesn't register keyCode on keypress only on keyup and down
-
-					if (keyCode == 13) { //return
-						e.preventDefault();
-						e.stopPropagation(); //to prevent return key from going into text box
-						element.click();
+				input.on('focus',function() {
+					if (timeout) {
+						clearTimeout(timeout);
+						timeout = false;
 					}
 				});
+
+				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
+				input.on('blur.ADE', function(e) {
+					//We delay the closure of the popup to give the internal icons a chance to
+					//fire their click handlers and change the value.
+					timeout = window.setTimeout(function() {
+						scope.$apply(function() {
+							saveEdit(0);
+						});
+					},500);
+				});
 			};
 
-			//handles blur events
-			element.on('blur.ADE', function(e) {
-				element.off('keypress.ADE');
-			});
-
 			//setup editing events
-			if(!readonly && !nopop) {
-				element.on('click.ADE', function(e) { 
-					//scope.$apply(function() { 
-						clickHandler(e); //not necessary?
-					//});
-				});
-
-				element.on('focus.ADE', function(e) {
-					focusHandler(e);
-				});
-			}
+			element.on('click.ADE', function(e) {
+				clickHandler(e);
+			});
 
 			 //A callback to observe for changes to the id and save edit
 			//The model will still be connected, so it is safe, but don't want to cause problems

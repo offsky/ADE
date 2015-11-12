@@ -513,6 +513,7 @@
     height: 2px;
     background: #fff;
     border: solid 1px #000;
+    cursor: pointer;
     margin-top: -2px;
     -moz-box-sizing: content-box;
     -webkit-box-sizing: content-box;
