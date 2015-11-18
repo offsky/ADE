@@ -6,23 +6,5 @@ node_modules/*
 libpeerconnection.log
 app/bower_components/*
 
-dist/bower_components
-dist/common
-dist/date
-dist/decimal
-dist/duration
-dist/email
-dist/icon
-dist/integer
-dist/list
-dist/money
-dist/percent
-dist/phone
-dist/rating
-dist/text
-dist/time
-dist/toggle
-dist/url
-dist/forkme_right_red.png
-dist/index.html
+dist/*
 reports

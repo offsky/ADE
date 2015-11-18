@@ -462,6 +462,7 @@
     display: inline-block;
     width: 180px;
     height: 150px;
+    cursor: pointer;
     background-color: red;
     background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
     background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));
@@ -503,6 +504,7 @@
     height: 150px;
     margin-left: 5px;
     background-image: url(../color/img/slider.png);
+    cursor: pointer;
 }
 
 .ade-color-hue-picker {
