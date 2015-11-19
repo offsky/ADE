@@ -28,7 +28,8 @@ Messages:
 
  ------------------------------------------------------------------*/
 
-angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colorUtils', function(ADE, $compile, $filter, utils) {
+angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colorUtils',
+	function(ADE, $compile, $filter, utils) {
 	'use strict';
 
 	var colorsPopupTemplate = '<div class="ade-color-gradient"><div class="ade-color-gradient-sat"><div class="ade-color-spot"></div></div></div><div class="ade-color-hue"><div class="ade-color-hue-picker"></div></div>';
@@ -50,14 +51,8 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
 			var input = null; //a reference to the invisible input DOM object
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
-			var readonly = false;
-			var nopop = false;
 			var stopObserving = null;
 			var adeId = scope.adeId;
-
-			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
-			if(scope.adeNopop!==undefined && scope.adeNopop=="1") nopop = true;
-
 
 			function keepWithin(value, min, max) {
 				if (value < min) value = min;
@@ -66,41 +61,36 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			}
 
 			function move(target, event) {
-				var picker = target.find('.ade-color-spot, .ade-color-hue-picker'),
-					offsetX = target.offset().left + 5,
-					offsetY = target.offset().top + 5,
-					x = Math.round(event.pageX - offsetX),
-					y = Math.round(event.pageY - offsetY),
-					wx, wy, r, phi, coords;
+				var picker = target.find('.ade-color-spot, .ade-color-hue-picker');
+				var hueAreaHeight = picker.parent().height();
+				var offsetX = target.offset().left;
+				var offsetY = target.offset().top;
+				var x = Math.round(event.pageX - offsetX);
+				var y = Math.round(event.pageY - offsetY);
+				var halfPicker, targetW, targetH, wx, wy, r, phi, coords;
+
+				if (picker.parent().is('.ade-color-spot')) {
+					halfPicker = picker.height() / 2;
+				} else {
+					halfPicker = 4;
+				}
+				targetH = target.height();
+				targetW = target.width();
 
 				if (x < 0) x = 0;
 				if (y < 0) y = 0;
-				if (x > target.width()) x = target.width();
-				if (y > target.height()) y = target.height();
-
-				if (target.parent().is('.ade-color-gradient-sat') && picker.parent().is('.ade-color-spot')) {
-					wx = 75 - x;
-					wy = 75 - y;
-					r = Math.sqrt(wx * wx + wy * wy);
-					phi = Math.atan2(wy, wx);
-					if (phi < 0) phi += Math.PI * 2;
-					if (r > 75) {
-						r = 75;
-						x = 75 - (75 * Math.cos(phi));
-						y = 75 - (75 * Math.sin(phi));
-					}
-					x = Math.round(x);
-					y = Math.round(y);
-				}
+				if (x > targetW) x = targetW;
+				if (y > targetH) y = targetH;
 
 				if (picker.hasClass('ade-color-hue-picker')) {
+					y = (y > hueAreaHeight) ? hueAreaHeight : y;
 					coords = {
 						top: y + 'px'
 					};
 				} else {
 					coords = {
-						top: y + 'px',
-						left: x + 'px'
+						top: y - halfPicker + 'px',
+						left: x - halfPicker + 'px'
 					};
 				}
 
@@ -119,12 +109,16 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				//we are saving, so cancel any delayed blur saves that we might get
 				window.clearTimeout(timeout);
 
-				var oldValue = scope.ngModel;
-				var value = newValue || oldValue;
+				var oldValue = $('#invisipicker').data("original-color");
 				exit = exited;
 
+				ADE.teardownBlur(input);
+				ADE.teardownKeys(input);
+
 				if (exit !== 3) { //don't save value on esc
-					scope.ngModel = value;
+					$('#invisipicker').data("original-color", scope.ngModel);
+				} else {
+					scope.ngModel = oldValue;
 				}
 				editing = false;
 
@@ -141,14 +135,16 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			//turns off all event listeners on the icons
 			var stopListening = function() {	
 				var nextElement = element.next('.ade-popup');
-				var clearNode = nextElement.find('.ade-clear');
 				var iconNode = nextElement.find('span');
 
-				if(clearNode) clearNode.off();
 				if(iconNode) iconNode.off();
 			};
 
 			var clickHandler = function(e) {
+				ADE.hidePopup(element);
+				destroy();
+				if (editing) return;
+				exit = 0;
 				//Hide any that are already up
 				var colorBox = $('.'+ADE.popupClass);
 				if(colorBox.length) {
@@ -172,7 +168,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 				if ((isMySpan || isMyDiv)  && (!colorPopup || !colorPopup.length)) {   //don't popup a second one
 					editing = true;
-					$compile('<div class="' + ADE.popupClass + ' ade-color-picker dropdown-menu open"><div class="ade-hidden"><input id="invisicon" type="text" /></div><h4>Pick a color</h4>' + colorsPopupTemplate + '</div>')(scope).insertAfter(element);
+					$compile('<div class="' + ADE.popupClass + ' ade-color-picker dropdown-menu open"><div class="ade-hidden"><input id="invisipicker" type="text" /></div><h4>Pick a color</h4>' + colorsPopupTemplate + '</div>')(scope).insertAfter(element);
 					
 					place();
 					setTimeout(function() { //need to give it time to render before moving it
@@ -180,6 +176,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					});
 				    setColor(scope.ngModel);
 					setupEvents();
+					$(input).data("original-color", scope.ngModel);
 				}
 			};
 
@@ -214,8 +211,8 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					left = picker.offset().left;
 					top = picker.offset().top;
 					return {
-						x: left - container.offset().left + (picker.outerWidth() / 2),
-						y: top - container.offset().top + (picker.outerHeight() / 2)
+						x: left - container.offset().left,
+						y: top - container.offset().top
 					};
 				}
 				var hue, saturation, brightness, x, y, r, phi, hex,
@@ -247,7 +244,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			};
 
 			var setupEvents = function() {
-				input = angular.element('#invisicon');
+				input = angular.element('#invisipicker');
 
 				var box = angular.element('.ade-color-gradient');
 				var slider = angular.element('.ade-color-hue');
@@ -314,43 +311,51 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 			//setup editing events
 			element.on('click.ADE', function(e) {
-				clickHandler(e);
+				scope.$apply(function() {
+					clickHandler(e);
+				});
 			});
 
-			 //A callback to observe for changes to the id and save edit
+			//A callback to observe for changes to the id and save edit
 			//The model will still be connected, so it is safe, but don't want to cause problems
 			var observeID = function(value) {
-				 //this gets called even when the value hasn't changed, 
-				 //so we need to check for changes ourselves
-				 if(editing && adeId!==value) saveEdit(3);
+				//this gets called even when the value hasn't changed,
+				//so we need to check for changes ourselves
+				if(editing && adeId!==value) saveEdit(3);
 			};
 
 			//If ID changes during edit, something bad happened. No longer editing the right thing. Cancel
 			stopObserving = attrs.$observe('adeId', observeID);
 
-			var destroy = function() { 
-				ADE.teardownScrollEvents(element);
+			var destroy = function() {
 				ADE.hidePopup();
 				ADE.teardownBlur(input);
 				if(input) input.off();
 				stopListening();
 				$(document).off('ADE_hidepops.ADE');
+
 			};
 
-			//need to clean up the event watchers when the scope is destroyed
-			scope.$on('$destroy', function() {
+			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
 				destroy();
-				if(element) element.off('.ADE');
+
+				if(element) {
+					element.off('mouseover.ADE');
+					element.off('mouseout.ADE');
+					element.off('click.ADE');
+				}
+
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();
 					stopObserving = null;
 				} else {
 					delete attrs.$$observers['adeId'];
 				}
+				if(unwatch) unwatch();
 			});
 
 			//need to watch the model for changes
-			scope.$watch(function(scope) {
+			var unwatch = scope.$watch(function(scope) {
 				return scope.ngModel;
 			}, function () {
 				makeHTML();
