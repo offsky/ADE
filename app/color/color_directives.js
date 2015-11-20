@@ -53,6 +53,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var isPickerDragging = false;
 
 			function keepWithin(value, min, max) {
 				if (value < min) value = min;
@@ -74,15 +75,11 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				} else {
 					halfPicker = 4;
 				}
-				targetH = target.height();
-				targetW = target.width();
-
-				if (x < 0) x = 0;
-				if (y < 0) y = 0;
-				if (x > targetW) x = targetW;
-				if (y > targetH) y = targetH;
 
 				if (picker.hasClass('ade-color-hue-picker')) {
+					targetH = target.height();
+					if (y < 0) y = 0;
+					if (y > targetH) y = targetH;
 					y = (y > hueAreaHeight) ? hueAreaHeight : y;
 					coords = {
 						top: y + 'px'
@@ -94,7 +91,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					};
 				}
 
-				picker.stop(true).animate(coords, 30, 'swing', function() {
+				picker.stop(true).animate(coords, 10, 'linear', function() {
 					getColor(target);
 				});
 
@@ -237,7 +234,6 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					s: 100,
 					b: 100
 				}));
-
 				scope.ngModel = hex;
 				scope.$apply();
 				input.focus();
@@ -247,19 +243,46 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				input = angular.element('#invisipicker');
 
 				var box = angular.element('.ade-color-gradient');
+				var popup = box.parent();
 				var slider = angular.element('.ade-color-hue');
 
 				box.on('mousedown.ADE', function(event) {
 					ADE.cancelBlur();
 					var _target = angular.element(this);
 					_target.data('adePickerTarget', _target);
+					isPickerDragging = true;
 					move(angular.element(this), event);
 				}).on('mousemove.ADE', function(event) {
 					if (angular.element(this).data('adePickerTarget')) {
 						move(angular.element(this), event);
 					}
 				}).on('mouseup.ADE', function(event) {
+					var boxPicker = angular.element('.ade-color-spot');
+					var boxPickerPos = boxPicker.position();
+					var halfPicker = 4;
+					var boxRightEdge = (boxPicker.parent().width() - halfPicker);
+					var boxBottomEdge = (boxPicker.parent().height() - halfPicker);
+
+					if (boxPickerPos.top < -halfPicker) {
+						boxPicker.css("top", -halfPicker);
+					}
+					if (boxPickerPos.left < -halfPicker) {
+						boxPicker.css("left", -halfPicker);
+					}
+					if (boxPickerPos.left > boxRightEdge) {
+						boxPicker.css("left", boxRightEdge);
+					}
+					if (boxPickerPos.top > boxBottomEdge) {
+						boxPicker.css("top", boxBottomEdge);
+					}
+					event.stopPropagation();
+					event.preventDefault();
+					isPickerDragging = false;
 					angular.element(this).removeData('adePickerTarget');
+				});
+
+				popup.on('mouseup.ADE', function() {
+					if (isPickerDragging) $(this).find('.ade-color-spot').trigger("mouseup.ADE");
 				});
 
 				slider.on('mousedown.ADE', function() {

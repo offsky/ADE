@@ -450,11 +450,11 @@
     border: 1px solid #333;
 }
 .ade-color-picker {
-    width: 205px;
+    width: 210px;
 }
 
 .ade-color-picker h4 {
-    margin: 0px;
+    margin: 0;
 }
 
 .ade-color-gradient {
@@ -502,7 +502,7 @@
     display: inline-block;
     width: 20px;
     height: 150px;
-    margin-left: 5px;
+    margin-left: 10px;
     background-image: url(../color/img/slider.png);
     cursor: pointer;
 }
