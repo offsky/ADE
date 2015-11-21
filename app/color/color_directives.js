@@ -53,7 +53,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			var timeout = null; //the timeout for when clicks cause a blur of the popup's invisible input
 			var stopObserving = null;
 			var adeId = scope.adeId;
-			var isPickerDragging = false;
+			var draggingPicker = null;
 
 			function keepWithin(value, min, max) {
 				if (value < min) value = min;
@@ -75,11 +75,15 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				} else {
 					halfPicker = 4;
 				}
+				targetH = target.height();
+				targetW = target.width();
+
+				if (x < 0) x = 0;
+				if (y < 0) y = 0;
+				if (x > targetW) y = targetW;
+				if (y > targetH) y = targetH;
 
 				if (picker.hasClass('ade-color-hue-picker')) {
-					targetH = target.height();
-					if (y < 0) y = 0;
-					if (y > targetH) y = targetH;
 					y = (y > hueAreaHeight) ? hueAreaHeight : y;
 					coords = {
 						top: y + 'px'
@@ -102,7 +106,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				element.html(html);
 			};
 
-			var saveEdit = function(exited, newValue) {
+			var saveEdit = function(exited) {
 				//we are saving, so cancel any delayed blur saves that we might get
 				window.clearTimeout(timeout);
 
@@ -205,17 +209,18 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				function getCoords(picker, container) {
 					var left, top;
 					if (!picker.length || !container) return null;
-					left = picker.offset().left;
-					top = picker.offset().top;
+					left = picker.offset().left + 4;
+					top = picker.offset().top + 4;
 					return {
 						x: left - container.offset().left,
 						y: top - container.offset().top
 					};
 				}
+
 				var hue, saturation, brightness, x, y, r, phi, hex,
-					box = angular.element('.ade-color-gradient'),
+					box = (target.hasClass("ade-color-gradient")) ? target : target.parents('.ade-popup').find(".ade-color-gradient"),
 					boxPicker = box.find('.ade-color-spot'),
-					slider = angular.element('.ade-color-hue'),
+					slider = (target.hasClass(".ade-color-hue")) ? target : target.parents('.ade-popup').find(".ade-color-hue"),
 					sliderPicker = slider.find('.ade-color-hue-picker'),
 					boxPos = getCoords(boxPicker, box),
 					sliderPos = getCoords(sliderPicker, slider);
@@ -234,6 +239,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					s: 100,
 					b: 100
 				}));
+
 				scope.ngModel = hex;
 				scope.$apply();
 				input.focus();
@@ -241,54 +247,77 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 			var setupEvents = function() {
 				input = angular.element('#invisipicker');
-
 				var box = angular.element('.ade-color-gradient');
-				var popup = box.parent();
 				var slider = angular.element('.ade-color-hue');
 
 				box.on('mousedown.ADE', function(event) {
 					ADE.cancelBlur();
 					var _target = angular.element(this);
 					_target.data('adePickerTarget', _target);
-					isPickerDragging = true;
+					draggingPicker = _target.find(".ade-color-spot");
 					move(angular.element(this), event);
 				}).on('mousemove.ADE', function(event) {
 					if (angular.element(this).data('adePickerTarget')) {
 						move(angular.element(this), event);
 					}
-				}).on('mouseup.ADE', function(event) {
-					var boxPicker = angular.element('.ade-color-spot');
-					var boxPickerPos = boxPicker.position();
-					var halfPicker = 4;
-					var boxRightEdge = (boxPicker.parent().width() - halfPicker);
-					var boxBottomEdge = (boxPicker.parent().height() - halfPicker);
-
-					if (boxPickerPos.top < -halfPicker) {
-						boxPicker.css("top", -halfPicker);
-					}
-					if (boxPickerPos.left < -halfPicker) {
-						boxPicker.css("left", -halfPicker);
-					}
-					if (boxPickerPos.left > boxRightEdge) {
-						boxPicker.css("left", boxRightEdge);
-					}
-					if (boxPickerPos.top > boxBottomEdge) {
-						boxPicker.css("top", boxBottomEdge);
-					}
-					event.stopPropagation();
-					event.preventDefault();
-					isPickerDragging = false;
+				}).on('mouseup.ADE', function() {
+					draggingPicker = null;
 					angular.element(this).removeData('adePickerTarget');
 				});
 
-				popup.on('mouseup.ADE', function() {
-					if (isPickerDragging) $(this).find('.ade-color-spot').trigger("mouseup.ADE");
+				$(document).on('mousemove.ADE', function(event) {
+					var target = angular.element(event.target);
+
+					if (draggingPicker && draggingPicker.is(":visible") && !(target.hasClass('ade-color-gradient-sat') ||
+							target.hasClass('ade-color-spot'))) {
+						var cb = draggingPicker.parent();
+						var cbOffset = cb.offset();
+						var halfPicker = 4;
+						var boxRightEdge = (cb.width());
+						var boxBottomEdge = (cb.height());
+						var leftPos = ((event.pageX - cbOffset.left) < 0) ? 0 : (event.pageX - cbOffset.left);
+						var topPos = ((event.pageY - cbOffset.top) <= -halfPicker) ? -halfPicker : (event.pageY - cbOffset.top);
+
+						/*console.log("boxBottomEdge: ", boxBottomEdge, " boxRightEdge: ", boxRightEdge, " topPos: ", topPos, " leftPos: ", leftPos);
+						console.log("top: ", boxPickerPos.top);*/
+
+						if (topPos < 0) {
+							/*console.log("over the top");*/
+							draggingPicker.css({
+								"top": -halfPicker,
+								"left": (leftPos > boxRightEdge) ? boxRightEdge-halfPicker : leftPos-halfPicker
+ 						 	});
+						} else if (leftPos <= 0) {
+							/*console.log("over the left");*/
+							draggingPicker.css({
+								"top": (topPos > boxBottomEdge) ? boxBottomEdge - halfPicker : topPos,
+								"left": -halfPicker
+							});
+						} else if (leftPos > boxRightEdge) {
+							/*console.log("over the right");*/
+							draggingPicker.css({
+								"top": (topPos > boxBottomEdge) ? boxBottomEdge - halfPicker : topPos,
+								"left": boxRightEdge - halfPicker
+							});
+						} else if (topPos > boxBottomEdge) {
+							/*console.log("over the bottom");*/
+							draggingPicker.css({
+								"top": boxBottomEdge - halfPicker,
+								"left": (leftPos > boxRightEdge) ? boxRightEdge : leftPos
+							});
+						}
+						getColor(cb);
+					}
+				}).on('mouseup.ADE', function() {;
+					if (draggingPicker) draggingPicker.parent().trigger("mouseup.ADE");
 				});
 
 				slider.on('mousedown.ADE', function() {
-					var _target = angular.element(this);
-					_target.data('adePickerTarget', _target);
-					move(_target, event);
+					if (!draggingPicker) {
+						var _target = angular.element(this);
+						_target.data('adePickerTarget', _target);
+						move(_target, event);
+					}
 				}).on('mousemove.ADE', function(event) {
 					var _target = angular.element(this);
 					if (_target.data('adePickerTarget')) {

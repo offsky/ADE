@@ -450,7 +450,7 @@
     border: 1px solid #333;
 }
 .ade-color-picker {
-    width: 210px;
+    width: 292px;
 }
 
 .ade-color-picker h4 {
@@ -460,8 +460,8 @@
 .ade-color-gradient {
     position: relative;
     display: inline-block;
-    width: 180px;
-    height: 150px;
+    width: 256px;
+    height: 256px;
     cursor: pointer;
     background-color: red;
     background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
@@ -500,8 +500,8 @@
 .ade-color-hue {
     position: relative;
     display: inline-block;
-    width: 20px;
-    height: 150px;
+    width: 26px;
+    height: 256px;
     margin-left: 10px;
     background-image: url(../color/img/slider.png);
     cursor: pointer;
@@ -511,7 +511,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 18px;
+    width: 24px;
     height: 2px;
     background: #fff;
     border: solid 1px #000;
