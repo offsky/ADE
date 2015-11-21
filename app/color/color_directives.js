@@ -312,7 +312,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					if (draggingPicker) draggingPicker.parent().trigger("mouseup.ADE");
 				});
 
-				slider.on('mousedown.ADE', function() {
+				slider.on('mousedown.ADE', function(event) {
 					if (!draggingPicker) {
 						var _target = angular.element(this);
 						_target.data('adePickerTarget', _target);
