@@ -54,6 +54,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			var stopObserving = null;
 			var adeId = scope.adeId;
 			var draggingPicker = null;
+			var draggingSlider = null;
 
 			function keepWithin(value, min, max) {
 				if (value < min) value = min;
@@ -310,22 +311,25 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					}
 				}).on('mouseup.ADE', function() {;
 					if (draggingPicker) draggingPicker.parent().trigger("mouseup.ADE");
+					if (draggingSlider) draggingSlider.trigger("mouseup.ADE");
 				});
 
 				slider.on('mousedown.ADE', function(event) {
 					if (!draggingPicker) {
 						var _target = angular.element(this);
-						_target.data('adePickerTarget', _target);
+						_target.data('adeSliderTarget', _target);
+						draggingSlider = _target;
 						move(_target, event);
 					}
 				}).on('mousemove.ADE', function(event) {
 					var _target = angular.element(this);
-					if (_target.data('adePickerTarget')) {
+					if (_target.data('adeSliderTarget')) {
 						window.clearTimeout(timeout);
 						move(_target, event);
 					}
-				}).on('mouseup.ADE', function(event) {
-					angular.element(this).removeData('adePickerTarget');
+				}).on('mouseup.ADE', function() {
+					draggingSlider = null;
+					angular.element(this).removeData('adeSliderTarget');
 				});
 
 				if(ADE.keyboardEdit) input.focus();
