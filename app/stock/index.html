@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title>ADE :: Stock Price Directive</title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+		<link rel="stylesheet" href="../common/ade.css"/>
+	</head>
+	<body ng-app="app" ng-init="stockString='GOOG'" >
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / URL
+		</div>
+		<div class="container" ng-controller="ctrl">
+			<h2>Stock Price Editing Directive</h2>
+			<p>A simple directive that makes a stock editable.</p>
+				
+			<section>
+				<p>Stock price provided by Google:</p>
+				<div class="ade-editme-stock" ade-stock ade-class="input-medium"
+					 ade-id="1234" ng-model="stockString"></div>
+
+				<p>Stock price provided by Yahoo:</p>
+				<div class="ade-editme-stock" ade-stock ade-provider="yahoo" ade-class="input-medium"
+					 ade-id="12345" ng-model="stockString"></div>
+
+				<p>The directive will broadcast a message when the edit starts and when it finishes
+					so that your controllers and models can handle the edit properly.</p>
+			
+				<b>Last Message :</b> 
+				<pre><span id="message" ng-controller="ctrl">{{ lastMessage }}</span></pre>
+			</section>
+		</div>
+
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
+		<script src="stock_directive.js"></script>
+	</body>
+</html>

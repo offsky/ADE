@@ -521,3 +521,28 @@
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
 }
+
+/* Stock Ticker */
+.ade-stock-arrow,
+.ade-stock-arrow > path,
+.ade-stock-arrow + span {
+    opacity: 0;
+}
+.ade-stock-up .ade-stock-arrow,
+.ade-stock-down .ade-stock-arrow {
+    opacity: 1;
+    vertical-align: bottom;
+    margin-left: 5px;
+}
+.ade-stock-up .ade-arrow-up,
+.ade-stock-up .ade-stock-arrow + span {
+    color: green;
+    fill: green;
+    opacity: 1;
+}
+.ade-stock-down .ade-arrow-down,
+.ade-stock-down .ade-stock-arrow + span {
+    color: red;
+    fill: red;
+    opacity: 1;
+}

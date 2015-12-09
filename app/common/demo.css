@@ -121,6 +121,10 @@ td {
 	min-width: 16px;
 	padding:2px;
 }
+.ade-editme-stock {
+	display: block;
+	cursor: pointer;
+}
 .sample,
 .ade-editme,
 input[type="text"] { 
