@@ -124,6 +124,7 @@ td {
 .ade-editme-stock {
 	display: block;
 	cursor: pointer;
+	font-size: 16px;
 }
 .sample,
 .ade-editme,

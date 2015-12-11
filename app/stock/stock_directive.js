@@ -51,6 +51,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			var inputClass = "";
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var requestFailed = false;
 
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
@@ -81,6 +82,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 
 			var handleError = function(data) {
 				console.log("error");
+				requestFailed = true;
 			};
 
 			var handleSuccess = function(resp) {
@@ -88,10 +90,15 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 					'height="24" viewBox="0 0 24 24" width="24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17' +
 					'l-5.58-5.59L4 12l8 8 8-8z" class="ade-arrow-down" /><path ' +
 					'd="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12 l-8-8-8 8z" class="ade-arrow-up"/></svg>';
-				var change = "";
+				var change = "", price = "";
 
 				if (scope.adeProvider === 'yahoo') {
 					change = resp.data.query.results.quote.Change;
+					price = resp.data.query.results.quote.LastTradePriceOnly;
+					if (price === null) {
+						handleError();
+						return;
+					}
 					element.html('<p><b>'+resp.data.query.results.quote.symbol.toUpperCase()+'</b><br />'+
 							resp.data.query.results.quote.LastTradePriceOnly + arrowIcon +
 							' <span>$' + change.substring(1) + '</span></p>');
@@ -100,12 +107,13 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 					element.html('<p><b>'+resp.data[0].t.toUpperCase()+'</b><br />'+
 							resp.data[0].l_cur+arrowIcon + ' <span>$' + change.substring(1) + '</span></p>');
 				}
+				requestFailed = false;
 
 				if (change.indexOf("+") !== -1) {
 					// stock up
-					element.addClass("ade-stock-up");
+					element.addClass("ade-stock-up").removeClass("ade-stock-down");
 				} else if (change.indexOf("-") !== -1) {
-					element.addClass("ade-stock-down");
+					element.addClass("ade-stock-down").removeClass("ade-stock-up");
 				}
 			};
 
@@ -139,36 +147,26 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				ADE.place('.'+ADE.popupClass,element,0,-5);
 			};
 
-			//when a link is clicked
-			//if editable and link, present popup with what action you want to take (follow, edit)
-			//if editable and not link, enter edit mode
-			//if not editable and link, follow link
 			var clickHandler = function(e) {
-
-				// if user is holding shift, control, or command, let the link work
-   				if (e.ctrlKey || e.shiftKey || e.metaKey) return;
-
 				if (editing) {
 					e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
 					e.stopPropagation();
 					return; //already editing
 				}
+				editing = true;
 
-				var popup = $('.'+ADE.popupClass);
+				var value = scope.ngModel;
 
-				if(popup.length) {
-					$(document).trigger('ADE_hidepops.ADE');
-				}
+				element.hide();
+				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);
+				input = element.next('input');
+				input.focus();
 
-				ADE.setupScrollEvents(element,function() {
-					scope.$apply(function() {
-						place();
-					});
-				});
+				//put cursor at end
+				input[0].selectionStart = input[0].selectionEnd = input.val().length;
 
-				$(document).on('ADE_hidepops.ADE',function() {
-					saveEdit(3);
-				});
+				ADE.setupBlur(input,saveEdit,scope);
+				ADE.setupKeys(input,saveEdit,false,scope);
 			};
 
 			//setup events
