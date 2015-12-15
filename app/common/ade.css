@@ -546,3 +546,6 @@
     fill: red;
     opacity: 1;
 }
+.ade-stock-no-data span {
+    color: #666;
+}

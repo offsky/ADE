@@ -51,7 +51,6 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			var inputClass = "";
 			var stopObserving = null;
 			var adeId = scope.adeId;
-			var requestFailed = false;
 
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
@@ -81,8 +80,8 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			};
 
 			var handleError = function(data) {
-				console.log("error");
-				requestFailed = true;
+				element.html("<p class='ade-stock-no-data'>"+ encodeURIComponent(scope.ngModel)
+					+ " - <span>no price available</span></p>");
 			};
 
 			var handleSuccess = function(resp) {
@@ -99,15 +98,14 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 						handleError();
 						return;
 					}
-					element.html('<p><b>'+resp.data.query.results.quote.symbol.toUpperCase()+'</b><br />'+
+					element.html('<p><b>'+resp.data.query.results.quote.symbol.toUpperCase()+'</b> '+
 							resp.data.query.results.quote.LastTradePriceOnly + arrowIcon +
 							' <span>$' + change.substring(1) + '</span></p>');
 				} else {
 					change = resp.data[0].c;
-					element.html('<p><b>'+resp.data[0].t.toUpperCase()+'</b><br />'+
+					element.html('<p><b>'+resp.data[0].t.toUpperCase()+'</b> '+
 							resp.data[0].l_cur+arrowIcon + ' <span>$' + change.substring(1) + '</span></p>');
 				}
-				requestFailed = false;
 
 				if (change.indexOf("+") !== -1) {
 					// stock up
