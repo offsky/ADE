@@ -14,7 +14,7 @@
 	ade-readonly:
 		If you don't want the stock ticker to be editable
 	ade-provider:
-
+		By default, stock prices provided by google API. This could be set to yahoo.
 
 	Messages:
 		name: ADE-start
@@ -46,7 +46,6 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			var input = null;
 			var invisibleInput = null;
 			var exit = 0; //0=click, 1=tab, -1= shift tab, 2=return, -2=shift return, 3=esc. controls if you exited the field so you can focus the next field if appropriate
-			var timeout = null;
 			var readonly = false;
 			var inputClass = "";
 			var stopObserving = null;
