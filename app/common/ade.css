@@ -546,6 +546,7 @@
     fill: red;
     opacity: 1;
 }
-.ade-stock-no-data span {
+.ade-stock-no-data {
+    padding-left: 5px;
     color: #666;
 }

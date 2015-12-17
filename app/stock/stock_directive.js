@@ -62,6 +62,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 					if(angular.isArray(value)) value = value[0];
 					if(value===null || value===undefined) value="";
 					if(!angular.isString(value)) value = value.toString();
+					element.html("<p class='ade-stock-price'><b>"+ encodeURIComponent(value) + "</b></p>");
 
 					if (scope.adeProvider === 'yahoo') {
 						url = "https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quotes where " +
@@ -77,10 +78,9 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				}
 
 			};
-
+;
 			var handleError = function(data) {
-				element.html("<p class='ade-stock-no-data'>"+ encodeURIComponent(scope.ngModel)
-					+ " - <span>no price available</span></p>");
+				element.find('.ade-stock-price').append("<span class='ade-stock-no-data'>no price available</span></p>");
 			};
 
 			var handleSuccess = function(resp) {
@@ -97,13 +97,12 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 						handleError();
 						return;
 					}
-					element.html('<p><b>'+resp.data.query.results.quote.symbol.toUpperCase()+'</b> '+
-							resp.data.query.results.quote.LastTradePriceOnly + arrowIcon +
-							' <span>$' + change.substring(1) + '</span></p>');
+					element.find('.ade-stock-price').append(" " + resp.data.query.results.quote.LastTradePriceOnly +
+							arrowIcon + ' <span>$' + change.substring(1) + '</span></p>');
 				} else {
 					change = resp.data[0].c;
-					element.html('<p><b>'+resp.data[0].t.toUpperCase()+'</b> '+
-							resp.data[0].l_cur+arrowIcon + ' <span>$' + change.substring(1) + '</span></p>');
+					element.find('.ade-stock-price').append(" " + resp.data[0].l_cur + arrowIcon +
+							' <span>$' + change.substring(1) + '</span></p>');
 				}
 
 				if (change.indexOf("+") !== -1) {
