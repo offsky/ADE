@@ -323,6 +323,10 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			//enters edit mode for the text
 			var editRichText = function() {
 				
+				scope.$apply(function() {
+					ADE.begin(adeId);
+				});
+				
 				window.clearTimeout(timeout);
 				destroy();
 
@@ -491,17 +495,13 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 			
 			//handles clicks on the read version of the data
 			var mouseclick = function() {
-				console.log("mouse click",adeId,editing);	
+				// console.log("mouse click",adeId,editing);	
 				if(editing) return;
 				window.clearTimeout(timeout);
 				editing = true;
 				exit = 0;
 
 				adeId = scope.adeId;
-
-				scope.$apply(function() {
-					ADE.begin(adeId);
-				});
 
 				editRichText();
 			};
@@ -515,17 +515,17 @@ angular.module('ADE').directive('adeRich', ['ADE', '$compile', '$sanitize', func
 						window.clearTimeout(timeout_open);
 					})
 					element.on('focus.rADE',function(e) {
-						console.log("focus");
+						// console.log("focus");
 						mousein(e);
 					});
 					element.on('touchstart.rADE',function(e) {
-						console.log("touchstart");
+						// console.log("touchstart");
 						//ignoreClick = true; //TODO: make this a preference. If uncommented, it will go into read mode first. Causes a problem if the read mode is empty. Can't edit an empty value
 					});
 				}
 				if(!readonly) {
 					element.on('click.rADE', function(e) {
-						console.log("click");
+						// console.log("click");
 						if(!ignoreClick) viewRichText(null,true);
 						else mousein(e);
 						ignoreClick = false;
