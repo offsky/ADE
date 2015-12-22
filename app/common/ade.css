@@ -503,7 +503,7 @@
     width: 26px;
     height: 256px;
     margin-left: 10px;
-    background-image: url(../color/img/slider.png);
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAEACAYAAACzuVY0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAEUSURBVHja7NzRDoIwDIXhFhm78P0f1QtGtMQ30Hgkhf48wJcd2g6XJXpYe5jw8bB7KMHZbDFAQMArgE0NdooCSGMzekT+T2Q2hwpgr9eH4sjxNpXgMAMEBAQ8ANzU4EpRqHKCFY56kSlKhciAFcB6je2ThfQKye0W4jupRfwOTwB2NdjqvUPAhG3TKUqBWe70IX14xaIQmd2GKrMfHlFlt5f6JOWbOLINwHygvMorRQGkD4lM5KqjN9JXmdFjUi7Zh/wU+fkkFbP2ksvDtEcz8WEUEBAQEBAwMdjUYCdyvhUuRAYEBDxklqenGBQfRgEBAT8ENzW4EjnfCgeRiUxkIp8TzF8UvnpsDl8/Hm7SvyvcBRgA4vmR5OGDm0sAAAAASUVORK5CYII=");
     cursor: pointer;
 }
 
