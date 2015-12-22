@@ -170,7 +170,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 				if ((isMySpan || isMyDiv)  && (!colorPopup || !colorPopup.length)) {   //don't popup a second one
 					editing = true;
-					$compile('<div class="' + ADE.popupClass + ' ade-color-picker dropdown-menu open"><div class="ade-hidden"><input id="invisipicker" type="text" /></div><h4>Pick a color</h4>' + colorsPopupTemplate + '</div>')(scope).insertAfter(element);
+					$compile('<div class="' + ADE.popupClass + ' ade-color-picker dropdown-menu open"><div class="ade-hidden"><input id="invisipicker" type="text" /></div><a class="ade-color-clear" href="#">No color</a><h4>Pick a color</h4>' + colorsPopupTemplate + '</div>')(scope).insertAfter(element);
 					
 					place();
 					setTimeout(function() { //need to give it time to render before moving it
@@ -250,6 +250,12 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				input = angular.element('#invisipicker');
 				var box = angular.element('.ade-color-gradient');
 				var slider = angular.element('.ade-color-hue');
+				var clearColor = angular.element('.ade-color-clear');
+
+				clearColor.on('click', function(event) {
+					scope.ngModel = "";
+					saveEdit(0);
+				});
 
 				box.on('mousedown.ADE', function(event) {
 					ADE.cancelBlur();

@@ -454,7 +454,7 @@
 }
 
 .ade-color-picker h4 {
-    margin: 0;
+    margin: 0 0 5px 0;
 }
 
 .ade-color-gradient {
@@ -520,6 +520,10 @@
     -moz-box-sizing: content-box;
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
+}
+
+.ade-color-clear {
+    float: right;
 }
 
 /* Stock Ticker */
