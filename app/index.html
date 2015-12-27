@@ -68,7 +68,7 @@
 		<script src="common/demoTagCtrl.js"></script>
 
 	</head>
-	<body ng-app="tagapp" id="demo" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';datacolor='#f00';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataflex=1.2;dataint=9;datasingle='apple';datamulti=['dog','cat'];datastock='AMZN'" >
+	<body ng-app="tagapp" id="demo" ng-init="datatext='click to edit me';datalongtext='click to edit this very very very long text'; datatime=1000;dataicon='glass';datacolor='#f00';datacolor2='#eeff00';dataurl='http://www.github.com';datatoggle=true;datadate=1357601471;dataemail='example@example.com';dataphone='111-555-1234';datarate=4;datapercent=50;datalen=90;datacurrency=4.50;datadec=1.2;dataflex=1.2;dataint=9;datasingle='apple';datamulti=['dog','cat'];datastock='AMZN'" >
 		<a href="https://github.com/Toodledo/ADE"><img class="github" src="forkme_right_red.png" alt="Fork me on GitHub"></a>
 
 		<div class="container" ng-controller="ctrl" id="top">
@@ -197,8 +197,10 @@
 			</section>
 			<section>
 				<h3>Color picker <a href="color/">Details</a></h3>
-				<p>A color that can be chosen from a popup color picker.</p>
-				<div ade-color ng-model="datacolor"></div>
+				<p>Presents a popup color picker that saves up-to 20 colors into a recently used colors palette.</p>
+				<span ade-color ng-model="datacolor"></span>
+				<p>Presents a palette of colors with options to choose no color and custom color.</p>
+				<span ade-color ade-palette="['#ff00ff','#00ff00','#0000ff','#6699cc']" ng-model="datacolor2"></span>
 			</section>
 			<section>
 				<h3>Stock Price <a href="stock/">Details</a></h3>
