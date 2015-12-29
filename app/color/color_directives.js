@@ -133,21 +133,6 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 				if (exit !== 3) { //don't save value on esc
 					input.data("original-color", scope.ngModel);
-
-					if (scope.ngModel !== "") {
-						var colorMatch = palette.indexOf(scope.ngModel);
-						if (colorMatch !== -1) {
-							palette.splice(colorMatch, 1);
-						}
-						palette.unshift(scope.ngModel);
-						if (palette.length > 20) {
-							// a max of 20 colors is remembered
-							palette.pop();
-						}
-						if (palette.length > 1) {
-							scope.adePalette = JSON.stringify(palette);
-						}
-					}
 				} else {
 					scope.ngModel = oldValue;
 				}
@@ -161,14 +146,6 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			//place the popup in the proper place on the screen
 			var place = function() {
 				ADE.place('.'+ADE.popupClass,element);
-			};
-
-			//turns off all event listeners on the icons
-			var stopListening = function() {
-				var nextElement = element.next('.ade-popup');
-				var iconNode = nextElement.find('span');
-
-				if(iconNode) iconNode.off();
 			};
 
 			var clickHandler = function(e) {
@@ -195,24 +172,26 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 				var isMySpan = (angular.isDefined(attrClass) && attrClass.match('color')!==null && attrClass.match('color').length && clickTarget.parent()[0] == element[0]);
 				var isMyDiv = (clickTarget[0]==element[0]);
-
-				var pickerCssClasses = 'ade-color-picker';
-				var paletteCssClasses = 'ade-color-palette';
+				var html = "";
 
 				if ((isMySpan || isMyDiv)  && (!colorPopup || !colorPopup.length)) {   //don't popup a second one
 					editing = true;
+
+					html = '<div class="'+ADE.popupClass+' ade-color-popup dropdown-menu open"><h4>Pick a color</h4>' +
+						'<div class="ade-hidden"><input class="ade-invisible-input" type="text" /></div>';
+
 					if (palette.length && scope.adePalette) {
-						paletteCssClasses += ' open';
+						html += '<div class="ade-color-palette open">' +
+							colorsPaletteTemplate(palette, scope.ngModel) + '</div>' +
+							'<div class="ade-color-picker">' + colorsPopupTemplate + '</div>' +
+							'<a class="ade-color-popup-toggle" href="#">Custom color</a>';
 					} else {
-						pickerCssClasses += ' open';
+						html += '<div class="ade-color-picker open">' + colorsPopupTemplate + '</div>';
 					}
 
-					$compile('<div class="'+ADE.popupClass+' ade-color-popup dropdown-menu open"><h4>Pick a color</h4>' +
-						'<div class="ade-hidden"><input class="ade-invisible-input" type="text" /></div>' +
-						'<div class="'+ paletteCssClasses +'">' + colorsPaletteTemplate(palette, scope.ngModel) + '</div>' +
-						'<div class="'+ pickerCssClasses +'">' + colorsPopupTemplate + '</div>' +
-						'<a class="ade-color-custom" href="#">Custom color</a>' +
-						'<a class="ade-color-clear" href="#">No color</a></div>')(scope).insertAfter(element);
+					html += '<a class="ade-color-clear" href="#">No color</a></div>';
+
+					$compile(html)(scope).insertAfter(element);
 
 					place();
 					setTimeout(function() { //need to give it time to render before moving it
@@ -295,9 +274,13 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				var slider = popup.find('.ade-color-hue');
 				var clearColor = popup.find('.ade-color-clear');
 				var paletteColor = popup.find('.ade-color');
-				var customColor = popup.find('.ade-color-custom');
+				var popupToggle = popup.find('.ade-color-popup-toggle');
 
-				customColor[(box.is(":visible")) ? "hide" : "show"]();
+				if (!box.is(":visible")) {
+					popupToggle.text("Custom color");
+				} else {
+					popupToggle.text("Show palette");
+				}
 
 				clearColor.on('click', function(event) {
 					event.preventDefault();
@@ -308,16 +291,23 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 				paletteColor.on('click', function(event) {
 					event.preventDefault();
-					scope.ngModel = event.target.getAttribute("data-color");
+					scope.ngModel = event.currentTarget.getAttribute("data-color");
 					scope.$apply();
 					saveEdit(0);
 				});
 
-				customColor.on('click', function(event) {
+				popupToggle.on('click', function(event) {
 					event.preventDefault();
 					input.focus();
-					angular.element(".ade-color-palette").removeClass("open");
-					angular.element(".ade-color-picker").addClass("open");
+					if (box.is(":visible")) {
+						popupToggle.text("Custom color");
+						angular.element(".ade-color-palette").addClass("open");
+						angular.element(".ade-color-picker").removeClass("open");
+					} else {
+						popupToggle.text("Show palette");
+						angular.element(".ade-color-palette").removeClass("open");
+						angular.element(".ade-color-picker").addClass("open");
+					}
 				});
 
 				box.on('mousedown.ADE', function(event) {

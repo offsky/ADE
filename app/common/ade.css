@@ -448,6 +448,7 @@
     width: 14px;
     height: 14px;
     border: 1px solid #333;
+    cursor: pointer;
 }
 .ade-color-picker {
     width: 292px;
@@ -532,7 +533,7 @@
     box-sizing: content-box;
 }
 
-.ade-color-custom {
+.ade-color-popup-toggle {
     float: right;
 }
 
@@ -561,6 +562,10 @@
 }
 
 /* Stock Ticker */
+.ade-stock-price {
+    position: relative;
+    margin: 0;
+}
 .ade-stock-arrow,
 .ade-stock-arrow > path,
 .ade-stock-arrow + span {
@@ -587,4 +592,16 @@
 .ade-stock-no-data {
     padding-left: 5px;
     color: #666;
+}
+.ade-stock-price-only .ade-price-movement,
+.ade-stock-popup .ade-price-movement {
+    display: none;
+}
+.ade-stock-popup .ade-price-movement {
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 130px;
+    min-width: 130px;
 }

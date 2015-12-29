@@ -37,6 +37,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			adeClass: "@",
 			adeReadonly: "@",
 			adeProvider: "@",
+			adeMovement: "@",
 			ngModel: "="
 		},
 
@@ -57,12 +58,19 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			var makeHTML = function() {
 				var url, request, html = "";
 				var value = scope.ngModel;
+				var cssClasses = "ade-stock-price";
 
 				if (value!==undefined) {
 					if(angular.isArray(value)) value = value[0];
 					if(value===null || value===undefined) value="";
 					if(!angular.isString(value)) value = value.toString();
-					element.html("<p class='ade-stock-price'><b>"+ encodeURIComponent(value) + "</b></p>");
+					if (scope.adeMovement === "0") {
+						cssClasses += " ade-stock-price-only";
+					}
+					if (scope.adeMovement === "2") {
+						cssClasses += " ade-stock-popup";
+					}
+					element.html("<p class='"+ cssClasses +"'><b>"+ encodeURIComponent(value).toUpperCase() + "</b></p>");
 
 					if (scope.adeProvider === 'yahoo') {
 						url = "https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quotes where " +
@@ -88,7 +96,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 					'height="24" viewBox="0 0 24 24" width="24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17' +
 					'l-5.58-5.59L4 12l8 8 8-8z" class="ade-arrow-down" /><path ' +
 					'd="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12 l-8-8-8 8z" class="ade-arrow-up"/></svg>';
-				var change = "", price = "";
+				var $stockEl = element.find(".ade-stock-price"); change = "", price = "";
 
 				if (scope.adeProvider === 'yahoo') {
 					change = resp.data.query.results.quote.Change;
@@ -97,12 +105,24 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 						handleError();
 						return;
 					}
-					element.find('.ade-stock-price').append(" " + resp.data.query.results.quote.LastTradePriceOnly +
-							arrowIcon + ' <span>$' + change.substring(1) + '</span></p>');
+					$stockEl.append(" " + resp.data.query.results.quote.LastTradePriceOnly +
+							'<span class="ade-price-movement">' + arrowIcon + ' <span>$' + change.substring(1) +
+							'</span></span></p>');
 				} else {
 					change = resp.data[0].c;
-					element.find('.ade-stock-price').append(" " + resp.data[0].l_cur + arrowIcon +
-							' <span>$' + change.substring(1) + '</span></p>');
+					$stockEl.append(" " + resp.data[0].l_cur +
+							'<span class="ade-price-movement">' + arrowIcon +
+							' <span>$' + change.substring(1) + '</span></span></p>');
+				}
+
+				if ($stockEl.hasClass("ade-stock-popup")) {
+					var $movementEl = $stockEl.find(".ade-price-movement");
+					$movementEl.addClass("ade-popup").addClass("dropdown-menu");
+					$stockEl.on("mouseenter", function() {
+						$movementEl.addClass("open");
+					}).on("mouseleave", function() {
+						$movementEl.removeClass("open");
+					});
 				}
 
 				if (change.indexOf("+") !== -1) {
