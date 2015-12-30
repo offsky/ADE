@@ -45,7 +45,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			html += $filter('color')(color, selectedColor);
 		});
 
-		if (colors.indexOf(selectedColor) === -1) {
+		if (selectedColor!=="" && colors.indexOf(selectedColor) === -1) {
 			html += $filter('color')(selectedColor, selectedColor);
 		}
 		return html;
