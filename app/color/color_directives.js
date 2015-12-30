@@ -45,12 +45,12 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			html += $filter('color')(color, selectedColor);
 		});
 
-		if (selectedColor!=="" && colors.indexOf(selectedColor) === -1) {
+		if (selectedColor!==undefined && selectedColor!=="" && colors.indexOf(selectedColor) === -1) {
 			html += $filter('color')(selectedColor, selectedColor);
 		}
 		return html;
 	};
-	
+
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-color=""></div>
@@ -122,7 +122,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			}
 
 			var makeHTML = function() {
-				var html = $filter('color')(scope.ngModel);
+				var html = $filter('color')(scope.ngModel,-1);
 				element.html(html);
 			};
 

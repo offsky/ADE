@@ -21,7 +21,7 @@ angular.module('ADE').filter('color', ['ADE', 'colorUtils', function(ADE, utils)
 			returnValue =  '<span class="ade-color" data-color="'+hexColor+'" style="background-color:' + hexColor + '">';
 		}
 
-		if (hexColor === selectedHexColor && selectedHexColor!==undefined) {
+		if (hexColor === selectedHexColor && selectedHexColor!==-1) {
 			returnValue += checkmark;
 		}
 
