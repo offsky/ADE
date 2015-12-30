@@ -15,11 +15,11 @@ describe('color', function() {
     }));
 
     it('should return a square with black background', function() {
-        expect(colorFilter('#000')).toEqual('<span class="ade-color" style="background-color:#000">');
+        expect(colorFilter('#000')).toEqual('<span class="ade-color" data-color="#000" style="background-color:#000"></span>');
     });
 
     it('should return a clear icon because we gave it a bad icon', function() {
-        expect(colorFilter('doesntexist')).toEqual('<span class="ade-color">');
-        expect(colorFilter(123)).toEqual('<span class="ade-color">');
+        expect(colorFilter('doesntexist')).toEqual('<span class="ade-color"></span>');
+        expect(colorFilter(123)).toEqual('<span class="ade-color"></span>');
     });
 });
