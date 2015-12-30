@@ -99,6 +99,10 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				var $stockEl = element.find(".ade-stock-price"); change = "", price = "";
 
 				if (scope.adeProvider === 'yahoo') {
+					if (resp.data.query.results === null) {
+						handleError();
+						return;
+					}
 					change = resp.data.query.results.quote.Change;
 					price = resp.data.query.results.quote.LastTradePriceOnly;
 					if (price === null) {
