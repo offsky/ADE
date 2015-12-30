@@ -60,7 +60,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				var value = scope.ngModel;
 				var cssClasses = "ade-stock-price";
 
-				if (value!==undefined) {
+				if (value!==undefined && value!=="") {
 					if(angular.isArray(value)) value = value[0];
 					if(value===null || value===undefined) value="";
 					if(!angular.isString(value)) value = value.toString();
@@ -83,6 +83,8 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 						request = $http.jsonp(url);
 					}
 					return( request.then( handleSuccess, handleError ) );
+				} else {
+					element.html("");
 				}
 
 			};
