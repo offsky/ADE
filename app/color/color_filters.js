@@ -16,11 +16,12 @@ angular.module('ADE').filter('color', ['ADE', 'colorUtils', function(ADE, utils)
 				'-3,-2.8c-3.03331,3.03333 -6.1667,6.76667 -8.10001,10.1z" /></svg>';
 
 		var returnValue = '<span class="ade-color">';
+
 		if (utils.parseHex(hexColor) !== "") {
 			returnValue =  '<span class="ade-color" data-color="'+hexColor+'" style="background-color:' + hexColor + '">';
 		}
 
-		if (hexColor === selectedHexColor) {
+		if (hexColor === selectedHexColor && selectedHexColor!==undefined) {
 			returnValue += checkmark;
 		}
 

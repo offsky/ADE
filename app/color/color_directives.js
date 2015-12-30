@@ -50,6 +50,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 		}
 		return html;
 	};
+	
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-color=""></div>
