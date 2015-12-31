@@ -51,6 +51,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			var inputClass = "";
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var cache = {};
 
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
@@ -59,8 +60,10 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				var url, request, html = "";
 				var value = scope.ngModel;
 				var cssClasses = "ade-stock-price";
+				var timestamp = new Date().getTime();
+				var cache = JSON.parse(localStorage.getItem("adeCache") || "{}");
 
-				if (value!==undefined && value!=="") {
+ 				if (value!==undefined && value!=="") {
 					if(angular.isArray(value)) value = value[0];
 					if(value===null || value===undefined) value="";
 					if(!angular.isString(value)) value = value.toString();
@@ -71,6 +74,11 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 						cssClasses += " ade-stock-popup";
 					}
 					element.html("<p class='"+ cssClasses +"'><b>"+ encodeURIComponent(value).toUpperCase() + "</b></p>");
+
+					if (cache && cache[value] && cache[value].expires > timestamp) {
+						handleSuccess(null, cache[value]);
+						return;
+					}
 
 					if (scope.adeProvider === 'yahoo') {
 						url = "https://query.yahooapis.com/v1/public/yql?q=select * from yahoo.finance.quotes where " +
@@ -84,7 +92,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 					}
 					return( request.then( handleSuccess, handleError ) );
 				} else {
-					element.html("");
+					return element.html("");
 				}
 
 			};
@@ -93,33 +101,52 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				element.find('.ade-stock-price').append("<span class='ade-stock-no-data'>no price available</span></p>");
 			};
 
-			var handleSuccess = function(resp) {
+			var handleSuccess = function(resp, cachedPrice) {
 				var arrowIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="ade-stock-arrow" fill="#000000" ' +
 					'height="24" viewBox="0 0 24 24" width="24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17' +
 					'l-5.58-5.59L4 12l8 8 8-8z" class="ade-arrow-down" /><path ' +
 					'd="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12 l-8-8-8 8z" class="ade-arrow-up"/></svg>';
-				var $stockEl = element.find(".ade-stock-price"); change = "", price = "";
+				var adeCache = JSON.parse(localStorage.getItem("adeCache") || "{}");
+				var $stockEl = element.find(".ade-stock-price"), period = 900000,
+					change = "", price = "", ticker = "", quote = "";
 
-				if (scope.adeProvider === 'yahoo') {
-					if (resp.data.query.results === null) {
-						handleError();
-						return;
+				if (resp) {
+					if (scope.adeProvider === 'yahoo') {
+						if (resp.data.query.results === null) {
+							handleError();
+							return;
+						}
+						quote = resp.data.query.results.quote;
+						change = quote.Change;
+						price = quote.LastTradePriceOnly;
+						ticker = quote.Symbol;
+
+						if (price === null) {
+							handleError();
+							return;
+						}
+					} else {
+						change = resp.data[0].c;
+						price = resp.data[0].l_cur;
+						ticker = resp.data[0].t;
 					}
-					change = resp.data.query.results.quote.Change;
-					price = resp.data.query.results.quote.LastTradePriceOnly;
-					if (price === null) {
-						handleError();
-						return;
-					}
-					$stockEl.append(" " + resp.data.query.results.quote.LastTradePriceOnly +
-							'<span class="ade-price-movement">' + arrowIcon + ' <span>$' + change.substring(1) +
-							'</span></span></p>');
+
+					//save to localStorage
+					adeCache[ticker] = {
+						"expires": new Date().getTime() + period,
+						"price": price,
+						"change": change
+					};
+
+					localStorage.setItem("adeCache", JSON.stringify(adeCache));
 				} else {
-					change = resp.data[0].c;
-					$stockEl.append(" " + resp.data[0].l_cur +
-							'<span class="ade-price-movement">' + arrowIcon +
-							' <span>$' + change.substring(1) + '</span></span></p>');
+					//cached data displayed;
+					price = cachedPrice.price;
+					change = cachedPrice.change;
 				}
+
+				$stockEl.append(" " + price + '<span class="ade-price-movement">' + arrowIcon +
+					' <span>$' + change.substring(1) + '</span></span></p>');
 
 				if ($stockEl.hasClass("ade-stock-popup")) {
 					var $movementEl = $stockEl.find(".ade-price-movement");
@@ -177,7 +204,7 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 				}
 				editing = true;
 
-				var value = scope.ngModel;
+				var value = (typeof scope.ngModel === "undefined") ? "" : scope.ngModel;
 
 				element.hide();
 				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value+'" />')(scope).insertAfter(element);

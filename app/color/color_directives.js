@@ -130,14 +130,14 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				//we are saving, so cancel any delayed blur saves that we might get
 				window.clearTimeout(timeout);
 
-				var oldValue = input.data("original-color");
+				var oldValue = scope.input.data("original-color");
 				exit = exited;
 
-				ADE.teardownBlur(input);
-				ADE.teardownKeys(input);
+				ADE.teardownBlur(scope.input);
+				ADE.teardownKeys(scope.input);
 
 				if (exit !== 3) { //don't save value on esc
-					input.data("original-color", scope.ngModel);
+					scope.input.data("original-color", scope.ngModel);
 				} else {
 					scope.ngModel = oldValue;
 				}
@@ -154,13 +154,13 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			};
 
 			var clickHandler = function(e) {
-				destroy();
+				//destroy();
 				if (editing) return;
 				exit = 0;
 				//Hide any that are already up
 				var colorBox = $('.'+ADE.popupClass);
 				if (colorBox.length) {
-					$(document).trigger('ADE_hidepops.ADE');
+					colorBox.find(".ade-invisible-input").trigger('blur.ADE');
 				}
 
 				element.off('keypress.ADE');
@@ -204,7 +204,7 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					});
 				    setColor(scope.ngModel);
 					setupEvents();
-					input.data("original-color", scope.ngModel);
+					scope.input.data("original-color", scope.ngModel);
 				}
 			};
 
@@ -269,12 +269,12 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 
 				scope.ngModel = hex;
 				scope.$apply();
-				input.focus();
+				scope.input.focus();
 			};
 
 			var setupEvents = function() {
 				var popup = element.next();
-				input = angular.element(".ade-invisible-input");
+				scope.input = angular.element(".ade-invisible-input");
 				var box = popup.find('.ade-color-gradient');
 				var slider = popup.find('.ade-color-hue');
 				var clearColor = popup.find('.ade-color-clear');
@@ -302,11 +302,13 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				});
 
 				popupToggle.on('click', function(event) {
+					ADE.cancelBlur();
 					event.preventDefault();
-					input.focus();
+					scope.input.focus();
 					if (box.is(":visible")) {
 						popupToggle.text("Custom color");
 						angular.element(".ade-color-palette").addClass("open");
+						$(".ade-color-palette.open").empty().html(colorsPaletteTemplate(palette, scope.ngModel));
 						angular.element(".ade-color-picker").removeClass("open");
 					} else {
 						popupToggle.text("Show palette");
@@ -396,9 +398,9 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					angular.element(this).removeData('adeSliderTarget');
 				});
 
-				if(ADE.keyboardEdit) input.focus();
+				if(ADE.keyboardEdit) scope.input.focus();
 
-				ADE.setupKeys(input, saveEdit, false, scope);
+				ADE.setupKeys(scope.input, saveEdit, false, scope);
 
 				ADE.setupScrollEvents(element,function() {
 					scope.$apply(function() {
@@ -410,23 +412,21 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					saveEdit(3);
 				});
 
-				input.on('focus',function() {
+				scope.input.on('focus',function() {
 					if (timeout) {
 						clearTimeout(timeout);
 						timeout = false;
 					}
 				});
 
-				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
-				input.on('blur.ADE', function(e) {
+				//handles blurs of the invisible scope.input.  This is done to respond to clicks outside the popup
+				scope.input.on('blur.ADE', function(e) {
 					//We delay the closure of the popup to give the internal icons a chance to
 					//fire their click handlers and change the value.
 					timeout = window.setTimeout(function() {
-						if (input.parents("body").length) {
-							scope.$apply(function () {
-								saveEdit(0);
-							});
-						}
+						scope.$apply(function () {
+							saveEdit(0);
+						});
 					},500);
 				});
 			};
@@ -450,8 +450,8 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			var destroy = function() {
-				ADE.teardownBlur(input);
-				if(input) input.off();
+				ADE.teardownBlur(scope.input);
+				if(scope.input) scope.input.off();
 				$(document).off('ADE_hidepops.ADE');
 				ADE.hidePopup();
 				editing = false;
