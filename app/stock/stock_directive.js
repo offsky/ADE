@@ -197,12 +197,11 @@ angular.module('ADE').directive('adeStock', ['ADE', '$compile', '$filter', '$htt
 			};
 
 			var clickHandler = function(e) {
-				if (editing) {
-					e.preventDefault(); //these two lines prevent the click on the link from actually taking you there
-					e.stopPropagation();
-					return; //already editing
-				}
+				if (editing) return;
 				editing = true;
+
+				adeId = scope.adeId;
+				ADE.begin(adeId);
 
 				var value = (typeof scope.ngModel === "undefined") ? "" : scope.ngModel;
 
