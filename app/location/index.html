@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8"/> 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title>ADE :: Text Directive</title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<link rel="stylesheet" href="../common/demo.css"/>
+	</head>
+	<body ng-app="app" ng-init='data="{\"title\": \"White House\", \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500\", \"lat\": \"38.8977\", \"lon\": \"77.0366\" }";data2="{\"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500\", \"lat\": \"38.8977\", \"lon\": \"77.0366\" }";data3="{\"lat\": \"38.8977\", \"lon\": \"77.0366\" }";data4="{}"'>
+		<div class="back">
+			<a href="../index.html">ADE demo</a> / Location
+		</div>
+		<div class="container" ng-controller="ctrl">
+		<!--[if lt IE 7]>
+			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+		<![endif]-->
+
+		<h2>Location directive</h2>
+		
+		<p>A directive that allows editing location.</p>
+		
+		<section>
+			<p><div class="ade-editme sample" ade-location ade-id="1234" ng-model="data"></div></p>
+
+			<p><div class="ade-editme sample" ade-location ade-id="2345" ng-model="data2"></div></p>
+
+			<p><div class="ade-editme sample" ade-location ade-id="3456" ng-model="data3"></div></p>
+
+			<p><div class="ade-editme sample" ade-location ade-id="4567" ng-model="data4"></div></p>
+
+			<p>The directive will broadcast a message when the edit starts and when it finishes so that your controllers and models can handle the edit properly.</p>
+
+			<b>Last Message :</b>
+			<pre><span id="message">{{ lastMessage }}</span></pre>
+		</section>
+
+		</div>
+
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+		
+		<script src="../common/ade.js"></script>
+		<script src="../common/demoCtrl.js"></script>
+		<script src="../common/demoApp.js"></script>
+		<script src="location_filters.js"></script>
+		<script src="location_directives.js"></script>
+		
+	</body>
+</html>
