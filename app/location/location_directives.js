@@ -24,6 +24,7 @@
 ------------------------------------------------------------------*/
 
 angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',function(ADE,$compile,$filter) {
+
 	return {
 		require: '?ngModel', //optional dependency for ngModel
 		restrict: 'A', //Attribute declaration eg: <div ade-text=""></div>
@@ -44,6 +45,12 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 			var inputClass = "";
 			var stopObserving = null;
 			var adeId = scope.adeId;
+			var map;
+			var marker;
+			var timeout = null;
+			var zoom = 13;
+			var infoWindow;
+			var geocoder = new google.maps.Geocoder();
 
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
@@ -64,16 +71,23 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				exit = exited;
 
 				if(exited!=3) { //don't save value on esc
-					scope.ngModel = input.val();
+					var parsedModel = JSON.parse(scope.ngModel);
+					parsedModel.address = element.next().find("#locationAddress").val() || "";
+					parsedModel.title = element.next().find("#locationTitle").val() || "";
+					scope.ngModel = JSON.stringify(parsedModel);
 				}
 
 				element.show();
-				input.remove();
 				editing=false;
 
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
 				ADE.teardownBlur(input);
 				ADE.teardownKeys(input);
+			};
+
+			//place the popup in the proper place on the screen
+			var place = function() {
+				ADE.place('.'+ADE.popupClass,element);
 			};
 
 			var clickHandler = function() {
@@ -83,19 +97,165 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 
 				adeId = scope.adeId;
 				ADE.begin(adeId);
+				var location_data = JSON.parse(scope.ngModel);
 
+				var lat = parseFloat(location_data.lat);
+				var lon = parseFloat(location_data.lon);
 
-				var value = scope.ngModel;
-				if(value==undefined || value==null) value="";
-				if(!angular.isString(value)) value = value.toString();
-				
-				element.hide();
-				$compile('<input type="text" class="ade-input '+inputClass+'" value="'+value.replace(/"/g,'&quot;')+'" />')(scope).insertAfter(element);
-				input = element.next('input');
-				input.focus();
+				var latLng = {lat: lat, lng: lon}
+				var html;
+				var title = location_data.title || "";
+				var address = location_data.address || "";
 
-				ADE.setupBlur(input,saveEdit,scope);
-				ADE.setupKeys(input,saveEdit,false,scope);
+				html = '<div class="'+ADE.popupClass+' ade-location-popup dropdown-menu open" id="ade-location-"' + adeId + '">' +
+						'<input type="hidden" class="ade-invisible-input" /><div id="map_canvas" class="ade-location-map"></div>' +
+						'<div class="ade-location-overlay"><input class="ade-input" placeholder="Enter title" id="locationTitle" ' +
+						'value="' + title  + '" /><input class="ade-input ade-search-input" placeholder="Enter address" type="text" ' +
+						'id="locationAddress" value="' + address + '" /><button class="icon-search ade-search-button" type="button" />' +
+						'<div><button class="ade-clear-location-button" type="button">' +
+						'<i class="icon-trash"></i> Clear location</button></div></div></div>';
+
+				$compile(html)(scope)
+						.insertAfter(element);
+
+				place();
+				setTimeout(function() { //need to give it time to render before moving it
+					place();
+				});
+
+				scope.input = element.next().find('.ade-invisible-input');
+				scope.input.focus();
+
+				//set the map options
+				var myOptions = {
+					zoom: zoom,
+					center: latLng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					streetViewControl: true
+				};
+				if (map) {
+					map.panTo(latLng);
+					map.setZoom(zoom);
+				} else {
+					map = new google.maps.Map($("#map_canvas")[0], myOptions);
+				}
+
+				marker = new google.maps.Marker({
+					position: latLng,
+					map: map,
+					draggable: true,
+					title: location_data.title
+				});
+
+				infoWindow = new google.maps.InfoWindow({
+					content: location_data.title
+				});
+
+				google.maps.event.addListener(marker, 'click', function() {
+					infoWindow.open(map,marker);
+				});
+
+				google.maps.event.addListener(marker, 'dragend', function() {
+					var pos = marker.getPosition();
+					lookupByCoords(pos);
+				});
+
+				setupEvents();
+
+				ADE.setupBlur(scope.input,saveEdit,scope);
+				ADE.setupKeys(scope.input,saveEdit,false,scope);
+
+				ADE.setupScrollEvents(element,function() {
+					scope.$apply(function() {
+						place();
+					});
+				});
+
+				if (!address) {
+					lookupByCoords(latLng);
+				}
+			};
+
+			var setupEvents = function() {
+				var searchBtn = element.next().find(".ade-search-button");
+
+				searchBtn.on('click', lookupByAddress);
+
+				$(document).on('ADE_hidepops.ADE',function() {
+					saveEdit(3);
+				});
+
+				scope.input.on('focus',function() {
+					console.log("input focus");
+					if (timeout) {
+						clearTimeout(timeout);
+						timeout = false;
+					}
+				});
+
+				//handles blurs of the invisible scope.input.  This is done to respond to clicks outside the popup
+				scope.input.on('blur.ADE', function(e) {
+
+					console.log("input blur");
+					//We delay the closure of the popup to give the internal icons a chance to
+					//fire their click handlers and change the value.
+					timeout = window.setTimeout(function() {
+						scope.$apply(function () {
+							saveEdit(0);
+						});
+					},500);
+				});
+			};
+
+			var destroy = function() {
+				ADE.teardownBlur(scope.input);
+				if(scope.input) scope.input.off();
+				$(document).off('ADE_hidepops.ADE');
+				ADE.hidePopup();
+				editing = false;
+			};
+
+			var lookupByAddress = function() {
+				var address = document.getElementById("locationAddress").value;
+
+				geocoder.geocode( { 'address': address }, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						map.setCenter(results[0].geometry.location);
+
+						if (marker) {
+							marker.setPosition(results[0].geometry.location);
+							marker.setMap(map);
+						} else {
+							marker = new google.maps.Marker({
+								map: map,
+								position: results[0].geometry.location
+							});
+						}
+					} else {
+						alert("Geocode was not successful for the following reason: " + status);
+					}
+				});
+			};
+
+			var lookupByCoords = function(latLon) {
+				geocoder.geocode( { 'location': latLon }, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						map.setCenter(results[0].geometry.location);
+
+						if (marker) {
+							marker.setPosition(results[0].geometry.location);
+							marker.setMap(map);
+						} else {
+							marker = new google.maps.Marker({
+								map: map,
+								position: results[0].geometry.location
+							});
+						}
+						element.next().find(".ade-search-input").val(results[0].formatted_address);
+					} else {
+						alert("Geocode was not successful for the following reason: " + status);
+					}
+				});
 			};
 
 			//setup events
@@ -119,8 +279,9 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 			stopObserving = attrs.$observe('adeId', observeID);
 
 			scope.$on('$destroy', function() { //need to clean up the event watchers when the scope is destroyed
+
 				if(element) element.off('click.ADE');
-			
+
 				if(stopObserving && stopObserving!=observeID) { //Angualar <=1.2 returns callback, not deregister fn
 					stopObserving();
 					stopObserving = null;
@@ -135,6 +296,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 			}, function () {
 				makeHTML();
 			});
+
 		}
 	};
 }]);

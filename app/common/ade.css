@@ -605,3 +605,56 @@
     width: 130px;
     min-width: 130px;
 }
+
+.ade-location-popup {
+    width: 450px;
+    height: 300px;
+}
+
+.ade-location-map {
+    width: 450px;
+    height: 300px;
+}
+
+.ade-location-overlay {
+    position: absolute;
+    right: 20px;
+    background: rgba(245,245,243,.7);
+    box-shadow: 1px 1px 2px 0 rgba(50,50,50,.3);
+    padding: 10px;
+    top: 20px;
+    width: 160px;
+    height: 75px;
+}
+
+.ade-location-overlay .ade-input {
+    margin: 0 0 5px 0;
+    width: 148px;
+}
+
+.ade-location-overlay .ade-search-input {
+    width: 110px;
+    margin-right: 5px;
+}
+
+.ade-search-button {
+    background: #1b75bc;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.ade-search-button:hover {
+    background: #173c60;
+}
+
+.ade-clear-location-button {
+    background: none;
+    border: none;
+    font-size: 14px;
+    float: right;
+    padding: 0;
+    cursor: pointer;
+}
