@@ -2,28 +2,22 @@
 	AngularJS Datatype Editor - Location
 	A filter to display a location.
 
-	Usage:
-	{{ data | duration }}
-
 ------------------------------------------------------------------*/
 
 angular.module('ADE').filter('location', function() {
 
 	return function(input) {
-		if (!input) return '';
-		
 		var output = '';
-		var value = JSON.parse(input);
 
-		if (!angular.isObject(value)) return;
+		if (!angular.isObject(input)) return;
 
-		if (value.title) {
-			output = value.title;
-		} else if (value.address) {
-			output = value.address;
-		} else if (value.lat || value.lon) {
-			output = (value.lat) ? 'Latitude: ' + value.lat + ' ' : '';
-			output += (value.lon) ? 'Longitude: ' + value.lon : '';
+		if (input.title) {
+			output = input.title;
+		} else if (input.address) {
+			output = input.address;
+		} else if (input.lat || input.lon) {
+			output = (input.lat) ? 'Latitude: ' + input.lat + ' ' : '';
+			output += (input.lon) ? 'Longitude: ' + input.lon : '';
 		} else {
 			output = 'No Location';
 		}

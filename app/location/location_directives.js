@@ -51,6 +51,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 			var zoom = 13;
 			var infoWindow;
 			var geocoder = new google.maps.Geocoder();
+			var savedMode = {};
 
 			if(scope.adeClass!==undefined) inputClass = scope.adeClass;
 			if(scope.adeReadonly!==undefined && scope.adeReadonly=="1") readonly = true;
@@ -67,18 +68,20 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 
 			//called once the edit is done, so we can save the new data	and remove edit mode
 			var saveEdit = function(exited) {
-				var oldValue = scope.ngModel;
+				debugger;
+				var oldValue = savedModel;
 				exit = exited;
 
-				if(exited!=3) { //don't save value on esc
-					var parsedModel = JSON.parse(scope.ngModel);
-					parsedModel.address = element.next().find("#locationAddress").val() || "";
-					parsedModel.title = element.next().find("#locationTitle").val() || "";
-					scope.ngModel = JSON.stringify(parsedModel);
+				if (exited === 3) { //don't save value on esc
+					scope.ngModel.title = savedModel.title;
+					scope.ngModel.address = savedModel.address;
+					scope.ngModel.lat = savedModel.lat;
+					scope.ngModel.lon = savedModel.lon;
 				}
 
 				element.show();
 				editing=false;
+				destroy();
 
 				ADE.done(adeId, oldValue, scope.ngModel, exit);
 				ADE.teardownBlur(input);
@@ -91,13 +94,16 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 			};
 
 			var clickHandler = function() {
-				if(editing) return;
-				editing=true;
+				ADE.hidePopup(element);
+				destroy();
+				if (editing) return;
+				editing = true;
 				exit = 0;
 
 				adeId = scope.adeId;
 				ADE.begin(adeId);
-				var location_data = JSON.parse(scope.ngModel);
+				savedModel = $.extend({}, scope.ngModel);
+				var location_data = scope.ngModel;
 
 				var lat = parseFloat(location_data.lat);
 				var lon = parseFloat(location_data.lon);
@@ -107,13 +113,13 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				var title = location_data.title || "";
 				var address = location_data.address || "";
 
-				html = '<div class="'+ADE.popupClass+' ade-location-popup dropdown-menu open" id="ade-location-"' + adeId + '">' +
-						'<input type="hidden" class="ade-invisible-input" /><div id="map_canvas" class="ade-location-map"></div>' +
-						'<div class="ade-location-overlay"><input class="ade-input" placeholder="Enter title" id="locationTitle" ' +
-						'value="' + title  + '" /><input class="ade-input ade-search-input" placeholder="Enter address" type="text" ' +
-						'id="locationAddress" value="' + address + '" /><button class="icon-search ade-search-button" type="button" />' +
-						'<div><button class="ade-clear-location-button" type="button">' +
-						'<i class="icon-trash"></i> Clear location</button></div></div></div>';
+				html = '<div class="'+ADE.popupClass+' ade-location-popup dropdown-menu open" id="ade-location-' + adeId + '">' +
+					'<input type="hidden" class="ade-invisible-input" /><div id="map_canvas" class="ade-location-map"></div>' +
+					'<div class="ade-location-overlay"><input class="ade-input" placeholder="Enter title" id="locationTitle" ' +
+					'value="' + title  + '" /><input class="ade-input ade-search-input" placeholder="Enter address" type="text" ' +
+					'id="locationAddress" value="' + address + '" /><button class="icon-search ade-search-button" type="button" />' +
+					'<div><button class="ade-clear-location-button" type="button">' +
+					'<i class="icon-trash"></i> Clear location</button></div></div></div>';
 
 				$compile(html)(scope)
 						.insertAfter(element);
@@ -123,8 +129,8 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 					place();
 				});
 
-				scope.input = element.next().find('.ade-invisible-input');
-				scope.input.focus();
+				input = $('.ade-invisible-input');
+				input.focus();
 
 				//set the map options
 				var myOptions = {
@@ -162,8 +168,8 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 
 				setupEvents();
 
-				ADE.setupBlur(scope.input,saveEdit,scope);
-				ADE.setupKeys(scope.input,saveEdit,false,scope);
+				ADE.setupBlur(input,saveEdit,scope);
+				ADE.setupKeys(input,saveEdit,false,scope);
 
 				ADE.setupScrollEvents(element,function() {
 					scope.$apply(function() {
@@ -174,18 +180,33 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				if (!address) {
 					lookupByCoords(latLng);
 				}
+
+				$(document).on('click.ADE', function(e) {
+					var $target = $(e.target);
+					scope.$apply(function() {
+						if (!$("#ade-location-"+adeId).has($target).length && $target.attr("ade-id") !== element.attr("ade-id")) {
+							saveEdit(0);
+						}
+					});
+				});
 			};
 
 			var setupEvents = function() {
 				var searchBtn = element.next().find(".ade-search-button");
+				var locationTitle = element.next().find("#locationTitle");
+				var clearLocationButton = element.next().find(".ade-clear-location-button");
 
 				searchBtn.on('click', lookupByAddress);
+
+				locationTitle.on('blur', saveLocationTitle);
+
+				clearLocationButton.on('click', clearLocation);
 
 				$(document).on('ADE_hidepops.ADE',function() {
 					saveEdit(3);
 				});
 
-				scope.input.on('focus',function() {
+				input.on('focus',function() {
 					console.log("input focus");
 					if (timeout) {
 						clearTimeout(timeout);
@@ -193,8 +214,8 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 					}
 				});
 
-				//handles blurs of the invisible scope.input.  This is done to respond to clicks outside the popup
-				scope.input.on('blur.ADE', function(e) {
+				//handles blurs of the invisible input.  This is done to respond to clicks outside the popup
+				input.on('blur.ADE', function(e) {
 
 					console.log("input blur");
 					//We delay the closure of the popup to give the internal icons a chance to
@@ -207,9 +228,28 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				});
 			};
 
+			var saveLocationTitle = function() {
+				var title = this.value;
+				scope.$apply(function() {
+					scope.ngModel.title = title;
+					makeHTML();
+				});
+			};
+
+			var clearLocation = function() {
+				document.getElementById("locationTitle").value = "";
+				document.getElementById("locationAddress").value = "";
+				scope.$apply(function() {
+					scope.ngModel = {};
+					makeHTML();
+				});
+				marker.setMap(null);
+				marker = null;
+			};
+
 			var destroy = function() {
-				ADE.teardownBlur(scope.input);
-				if(scope.input) scope.input.off();
+				ADE.teardownBlur(input);
+				if(input) input.off();
 				$(document).off('ADE_hidepops.ADE');
 				ADE.hidePopup();
 				editing = false;
@@ -231,6 +271,16 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 								position: results[0].geometry.location
 							});
 						}
+
+						element.next().find("#locationAddress").val(results[0].formatted_address).end()
+								.find("#locationTitle").val("");
+						scope.$apply(function() {
+							scope.ngModel.address = results[0].formatted_address;
+							scope.ngModel.title = "";
+							scope.ngModel.lat = results[0].geometry.location.lat();
+							scope.ngModel.lon = results[0].geometry.location.lng();
+							makeHTML();
+						});
 					} else {
 						alert("Geocode was not successful for the following reason: " + status);
 					}
@@ -251,7 +301,16 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 								position: results[0].geometry.location
 							});
 						}
-						element.next().find(".ade-search-input").val(results[0].formatted_address);
+
+						element.next().find("#locationAddress").val(results[0].formatted_address).end()
+						 	.find("#locationTitle").val("");
+					 	scope.$apply(function() {
+						 	scope.ngModel.address = results[0].formatted_address;
+							scope.ngModel.title = "";
+							scope.ngModel.lat = results[0].geometry.location.lat();
+							scope.ngModel.lon = results[0].geometry.location.lng();
+							makeHTML();
+					 	});
 					} else {
 						alert("Geocode was not successful for the following reason: " + status);
 					}
