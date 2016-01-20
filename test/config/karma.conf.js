@@ -39,6 +39,9 @@ module.exports = function(config) {
       'app/duration/*.js',
       'test/unit/duration/*.js',
 
+      'app/location/*.js',
+      'test/unit/location/*.js',
+
       'app/money/*.js',
       'test/unit/money/*.js',
 
