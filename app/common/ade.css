@@ -621,7 +621,7 @@
     right: 20px;
     background: rgba(245,245,243,.7);
     box-shadow: 1px 1px 2px 0 rgba(50,50,50,.3);
-    padding: 10px;
+    padding: 10px 8px;
     top: 20px;
     width: 180px;
     height: 90px;
@@ -629,9 +629,9 @@
 }
 
 .ade-location-overlay .ade-input {
-    padding: .4em;
+    padding: 2px;
     margin: 0 0 5px 0;
-    width: 160px;
+    width: 165px;
     box-sizing: border-box;
 }
 
@@ -644,7 +644,7 @@
     background: #1b75bc;
     border: none;
     color: white;
-    padding: 4px 6px;
+    padding: 4px 5px 4px 6px;
     display: inline-block;
     cursor: pointer;
     font-size: 0;

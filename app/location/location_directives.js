@@ -113,7 +113,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 					requestInProgress = false;
 					lat = 37.09024;
 					lon = -95.712891;
-					populateMap();
+					populateMap(true); //true for defaultLocation - will set zoom level lower
 				}
 
 				var html;
@@ -183,21 +183,21 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				}, 5000);
 			};
 
-			var populateMap = function() {
+			var populateMap = function(isDefaultLocation) {
 
 				latLng = { lat: lat, lng: lon };
 
 				//set the map options
 				var myOptions = {
-					zoom: zoom,
+					zoom: (isDefaultLocation) ? 3 : zoom,
 					center: latLng,
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
-					streetViewControl: true
+					streetViewControl: false
 				};
 
 				if (map) {
 					map.panTo(latLng);
-					map.setZoom(zoom);
+					map.setZoom((isDefaultLocation) ? 3 : zoom);
 				} else {
 					map = new google.maps.Map($("#map_canvas")[0], myOptions);
 				}
@@ -232,11 +232,18 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 			var setupEvents = function() {
 				var searchBtn = element.next().find(".ade-search-button");
 				var locationTitle = element.next().find("#locationTitle");
+				var locationAddress = element.next().find("#locationAddress");
 				var clearLocationButton = element.next().find(".ade-clear-location-button");
 
 				searchBtn.on('click', lookupByAddress);
 
 				locationTitle.on('blur', saveLocationTitle);
+
+				locationAddress.on('keypress', function(e) {
+					if (e.which === 13) {
+						lookupByAddress();
+					}
+				});
 
 				clearLocationButton.on('click', clearLocation);
 
@@ -307,7 +314,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 						element.next().find("#locationAddress").val(results[0].formatted_address);
 						scope.$apply(function() {
 							scope.ngModel.address = results[0].formatted_address;
-							scope.ngModel.title = "";
+							scope.ngModel.title = element.next().find("#locationTitle").val();
 							scope.ngModel.lat = results[0].geometry.location.lat();
 							scope.ngModel.lon = results[0].geometry.location.lng();
 							makeHTML();
@@ -336,7 +343,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 						element.next().find("#locationAddress").val(results[0].formatted_address);
 					 	scope.$apply(function() {
 						 	scope.ngModel.address = results[0].formatted_address;
-							scope.ngModel.title = "";
+							scope.ngModel.title = element.next().find("#locationTitle").val();
 							scope.ngModel.lat = results[0].geometry.location.lat();
 							scope.ngModel.lon = results[0].geometry.location.lng();
 							makeHTML();
