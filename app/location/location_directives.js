@@ -363,12 +363,13 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				});
 			}
 			var loadGoogleAPI = function() {
-				var key = "Key Goes here";
+				//You need to define google_maps_key as a global variable with your API key in it
+
 				var domain = "//maps.googleapis.com/maps/api/js";
 				var script = document.createElement("script");
 
 				script.type = "text/javascript";
-				script.src = domain + "?v=3&key=" + key;
+				script.src = domain + "?v=3&key=" + google_maps_key;
 				document.body.appendChild(script);
 
 				window.googleApiLoaded = true;
