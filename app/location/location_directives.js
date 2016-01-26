@@ -98,6 +98,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 				savedModel = $.extend({}, scope.ngModel);
 
 				location_data = scope.ngModel;
+				if(!location_data) location_data = {};
 
 				lat = parseFloat(location_data.lat);
 				lon = parseFloat(location_data.lon);
@@ -313,6 +314,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 
 						element.next().find("#locationAddress").val(results[0].formatted_address);
 						scope.$apply(function() {
+							if(!scope.ngModel) scope.ngModel = {};
 							scope.ngModel.address = results[0].formatted_address;
 							scope.ngModel.title = element.next().find("#locationTitle").val();
 							scope.ngModel.lat = results[0].geometry.location.lat();
@@ -342,6 +344,7 @@ angular.module('ADE').directive('adeLocation', ['ADE','$compile','$filter',funct
 
 						element.next().find("#locationAddress").val(results[0].formatted_address);
 					 	scope.$apply(function() {
+					 		if(!scope.ngModel) scope.ngModel = {};
 						 	scope.ngModel.address = results[0].formatted_address;
 							scope.ngModel.title = element.next().find("#locationTitle").val();
 							scope.ngModel.lat = results[0].geometry.location.lat();
