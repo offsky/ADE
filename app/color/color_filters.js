@@ -10,10 +10,9 @@
 angular.module('ADE').filter('color', ['ADE', 'colorUtils', function(ADE, utils) {
 	'use strict';
 	return function(hexColor, selectedHexColor) {
-		var checkmark = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">' +
-			'<path d="m8.1,13.4c-1.66667,-1.43333 -3.13333,-3.36667 -4.8,-4.8l-3,3c2.76667,2.36667 5.53334,4.73333 ' +
-				'8.3,7.1c3.86667,-4.03333 6.73334,-8.56667 10.60001,-12.6c-1,-0.93333 -2,-1.86667 ' +
-				'-3,-2.8c-3.03331,3.03333 -6.1667,6.76667 -8.10001,10.1z" /></svg>';
+		var checkmark = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="312px" height="312px" viewBox="0 0 312 312" enable-background="new 0 0 312 312" xml:space="preserve">' +
+			'<path fill="#1D1D1B" d="M287,29.8c-12.5-7.5-30-6.2-38.7,6.2l-141,171l-44.9-52.4c-8.7-10-27.5-12.5-38.7-5 ' +
+				'c-12.5,8.7-13.7,23.7-5,34.9L111,286.9L293.2,64.7C303.2,53.5,299.5,37.3,287,29.8z"/></svg>';
 
 		var returnValue = '<span class="ade-color">';
 
