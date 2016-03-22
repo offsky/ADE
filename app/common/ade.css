@@ -662,21 +662,20 @@
     box-shadow: 1px 1px 2px 0 rgba(50,50,50,.3);
     padding: 10px 8px;
     top: 20px;
-    width: 180px;
-    height: 90px;
+    width: 200px;
     box-sizing: border-box;
 }
 
 .ade-location-overlay .ade-input {
     padding: 2px;
     margin: 0 0 5px 0;
-    width: 165px;
+    width: 185px;
     box-sizing: border-box;
 }
 
 .ade-location-overlay .ade-search-input {
-    width: 130px;
-    margin-right: 5px;
+    width: 160px;
+    margin-right: 0px;
 }
 
 .ade-search-button {
