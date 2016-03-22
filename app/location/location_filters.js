@@ -24,6 +24,6 @@ angular.module('ADE').filter('location', function() {
 			}
 		}
 
-		return output;
+		return "<span title='"+output+"'>"+output+"</span>";
 	};
 });
