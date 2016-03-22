@@ -119,9 +119,22 @@ angular.module('ADE').factory('colorUtils', function() {
         return hsb;
     }
 
+    function colorDistance(hex1, hex2) {
+        var c1 = hex2rgb(hex1);
+        var c2 = hex2rgb(hex2);
+
+        var sum = Math.pow(1*(c2.r-c1.r),2)+Math.pow(1*(c2.g-c1.g),2)+Math.pow(1*(c2.b-c1.b),2);
+        var score = Math.sqrt(sum);
+
+        console.log(hex1,hex2,score);
+
+        return score;
+    }
+
     return {
         parseHex: parseHex,
         hex2hsb: hex2hsb,
-        hsb2hex: hsb2hex
+        hsb2hex: hsb2hex,
+        colorDistance: colorDistance
     };
 });

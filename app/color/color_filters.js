@@ -17,7 +17,11 @@ angular.module('ADE').filter('color', ['ADE', 'colorUtils', function(ADE, utils)
 		var returnValue = '<span class="ade-color">';
 
 		if (utils.parseHex(hexColor) !== "") {
-			returnValue =  '<span class="ade-color" data-color="'+hexColor+'" style="background-color:' + hexColor + '">';
+			var border = "";
+
+			if(utils.colorDistance(hexColor,"#FAFAFA")<80) border = " border"; //determine if the color would blend into background
+
+			returnValue =  '<span class="ade-color'+border+'" data-color="'+hexColor+'" title="'+hexColor+'" style="background-color:' + hexColor + '">';
 		}
 
 		if (hexColor === selectedHexColor && selectedHexColor!==-1) {

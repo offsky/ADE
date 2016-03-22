@@ -189,12 +189,12 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 						html += '<div class="ade-color-palette open">' +
 							colorsPaletteTemplate(palette, scope.ngModel) + '</div>' +
 							'<div class="ade-color-picker">' + colorsPopupTemplate + '</div>' +
-							'<a class="ade-color-popup-toggle" href="#">Custom color</a>';
+							'<a class="ade-color-popup-toggle" href="#"><span class="ade-color-empty"></span> <b>CUSTOM</b></a>';
 					} else {
 						html += '<div class="ade-color-picker open">' + colorsPopupTemplate + '</div>';
 					}
 
-					html += '<a class="ade-color-clear" href="#">No color</a></div>';
+					html += '<a class="ade-color-clear" href="#"><span class="ade-color-empty"></span> <b>NONE</b></a></div>';
 
 					$compile(html)(scope).insertAfter(element);
 
@@ -291,9 +291,9 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 				};
 
 				if (!box.is(":visible")) {
-					popupToggle.text("Custom color");
+					popupToggle.find('b').text("CUSTOM");
 				} else {
-					popupToggle.text("Show palette");
+					popupToggle.find('b').text("PALETTE");
 				}
 
 				clearColor.on('click', function(event) {
@@ -311,13 +311,13 @@ angular.module('ADE').directive('adeColor', ['ADE', '$compile', '$filter', 'colo
 					event.preventDefault();
 					scope.input.focus();
 					if (box.is(":visible")) {
-						popupToggle.text("Custom color");
+						popupToggle.find('b').text("CUSTOM");
 						paletteContainer = popupToggle.parent().find(".ade-color-palette");
 						paletteContainer.addClass("open").empty().html(colorsPaletteTemplate(palette, scope.ngModel));
 						attachColorClickEvent(paletteContainer.find(".ade-color"));
 						angular.element(".ade-color-picker").removeClass("open");
 					} else {
-						popupToggle.text("Show palette");
+						popupToggle.find('b').text("PALETTE");
 						angular.element(".ade-color-palette").removeClass("open");
 						angular.element(".ade-color-picker").addClass("open");
 					}
